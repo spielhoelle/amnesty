@@ -116,6 +116,8 @@ add_action( 'widgets_init', 'amnesty_widgets_init' );
 function amnesty_scripts() {
 	wp_enqueue_style( 'amnesty-style', get_stylesheet_uri() );
 
+    wp_enqueue_style('font-awesome', get_bloginfo('stylesheet_directory') . '/sass/font-awesome.min.css');
+
 	wp_enqueue_script( 'amnesty-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
 
 	wp_enqueue_script( 'amnesty-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
@@ -146,7 +148,5 @@ require get_template_directory() . '/inc/extras.php';
  */
 require get_template_directory() . '/inc/customizer.php';
 
-/**
- * Load Jetpack compatibility file.
- */
-require get_template_directory() . '/inc/jetpack.php';
+require get_template_directory() . '/inc/tinymce.php';
+
