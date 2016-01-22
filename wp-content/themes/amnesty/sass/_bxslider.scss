@@ -3,26 +3,49 @@
   position: relative;
   #slideshow {
     figure {
-      height: 400px;
+      height: 600px;
 
       position: relative;
       &.active-slide img {
         transform: scale(1.2);
       }
       img {
-        height: 400px;
-
         background: transparent none no-repeat scroll center center / cover;
         width: 100%;
         display: block;
-        transition: transform 10s linear 0s, -webkit-transform 10s linear 0s;
+        transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
       }
       figcaption {
-        padding: 0 20px;
         position: absolute;
         bottom: 40px;
-        background: rgba(255, 255, 0, 0.73);
         left: 40px;
+        color: $black;
+        h1, h2 {
+          padding: 0.5em;
+          opacity: 0;
+          transform: translate(0, -10px);
+        }
+        h1 {
+          display: inline;
+          background: rgba(255, 255, 0, 0.9);
+          transform: translate(-50px, 0);
+          transition: opacity .5s ease 0s, transform .5s ease 0s;
+
+        }
+        h2 {
+          margin-top: 20px;
+          background: rgba(0, 0, 0, 0.9);
+          color: white;
+          transform: translate(-50px, 0);
+          transition: opacity .5s ease .5s, transform .5s ease .5s;
+
+        }
+      }
+      &.active-slide {
+        h1, h2, h3, p {
+          opacity: 1;
+          transform: translate(0, 0);
+        }
       }
     }
   }
@@ -37,7 +60,7 @@
       height: 100%;
       font-size: 5em;
       z-index: 51;
-      width: 100px;
+      width: 10vh;
       display: flex;
       justify-content: center;
       align-items: center;

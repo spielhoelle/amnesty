@@ -15,6 +15,26 @@ body {
   background: $white; /* Fallback for when there is no custom background color defined. */
 }
 
+a {
+  color: $darkgrey;
+
+  &:visited {
+    color: $darkgrey;
+  }
+  &:hover,
+  &:focus,
+  &:active {
+    color: $darkgrey;
+  }
+  &:focus {
+    outline: thin dotted;
+  }
+  &:hover,
+  &:active {
+    outline: 0;
+  }
+}
+
 blockquote, q {
   quotes: "" "";
 
@@ -70,3 +90,4 @@ table {
 figure {
   margin: 0;
 }
+

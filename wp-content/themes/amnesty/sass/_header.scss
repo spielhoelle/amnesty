@@ -1,4 +1,5 @@
 #masthead {
+  position: relative;
   .top {
     display: flex;
     height: 80px;
@@ -29,47 +30,31 @@
         height: 100%;
         justify-content: center;
         flex-flow: column;
-        > ul {
+        ul {
           display: flex;
           justify-content: flex-end;
-          height: 100%;
           align-items: center;
+
+          a {
+            font-family: $font__title;
+            height: 100%;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            &:hover {
+              background: rgba(0, 0, 0, 0.1)
+            }
+          }
+        }
+        > ul {
+          height: 100%;
+
           > li {
             height: 100%;
-            a {
-              font-family: $font__title;
-              height: 100%;
-              padding: 0 30px;
-              display: flex;
-              align-items: center;
-              &:hover {
-                background: rgba(0, 0, 0, 0.1)
-              }
-            }
           }
         }
       }
     }
-  }
-}
-
-a {
-  color: $darkgrey;
-
-  &:visited {
-    color: $darkgrey;
-  }
-  &:hover,
-  &:focus,
-  &:active {
-    color: $darkgrey;
-  }
-  &:focus {
-    outline: thin dotted;
-  }
-  &:hover,
-  &:active {
-    outline: 0;
   }
 }
 
@@ -83,16 +68,32 @@ a {
     padding-left: 0;
 
     .sub-menu {
-      background: white;
-      float: left;
+      background: $black;
+      height: 80px;
       position: absolute;
-      //left: -999em;
-      top: 100%;
       z-index: 99999;
       display: flex;
       flex-flow: row nowrap;
-      > li {
+      top: 80px;
 
+      &:after {
+        background: $black;
+        content: "";
+        display: block;
+        width: 100%;
+        max-width: 1600px;
+        height: 80px;
+        position: fixed;
+        left: 50%;
+        margin: 0 auto;
+        transform: translate(-50%, 0);
+        z-index: -1;
+      }
+      &, &:after {
+        left: -999em;
+      }
+      > li {
+        height: 80px;
       }
       ul {
         left: -999em;
@@ -100,33 +101,28 @@ a {
       }
 
       li {
-        &:hover > ul,
-        &.focus > ul {
-          left: 100%;
+        &:hover, &.focus {
+          ul {
+            left: 100%;
+
+          }
         }
       }
 
       a {
-        width: 200px;
-      }
-
-      :hover > a,
-      .focus > a {
-      }
-
-      a:hover,
-      a.focus {
+        color: $white;
       }
     }
 
     li:hover > ul,
     li.focus > ul {
       left: auto;
+      &:after {
+        left: 50%;
+      }
     }
   }
   li {
-    position: relative;
-
     &:hover > a,
     &.focus > a {
     }

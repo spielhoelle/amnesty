@@ -6,11 +6,13 @@
  *
  * @package amnesty
  */
-
+if (has_post_thumbnail()) : ?><?php $thumb = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+	$output = ' style="background-image: url(' . $thumb[0] . ')"';
+endif;
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
+	<header <?php echo $output ?> class="entry-header">
 		<?php
 			if ( is_single() ) {
 				the_title( '<h1 class="entry-title">', '</h1>' );
