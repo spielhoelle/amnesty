@@ -42,9 +42,6 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 	## Captions
 	## Galleries
 --------------------------------------------------------------*/
-/*--------------------------------------------------------------
-# Normalize
---------------------------------------------------------------*/
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
@@ -221,9 +218,6 @@ td,
 th {
   padding: 0; }
 
-/*--------------------------------------------------------------
-# Typography
---------------------------------------------------------------*/
 body,
 button,
 input,
@@ -234,9 +228,6 @@ textarea {
   font-size: 16px;
   font-size: 1rem;
   line-height: 1.5; }
-
-h1, h2, h3, h4, h5, h6 {
-  clear: both; }
 
 p {
   margin-bottom: 1.5em; }
@@ -277,9 +268,9 @@ mark, ins {
 big {
   font-size: 125%; }
 
-/*--------------------------------------------------------------
-# Elements
---------------------------------------------------------------*/
+h1, h2, h3, h4, h5, h6 {
+  clear: both; }
+
 html {
   box-sizing: border-box; }
 
@@ -334,9 +325,6 @@ table {
   margin: 0 0 1.5em;
   width: 100%; }
 
-/*--------------------------------------------------------------
-# Forms
---------------------------------------------------------------*/
 button,
 input[type="button"],
 input[type="reset"],
@@ -429,12 +417,6 @@ textarea {
   padding-left: 3px;
   width: 100%; }
 
-/*--------------------------------------------------------------
-# Navigation
---------------------------------------------------------------*/
-/*--------------------------------------------------------------
-## Links
---------------------------------------------------------------*/
 a {
   color: #766a62; }
   a:visited {
@@ -446,9 +428,6 @@ a {
   a:hover, a:active {
     outline: 0; }
 
-/*--------------------------------------------------------------
-## Menus
---------------------------------------------------------------*/
 .main-navigation {
   clear: both;
   display: block;
@@ -514,9 +493,6 @@ a {
   text-align: right;
   width: 50%; }
 
-/*--------------------------------------------------------------
-# Accessibility
---------------------------------------------------------------*/
 /* Text meant only for screen readers. */
 .screen-reader-text {
   clip: rect(1px, 1px, 1px, 1px);
@@ -548,9 +524,6 @@ a {
 #content[tabindex="-1"]:focus {
   outline: 0; }
 
-/*--------------------------------------------------------------
-# Alignments
---------------------------------------------------------------*/
 .alignleft {
   display: inline;
   float: left;
@@ -567,9 +540,6 @@ a {
   margin-left: auto;
   margin-right: auto; }
 
-/*--------------------------------------------------------------
-# Clearings
---------------------------------------------------------------*/
 .clear:before,
 .clear:after,
 .entry-content:before,
@@ -594,18 +564,12 @@ a {
 .site-footer:after {
   clear: both; }
 
-/*--------------------------------------------------------------
-# Widgets
---------------------------------------------------------------*/
 .widget {
   margin: 0 0 1.5em;
   /* Make sure select elements fit in widgets. */ }
   .widget select {
     max-width: 100%; }
 
-/*--------------------------------------------------------------
-# Content
---------------------------------------------------------------*/
 /*--------------------------------------------------------------
 ## Posts and pages
 --------------------------------------------------------------*/
@@ -648,9 +612,6 @@ a {
 .bypostauthor {
   display: block; }
 
-/*--------------------------------------------------------------
-# Infinite scroll
---------------------------------------------------------------*/
 /* Globally hidden elements when Infinite Scroll is supported and in use. */
 .infinite-scroll .posts-navigation,
 .infinite-scroll.neverending .site-footer {
@@ -661,9 +622,6 @@ a {
 .infinity-end.neverending .site-footer {
   display: block; }
 
-/*--------------------------------------------------------------
-# Media
---------------------------------------------------------------*/
 .page-content .wp-smiley,
 .entry-content .wp-smiley,
 .comment-content .wp-smiley {
