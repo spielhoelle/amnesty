@@ -40,32 +40,6 @@
         </div>
 
 
-        <?php if (($header_images = get_uploaded_header_images())): ?>
-            <div id="slideshow">
-                <?php foreach ($header_images as $header_image): ?>
-
-                    <figure class="pattern">
-                        <?php $data = wp_prepare_attachment_for_js($header_image['attachment_id']); ?>
-                        <img src="/wp-includes/images/blank.gif"
-                             style="background-image: url(<?php echo esc_url($header_image['url']); ?>)"/>
-                        <figcaption>
-                            <h1 class="entry-title"><?php echo $data['title'] ?></h1>
-
-                            <h2><?php echo $data['caption'] ?></h2>
-
-                            <h3><?php echo $data['alt'] ?></h3>
-
-                            <p><?php echo $data['description'] ?></p>
-
-
-                        </figcaption>
-                    </figure>
-
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?> <!-- slider -->
-
-
-    </header><!-- #masthead -->
+remove    </header><!-- #masthead -->
 
     <div id="content" class="site-content">

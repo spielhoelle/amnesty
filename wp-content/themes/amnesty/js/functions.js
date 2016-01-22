@@ -4,7 +4,7 @@
         /**
          * slider
          */
-        $('#slideshow').bxSlider({
+        $('.slider').bxSlider({
             mode: 'fade',
             speed: 500,
             pager: false,
@@ -13,10 +13,10 @@
             //auto: true,
             onSlideAfter: function (currentSlideNumber, totalSlideQty, currentSlideHtmlObject) {
                 $('.active-slide').removeClass('active-slide');
-                $('#slideshow > figure').eq(currentSlideHtmlObject).addClass('active-slide')
+                $('.slider > figure').eq(currentSlideHtmlObject).addClass('active-slide')
             },
             onSliderLoad: function () {
-                $('#slideshow > figure').eq(0).addClass('active-slide')
+                $('.slider > figure').eq(0).addClass('active-slide')
             }
         });
     });

@@ -565,7 +565,8 @@ textarea {
         -webkit-transform: translate(-50%, 0);
             -ms-transform: translate(-50%, 0);
                 transform: translate(-50%, 0);
-        z-index: -1; }
+        z-index: -1;
+        top: 80px; }
       .main-navigation ul .sub-menu, .main-navigation ul .sub-menu:after {
         left: -999em; }
       .main-navigation ul .sub-menu > li {
@@ -810,30 +811,30 @@ object {
 .bx-wrapper {
   overflow: hidden;
   position: relative; }
-  .bx-wrapper #slideshow figure {
+  .bx-wrapper .slider figure {
     height: 600px;
     position: relative; }
-    .bx-wrapper #slideshow figure.active-slide img {
+    .bx-wrapper .slider figure.active-slide img {
       -webkit-transform: scale(1.2);
           -ms-transform: scale(1.2);
               transform: scale(1.2); }
-    .bx-wrapper #slideshow figure img {
+    .bx-wrapper .slider figure img {
       background: transparent none no-repeat scroll center center / cover;
       width: 100%;
       display: block;
       transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84); }
-    .bx-wrapper #slideshow figure figcaption {
+    .bx-wrapper .slider figure figcaption {
       position: absolute;
       bottom: 40px;
       left: 40px;
       color: #111; }
-      .bx-wrapper #slideshow figure figcaption h1, .bx-wrapper #slideshow figure figcaption h2 {
+      .bx-wrapper .slider figure figcaption h1, .bx-wrapper .slider figure figcaption h2 {
         padding: 0.5em;
         opacity: 0;
         -webkit-transform: translate(0, -10px);
             -ms-transform: translate(0, -10px);
                 transform: translate(0, -10px); }
-      .bx-wrapper #slideshow figure figcaption h1 {
+      .bx-wrapper .slider figure figcaption h1 {
         display: inline;
         background: rgba(255, 255, 0, 0.9);
         -webkit-transform: translate(-50px, 0);
@@ -842,7 +843,7 @@ object {
         transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
         transition: opacity .5s ease 0s, transform .5s ease 0s;
         transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
-      .bx-wrapper #slideshow figure figcaption h2 {
+      .bx-wrapper .slider figure figcaption h2 {
         margin-top: 20px;
         background: rgba(0, 0, 0, 0.9);
         color: white;
@@ -852,7 +853,7 @@ object {
         transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
         transition: opacity .5s ease .5s, transform .5s ease .5s;
         transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
-    .bx-wrapper #slideshow figure.active-slide h1, .bx-wrapper #slideshow figure.active-slide h2, .bx-wrapper #slideshow figure.active-slide h3, .bx-wrapper #slideshow figure.active-slide p {
+    .bx-wrapper .slider figure.active-slide h1, .bx-wrapper .slider figure.active-slide h2, .bx-wrapper .slider figure.active-slide h3, .bx-wrapper .slider figure.active-slide p {
       opacity: 1;
       -webkit-transform: translate(0, 0);
           -ms-transform: translate(0, 0);
