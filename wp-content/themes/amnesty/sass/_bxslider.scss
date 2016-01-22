@@ -20,15 +20,15 @@
         bottom: 40px;
         left: 40px;
         color: $black;
-        h1, h2 {
+        h1, h2, .more-link {
           padding: 0.5em;
           opacity: 0;
-          transform: translate(0, -10px);
+          transform: translate(-50px, 0);
+
         }
         h1 {
           display: inline;
           background: rgba(255, 255, 0, 0.9);
-          transform: translate(-50px, 0);
           transition: opacity .5s ease 0s, transform .5s ease 0s;
 
         }
@@ -36,13 +36,14 @@
           margin-top: 20px;
           background: rgba(0, 0, 0, 0.9);
           color: white;
-          transform: translate(-50px, 0);
           transition: opacity .5s ease .5s, transform .5s ease .5s;
-
+        }
+        .more-link {
+          transition: opacity .5s ease .8s, transform .5s ease .8s;
         }
       }
       &.active-slide {
-        h1, h2, h3, p {
+        h1, h2,.more-link {
           opacity: 1;
           transform: translate(0, 0);
         }
@@ -58,7 +59,7 @@
     a {
       position: absolute;
       height: 100%;
-      font-size: 5em;
+      font-size: 1rem;
       z-index: 51;
       width: 10vh;
       display: flex;

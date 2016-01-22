@@ -17,8 +17,6 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                 <figcaption class="bubble">
                     <h1 class="entry-title"><?php echo get_the_title() ?></h1>';
                     <h2><?php echo $content_parts['main'] ?></h2>
-                    <?php
-                    echo '<p>' . the_title() . '</p>'; ?>
                     <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
                 </figcaption>
             </figure>

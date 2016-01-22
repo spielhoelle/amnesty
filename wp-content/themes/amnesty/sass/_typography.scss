@@ -23,13 +23,17 @@ select,
 textarea {
   color: $darkgrey;
   font-family: $font__main;
-  @include font-size(1);
+  @include font-size(1.5);
   line-height: $font__line-height-body;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: $font__title;
   clear: both;
+}
+
+h2 {
+  font-size: 1.5rem;
 }
 
 p {

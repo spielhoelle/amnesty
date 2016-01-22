@@ -237,13 +237,16 @@ select,
 textarea {
   color: #404040;
   font-family: sans-serif;
-  font-size: 16px;
-  font-size: 1rem;
+  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1.5; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Trade Gothic";
   clear: both; }
+
+h2 {
+  font-size: 1.5rem; }
 
 p {
   margin-bottom: 1.5em; }
@@ -308,7 +311,7 @@ a {
   a:hover, a:focus, a:active {
     color: #404040; }
   a:focus {
-    outline: thin dotted; }
+    outline: 0; }
   a:hover, a:active {
     outline: 0; }
 
@@ -355,6 +358,12 @@ table {
 
 figure {
   margin: 0; }
+
+.more-link {
+  text-decoration: none;
+  padding: 2rem;
+  background: #ff0;
+  font-family: "Trade Gothic"; }
 
 button,
 input[type="button"],
@@ -525,7 +534,8 @@ textarea {
             display: flex;
             -webkit-align-items: center;
                 -ms-flex-align: center;
-                    align-items: center; }
+                    align-items: center;
+            white-space: now; }
             #masthead .top nav div ul a:hover {
               background: rgba(0, 0, 0, 0.1); }
         #masthead .top nav div > ul {
@@ -828,18 +838,15 @@ object {
       bottom: 40px;
       left: 40px;
       color: #111; }
-      .bx-wrapper .slider figure figcaption h1, .bx-wrapper .slider figure figcaption h2 {
+      .bx-wrapper .slider figure figcaption h1, .bx-wrapper .slider figure figcaption h2, .bx-wrapper .slider figure figcaption .more-link {
         padding: 0.5em;
         opacity: 0;
-        -webkit-transform: translate(0, -10px);
-            -ms-transform: translate(0, -10px);
-                transform: translate(0, -10px); }
+        -webkit-transform: translate(-50px, 0);
+            -ms-transform: translate(-50px, 0);
+                transform: translate(-50px, 0); }
       .bx-wrapper .slider figure figcaption h1 {
         display: inline;
         background: rgba(255, 255, 0, 0.9);
-        -webkit-transform: translate(-50px, 0);
-            -ms-transform: translate(-50px, 0);
-                transform: translate(-50px, 0);
         transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
         transition: opacity .5s ease 0s, transform .5s ease 0s;
         transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
@@ -847,13 +854,14 @@ object {
         margin-top: 20px;
         background: rgba(0, 0, 0, 0.9);
         color: white;
-        -webkit-transform: translate(-50px, 0);
-            -ms-transform: translate(-50px, 0);
-                transform: translate(-50px, 0);
         transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
         transition: opacity .5s ease .5s, transform .5s ease .5s;
         transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
-    .bx-wrapper .slider figure.active-slide h1, .bx-wrapper .slider figure.active-slide h2, .bx-wrapper .slider figure.active-slide h3, .bx-wrapper .slider figure.active-slide p {
+      .bx-wrapper .slider figure figcaption .more-link {
+        transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
+        transition: opacity .5s ease .8s, transform .5s ease .8s;
+        transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
+    .bx-wrapper .slider figure.active-slide h1, .bx-wrapper .slider figure.active-slide h2, .bx-wrapper .slider figure.active-slide .more-link {
       opacity: 1;
       -webkit-transform: translate(0, 0);
           -ms-transform: translate(0, 0);
@@ -866,7 +874,7 @@ object {
     .bx-wrapper .bx-controls a {
       position: absolute;
       height: 100%;
-      font-size: 5em;
+      font-size: 1rem;
       z-index: 51;
       width: 10vh;
       display: -webkit-flex;
@@ -886,5 +894,21 @@ section[rel="Über uns"] {
   text-align: center; }
   section[rel="Über uns"] i {
     font-size: 5rem; }
+
+/**
+ * WP admin bar
+ */
+html[lang] {
+  margin-top: 0 !important; }
+
+#wpadminbar {
+  transition: top 0.2s;
+  top: -22px; }
+  #wpadminbar > * {
+    visibility: hidden; }
+  #wpadminbar:hover {
+    top: 0; }
+    #wpadminbar:hover > * {
+      visibility: visible; }
 
 /*# sourceMappingURL=style.css.map */

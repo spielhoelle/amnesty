@@ -61,3 +61,32 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 @import "sass/bxslider";
 @import "sass/template.specific";
 
+/**
+ * WP admin bar
+ */
+
+html[lang] {
+  margin-top: 0 !important;
+}
+
+
+#wpadminbar {
+  transition: top 0.2s;
+  top: -22px;
+
+
+  > * {
+    visibility: hidden;
+  }
+
+
+  &:hover {
+    top: 0;
+
+    > * {
+      visibility: visible;
+    }
+  }
+}
+
+

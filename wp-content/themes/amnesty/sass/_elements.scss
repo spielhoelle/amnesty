@@ -25,9 +25,10 @@ a {
   &:focus,
   &:active {
     color: $darkgrey;
+
   }
   &:focus {
-    outline: thin dotted;
+    outline: 0;
   }
   &:hover,
   &:active {
@@ -91,3 +92,9 @@ figure {
   margin: 0;
 }
 
+.more-link {
+  text-decoration: none;
+  padding: 2rem;
+  background: $yellow;
+  font-family: $font__title;
+}
