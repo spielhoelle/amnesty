@@ -1,0 +1,28 @@
+.bx-wrapper {
+  overflow: hidden;
+  #slideshow {
+    figure {
+      height: 400px;
+
+      position: relative;
+      &.active-slide img {
+        transform: scale(1.2);
+      }
+      img {
+        height: 400px;
+
+        background: transparent none no-repeat scroll center center / cover;
+        width: 100%;
+        display: block;
+        transition: transform 10s linear 0s, -webkit-transform 10s linear 0s;
+      }
+      figcaption {
+        position: absolute;
+        bottom: 40px;
+        background: rgba(255, 255, 0, 0.73);
+        left: 40px;
+      }
+    }
+  }
+}
+

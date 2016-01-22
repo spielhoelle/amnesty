@@ -1,5 +1,42 @@
 #masthead {
-
+  .top {
+    display: flex;
+    .site-branding {
+      .site-title {
+        margin: 0;
+        a {
+          height: 70px;
+          display: block;
+          color: transparent;
+          background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain;
+        }
+      }
+      .site-description {
+        display: none;
+      }
+    }
+    nav {
+      display: flex;
+      width: 100%;
+      flex-flow: column;
+      div {
+        flex: 1 0 auto;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        flex-flow: column;
+        > ul {
+          display: flex;
+          justify-content: flex-end;
+          height: 100%;
+          align-items: center;
+          > li {
+            padding: 10px 20px;
+          }
+        }
+      }
+    }
+  }
 }
 
 a {
@@ -23,9 +60,6 @@ a {
 }
 
 .main-navigation {
-  clear: both;
-  display: block;
-  float: left;
   width: 100%;
 
   ul {
@@ -73,7 +107,6 @@ a {
     }
   }
   li {
-    float: left;
     position: relative;
 
     &:hover > a,
@@ -98,7 +131,7 @@ a {
   display: block;
 }
 
-@media screen and (min-width: 37.5em) {
+@media screen and (min-width: $menu-break-point) {
   .menu-toggle {
     display: none;
   }

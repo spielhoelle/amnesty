@@ -42,6 +42,9 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 	## Captions
 	## Galleries
 --------------------------------------------------------------*/
+/**
+* Variables
+*/
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
@@ -325,6 +328,9 @@ table {
   margin: 0 0 1.5em;
   width: 100%; }
 
+figure {
+  margin: 0; }
+
 button,
 input[type="button"],
 input[type="reset"],
@@ -417,6 +423,71 @@ textarea {
   padding-left: 3px;
   width: 100%; }
 
+#page {
+  max-width: 1600px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: column;
+      -ms-flex-flow: column;
+          flex-flow: column;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 0 auto; }
+
+#masthead, #content {
+  width: 100%; }
+
+#masthead .top {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
+  #masthead .top .site-branding .site-title {
+    margin: 0; }
+    #masthead .top .site-branding .site-title a {
+      height: 70px;
+      display: block;
+      color: transparent;
+      background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top/contain; }
+  #masthead .top .site-branding .site-description {
+    display: none; }
+  #masthead .top nav {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column; }
+    #masthead .top nav div {
+      -webkit-flex: 1 0 auto;
+          -ms-flex: 1 0 auto;
+              flex: 1 0 auto;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      height: 100%;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-flex-flow: column;
+          -ms-flex-flow: column;
+              flex-flow: column; }
+      #masthead .top nav div > ul {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: flex-end;
+            -ms-flex-pack: end;
+                justify-content: flex-end;
+        height: 100%;
+        -webkit-align-items: center;
+            -ms-flex-align: center;
+                align-items: center; }
+        #masthead .top nav div > ul > li {
+          padding: 10px 20px; }
+
 a {
   color: #766a62; }
   a:visited {
@@ -429,9 +500,6 @@ a {
     outline: 0; }
 
 .main-navigation {
-  clear: both;
-  display: block;
-  float: left;
   width: 100%; }
   .main-navigation ul {
     display: none;
@@ -457,7 +525,6 @@ a {
     .main-navigation ul li.focus > ul {
       left: auto; }
   .main-navigation li {
-    float: left;
     position: relative; }
   .main-navigation a {
     display: block;
@@ -682,5 +749,26 @@ object {
 
 .gallery-caption {
   display: block; }
+
+.bx-wrapper {
+  overflow: hidden; }
+  .bx-wrapper #slideshow figure {
+    height: 400px;
+    position: relative; }
+    .bx-wrapper #slideshow figure.active-slide img {
+      -webkit-transform: scale(1.2);
+          -ms-transform: scale(1.2);
+              transform: scale(1.2); }
+    .bx-wrapper #slideshow figure img {
+      height: 400px;
+      background: transparent none no-repeat scroll center center / cover;
+      width: 100%;
+      display: block;
+      transition: transform 10s linear 0s, -webkit-transform 10s linear 0s; }
+    .bx-wrapper #slideshow figure figcaption {
+      position: absolute;
+      bottom: 40px;
+      background: rgba(255, 255, 0, 0.73);
+      left: 40px; }
 
 /*# sourceMappingURL=style.css.map */

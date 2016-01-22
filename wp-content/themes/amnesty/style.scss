@@ -43,11 +43,13 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 	## Galleries
 --------------------------------------------------------------*/
 @import "sass/variables-site";
+@import "sass/base";
 @import "sass/mixins-master";
 @import "sass/normalize";
 @import "sass/typography";
 @import "sass/elements";
 @import "sass/forms";
+@import "sass/layout";
 @import "sass/header";
 @import "sass/accessibility";
 @import "sass/alignments";
@@ -56,4 +58,5 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 @import "sass/site";
 @import "sass/infinite-scroll";
 @import "sass/media";
+@import "sass/bxslider";
 

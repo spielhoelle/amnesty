@@ -1,0 +1,11 @@
+#page {
+  max-width: $viewport;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+#masthead, #content {
+  width: 100%;
+}
