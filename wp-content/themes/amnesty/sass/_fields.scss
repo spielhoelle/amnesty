@@ -14,17 +14,17 @@ input[type="datetime"],
 input[type="datetime-local"],
 input[type="color"],
 textarea {
-	color: $color__text-main;
-	border: 1px solid $color__border-input;
+	color: $darkgrey;
+	border: 1px solid $darkgrey;
 	border-radius: 3px;
 
 	&:focus {
-		color: $color__text-input-focus;
+		color: $black;
 	}
 }
 
 select {
-	border: 1px solid $color__border-input;
+	border: 1px solid $darkgrey;
 }
 
 input[type="text"],

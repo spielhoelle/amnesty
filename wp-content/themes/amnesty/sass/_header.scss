@@ -54,15 +54,15 @@
 }
 
 a {
-  color: $color__link;
+  color: $darkgrey;
 
   &:visited {
-    color: $color__link-visited;
+    color: $darkgrey;
   }
   &:hover,
   &:focus,
   &:active {
-    color: $color__link-hover;
+    color: $darkgrey;
   }
   &:focus {
     outline: thin dotted;
@@ -82,14 +82,18 @@ a {
     margin: 0;
     padding-left: 0;
 
-    ul {
-      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+    .sub-menu {
+      background: white;
       float: left;
       position: absolute;
-      top: 1.5em;
-      left: -999em;
+      //left: -999em;
+      top: 100%;
       z-index: 99999;
+      display: flex;
+      flex-flow: row nowrap;
+      > li {
 
+      }
       ul {
         left: -999em;
         top: 0;

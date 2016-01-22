@@ -165,3 +165,34 @@ require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/jetpack.php';
 
 require get_template_directory() . '/inc/tinymce.php';
+
+
+
+
+/**
+ * show page name in <title> to see which page is currently edited.
+ */
+add_filter('admin_title', 'my_admin_title', 10, 2);
+
+function my_admin_title($admin_title, $title)
+{
+    $currentScreen = get_current_screen();
+    if ($currentScreen->id === 'page' || $currentScreen->id === 'post' || $currentScreen->id === 'project' || $currentScreen->id === 'product') {
+        return 'e-' . get_the_title();
+    } else {
+        return $admin_title;
+    }
+}
+
+
+/**
+ * add style to admin
+ */
+
+add_action('admin_enqueue_scripts', 'load_admin_style');
+function load_admin_style() {
+    //@TODO checken
+    wp_enqueue_style('admin_css', get_template_directory_uri() . '/sass/admin-style.css', false, '1.0.0');
+}
+
+

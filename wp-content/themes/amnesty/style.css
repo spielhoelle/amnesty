@@ -278,7 +278,7 @@ abbr, acronym {
   cursor: help; }
 
 mark, ins {
-  background: #fff9c0;
+  background: #aaa #bbb #bbb;
   text-decoration: none; }
 
 big {
@@ -292,6 +292,10 @@ html {
 *:after {
   /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior; see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/ */
   box-sizing: inherit; }
+  *:focus,
+  *:before:focus,
+  *:after:focus {
+    outline: 0; }
 
 body {
   background: #f1f1f1;
@@ -346,9 +350,9 @@ input[type="button"],
 input[type="reset"],
 input[type="submit"] {
   border: 1px solid;
-  border-color: #ccc #ccc #bbb;
+  border-color: #404040;
   border-radius: 3px;
-  background: #e6e6e6;
+  background: #404040;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 15px 17px rgba(255, 255, 255, 0.5), inset 0 -5px 12px rgba(0, 0, 0, 0.05);
   color: rgba(0, 0, 0, 0.8);
   font-size: 12px;
@@ -360,7 +364,7 @@ input[type="submit"] {
   input[type="button"]:hover,
   input[type="reset"]:hover,
   input[type="submit"]:hover {
-    border-color: #ccc #bbb #aaa;
+    border-color: #aaa #bbb #bbb;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 15px 17px rgba(255, 255, 255, 0.8), inset 0 -5px 12px rgba(0, 0, 0, 0.02); }
   button:active, button:focus,
   input[type="button"]:active,
@@ -389,7 +393,7 @@ input[type="datetime-local"],
 input[type="color"],
 textarea {
   color: #404040;
-  border: 1px solid #ccc;
+  border: 1px solid #404040;
   border-radius: 3px; }
   input[type="text"]:focus,
   input[type="email"]:focus,
@@ -410,7 +414,7 @@ textarea {
     color: #111; }
 
 select {
-  border: 1px solid #ccc; }
+  border: 1px solid #404040; }
 
 input[type="text"],
 input[type="email"],
@@ -516,11 +520,11 @@ textarea {
               background: rgba(0, 0, 0, 0.1); }
 
 a {
-  color: #766a62; }
+  color: #404040; }
   a:visited {
-    color: #766a62; }
+    color: #404040; }
   a:hover, a:focus, a:active {
-    color: #3e3834; }
+    color: #404040; }
   a:focus {
     outline: thin dotted; }
   a:hover, a:active {
@@ -533,20 +537,25 @@ a {
     list-style: none;
     margin: 0;
     padding-left: 0; }
-    .main-navigation ul ul {
-      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+    .main-navigation ul .sub-menu {
+      background: white;
       float: left;
       position: absolute;
-      top: 1.5em;
-      left: -999em;
-      z-index: 99999; }
-      .main-navigation ul ul ul {
+      top: 100%;
+      z-index: 99999;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-flow: row nowrap;
+          -ms-flex-flow: row nowrap;
+              flex-flow: row nowrap; }
+      .main-navigation ul .sub-menu ul {
         left: -999em;
         top: 0; }
-      .main-navigation ul ul li:hover > ul,
-      .main-navigation ul ul li.focus > ul {
+      .main-navigation ul .sub-menu li:hover > ul,
+      .main-navigation ul .sub-menu li.focus > ul {
         left: 100%; }
-      .main-navigation ul ul a {
+      .main-navigation ul .sub-menu a {
         width: 200px; }
     .main-navigation ul li:hover > ul,
     .main-navigation ul li.focus > ul {
@@ -794,6 +803,7 @@ object {
       display: block;
       transition: transform 10s linear 0s, -webkit-transform 10s linear 0s; }
     .bx-wrapper #slideshow figure figcaption {
+      padding: 0 20px;
       position: absolute;
       bottom: 40px;
       background: rgba(255, 255, 0, 0.73);
@@ -821,5 +831,10 @@ object {
       text-decoration: none; }
       .bx-wrapper .bx-controls a.bx-next {
         right: 0; }
+
+section[rel="Über uns"] {
+  text-align: center; }
+  section[rel="Über uns"] i {
+    font-size: 5rem; }
 
 /*# sourceMappingURL=style.css.map */

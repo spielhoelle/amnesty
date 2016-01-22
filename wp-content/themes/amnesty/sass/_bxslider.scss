@@ -18,6 +18,7 @@
         transition: transform 10s linear 0s, -webkit-transform 10s linear 0s;
       }
       figcaption {
+        padding: 0 20px;
         position: absolute;
         bottom: 40px;
         background: rgba(255, 255, 0, 0.73);
