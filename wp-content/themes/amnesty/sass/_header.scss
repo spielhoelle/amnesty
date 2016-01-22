@@ -1,13 +1,16 @@
 #masthead {
   .top {
     display: flex;
+    height: 80px;
     .site-branding {
+      height: 100%;
       .site-title {
         margin: 0;
+        height: 100%;
         a {
-          height: 70px;
           display: block;
           color: transparent;
+          height: 100%;
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain;
         }
       }
@@ -16,6 +19,7 @@
       }
     }
     nav {
+      height: 100%;
       display: flex;
       width: 100%;
       flex-flow: column;
@@ -31,7 +35,17 @@
           height: 100%;
           align-items: center;
           > li {
-            padding: 10px 20px;
+            height: 100%;
+            a {
+              font-family: $font__title;
+              height: 100%;
+              padding: 0 30px;
+              display: flex;
+              align-items: center;
+              &:hover {
+                background: rgba(0, 0, 0, 0.1)
+              }
+            }
           }
         }
       }

@@ -1,5 +1,6 @@
 .bx-wrapper {
   overflow: hidden;
+  position: relative;
   #slideshow {
     figure {
       height: 400px;
@@ -22,6 +23,28 @@
         background: rgba(255, 255, 0, 0.73);
         left: 40px;
       }
+    }
+  }
+  .bx-controls {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    width: 100%;
+
+    a {
+      position: absolute;
+      height: 100%;
+      font-size: 5em;
+      z-index: 51;
+      width: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      &.bx-next {
+        right: 0;
+      }
+
     }
   }
 }
