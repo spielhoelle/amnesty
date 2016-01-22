@@ -39,21 +39,7 @@
             </nav><!-- #site-navigation -->
         </div>
 
-        <ul>
-            <?php
-            $args = array('numberposts' => '5');
-            $recent_posts = wp_get_recent_posts($args);
-            foreach ($recent_posts as $recent) {
 
-                $output = '';
-                if (has_post_thumbnail($recent['ID'])) :
-                    $thumb = wp_get_attachment_image_src(get_post_thumbnail_id($recent['ID']), 'full');
-                    $output = ' style="background-image: url(' . $thumb[0] . ')"';
-                endif;
-                echo '<li' . $output . '><a href="' . get_permalink($recent["ID"]) . '">' . $recent["post_title"] . '</a> </li>            ';
-            }
-            ?>
-        </ul>
         <?php if (($header_images = get_uploaded_header_images())): ?>
             <div id="slideshow">
                 <?php foreach ($header_images as $header_image): ?>
