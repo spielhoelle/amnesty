@@ -1,0 +1,1 @@
+{"version":3,"sources":["admin-style.css"],"names":[],"mappings":"AAAA;;EAEE;AACF,kCAAkC","file":"sass/admin-style.css","sourcesContent":["/**\n* Variables\n*/\n@import url(font-awesome.min.css);\n"],"sourceRoot":"/source/"}
