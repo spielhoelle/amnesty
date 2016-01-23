@@ -535,7 +535,7 @@ textarea {
             -webkit-align-items: center;
                 -ms-flex-align: center;
                     align-items: center;
-            white-space: now; }
+            white-space: nowrap; }
             #masthead .top nav div ul a:hover {
               background: rgba(0, 0, 0, 0.1); }
         #masthead .top nav div > ul {
@@ -872,9 +872,10 @@ object {
     top: 0;
     width: 100%; }
     .bx-wrapper .bx-controls a {
+      font-size: 3em;
+      color: white;
       position: absolute;
       height: 100%;
-      font-size: 1rem;
       z-index: 51;
       width: 10vh;
       display: -webkit-flex;

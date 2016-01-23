@@ -43,7 +43,7 @@
         }
       }
       &.active-slide {
-        h1, h2,.more-link {
+        h1, h2, .more-link {
           opacity: 1;
           transform: translate(0, 0);
         }
@@ -55,11 +55,11 @@
     height: 100%;
     top: 0;
     width: 100%;
-
     a {
+      font-size: 3em;
+      color: white;
       position: absolute;
       height: 100%;
-      font-size: 1rem;
       z-index: 51;
       width: 10vh;
       display: flex;

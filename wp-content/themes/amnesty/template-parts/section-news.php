@@ -15,6 +15,6 @@
 		<?php // restore original post data
 		wp_reset_postdata(); ?>
 
-	<a class="more-link show" href="<?php echo get_permalink( get_page_by_path( 'blognews' ) ) ?>">Mehr...</a>
+	<a class="more-link show" href="<?php echo get_permalink( get_page_by_path( 'alle-news' ) ) ?>">Mehr...</a>
 </section>
 <!-- #section-news.php-## -->
