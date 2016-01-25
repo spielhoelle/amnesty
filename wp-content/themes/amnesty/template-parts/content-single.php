@@ -13,7 +13,7 @@
 	<h2 class="entry-title">News</h2>
 </header>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class( ( get_the_ID() % 2 === 0 ) ? ' black' : '' ); ?>>
+<article id="post-<?php the_ID(); ?>">
 	<?php
 	$img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
 	$content = get_post_field('post_content', get_the_ID());

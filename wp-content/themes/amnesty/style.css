@@ -879,7 +879,6 @@ object {
         right: 0; }
 
 .slider figure {
-  height: 600px;
   position: relative; }
   .slider figure.active-slide img {
     -webkit-transform: scale(1.2);
@@ -967,6 +966,9 @@ section[rel="Über uns"] {
   text-align: center; }
   section[rel="Über uns"] i {
     font-size: 5rem; }
+
+.slider figure, .single figure {
+  height: 600px; }
 
 /**
  * WP admin bar

@@ -15,22 +15,14 @@ endif;
 
     <?php
 
-        $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
-        $content = get_post_field('post_content', get_the_ID());
-        $content_parts = get_extended($content);
-        ?>
+    $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
+    $content = get_post_field('post_content', get_the_ID());
+    $content_parts = get_extended($content);
+    ?>
 
-        <figure class="slider">
-        <a href="<?php the_permalink() ?>">
-            <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
-        </a>
-
-        <figcaption class="bubble">
-            <h1 class="entry-title"><?php echo get_the_title() ?></h1>';
-            <h2><?php echo $content_parts['main'] ?></h2>
-            <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
-        </figcaption>
-        </figure>
+    <figure>
+        <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+    </figure>
 
     <header class="entry-header">
         <?php
