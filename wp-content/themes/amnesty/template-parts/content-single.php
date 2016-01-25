@@ -14,6 +14,23 @@
 </header>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class( ( get_the_ID() % 2 === 0 ) ? ' black' : '' ); ?>>
+	<?php
+	$img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
+	$content = get_post_field('post_content', get_the_ID());
+	$content_parts = get_extended($content);
+	?>
+
+	<figure>
+		<a href="<?php the_permalink() ?>">
+			<img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+		</a>
+
+		<figcaption class="bubble">
+			<h1 class="entry-title"><?php echo get_the_title() ?></h1>';
+			<h2><?php echo $content_parts['main'] ?></h2>
+			<a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
+		</figcaption>
+	</figure>
 	<div class="entry-content">
 
 		<?php
@@ -23,49 +40,6 @@
 		the_content();
 		?>
 
-		<div class="artists-info">
-
-			<?php
-			if ( "" !== get_post_meta( $post->ID, 'is-release', true ) ) { ?>
-
-				<div>
-					<h3>Release Info:</h3>
-
-					<table class="subinfos">
-						<?php
-						echo ( get_post_meta( get_the_ID(), "_album", true ) !== '' ) ? '<tr class="meta"><td>Album: </td><td>' . get_post_meta( get_the_ID(), "_album", true ) . "</td></tr>" : '';
-						echo ( get_post_meta( get_the_ID(), "_date", true ) !== '' ) ? '<tr class="meta"><td>Veröffentlichungsdatum: </td><td>' . get_post_meta( get_the_ID(), "_date", true ) . "</td></tr>" : '';
-						echo ( get_post_meta( get_the_ID(), "_ean", true ) !== '' ) ? '<tr class="meta"><td>EAN: </td><td>' . get_post_meta( get_the_ID(), "_ean", true ) . "</td></tr>" : '';
-						?>
-					</table>
-				</div>
-
-			<?php } ?>
-			<div>
-				<?php if ( "" !== get_post_meta( $post->ID, 'is-release', true ) ) { ?>
-					<div class="links">
-						<h3>Erhältlich bei:</h3><?php
-						echo ( get_post_meta( get_the_ID(), "_itunes", true ) ) ? '<a class="more-link" href="' . get_post_meta( get_the_ID(), "_itunes", true ) . '">iTunes</a>' : '';
-						echo ( get_post_meta( get_the_ID(), "_amazon", true ) ) ? '<a class="more-link" href="' . get_post_meta( get_the_ID(), "_amazon", true ) . '">Amazon</a>' : '';
-						echo ( get_post_meta( get_the_ID(), "_s24d", true ) ) ? '<a class="more-link" href="' . get_post_meta( get_the_ID(), "_s24d", true ) . '">Shop24Direct</a>' : '';
-						?>
-					</div>
-				<?php }
-
-				//show related Artists
-				$existing_terms = get_the_terms( $post->ID, 'related_artists' );
-				if ( $existing_terms ) {
-					echo '<div class="related-artists">';
-					echo ' <h3>Verknüpfte Künstler:</h3>';
-					foreach ( get_the_terms( $post->ID, 'related_artists' ) as $term ) {
-						echo '<a class="more-link" href="' . get_permalink( get_page_by_path( $term->slug, OBJECT, 'artists' ) ) . '">' . $term->name . '</a>';
-					}
-					echo '</div>';
-				}
-				?>
-			</div
-
-		</div>
 	</div>
 
 	<!-- .entry-content -->

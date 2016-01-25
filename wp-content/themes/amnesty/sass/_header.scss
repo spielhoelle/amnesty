@@ -1,5 +1,7 @@
 #masthead {
-  position: relative;
+  position: fixed;
+  z-index: 52;
+  background: white;
   .top {
     display: flex;
     height: 80px;
@@ -75,7 +77,6 @@
       z-index: 99999;
       display: flex;
       flex-flow: row nowrap;
-      top: 80px;
 
       &:after {
         background: $black;
@@ -89,38 +90,35 @@
         margin: 0 auto;
         transform: translate(-50%, 0);
         z-index: -1;
-        top: 80px;
       }
-      &, &:after {
+      &, &:after, .sub-menu:after {
         left: -999em;
       }
       > li {
         height: 80px;
       }
 
-      ul {
-        left: -999em;
-        top: 0;
-      }
-
-      li {
-        &:hover, &.focus {
-          ul {
-            left: 100%;
-
-          }
-        }
-      }
-
       a {
         color: $white;
       }
     }
-
-    li:hover > ul,
-    li.focus > ul {
+    > .sub-menu {
+      top: 80px;
+      .sub-menu {
+        top: 160px;
+        width: 100%;
+        &:after {
+          top: 160px;
+        }
+      }
+    }
+    > li:hover > ul,
+    > li.focus > ul {
       left: auto;
       &:after {
+        left: 50%;
+      }
+      li:hover .sub-menu:after {
         left: 50%;
       }
     }

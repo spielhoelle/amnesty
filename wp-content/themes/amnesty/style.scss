@@ -89,4 +89,13 @@ html[lang] {
   }
 }
 
+#main {
+  display: flex;
+  flex-direction: column;
 
+  @for $i from 1 through 99 {
+    section[tabindex="#{$i}"] {
+      order: #{$i};
+    }
+  }
+}

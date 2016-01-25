@@ -1,55 +1,7 @@
 .bx-wrapper {
   overflow: hidden;
   position: relative;
-  .slider {
-    figure {
-      height: 600px;
 
-      position: relative;
-      &.active-slide img {
-        transform: scale(1.2);
-      }
-      img {
-        background: transparent none no-repeat scroll center center / cover;
-        width: 100%;
-        display: block;
-        transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
-      }
-      figcaption {
-        position: absolute;
-        bottom: 40px;
-        left: 40px;
-        color: $black;
-        h1, h2, .more-link {
-          padding: 0.5em;
-          opacity: 0;
-          transform: translate(-50px, 0);
-
-        }
-        h1 {
-          display: inline;
-          background: rgba(255, 255, 0, 0.9);
-          transition: opacity .5s ease 0s, transform .5s ease 0s;
-
-        }
-        h2 {
-          margin-top: 20px;
-          background: rgba(0, 0, 0, 0.9);
-          color: white;
-          transition: opacity .5s ease .5s, transform .5s ease .5s;
-        }
-        .more-link {
-          transition: opacity .5s ease .8s, transform .5s ease .8s;
-        }
-      }
-      &.active-slide {
-        h1, h2, .more-link {
-          opacity: 1;
-          transform: translate(0, 0);
-        }
-      }
-    }
-  }
   .bx-controls {
     position: absolute;
     height: 100%;
@@ -70,6 +22,57 @@
         right: 0;
       }
 
+    }
+  }
+}
+
+figure {
+  height: 600px;
+  position: relative;
+  &.active-slide img {
+    transform: scale(1.2);
+  }
+  a {
+    height: 100%;
+  }
+  img {
+    background: transparent none no-repeat scroll center center / cover;
+    width: 100%;
+    display: block;
+    transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84);
+    height: 100%;
+  }
+  figcaption {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    color: $black;
+    h1, h2, .more-link {
+      padding: 0.5em;
+      opacity: 0;
+      transform: translate(-50px, 0);
+
+    }
+    h1 {
+      display: inline;
+      background: rgba(255, 255, 0, 0.9);
+      transition: opacity .5s ease 0s, transform .5s ease 0s;
+
+    }
+    h2 {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      transition: opacity .5s ease .5s, transform .5s ease .5s;
+    }
+    .more-link {
+      transition: opacity .5s ease .8s, transform .5s ease .8s;
+    }
+  }
+  &.active-slide {
+    h1, h2, .more-link {
+      opacity: 1;
+      transform: translate(0, 0);
     }
   }
 }
