@@ -371,7 +371,8 @@ figure {
     figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
       padding: 0.5em; }
     figure figcaption h1 {
-      background: rgba(255, 255, 0, 0.9); }
+      color: #f1f1f1;
+      background: rgba(0, 0, 0, 0.9); }
     figure figcaption h2 {
       margin-top: 20px;
       background: rgba(0, 0, 0, 0.9);
@@ -493,6 +494,13 @@ textarea {
 
 #content {
   margin-top: 80px; }
+
+.content-button {
+  padding: 0.9em;
+  background-color: black;
+  color: white;
+  font-family: "Trade Gothic";
+  font-weight: 100; }
 
 #masthead {
   position: fixed;
@@ -738,9 +746,6 @@ textarea {
 .sticky {
   display: block; }
 
-.hentry {
-  margin: 0 0 1.5em; }
-
 .byline,
 .updated:not(.published) {
   display: none; }
@@ -935,26 +940,28 @@ section[rel="News"] figure {
     transition: background .3s ease; }
   section[rel="News"] figure:hover:before {
     background: rgba(0, 0, 0, 0.5); }
-  section[rel="News"] figure figcaption h1 {
-    font-size: 1.5rem; }
-    section[rel="News"] figure figcaption h1:before {
-      content: "";
-      display: inline-block;
-      font-family: FontAwesome;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-align: center;
-      line-height: 1;
-      text-decoration: inherit;
-      text-transform: none;
-      -moz-osx-font-smoothing: grayscale;
-      -webkit-font-smoothing: antialiased;
-      font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      margin-right: 10px; }
-  section[rel="News"] figure figcaption h2 {
-    display: none; }
+  section[rel="News"] figure figcaption {
+    background: rgba(255, 255, 0, 0.9); }
+    section[rel="News"] figure figcaption h1 {
+      font-size: 1.5rem; }
+      section[rel="News"] figure figcaption h1:before {
+        content: "";
+        display: inline-block;
+        font-family: FontAwesome;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-align: center;
+        line-height: 1;
+        text-decoration: inherit;
+        text-transform: none;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        margin-right: 10px; }
+    section[rel="News"] figure figcaption h2 {
+      display: none; }
 
 section[rel="Über uns"] {
   text-align: center; }
