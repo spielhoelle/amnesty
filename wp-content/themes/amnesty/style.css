@@ -358,6 +358,24 @@ table {
 
 figure {
   margin: 0; }
+  figure img {
+    background: transparent none no-repeat scroll center center / cover;
+    width: 100%;
+    display: block;
+    height: 100%; }
+  figure figcaption {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    color: #111; }
+    figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
+      padding: 0.5em; }
+    figure figcaption h1 {
+      background: rgba(255, 255, 0, 0.9); }
+    figure figcaption h2 {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white; }
 
 .more-link {
   text-decoration: none;
@@ -479,7 +497,8 @@ textarea {
 #masthead {
   position: fixed;
   z-index: 52;
-  background: white; }
+  background: white;
+  max-width: 1600px; }
   #masthead .top {
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -854,54 +873,88 @@ object {
       .bx-wrapper .bx-controls a.bx-next {
         right: 0; }
 
-figure {
+.slider figure {
   height: 600px;
   position: relative; }
-  figure.active-slide img {
+  .slider figure.active-slide img {
     -webkit-transform: scale(1.2);
         -ms-transform: scale(1.2);
             transform: scale(1.2); }
-  figure a {
+  .slider figure a {
     height: 100%; }
-  figure img {
-    background: transparent none no-repeat scroll center center / cover;
-    width: 100%;
-    display: block;
-    transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84);
-    height: 100%; }
-  figure figcaption {
-    position: absolute;
-    bottom: 40px;
-    left: 40px;
-    color: #111; }
-    figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
-      padding: 0.5em;
-      opacity: 0;
-      -webkit-transform: translate(-50px, 0);
-          -ms-transform: translate(-50px, 0);
-              transform: translate(-50px, 0); }
-    figure figcaption h1 {
-      display: inline;
-      background: rgba(255, 255, 0, 0.9);
-      transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
-      transition: opacity .5s ease 0s, transform .5s ease 0s;
-      transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
-    figure figcaption h2 {
-      margin-top: 20px;
-      background: rgba(0, 0, 0, 0.9);
-      color: white;
-      transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
-      transition: opacity .5s ease .5s, transform .5s ease .5s;
-      transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
-    figure figcaption .more-link {
-      transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
-      transition: opacity .5s ease .8s, transform .5s ease .8s;
-      transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
-  figure.active-slide h1, figure.active-slide h2, figure.active-slide .more-link {
+  .slider figure img {
+    transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84); }
+  .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
+    opacity: 0;
+    -webkit-transform: translate(-50px, 0);
+        -ms-transform: translate(-50px, 0);
+            transform: translate(-50px, 0); }
+  .slider figure figcaption h1 {
+    display: inline;
+    transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
+    transition: opacity .5s ease 0s, transform .5s ease 0s;
+    transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
+  .slider figure figcaption h2 {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
+    transition: opacity .5s ease .5s, transform .5s ease .5s;
+    transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
+  .slider figure figcaption .more-link {
+    transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
+    transition: opacity .5s ease .8s, transform .5s ease .8s;
+    transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
+  .slider figure.active-slide h1, .slider figure.active-slide h2, .slider figure.active-slide .more-link {
     opacity: 1;
     -webkit-transform: translate(0, 0);
         -ms-transform: translate(0, 0);
             transform: translate(0, 0); }
+
+section[rel="News"] .newswrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
+  section[rel="News"] .newswrapper > article {
+    -webkit-flex: 0 0 33.3333%;
+        -ms-flex: 0 0 33.3333%;
+            flex: 0 0 33.3333%; }
+
+section[rel="News"] figure {
+  position: relative; }
+  section[rel="News"] figure:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background .3s ease; }
+  section[rel="News"] figure:hover:before {
+    background: rgba(0, 0, 0, 0.5); }
+  section[rel="News"] figure figcaption h1 {
+    font-size: 1.5rem; }
+    section[rel="News"] figure figcaption h1:before {
+      content: "";
+      display: inline-block;
+      font-family: FontAwesome;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-align: center;
+      line-height: 1;
+      text-decoration: inherit;
+      text-transform: none;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      margin-right: 10px; }
+  section[rel="News"] figure figcaption h2 {
+    display: none; }
 
 section[rel="Über uns"] {
   text-align: center; }
@@ -916,11 +969,13 @@ html[lang] {
 
 #wpadminbar {
   transition: top 0.2s;
-  top: -22px; }
+  top: -22px;
+  opacity: 0; }
   #wpadminbar > * {
     visibility: hidden; }
   #wpadminbar:hover {
-    top: 0; }
+    top: 0;
+    opacity: 1; }
     #wpadminbar:hover > * {
       visibility: visible; }
 

@@ -73,7 +73,7 @@ html[lang] {
 #wpadminbar {
   transition: top 0.2s;
   top: -22px;
-
+  opacity:0;
 
   > * {
     visibility: hidden;
@@ -82,7 +82,7 @@ html[lang] {
 
   &:hover {
     top: 0;
-
+    opacity:1;
     > * {
       visibility: visible;
     }

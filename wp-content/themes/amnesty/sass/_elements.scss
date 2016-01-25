@@ -90,6 +90,35 @@ table {
 
 figure {
   margin: 0;
+  img {
+    background: transparent none no-repeat scroll center center / cover;
+    width: 100%;
+    display: block;
+    height: 100%;
+  }
+  figcaption {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    color: $black;
+    h1, h2, .more-link {
+      padding: 0.5em;
+    }
+    h1 {
+      background: rgba(255, 255, 0, 0.9);
+    }
+    h2 {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+    }
+  }
+}
+
+h1, h2 {
+  .entry-title {
+
+  }
 }
 
 .more-link {

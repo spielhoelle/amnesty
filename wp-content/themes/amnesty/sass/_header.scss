@@ -2,6 +2,7 @@
   position: fixed;
   z-index: 52;
   background: white;
+  max-width: $viewport;
   .top {
     display: flex;
     height: 80px;

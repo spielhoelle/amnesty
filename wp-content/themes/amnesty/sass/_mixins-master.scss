@@ -22,3 +22,21 @@
 @mixin clearfix-after() {
 	clear: both;
 }
+
+@mixin icon($content: "") {
+	content: $content;
+	display: inline-block;
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-align: center;
+	line-height: 1;
+	text-decoration: inherit;
+	text-transform: none;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	@content;
+}
