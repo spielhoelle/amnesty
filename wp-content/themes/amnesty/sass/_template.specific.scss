@@ -1,11 +1,5 @@
-section[rel="News"] {
-  .newswrapper {
-    display: flex;
-    flex-flow: row wrap;
-    > article {
-      flex: 0 0 33.3333%
-    }
-  }
+.grid {
+
   figure {
     position: relative;
     &:before {
@@ -21,7 +15,6 @@ section[rel="News"] {
       background: rgba(0, 0, 0, 0.5);
     }
     figcaption {
-      background: rgba(255, 255, 0, 0.9);
       h1 {
         font-size: 1.5rem;
         &:before {

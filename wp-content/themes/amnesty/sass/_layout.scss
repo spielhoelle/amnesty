@@ -30,4 +30,23 @@
     margin: -100px 0 20px 20px;
     color: $white;
   }
+  .content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    .entry-content {
+      flex: 0 0 50%;
+    }
+    aside {
+      flex: 0 0 33%;
+    }
+  }
+}
+
+
+.grid {
+  display: flex;
+  flex-flow: row wrap;
+  > article {
+    flex: 0 0 33.3333%
+  }
 }

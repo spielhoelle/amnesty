@@ -4,13 +4,13 @@
         <h2 class="entry-title"><?php the_title() ?></h2>
     </header>
 
-    <div class="newswrapper">
+    <div class="grid">
         <?php // switch WP to page for posts
         $blog = new WP_Query('posts_per_page=5, page_id=' . get_option('page_for_posts'));
 
         // loop through posts
         while ($blog->have_posts()) : $blog->the_post();
-            get_template_part('template-parts/content', 'post');
+            get_template_part('template-parts/content', '');
         endwhile; ?>
 
         <?php // restore original post data

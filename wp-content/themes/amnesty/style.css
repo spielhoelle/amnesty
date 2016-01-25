@@ -327,18 +327,9 @@ hr {
   margin-bottom: 1.5em; }
 
 ul, ol {
-  margin: 0 0 1.5em 3em; }
-
-ul {
-  list-style: disc; }
-
-ol {
-  list-style: decimal; }
-
-li > ul,
-li > ol {
-  margin-bottom: 0;
-  margin-left: 1.5em; }
+  margin: 0;
+  list-style: none;
+  padding: 0; }
 
 dt {
   font-weight: bold; }
@@ -508,6 +499,34 @@ textarea {
   padding: 0.3em;
   margin: -100px 0 20px 20px;
   color: #f1f1f1; }
+
+.single .content-wrapper {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
+  .single .content-wrapper .entry-content {
+    -webkit-flex: 0 0 50%;
+        -ms-flex: 0 0 50%;
+            flex: 0 0 50%; }
+  .single .content-wrapper aside {
+    -webkit-flex: 0 0 33%;
+        -ms-flex: 0 0 33%;
+            flex: 0 0 33%; }
+
+.grid {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
+  .grid > article {
+    -webkit-flex: 0 0 33.3333%;
+        -ms-flex: 0 0 33.3333%;
+            flex: 0 0 33.3333%; }
 
 #masthead {
   position: fixed;
@@ -922,21 +941,9 @@ object {
         -ms-transform: translate(0, 0);
             transform: translate(0, 0); }
 
-section[rel="News"] .newswrapper {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-flow: row wrap;
-      -ms-flex-flow: row wrap;
-          flex-flow: row wrap; }
-  section[rel="News"] .newswrapper > article {
-    -webkit-flex: 0 0 33.3333%;
-        -ms-flex: 0 0 33.3333%;
-            flex: 0 0 33.3333%; }
-
-section[rel="News"] figure {
+.grid figure {
   position: relative; }
-  section[rel="News"] figure:before {
+  .grid figure:before {
     content: "";
     display: block;
     width: 100%;
@@ -944,30 +951,28 @@ section[rel="News"] figure {
     position: absolute;
     background: rgba(0, 0, 0, 0.2);
     transition: background .3s ease; }
-  section[rel="News"] figure:hover:before {
+  .grid figure:hover:before {
     background: rgba(0, 0, 0, 0.5); }
-  section[rel="News"] figure figcaption {
-    background: rgba(255, 255, 0, 0.9); }
-    section[rel="News"] figure figcaption h1 {
-      font-size: 1.5rem; }
-      section[rel="News"] figure figcaption h1:before {
-        content: "";
-        display: inline-block;
-        font-family: FontAwesome;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-align: center;
-        line-height: 1;
-        text-decoration: inherit;
-        text-transform: none;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        margin-right: 10px; }
-    section[rel="News"] figure figcaption h2 {
-      display: none; }
+  .grid figure figcaption h1 {
+    font-size: 1.5rem; }
+    .grid figure figcaption h1:before {
+      content: "";
+      display: inline-block;
+      font-family: FontAwesome;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-align: center;
+      line-height: 1;
+      text-decoration: inherit;
+      text-transform: none;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      margin-right: 10px; }
+  .grid figure figcaption h2 {
+    display: none; }
 
 section[rel="Über uns"] {
   text-align: center; }
