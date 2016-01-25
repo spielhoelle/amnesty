@@ -14,11 +14,16 @@
 	</div><!-- #content -->
 
 	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'amnesty' ) ); ?>"><?php printf( esc_html__( 'Proudly powered by %s', 'amnesty' ), 'WordPress' ); ?></a>
-			<span class="sep"> | </span>
-			<?php printf( esc_html__( 'Theme: %1$s by %2$s.', 'amnesty' ), 'amnesty', '<a href="http://thomaskuhnert.com" rel="designer">Thomas Kuhnert</a>' ); ?>
-		</div><!-- .site-info -->
+		<div class="footer-wrap">
+			<div class="footer-container">
+				<div class="footer-top"><?php dynamic_sidebar( 'footer' ); ?></div>
+			</div>
+			<div class="footer-below">
+				<p>&copy; 2015 with <i class="fa fa-heart"></i> by
+					<a target="_blank" href="http://www.thomaskuhnert.com">Thomas Kuhnert</a>
+				</p>
+			</div>
+		</div>
 	</footer><!-- #colophon -->
 </div><!-- #page -->
 

@@ -502,6 +502,13 @@ textarea {
   font-family: "Trade Gothic";
   font-weight: 100; }
 
+.single h1.entry-title {
+  display: inline-block;
+  background-color: black;
+  padding: 0.3em;
+  margin: -100px 0 20px 20px;
+  color: #f1f1f1; }
+
 #masthead {
   position: fixed;
   z-index: 52;

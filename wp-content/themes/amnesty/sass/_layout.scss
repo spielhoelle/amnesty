@@ -21,6 +21,13 @@
   font-family: $font__title;
   font-weight: 100;
 }
-.single {
 
+.single {
+  h1.entry-title {
+    display: inline-block;
+    background-color: black;
+    padding: 0.3em;
+    margin: -100px 0 20px 20px;
+    color: $white;
+  }
 }
