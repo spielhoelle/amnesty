@@ -47,15 +47,15 @@ function amnesty_entry_footer() {
 	// Hide category and tag text for pages.
 	if ( 'post' === get_post_type() ) {
 		/* translators: used between list items, there is a space after the comma */
-		$categories_list = get_the_category_list( esc_html__( ', ', 'amnesty' ) );
+		$categories_list = get_the_category_list( esc_html__( '', 'amnesty' ) );
 		if ( $categories_list && amnesty_categorized_blog() ) {
-			printf( '<span class="cat-links">' . esc_html__( 'Posted in %1$s', 'amnesty' ) . '</span>', $categories_list ); // WPCS: XSS OK.
+			printf( '<span class="cat-links"><h2>' . esc_html__( 'Posted in', 'amnesty' ) . '</h2>%1$s</span>', $categories_list ); // WPCS: XSS OK.
 		}
 
 		/* translators: used between list items, there is a space after the comma */
-		$tags_list = get_the_tag_list( '', esc_html__( ', ', 'amnesty' ) );
+		$tags_list = get_the_tag_list( '<li>', '</li><li>', '</li>' );
 		if ( $tags_list ) {
-			printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'amnesty' ) . '</span>', $tags_list ); // WPCS: XSS OK.
+			printf( '<span class="tags-links"><h2>' . esc_html__( 'Tagged', 'amnesty' ) . '</h2><ul>%1$s</ul></span>', $tags_list ); // WPCS: XSS OK.
 		}
 	}
 
@@ -65,15 +65,15 @@ function amnesty_entry_footer() {
 		echo '</span>';
 	}
 
-	edit_post_link(
-		sprintf(
-			/* translators: %s: Name of current post */
-			esc_html__( 'Edit %s', 'amnesty' ),
-			the_title( '<span class="screen-reader-text">"', '"</span>', false )
-		),
-		'<span class="edit-link">',
-		'</span>'
-	);
+//    edit_post_link(
+//        sprintf(
+//        /* translators: %s: Name of current post */
+//            esc_html__('Edit %s', 'amnesty'),
+//            the_title('<span class="screen-reader-text">"', '"</span>', false)
+//        ),
+//        '<span class="edit-link">',
+//        '</span>'
+//    );
 }
 endif;
 

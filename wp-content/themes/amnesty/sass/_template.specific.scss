@@ -2,17 +2,16 @@
 
   figure {
     position: relative;
-    &:before {
-      content: "";
-      display: block;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      background: rgba(0, 0, 0, 0.2);
-      transition: background .3s ease;
+    overflow: hidden;
+    background-color: $black;
+    img {
+      transition: transform .3s ease, opacity .3s ease;
     }
-    &:hover:before {
-      background: rgba(0, 0, 0, 0.5);
+    &:hover {
+      img {
+        transform: scale(1.1);
+        opacity: 0.5;
+      }
     }
     figcaption {
       h1 {

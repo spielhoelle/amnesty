@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Template part for displaying posts.
@@ -25,44 +24,66 @@ endif;
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
     </figure>
 
-    <header class="entry-header">
-        <?php
-        if (is_single()) {
-            the_title('<h1 class="entry-title">', '</h1>');
-        } else {
-            the_title('<h2 class="entry-title"><a href="' . esc_url(get_permalink()) . '" rel="bookmark">', '</a></h2>');
-        }
 
-        if ('post' === get_post_type()) : ?>
-            <div class="entry-meta">
-                <?php amnesty_posted_on(); ?>
-            </div><!-- .entry-meta -->
-            <?php
-        endif; ?>
-    </header><!-- .entry-header -->
+    <div class="wrap">
+        <div class="content-wrapper">
+            <header class="entry-header">
 
-    <div class="content-wrapper">
-        <div class="entry-content">
+            </header><!-- .entry-header -->
+            <div class="entry-content">
+                <?php
+                if (is_single()) {
+                    the_title('<h1 class="entry-title">', '</h1>');
+                } else {
+                    the_title('<h2 class="entry-title"><a href="' . esc_url(get_permalink()) . '" rel="bookmark">', '</a></h2>');
+                }
 
-            <?php
-            the_content(sprintf(
-            /* translators: %s: Name of current post. */
-                wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
-                the_title('<span class="screen-reader-text">"', '"</span>', false)
-            ));
-
-            wp_link_pages(array(
-                'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
-                'after'  => '</div>',
-            ));
-            ?>
+                if ('post' === get_post_type()) : ?>
+                    <div class="entry-meta">
+                        <?php amnesty_posted_on(); ?>
+                    </div><!-- .entry-meta -->
+                    <?php
+                endif; ?>
 
 
-        </div><!-- .entry-content -->
-        <?php dynamic_sidebar('sidebar'); ?>
+                <?php
+                the_content(sprintf(
+                /* translators: %s: Name of current post. */
+                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
+                    the_title('<span class="screen-reader-text">"', '"</span>', false)
+                ));
+
+                wp_link_pages(array(
+                    'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
+                    'after'  => '</div>',
+                ));
+                ?>
+
+
+            </div><!-- .entry-content -->
+            <footer class="entry-footer">
+                <?php amnesty_entry_footer(); ?>
+            </footer><!-- .entry-footer -->
+
+        </div>
+
+        <aside>
+            <h2>Letzte Beiträge</h2>
+
+            <?php $blog = new WP_Query('posts_per_page=5, page_id=' . get_option('page_for_posts'));
+
+            while ($blog->have_posts()) : $blog->the_post();
+                $format = (get_post_format()) ? get_post_format() : 'standard'; ?>
+                <h3>
+                    <a href="<?php the_permalink() ?>"
+                       class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></a>
+                </h3>
+                <?php
+            endwhile;
+            wp_reset_postdata(); ?>
+
+        </aside>
     </div>
 
-    <footer class="entry-footer">
-        <?php amnesty_entry_footer(); ?>
-    </footer><!-- .entry-footer -->
+
 </article><!-- content-post.php -->

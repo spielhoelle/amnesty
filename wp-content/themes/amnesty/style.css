@@ -261,7 +261,7 @@ address {
   margin: 0 0 1.5em; }
 
 pre {
-  background: #f1f1f1;
+  background: #fff;
   font-family: "Courier 10 Pitch", Courier, monospace;
   font-size: 15px;
   font-size: 0.9375rem;
@@ -281,7 +281,7 @@ abbr, acronym {
   cursor: help; }
 
 mark, ins {
-  background: #aaa #bbb #bbb;
+  background: #dadada;
   text-decoration: none; }
 
 big {
@@ -301,11 +301,12 @@ html {
     outline: 0; }
 
 body {
-  background: #f1f1f1;
+  background: #fff;
   /* Fallback for when there is no custom background color defined. */ }
 
 a {
-  color: #404040; }
+  color: #404040;
+  text-decoration: none; }
   a:visited {
     color: #404040; }
   a:hover, a:focus, a:active {
@@ -321,7 +322,7 @@ blockquote, q {
     content: ""; }
 
 hr {
-  background-color: #f1f1f1;
+  background-color: #fff;
   border: 0;
   height: 1px;
   margin-bottom: 1.5em; }
@@ -362,7 +363,7 @@ figure {
     figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
       padding: 0.5em; }
     figure figcaption h1 {
-      color: #f1f1f1;
+      color: #fff;
       background: rgba(0, 0, 0, 0.9); }
     figure figcaption h2 {
       margin-top: 20px;
@@ -394,7 +395,7 @@ input[type="submit"] {
   input[type="button"]:hover,
   input[type="reset"]:hover,
   input[type="submit"]:hover {
-    border-color: #aaa #bbb #bbb;
+    border-color: #dadada;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 15px 17px rgba(255, 255, 255, 0.8), inset 0 -5px 12px rgba(0, 0, 0, 0.02); }
   button:active, button:focus,
   input[type="button"]:active,
@@ -403,7 +404,7 @@ input[type="submit"] {
   input[type="reset"]:focus,
   input[type="submit"]:active,
   input[type="submit"]:focus {
-    border-color: #aaa #bbb #bbb;
+    border-color: #dadada;
     box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.5), inset 0 2px 5px rgba(0, 0, 0, 0.15); }
 
 input[type="text"],
@@ -493,28 +494,80 @@ textarea {
   font-family: "Trade Gothic";
   font-weight: 100; }
 
+.single .wrap {
+  padding: 0 20px; }
+
 .single h1.entry-title {
   display: inline-block;
   background-color: black;
   padding: 0.3em;
-  margin: -100px 0 20px 20px;
-  color: #f1f1f1; }
+  position: absolute;
+  -webkit-transform: translate(0, -4em);
+      -ms-transform: translate(0, -4em);
+          transform: translate(0, -4em);
+  color: #fff; }
 
-.single .content-wrapper {
+.single .wrap {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   -webkit-justify-content: space-between;
       -ms-flex-pack: justify;
-          justify-content: space-between; }
-  .single .content-wrapper .entry-content {
+          justify-content: space-between;
+  -webkit-align-items: flex-start;
+      -ms-flex-align: start;
+          align-items: flex-start; }
+  .single .wrap .content-wrapper {
     -webkit-flex: 0 0 50%;
         -ms-flex: 0 0 50%;
             flex: 0 0 50%; }
-  .single .content-wrapper aside {
+  .single .wrap aside {
+    margin-top: 20px;
+    padding: 0 20px;
     -webkit-flex: 0 0 33%;
         -ms-flex: 0 0 33%;
-            flex: 0 0 33%; }
+            flex: 0 0 33%;
+    background: #dadada; }
+
+.single .entry-content {
+  border-bottom: 1px solid #dadada; }
+
+.single .entry-meta {
+  font-family: "Trade Gothic";
+  border-bottom: 1px solid #dadada;
+  border-top: 1px solid #dadada;
+  padding: .6rem 0; }
+  .single .entry-meta .posted-on a, .single .entry-meta .author a {
+    font-weight: bold; }
+
+.single .entry-footer {
+  font-family: TradeGothicLT-BoldCondTwenty, HelveticaNeue-CondensedBold, 'Franklin Gothic Medium', sans-serif; }
+  .single .entry-footer span {
+    display: block; }
+  .single .entry-footer ul {
+    display: -webkit-inline-flex;
+    display: -ms-inline-flexbox;
+    display: inline-flex; }
+  .single .entry-footer a {
+    display: block;
+    margin: 0;
+    font-weight: 400;
+    text-transform: uppercase;
+    -webkit-font-feature-settings: 'kern';
+    font-feature-settings: 'kern';
+    -webkit-font-kerning: normal;
+    font-kerning: normal;
+    line-height: 1.1;
+    white-space: nowrap;
+    margin-right: 1.71429rem;
+    margin-bottom: .85714rem;
+    background-color: #f0f0f0;
+    letter-spacing: 0;
+    padding: .71429rem;
+    text-decoration: none;
+    transition: background-color .25s; }
+    .single .entry-footer a:hover {
+      background-color: #dadada; }
 
 .grid {
   display: -webkit-flex;
@@ -656,7 +709,7 @@ a.post-state-format.format-standard:before {
       .main-navigation ul .sub-menu > li {
         height: 80px; }
       .main-navigation ul .sub-menu a {
-        color: #f1f1f1; }
+        color: #fff; }
     .main-navigation ul > .sub-menu {
       top: 80px; }
       .main-navigation ul > .sub-menu .sub-menu {
@@ -692,13 +745,13 @@ a.post-state-format.format-standard:before {
   .main-navigation .current_page_ancestor > a,
   .main-navigation .current-menu-ancestor > a {
     background: black;
-    color: #f1f1f1; }
+    color: #fff; }
     .main-navigation .current_page_item > a:hover,
     .main-navigation .current-menu-item > a:hover,
     .main-navigation .current_page_ancestor > a:hover,
     .main-navigation .current-menu-ancestor > a:hover {
       background-color: black;
-      color: #d8d8d8; }
+      color: #e6e6e6; }
 
 /* Small menu. */
 .menu-toggle,
@@ -746,7 +799,7 @@ a.post-state-format.format-standard:before {
   width: 1px;
   overflow: hidden; }
   .screen-reader-text:focus {
-    background-color: #f1f1f1;
+    background-color: #fff;
     border-radius: 3px;
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
     clip: auto !important;
@@ -834,7 +887,8 @@ ul.children {
 
 .page-content,
 .entry-content,
-.entry-summary {
+.entry-summary,
+.content-wrapper aside {
   margin: 1.5em 0 0; }
 
 .page-links {
@@ -975,7 +1029,13 @@ object {
     display: inline;
     transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s;
-    transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
+    transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s;
+    background-color: #ff0;
+    color: #111;
+    font-size: 4rem;
+    padding: 0.8rem; }
+    .slider figure figcaption h1:before {
+      font-size: 2.5rem; }
   .slider figure figcaption h2 {
     margin-top: 20px;
     background: rgba(0, 0, 0, 0.9);
@@ -994,17 +1054,18 @@ object {
             transform: translate(0, 0); }
 
 .grid figure {
-  position: relative; }
-  .grid figure:before {
-    content: "";
-    display: block;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    background: rgba(0, 0, 0, 0.2);
-    transition: background .3s ease; }
-  .grid figure:hover:before {
-    background: rgba(0, 0, 0, 0.5); }
+  position: relative;
+  overflow: hidden;
+  background-color: #111; }
+  .grid figure img {
+    transition: opacity .3s ease, -webkit-transform .3s ease;
+    transition: transform .3s ease, opacity .3s ease;
+    transition: transform .3s ease, opacity .3s ease, -webkit-transform .3s ease; }
+  .grid figure:hover img {
+    -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+            transform: scale(1.1);
+    opacity: 0.5; }
   .grid figure figcaption h1 {
     font-size: 1.5rem; }
   .grid figure figcaption h2 {
