@@ -1098,7 +1098,7 @@ object {
     transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s;
-    background-color: #ff0;
+    background-color: #fff;
     color: #111;
     font-size: 4rem;
     padding: 0.8rem; }
