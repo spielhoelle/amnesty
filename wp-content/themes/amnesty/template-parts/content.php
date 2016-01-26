@@ -19,6 +19,7 @@ $content_parts = get_extended($content);
     $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
     $content = get_post_field('post_content', get_the_ID());
     $content_parts = get_extended($content);
+    $format = (get_post_format()) ? get_post_format() : 'standard';
     ?>
 
     <figure>
@@ -27,12 +28,12 @@ $content_parts = get_extended($content);
         </a>
 
         <figcaption>
-            <h1 class="entry-title"><?php echo get_the_title() ?></h1>
+            <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
             <h2><?php echo $content_parts['main'] ?></h2>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
         </figcaption>
     </figure>
 
 </article>
-<!-- content.php -->
+<!-- content.php grid-->
 

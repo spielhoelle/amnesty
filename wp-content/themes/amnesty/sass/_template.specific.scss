@@ -17,12 +17,8 @@
     figcaption {
       h1 {
         font-size: 1.5rem;
-        &:before {
-          @include icon('\f10e') {
-            margin-right: 10px;
-          }
-        }
       }
+
       h2 {
         display: none;
       }
