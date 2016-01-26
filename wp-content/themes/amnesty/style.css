@@ -672,6 +672,19 @@ a.post-state-format.format-standard:before {
             flex-flow: column; }
     .main-navigation > div > ul {
       height: 100%; }
+      .main-navigation > div > ul > .sub-menu {
+        top: 80px;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: center;
+            -ms-flex-pack: center;
+                justify-content: center; }
+        .main-navigation > div > ul > .sub-menu .sub-menu {
+          top: 160px;
+          width: 100%; }
+          .main-navigation > div > ul > .sub-menu .sub-menu:after {
+            top: 160px; }
       .main-navigation > div > ul > li {
         height: 100%; }
   .main-navigation ul {
@@ -684,52 +697,37 @@ a.post-state-format.format-standard:before {
       height: 80px;
       position: absolute;
       z-index: 99999;
+      -webkit-justify-content: center;
+          -ms-flex-pack: center;
+              justify-content: center;
       display: -webkit-flex;
       display: -ms-flexbox;
       display: flex;
       -webkit-flex-flow: row nowrap;
           -ms-flex-flow: row nowrap;
-              flex-flow: row nowrap; }
-      .main-navigation ul .sub-menu:after {
-        background: #111;
-        content: "";
-        display: block;
-        width: 100%;
-        max-width: 1600px;
-        height: 80px;
-        position: fixed;
-        left: 50%;
-        margin: 0 auto;
-        -webkit-transform: translate(-50%, 0);
-            -ms-transform: translate(-50%, 0);
-                transform: translate(-50%, 0);
-        z-index: -1; }
-      .main-navigation ul .sub-menu, .main-navigation ul .sub-menu:after, .main-navigation ul .sub-menu .sub-menu:after {
-        left: -999em; }
-      .main-navigation ul .sub-menu > li {
-        height: 80px; }
+              flex-flow: row nowrap;
+      width: 100%;
+      left: -999em; }
+      .main-navigation ul .sub-menu .sub-menu {
+        z-index: 0; }
       .main-navigation ul .sub-menu a {
-        color: #fff; }
-    .main-navigation ul > .sub-menu {
-      top: 80px; }
-      .main-navigation ul > .sub-menu .sub-menu {
-        top: 160px;
-        width: 100%; }
-        .main-navigation ul > .sub-menu .sub-menu:after {
-          top: 160px; }
-    .main-navigation ul > li:hover > ul,
-    .main-navigation ul > li.focus > ul {
-      left: auto; }
-      .main-navigation ul > li:hover > ul:after,
-      .main-navigation ul > li.focus > ul:after {
-        left: 50%; }
-      .main-navigation ul > li:hover > ul li:hover .sub-menu:after,
-      .main-navigation ul > li.focus > ul li:hover .sub-menu:after {
-        left: 50%; }
+        color: #fff;
+        -webkit-transform: translate(0, -50px);
+            -ms-transform: translate(0, -50px);
+                transform: translate(0, -50px);
+        transition: -webkit-transform .3s ease;
+        transition: transform .3s ease;
+        transition: transform .3s ease, -webkit-transform .3s ease; }
+  .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
+    left: 0; }
+    .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu > li > a {
+      -webkit-transform: translate(0, 0);
+          -ms-transform: translate(0, 0);
+              transform: translate(0, 0); }
   .main-navigation a {
+    height: 80px;
     text-decoration: none;
     font-family: "Trade Gothic";
-    height: 100%;
     padding: 0 30px;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -761,7 +759,7 @@ a.post-state-format.format-standard:before {
 @media screen and (min-width: 37.5em) {
   .menu-toggle {
     display: none; }
-  .main-navigation ul {
+  .main-navigation > div > ul {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
@@ -1127,7 +1125,8 @@ html[lang] {
   display: flex;
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
-          flex-direction: column; }
+          flex-direction: column;
+  margin-bottom: 30px; }
   #main section[tabindex="1"] {
     -webkit-order: 1;
         -ms-flex-order: 1;

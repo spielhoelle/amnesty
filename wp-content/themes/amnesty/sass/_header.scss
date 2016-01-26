@@ -42,7 +42,18 @@
     flex-flow: column;
     > ul {
       height: 100%;
-
+      > .sub-menu {
+        top: 80px;
+        display: flex;
+        justify-content: center;
+        .sub-menu {
+          top: 160px;
+          width: 100%;
+          &:after {
+            top: 160px;
+          }
+        }
+      }
       > li {
         height: 100%;
       }
@@ -59,60 +70,34 @@
       height: 80px;
       position: absolute;
       z-index: 99999;
+      justify-content: center;
       display: flex;
       flex-flow: row nowrap;
-
-      &:after {
-        background: $black;
-        content: "";
-        display: block;
-        width: 100%;
-        max-width: 1600px;
-        height: 80px;
-        position: fixed;
-        left: 50%;
-        margin: 0 auto;
-        transform: translate(-50%, 0);
-        z-index: -1;
+      width: 100%;
+      left: -999em;
+      .sub-menu {
+        z-index: 0;
       }
-      &, &:after, .sub-menu:after {
-        left: -999em;
-      }
-
-      > li {
-        height: 80px;
-      }
-
       a {
         color: $white;
-      }
-    }
-    > .sub-menu {
-      top: 80px;
-      .sub-menu {
-        top: 160px;
-        width: 100%;
-        &:after {
-          top: 160px;
-        }
-      }
-    }
-    > li:hover > ul,
-    > li.focus > ul {
-      left: auto;
-      &:after {
-        left: 50%;
-      }
-      li:hover .sub-menu:after {
-        left: 50%;
+        transform: translate(0, -50px);
+        transition: transform .3s ease;
       }
     }
   }
 
+  div > ul li.menu-item-has-children:hover {
+    > .sub-menu {
+      left: 0;
+      > li > a {
+        transform: translate(0, 0);
+      }
+    }
+  }
   a {
+    height: 80px;
     text-decoration: none;
     font-family: $font__title;
-    height: 100%;
     padding: 0 30px;
     display: flex;
     align-items: center;
@@ -147,7 +132,7 @@
   .menu-toggle {
     display: none;
   }
-  .main-navigation ul {
+  .main-navigation > div > ul {
     display: flex;
     justify-content: flex-end;
     align-items: center;
