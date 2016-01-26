@@ -254,9 +254,6 @@ p {
 dfn, cite, em, i {
   font-style: italic; }
 
-blockquote {
-  margin: 0 1.5em; }
-
 address {
   margin: 0 0 1.5em; }
 
@@ -317,7 +314,10 @@ a {
     outline: 0; }
 
 blockquote, q {
-  quotes: "" ""; }
+  margin: 0;
+  quotes: "" "";
+  border-left: 15px solid #000;
+  padding-left: 1.5rem; }
   blockquote:before, blockquote:after, q:before, q:after {
     content: ""; }
 
@@ -522,7 +522,7 @@ textarea {
         -ms-flex: 0 0 50%;
             flex: 0 0 50%; }
   .single .wrap aside {
-    margin-top: 20px;
+    margin: 20px 0;
     padding: 0 20px;
     -webkit-flex: 0 0 33%;
         -ms-flex: 0 0 33%;
@@ -867,6 +867,30 @@ a.post-state-format.format-standard:before {
   /* Make sure select elements fit in widgets. */ }
   .widget select {
     max-width: 100%; }
+
+footer#colophon {
+  padding: 0 20px;
+  background: black;
+  width: 100%; }
+  footer#colophon, footer#colophon a {
+    color: #dadada; }
+  footer#colophon .content-button {
+    border: 1px solid #fff; }
+
+.footer-top {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
+  .footer-top section {
+    -webkit-flex: 0 0 200px;
+        -ms-flex: 0 0 200px;
+            flex: 0 0 200px;
+    margin-right: 20px; }
+    .footer-top section h2 {
+      border-bottom: 1px solid #dadada; }
 
 ul.children {
   padding-left: 10px; }

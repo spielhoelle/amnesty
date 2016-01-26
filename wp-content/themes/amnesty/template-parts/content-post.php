@@ -70,9 +70,9 @@ endif;
         <aside>
             <h2>Letzte Beiträge</h2>
 
-            <?php $blog = new WP_Query('posts_per_page=5, page_id=' . get_option('page_for_posts'));
+            <?php $recent_posts = new WP_Query('posts_per_page=5, page_id=' . get_option('page_for_posts'));
 
-            while ($blog->have_posts()) : $blog->the_post();
+            while ($recent_posts->have_posts()) : $recent_posts->the_post();
                 $format = (get_post_format()) ? get_post_format() : 'standard'; ?>
                 <h3>
                     <a href="<?php the_permalink() ?>"

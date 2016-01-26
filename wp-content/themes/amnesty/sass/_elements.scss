@@ -37,8 +37,10 @@ a {
 }
 
 blockquote, q {
+  margin: 0;
   quotes: "" "";
-
+  border-left: 15px solid #000;
+  padding-left: 1.5rem;
   &:before,
   &:after {
     content: "";
