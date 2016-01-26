@@ -19,6 +19,13 @@
                 $('.slider > figure').eq(0).addClass('active-slide')
             }
         });
+
+
+        /**
+         * make nice page load effect
+         */
+        $('#page').removeClass('page-hidden');
+
     });
 
 }(jQuery));

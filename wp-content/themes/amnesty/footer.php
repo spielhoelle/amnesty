@@ -19,18 +19,25 @@
             <div class="footer-top"><?php dynamic_sidebar('footer'); ?></div>
         </div>
         <div class="footer-below">
-            <div>
+
+            <div class="rest">
+                <div>
+                    <p>Privacy Policy | Cookie Statement | Permissions © 2016 AMNESTY INTERNATIONAL</p>
+                </div>
+                <ul>
+                    <li><a href="http://facebook.com/"><i class="fa fa-facebook"></i></a></li>
+                    <li><a href="http://linkedin.com/"><i class="fa fa-linkedin"></i></a></li>
+                    <li><a href="http://twitter.com/"><i class="fa fa-twitter"></i></a></li>
+                    <li><a href="http://plus.google.com/"><i class="fa fa-google-plus"></i> </a></li>
+                </ul>
+            </div>
+
+            <div class="tommy">
                 <p>&copy; 2015 with <i class="fa fa-heart"></i> by
-                    <a target="_blank" href="http://www.thomaskuhnert.com">Thomas Kuhnert</a>
+                    <a target="_blank" href="http://www.thomaskuhnert.com">dystopie Spielhoelle Entertainment</a>
                 </p>
             </div>
-            <div>
-                <p>Privacy Policy   |   Cookie Statement   |   Permissions
-                © 2016 AMNESTY INTERNATIONAL</p>
-                <span class="social-icons">
-                    <a href="https://www.facebook.com/amnestyglobal" class="social-list__link--facebook" data-ga="event,Outgoing links,Click,external">Like us on Facebook</a>
-                </span>
-            </div>
+
         </div>
     </div>
 </footer><!-- #colophon -->

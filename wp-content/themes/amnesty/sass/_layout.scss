@@ -1,9 +1,14 @@
+
 #page {
   max-width: $viewport;
   display: flex;
   flex-flow: column;
   align-items: center;
   margin: 0 auto;
+  transition: opacity .3s ease;
+  &.page-hidden {
+    opacity: 0;
+  }
 }
 
 #masthead, #content {
@@ -26,14 +31,7 @@
   .wrap {
     padding: 0 20px;
   }
-  h1.entry-title {
-    display: inline-block;
-    background-color: black;
-    padding: 0.3em;
-    position: absolute;
-    transform: translate(0, -4em);
-    color: $white;
-  }
+
 
   .wrap {
     display: flex;
@@ -104,8 +102,11 @@
 .grid {
   display: flex;
   flex-flow: row wrap;
+  margin: 0 #{-$gap/2};
+  padding: $gap 0 0;
   > article {
-    flex: 0 0 33.3333%
+    flex: 0 0 33.3333%;
+    padding: 0 #{$gap/2} $gap #{$gap/2};
   }
 }
 

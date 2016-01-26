@@ -69,7 +69,7 @@
       background: $black;
       height: 80px;
       position: absolute;
-      z-index: 99999;
+      z-index: -1;
       justify-content: center;
       display: flex;
       flex-flow: row nowrap;
@@ -80,8 +80,8 @@
       }
       a {
         color: $white;
-        transform: translate(0, -50px);
-        transition: transform .3s ease;
+        margin-top: -50px;
+        transition: margin .3s ease;
       }
     }
   }
@@ -90,7 +90,7 @@
     > .sub-menu {
       left: 0;
       > li > a {
-        transform: translate(0, 0);
+        margin: 0;
       }
     }
   }

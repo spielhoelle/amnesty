@@ -6,6 +6,7 @@
  *
  * @package amnesty
  */
+$img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
 
 get_header(); ?>
 
@@ -15,12 +16,18 @@ get_header(); ?>
             <?php
             if (have_posts()) : ?>
 
+
+            <figure>
+                <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+            </figure>
+
             <header class="page-header">
                 <?php
                 the_archive_title('<h1 class="page-title">', '</h1>');
                 the_archive_description('<div class="taxonomy-description">', '</div>');
                 ?>
             </header><!-- .page-header -->
+
             <div class="grid">
                 <?php
                 /* Start the Loop */

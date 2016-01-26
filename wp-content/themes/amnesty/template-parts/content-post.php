@@ -27,9 +27,7 @@ endif;
 
     <div class="wrap">
         <div class="content-wrapper">
-            <header class="entry-header">
 
-            </header><!-- .entry-header -->
             <div class="entry-content">
                 <?php
                 if (is_single()) {

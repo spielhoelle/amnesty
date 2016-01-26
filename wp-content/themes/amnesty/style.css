@@ -46,6 +46,27 @@ Nicolas Gallagher and Jonathan Neal http://necolas.github.com/normalize.css/
 /**
 * Variables
 */
+@-webkit-keyframes heart {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1); }
+  50% {
+    -webkit-transform: scale(1.3);
+            transform: scale(1.3); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+@keyframes heart {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1); }
+  50% {
+    -webkit-transform: scale(1.3);
+            transform: scale(1.3); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
@@ -479,7 +500,10 @@ textarea {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
-  margin: 0 auto; }
+  margin: 0 auto;
+  transition: opacity .3s ease; }
+  #page.page-hidden {
+    opacity: 0; }
 
 #masthead, #content {
   width: 100%; }
@@ -496,16 +520,6 @@ textarea {
 
 .single .wrap {
   padding: 0 20px; }
-
-.single h1.entry-title {
-  display: inline-block;
-  background-color: black;
-  padding: 0.3em;
-  position: absolute;
-  -webkit-transform: translate(0, -4em);
-      -ms-transform: translate(0, -4em);
-          transform: translate(0, -4em);
-  color: #fff; }
 
 .single .wrap {
   display: -webkit-flex;
@@ -575,11 +589,14 @@ textarea {
   display: flex;
   -webkit-flex-flow: row wrap;
       -ms-flex-flow: row wrap;
-          flex-flow: row wrap; }
+          flex-flow: row wrap;
+  margin: 0 -15px;
+  padding: 30px 0 0; }
   .grid > article {
     -webkit-flex: 0 0 33.3333%;
         -ms-flex: 0 0 33.3333%;
-            flex: 0 0 33.3333%; }
+            flex: 0 0 33.3333%;
+    padding: 0 15px 30px 15px; }
 
 .post-format-icon:before {
   position: relative;
@@ -696,7 +713,7 @@ a.post-state-format.format-standard:before {
       background: #111;
       height: 80px;
       position: absolute;
-      z-index: 99999;
+      z-index: -1;
       -webkit-justify-content: center;
           -ms-flex-pack: center;
               justify-content: center;
@@ -712,18 +729,12 @@ a.post-state-format.format-standard:before {
         z-index: 0; }
       .main-navigation ul .sub-menu a {
         color: #fff;
-        -webkit-transform: translate(0, -50px);
-            -ms-transform: translate(0, -50px);
-                transform: translate(0, -50px);
-        transition: -webkit-transform .3s ease;
-        transition: transform .3s ease;
-        transition: transform .3s ease, -webkit-transform .3s ease; }
+        margin-top: -50px;
+        transition: margin .3s ease; }
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
     left: 0; }
     .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu > li > a {
-      -webkit-transform: translate(0, 0);
-          -ms-transform: translate(0, 0);
-              transform: translate(0, 0); }
+      margin: 0; }
   .main-navigation a {
     height: 80px;
     text-decoration: none;
@@ -873,7 +884,15 @@ footer#colophon {
   footer#colophon, footer#colophon a {
     color: #dadada; }
   footer#colophon .content-button {
-    border: 1px solid #fff; }
+    border: 1px solid #fff;
+    transition: color .3s ease, background .3s ease; }
+    footer#colophon .content-button:hover {
+      background: #fff;
+      color: #111; }
+  footer#colophon li {
+    margin: 15px 0; }
+  footer#colophon .footer-below, footer#colophon .tommy {
+    border-top: 1px solid #444444; }
 
 .footer-top {
   display: -webkit-flex;
@@ -888,14 +907,57 @@ footer#colophon {
             flex: 0 0 200px;
     margin-right: 20px; }
     .footer-top section h2 {
-      border-bottom: 1px solid #dadada; }
+      border-bottom: 1px solid #444444; }
+
+.footer-below .tommy {
+  text-align: center; }
+  .footer-below .tommy i {
+    -webkit-animation-name: heart;
+            animation-name: heart;
+    -webkit-animation-duration: 1s;
+            animation-duration: 1s;
+    -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease;
+            animation-timing-function: ease;
+    padding: 0 5px;
+    -webkit-animation-play-state: paused;
+            animation-play-state: paused; }
+  .footer-below .tommy:hover i {
+    -webkit-animation-play-state: running;
+            animation-play-state: running; }
+  .footer-below .tommy:hover a {
+    color: #dadada; }
+
+.footer-below .rest {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center; }
+  .footer-below .rest > * {
+    -webkit-flex: 0 0 33%;
+        -ms-flex: 0 0 33%;
+            flex: 0 0 33%; }
+
+.footer-below ul {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap; }
+  .footer-below ul i {
+    padding: 20px;
+    font-size: 2em; }
 
 ul.children {
   padding-left: 10px; }
 
-/*--------------------------------------------------------------
-## Posts and pages
---------------------------------------------------------------*/
 .sticky {
   display: block; }
 
@@ -916,22 +978,6 @@ ul.children {
 .page-links {
   clear: both;
   margin: 0 0 1.5em; }
-
-/*--------------------------------------------------------------
-## Asides
---------------------------------------------------------------*/
-.blog .format-aside .entry-title,
-.archive .format-aside .entry-title {
-  display: none; }
-
-/*--------------------------------------------------------------
-## Comments
---------------------------------------------------------------*/
-.comment-content a {
-  word-wrap: break-word; }
-
-.bypostauthor {
-  display: block; }
 
 /* Globally hidden elements when Infinite Scroll is supported and in use. */
 .infinite-scroll .posts-navigation,
@@ -1098,8 +1144,23 @@ section[rel="Über uns"] {
   section[rel="Über uns"] i {
     font-size: 5rem; }
 
-.slider figure, .single figure {
+.slider .page-header h1.entry-title, .slider .page-header h1.page-title, .slider .entry-content h1.entry-title, .slider .entry-content h1.page-title, .single .page-header h1.entry-title, .single .page-header h1.page-title, .single .entry-content h1.entry-title, .single .entry-content h1.page-title, .archive .page-header h1.entry-title, .archive .page-header h1.page-title, .archive .entry-content h1.entry-title, .archive .entry-content h1.page-title {
+  display: inline-block;
+  background-color: black;
+  padding: 0.3em;
+  position: absolute;
+  -webkit-transform: translate(0, -4em);
+      -ms-transform: translate(0, -4em);
+          transform: translate(0, -4em);
+  color: #fff; }
+
+.slider figure, .single figure, .archive figure {
   height: 600px; }
+
+.archive .page-header h1 {
+  -webkit-transform: translate(20px, -4em);
+      -ms-transform: translate(20px, -4em);
+          transform: translate(20px, -4em); }
 
 /**
  * WP admin bar

@@ -7,6 +7,17 @@ footer#colophon {
   }
   .content-button {
     border: 1px solid $white;
+    transition: color .3s ease, background .3s ease;
+    &:hover {
+      background: $white;
+      color: $black;
+    }
+  }
+  li {
+    margin: 15px 0;
+  }
+  .footer-below, .tommy {
+    border-top: 1px solid lighten($black, 20);
   }
 }
 
@@ -16,11 +27,49 @@ footer#colophon {
   section {
     flex: 0 0 200px;
     margin-right: 20px;
-
     h2 {
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid lighten($black, 20);
     }
   }
+}
+
+.footer-below {
+  .tommy {
+    text-align: center;
+    i {
+      animation-name: heart;
+      animation-duration: 1s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease;
+      padding: 0 5px;
+      animation-play-state: paused;
+    }
+    &:hover {
+      i {
+        animation-play-state: running;
+      }
+      a {
+        color: $grey;
+      }
+    }
+  }
+  .rest {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > * {
+      flex: 0 0 33%;
+    }
+  }
+  ul {
+    display: flex;
+    flex-flow: row nowrap;
+    i {
+      padding: 20px;
+      font-size: 2em;
+    }
+  }
+
 }
 
 ul.children {

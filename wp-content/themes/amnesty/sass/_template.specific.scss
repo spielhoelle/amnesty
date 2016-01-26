@@ -1,5 +1,4 @@
 .grid {
-
   figure {
     position: relative;
     overflow: hidden;
@@ -33,9 +32,24 @@ section[rel="Über uns"] {
   }
 }
 
-.slider, .single {
+.slider, .single, .archive {
+  .page-header, .entry-content {
+    h1.entry-title, h1.page-title {
+      display: inline-block;
+      background-color: black;
+      padding: 0.3em;
+      position: absolute;
+      transform: translate(0, -4em);
+      color: $white;
+    }
+  }
   figure {
     height: 600px;
   }
 }
 
+.archive {
+  .page-header h1 {
+    transform: translate(20px, -4em);
+  }
+}
