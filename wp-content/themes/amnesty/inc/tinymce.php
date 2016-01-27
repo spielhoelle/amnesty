@@ -22,6 +22,12 @@ function my_mce_before_init_insert_formats( $init_array ) {
             'classes' => 'content-button',
             'wrapper' => true,
         ),
+        array(
+            'title' => 'More link',
+            'block' => 'span',
+            'classes' => 'more-link',
+            'wrapper' => true,
+        ),
     );
     // Insert the array, JSON ENCODED, into 'style_formats'
     $init_array['style_formats'] = json_encode( $style_formats );

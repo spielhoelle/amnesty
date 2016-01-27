@@ -10,13 +10,17 @@
   .top {
     display: flex;
     height: 80px;
+    margin-left: 200px;
     .site-branding {
       height: 100%;
+      position: absolute;
+      left: 0;
       .site-title {
         margin: 0;
         height: 100%;
         a {
-          display: block;
+          padding-top: 31.1%;
+          display: inline-block;
           color: transparent;
           height: 100%;
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain;

@@ -30,6 +30,31 @@ section {
   color: white;
   font-family: $font__title;
   font-weight: 100;
+  border: 1px solid black;
+  &:hover {
+    background: $white;
+    color: $black;
+  }
+}
+
+.more-link {
+  display: inline-block;
+  text-decoration: none;
+  padding: 1rem 2rem;
+  font-family: $font__title;
+  margin-bottom: $gap;
+  background: $white;
+  border: 1px solid $black;
+  &:hover {
+    background: $black;
+    color: $white;
+  }
+}
+
+figure .more-link {
+  background: $yellow;
+  border: 0 none;
+  margin-bottom: 0;
 }
 
 .single {
@@ -106,6 +131,7 @@ section {
 .grid {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
   margin: 0 #{-$gap/2};
   padding: $gap 0 0;
   > article {
