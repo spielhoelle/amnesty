@@ -15,9 +15,8 @@
     </div>
 
     <?php wp_reset_postdata(); ?>
-
-    </div>
-
-    <a class="more-link show" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr...</a>
+    <footer class="entry-footer">
+        <a class="more-link" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr News ...</a>
+    </footer>
 </section>
 <!-- #section-news.php-## -->

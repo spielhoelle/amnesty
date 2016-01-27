@@ -392,10 +392,20 @@ figure {
       color: white; }
 
 .more-link {
+  display: inline-block;
   text-decoration: none;
-  padding: 2rem;
+  padding: 1rem 2rem;
+  font-family: "Trade Gothic";
+  margin-bottom: 30px;
+  background: #fff;
+  border: 1px solid #111; }
+  .more-link:hover {
+    background: #111;
+    color: #fff; }
+
+figure .more-link {
   background: #ff0;
-  font-family: "Trade Gothic"; }
+  border: 0 none; }
 
 button,
 input[type="button"],
@@ -511,6 +521,9 @@ textarea {
 #content {
   margin-top: 80px; }
 
+section .entry-footer {
+  text-align: center; }
+
 .content-button {
   padding: 0.9em;
   background-color: black;
@@ -593,9 +606,10 @@ textarea {
   margin: 0 -15px;
   padding: 30px 0 0; }
   .grid > article {
-    -webkit-flex: 0 0 33.3333%;
-        -ms-flex: 0 0 33.3333%;
-            flex: 0 0 33.3333%;
+    -webkit-flex: 0 0 350px;
+        -ms-flex: 0 0 350px;
+            flex: 0 0 350px;
+    max-width: 33.3333%;
     padding: 0 15px 30px 15px; }
 
 .post-format-icon:before {
@@ -1085,7 +1099,7 @@ section[rel="Startseite"] {
   position: absolute;
   bottom: 0;
   right: 0;
-  z-index: 55;
+  z-index: 51;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;

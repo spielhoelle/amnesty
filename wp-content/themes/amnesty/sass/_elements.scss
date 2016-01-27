@@ -113,8 +113,20 @@ h1, h2 {
 }
 
 .more-link {
+  display: inline-block;
   text-decoration: none;
-  padding: 2rem;
-  background: $yellow;
+  padding: 1rem 2rem;
   font-family: $font__title;
+  margin-bottom: $gap;
+  background: $white;
+  border: 1px solid $black;
+  &:hover {
+    background: $black;
+    color: $white;
+  }
+}
+
+figure .more-link {
+  background: $yellow;
+  border: 0 none;
 }
