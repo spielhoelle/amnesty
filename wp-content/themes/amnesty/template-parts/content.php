@@ -22,7 +22,7 @@ $content_parts = get_extended($content);
     $format = (get_post_format()) ? get_post_format() : 'standard';
     ?>
 
-    <figure class="header">
+    <figure>
         <a href="<?php the_permalink() ?>">
             <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         </a>

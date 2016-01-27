@@ -25,7 +25,9 @@
 }
 
 section[rel="Über uns"] {
-  text-align: center;
+  .entry-content {
+    text-align: center;
+  }
   i {
     font-size: 5rem;
 
@@ -40,9 +42,11 @@ h1.entry-title, h1.page-title {
 }
 
 article.has-post-thumbnail {
-  h1.entry-title, h1.page-title {
-    transform: translate(0, -4em);
-    position: absolute;
+  &:not(.grid &) {
+    h1.entry-title, h1.page-title {
+      transform: translate(0, -4em);
+      position: absolute;
+    }
   }
 }
 

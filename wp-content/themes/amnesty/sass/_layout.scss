@@ -70,6 +70,7 @@ figure .more-link {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-flow: row wrap;
     .content-wrapper {
       flex: 0 0 50%;
     }
@@ -84,7 +85,6 @@ figure .more-link {
   }
   .entry-content {
     border-bottom: 1px solid $grey;
-
   }
 
   .entry-meta {
@@ -138,6 +138,9 @@ figure .more-link {
   justify-content: center;
   margin: 0 #{-$gap/2};
   padding: $gap 0 0;
+  figcaption {
+    padding-right: 10px;
+  }
   > article {
     flex: 0 0 350px;
     max-width: 33.3333%;

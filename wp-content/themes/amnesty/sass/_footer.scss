@@ -19,6 +19,16 @@ footer#colophon {
   .footer-below, .tommy {
     border-top: 1px solid lighten($black, 20);
   }
+  ::selection {
+    background: $white; /* WebKit/Blink Browsers */
+    color: #000;
+  }
+
+  ::-moz-selection {
+    background: $white; /* Gecko Browsers */
+    color: #000;
+  }
+
 }
 
 .footer-top {

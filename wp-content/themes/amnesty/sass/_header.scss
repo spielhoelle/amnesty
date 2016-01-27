@@ -3,6 +3,8 @@
   z-index: 52;
   background: white;
   max-width: $viewport;
+  left: 50%;
+  transform: translate(-50%,0);
   a {
     text-transform: uppercase;
   }

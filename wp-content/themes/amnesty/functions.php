@@ -120,6 +120,8 @@ add_action('widgets_init', 'amnesty_widgets_init');
 function amnesty_scripts() {
     wp_enqueue_style('amnesty-style', get_stylesheet_uri());
 
+    wp_enqueue_style( 'dashicons' );
+
     wp_enqueue_style('font-awesome', get_bloginfo('stylesheet_directory') . '/sass/font-awesome.min.css');
 
     wp_enqueue_script("jquery");

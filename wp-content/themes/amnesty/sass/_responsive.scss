@@ -1,0 +1,61 @@
+body.responsive {
+  #masthead {
+    .top, .main-navigation a {
+      height: 40px;
+    }
+    .top {
+      .site-branding .site-title a {
+        padding-top: 0;
+      }
+    }
+    .main-navigation {
+      ul .sub-menu {
+        height: 40px;
+      }
+      a {
+        padding: 0 $gap/2;
+      }
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  figure.header {
+    height: 33vh !important;
+  }
+  .single .wrap {
+    .content-wrapper, aside {
+      flex: 0 0 100%;
+    }
+
+  }
+  .slider figure figcaption {
+    h1 {
+      font-size: 2em;
+      &:before {
+        font-size: 1.5rem;
+      }
+    }
+    h2 {
+      font-size: 1.2em;
+    }
+  }
+  #content {
+    margin-top: 40px;
+  }
+  .columns {
+    display: block;
+    .column {
+      width: 100% !important;
+    }
+  }
+  .grid > article {
+    flex: 0 0 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: $breakpoint1) {
+  body {
+  }
+}

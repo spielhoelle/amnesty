@@ -406,7 +406,24 @@ figure {
       background: rgba(0, 0, 0, 0.9);
       color: white; }
 
-button,
+.menu-toggle {
+  background: transparent;
+  border: 0 none;
+  color: transparent;
+  width: 40px;
+  height: 40px; }
+  .menu-toggle:before {
+    position: absolute;
+    right: 0;
+    color: #000;
+    content: "\f228";
+    display: inline-block;
+    margin-right: 7px;
+    font: 400 40px/1 dashicons;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; }
+
+button:not(.menu-toggle),
 input[type="button"],
 input[type="reset"],
 input[type="submit"] {
@@ -421,13 +438,13 @@ input[type="submit"] {
   line-height: 1;
   padding: .6em 1em .4em;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8); }
-  button:hover,
+  button:not(.menu-toggle):hover,
   input[type="button"]:hover,
   input[type="reset"]:hover,
   input[type="submit"]:hover {
     border-color: #dadada;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 15px 17px rgba(255, 255, 255, 0.8), inset 0 -5px 12px rgba(0, 0, 0, 0.02); }
-  button:active, button:focus,
+  button:not(.menu-toggle):active, button:not(.menu-toggle):focus,
   input[type="button"]:active,
   input[type="button"]:focus,
   input[type="reset"]:active,
@@ -566,7 +583,10 @@ figure .more-link {
           justify-content: space-between;
   -webkit-align-items: flex-start;
       -ms-flex-align: start;
-          align-items: flex-start; }
+          align-items: flex-start;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
   .single .wrap .content-wrapper {
     -webkit-flex: 0 0 50%;
         -ms-flex: 0 0 50%;
@@ -631,6 +651,8 @@ figure .more-link {
           justify-content: center;
   margin: 0 -15px;
   padding: 30px 0 0; }
+  .grid figcaption {
+    padding-right: 10px; }
   .grid > article {
     -webkit-flex: 0 0 350px;
         -ms-flex: 0 0 350px;
@@ -683,7 +705,11 @@ a.post-state-format.format-standard:before {
   position: fixed;
   z-index: 52;
   background: white;
-  max-width: 1600px; }
+  max-width: 1600px;
+  left: 50%;
+  -webkit-transform: translate(-50%, 0);
+      -ms-transform: translate(-50%, 0);
+          transform: translate(-50%, 0); }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -937,6 +963,18 @@ footer#colophon {
     margin: 15px 0; }
   footer#colophon .footer-below, footer#colophon .tommy {
     border-top: 1px solid #333333; }
+  footer#colophon ::-moz-selection {
+    background: #fff;
+    /* WebKit/Blink Browsers */
+    color: #000; }
+  footer#colophon ::selection {
+    background: #fff;
+    /* WebKit/Blink Browsers */
+    color: #000; }
+  footer#colophon ::-moz-selection {
+    background: #fff;
+    /* Gecko Browsers */
+    color: #000; }
 
 .footer-top {
   display: -webkit-flex;
@@ -1210,10 +1248,11 @@ section[rel="Startseite"] {
   .grid figure figcaption h2 {
     display: none; }
 
-section[rel="Über uns"] {
+section[rel="Über uns"] .entry-content {
   text-align: center; }
-  section[rel="Über uns"] i {
-    font-size: 5rem; }
+
+section[rel="Über uns"] i {
+  font-size: 5rem; }
 
 h1.entry-title, h1.page-title {
   display: inline-block;
@@ -1221,7 +1260,7 @@ h1.entry-title, h1.page-title {
   padding: 0.3em;
   color: #fff; }
 
-article.has-post-thumbnail h1.entry-title, article.has-post-thumbnail h1.page-title {
+article.has-post-thumbnail:not(.grid &) h1.entry-title, article.has-post-thumbnail:not(.grid &) h1.page-title {
   -webkit-transform: translate(0, -4em);
       -ms-transform: translate(0, -4em);
           transform: translate(0, -4em);
@@ -1654,5 +1693,42 @@ html[lang] {
     -webkit-order: 99;
         -ms-flex-order: 99;
             order: 99; }
+
+body.responsive #masthead .top, body.responsive #masthead .main-navigation a {
+  height: 40px; }
+
+body.responsive #masthead .top .site-branding .site-title a {
+  padding-top: 0; }
+
+body.responsive #masthead .main-navigation ul .sub-menu {
+  height: 40px; }
+
+body.responsive #masthead .main-navigation a {
+  padding: 0 15px; }
+
+@media (max-width: 800px) {
+  figure.header {
+    height: 33vh !important; }
+  .single .wrap .content-wrapper, .single .wrap aside {
+    -webkit-flex: 0 0 100%;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%; }
+  .slider figure figcaption h1 {
+    font-size: 2em; }
+    .slider figure figcaption h1:before {
+      font-size: 1.5rem; }
+  .slider figure figcaption h2 {
+    font-size: 1.2em; }
+  #content {
+    margin-top: 40px; }
+  .columns {
+    display: block; }
+    .columns .column {
+      width: 100% !important; }
+  .grid > article {
+    -webkit-flex: 0 0 100%;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: none; } }
 
 /*# sourceMappingURL=style.css.map */
