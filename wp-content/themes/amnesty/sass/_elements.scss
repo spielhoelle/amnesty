@@ -11,6 +11,16 @@ html {
   }
 }
 
+::selection {
+  background: $black; /* WebKit/Blink Browsers */
+  color: $white;
+}
+
+::-moz-selection {
+  background: $black; /* Gecko Browsers */
+  color: $white;
+}
+
 body {
   background: $white; /* Fallback for when there is no custom background color defined. */
 }

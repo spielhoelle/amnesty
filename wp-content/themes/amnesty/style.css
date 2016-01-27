@@ -318,6 +318,21 @@ html {
   *:after:focus {
     outline: 0; }
 
+::-moz-selection {
+  background: #000;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+::selection {
+  background: #000;
+  /* WebKit/Blink Browsers */
+  color: #fff; }
+
+::-moz-selection {
+  background: #000;
+  /* Gecko Browsers */
+  color: #fff; }
+
 body {
   background: #fff;
   /* Fallback for when there is no custom background color defined. */ }
@@ -380,7 +395,7 @@ figure {
     position: absolute;
     bottom: 40px;
     left: 40px;
-    color: #111; }
+    color: #000; }
     figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
       padding: 0.5em; }
     figure figcaption h1 {
@@ -457,7 +472,7 @@ textarea {
   input[type="datetime-local"]:focus,
   input[type="color"]:focus,
   textarea:focus {
-    color: #111; }
+    color: #000; }
 
 select {
   border: 1px solid #404040; }
@@ -508,6 +523,9 @@ textarea {
 section .entry-footer {
   text-align: center; }
 
+figure.header {
+  height: 600px; }
+
 .content-button {
   padding: 0.9em;
   background-color: black;
@@ -517,7 +535,7 @@ section .entry-footer {
   border: 1px solid black; }
   .content-button:hover {
     background: #fff;
-    color: #111; }
+    color: #000; }
 
 .more-link {
   display: inline-block;
@@ -526,9 +544,9 @@ section .entry-footer {
   font-family: "Trade Gothic";
   margin-bottom: 30px;
   background: #fff;
-  border: 1px solid #111; }
+  border: 1px solid #000; }
   .more-link:hover {
-    background: #111;
+    background: #000;
     color: #fff; }
 
 figure .more-link {
@@ -536,7 +554,7 @@ figure .more-link {
   border: 0 none;
   margin-bottom: 0; }
 
-.single .wrap {
+.wrap {
   padding: 0 20px; }
 
 .single .wrap {
@@ -736,7 +754,7 @@ a.post-state-format.format-standard:before {
     margin: 0;
     padding-left: 0; }
     .main-navigation ul .sub-menu {
-      background: #111;
+      background: #000;
       height: 80px;
       position: absolute;
       z-index: -1;
@@ -914,11 +932,11 @@ footer#colophon {
     transition: color .3s ease, background .3s ease; }
     footer#colophon .content-button:hover {
       background: #fff;
-      color: #111; }
+      color: #000; }
   footer#colophon li {
     margin: 15px 0; }
   footer#colophon .footer-below, footer#colophon .tommy {
-    border-top: 1px solid #444444; }
+    border-top: 1px solid #333333; }
 
 .footer-top {
   display: -webkit-flex;
@@ -933,7 +951,7 @@ footer#colophon {
             flex: 0 0 200px;
     margin-right: 20px; }
     .footer-top section h2 {
-      border-bottom: 1px solid #444444; }
+      border-bottom: 1px solid #333333; }
 
 .footer-below .tommy {
   text-align: center; }
@@ -1123,9 +1141,9 @@ section[rel="Startseite"] {
     display: block;
     background: #fff; }
     .custom-pager a:not(:last-child) {
-      border-right: 1px solid #111; }
+      border-right: 1px solid #000; }
     .custom-pager a.active, .custom-pager a:hover {
-      background-color: #111;
+      background-color: #000;
       color: #fff; }
   .custom-pager .post-format-icon:before {
     padding: 0.5rem;
@@ -1152,7 +1170,7 @@ section[rel="Startseite"] {
     transition: opacity .5s ease 0s, transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s;
     background-color: #fff;
-    color: #111;
+    color: #000;
     font-size: 4rem;
     padding: 0.8rem; }
     .slider figure figcaption h1:before {
@@ -1177,7 +1195,7 @@ section[rel="Startseite"] {
 .grid figure {
   position: relative;
   overflow: hidden;
-  background-color: #111; }
+  background-color: #000; }
   .grid figure img {
     transition: opacity .3s ease, -webkit-transform .3s ease;
     transition: transform .3s ease, opacity .3s ease;
@@ -1197,18 +1215,17 @@ section[rel="Über uns"] {
   section[rel="Über uns"] i {
     font-size: 5rem; }
 
-.slider .page-header h1.entry-title, .slider .page-header h1.page-title, .slider .entry-content h1.entry-title, .slider .entry-content h1.page-title, .single .page-header h1.entry-title, .single .page-header h1.page-title, .single .entry-content h1.entry-title, .single .entry-content h1.page-title, .archive .page-header h1.entry-title, .archive .page-header h1.page-title, .archive .entry-content h1.entry-title, .archive .entry-content h1.page-title {
+h1.entry-title, h1.page-title {
   display: inline-block;
   background-color: black;
   padding: 0.3em;
-  position: absolute;
+  color: #fff; }
+
+article.has-post-thumbnail h1.entry-title, article.has-post-thumbnail h1.page-title {
   -webkit-transform: translate(0, -4em);
       -ms-transform: translate(0, -4em);
           transform: translate(0, -4em);
-  color: #fff; }
-
-.slider figure, .single figure, .archive figure {
-  height: 600px; }
+  position: absolute; }
 
 .archive .page-header h1 {
   -webkit-transform: translate(20px, -4em);

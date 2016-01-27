@@ -24,6 +24,10 @@ section {
   }
 }
 
+figure.header {
+  height: 600px;
+}
+
 .content-button {
   padding: 0.9em;
   background-color: black;
@@ -57,11 +61,11 @@ figure .more-link {
   margin-bottom: 0;
 }
 
-.single {
-  .wrap {
-    padding: 0 20px;
-  }
+.wrap {
+  padding: 0 20px;
+}
 
+.single {
   .wrap {
     display: flex;
     justify-content: space-between;

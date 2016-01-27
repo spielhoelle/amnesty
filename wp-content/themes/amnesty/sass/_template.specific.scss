@@ -32,19 +32,17 @@ section[rel="Über uns"] {
   }
 }
 
-.slider, .single, .archive {
-  .page-header, .entry-content {
-    h1.entry-title, h1.page-title {
-      display: inline-block;
-      background-color: black;
-      padding: 0.3em;
-      position: absolute;
-      transform: translate(0, -4em);
-      color: $white;
-    }
-  }
-  figure {
-    height: 600px;
+h1.entry-title, h1.page-title {
+  display: inline-block;
+  background-color: black;
+  padding: 0.3em;
+  color: $white;
+}
+
+article.has-post-thumbnail {
+  h1.entry-title, h1.page-title {
+    transform: translate(0, -4em);
+    position: absolute;
   }
 }
 

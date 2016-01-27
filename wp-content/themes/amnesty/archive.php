@@ -17,7 +17,7 @@ get_header(); ?>
             if (have_posts()) : ?>
 
 
-            <figure>
+            <figure class="header">
                 <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
             </figure>
 

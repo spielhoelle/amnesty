@@ -13,14 +13,11 @@ endif;
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-    <?php
-
-    $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
+    <?php $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
     $content = get_post_field('post_content', get_the_ID());
-    $content_parts = get_extended($content);
-    ?>
+    $content_parts = get_extended($content); ?>
 
-    <figure>
+    <figure class="header">
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
     </figure>
 

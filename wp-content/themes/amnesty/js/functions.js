@@ -28,6 +28,15 @@
          */
         $('#page').removeClass('page-hidden');
 
+        var size = 0;
+        var menu = $('#primary-menu')
+        $('#primary-menu').find('li').each(function () {
+            size = size + $(this).width();
+        });
+        if (size > menu.width()) {
+            menu.addClass('responsive');
+        }
+
     });
 
 }(jQuery));

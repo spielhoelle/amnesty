@@ -1,7 +1,7 @@
 <section id="section-<?php the_ID(); ?>" data-url="<?php the_permalink(); ?>"
          tabindex="<?php echo $post->menu_order; ?>" rel="<?php echo $post->post_title; ?>">
     <header class="entry-header">
-        <h2 class="entry-title"><?php the_title() ?></h2>
+        <h1 class="entry-title"><?php the_title() ?></h1>
     </header>
 
     <div class="grid">
