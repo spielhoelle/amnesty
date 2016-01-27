@@ -12,9 +12,10 @@
         while ($blog->have_posts()) : $blog->the_post();
             get_template_part('template-parts/content', '');
         endwhile; ?>
+    </div>
 
-        <?php // restore original post data
-        wp_reset_postdata(); ?>
+    <?php wp_reset_postdata(); ?>
+
     </div>
 
     <a class="more-link show" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr...</a>

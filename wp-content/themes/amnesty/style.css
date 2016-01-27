@@ -1058,8 +1058,8 @@ object {
     height: 100%;
     top: 0;
     width: 100%; }
-    .bx-wrapper .bx-controls a {
-      font-size: 3em;
+    .bx-wrapper .bx-controls a.bx-prev, .bx-wrapper .bx-controls a.bx-next {
+      font-size: 5em;
       color: white;
       position: absolute;
       height: 100%;
@@ -1075,8 +1075,32 @@ object {
           -ms-flex-align: center;
               align-items: center;
       text-decoration: none; }
-      .bx-wrapper .bx-controls a.bx-next {
+      .bx-wrapper .bx-controls a.bx-prev.bx-next, .bx-wrapper .bx-controls a.bx-next.bx-next {
         right: 0; }
+
+section[rel="Startseite"] {
+  position: relative; }
+
+.custom-pager {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 55;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  border: 1px solid black; }
+  .custom-pager a {
+    display: block;
+    background: #fff; }
+    .custom-pager a:not(:last-child) {
+      border-right: 1px solid #111; }
+    .custom-pager a.active, .custom-pager a:hover {
+      background-color: #111;
+      color: #fff; }
+  .custom-pager .post-format-icon:before {
+    padding: 0.5rem;
+    margin: 0; }
 
 .slider figure {
   position: relative; }
