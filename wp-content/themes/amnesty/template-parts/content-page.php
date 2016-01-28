@@ -9,7 +9,7 @@
 $img = '';
 $classes = [];
 if (has_post_thumbnail()) {
-    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
     $classes[] = 'header';
 }
 ?>

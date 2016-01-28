@@ -1267,7 +1267,9 @@ h1.entry-title, h1.page-title {
 
 .slider figure figcaption h1 {
   margin-bottom: 10px;
-  display: inline-block; }
+  display: inline-block;
+  background-color: #fff;
+  color: #000; }
 
 /**
  * WP admin bar
