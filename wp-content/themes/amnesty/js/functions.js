@@ -29,37 +29,6 @@
         $('#page').removeClass('page-hidden');
 
 
-        /**
-         * add class to body if menu is to big for screen
-         */
-        //function responsiveClass() {
-        //    var size = 0;
-        //    var menu = $('#primary-menu');
-        //    var lis = $('#primary-menu>li')
-        //
-        //    lis.each(function () {
-        //        size = size + $(this).width();
-        //    });
-        //    if (size > menu.width()) {
-        //        $('body').addClass('responsive');
-        //    } else {
-        //        $('body').removeClass('responsive');
-        //    }
-        //}
-
-        //responsiveClass();
-
-
-        //$(window).resize(function () {
-        //    if (timer) {
-        //        window.clearTimeout(timer);
-        //    }
-        //    timer = window.setTimeout(function () {
-        //        responsiveClass();
-        //    }, 500);
-        //
-        //});
-        //var timer;
     });
 
 }(jQuery));
