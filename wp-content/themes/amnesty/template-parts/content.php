@@ -29,6 +29,7 @@ $content_parts = get_extended($content);
 
         <figcaption>
             <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
+            <br>
             <h2><?php echo $content_parts['main'] ?></h2>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
         </figcaption>

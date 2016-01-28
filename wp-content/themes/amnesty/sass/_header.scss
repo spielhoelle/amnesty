@@ -4,7 +4,8 @@
   background: white;
   max-width: $viewport;
   left: 50%;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
+  border-bottom: 1px solid $grey;
   a {
     text-transform: uppercase;
   }
@@ -12,7 +13,6 @@
   .top {
     display: flex;
     height: 80px;
-    margin-left: 200px;
     .site-branding {
       height: 100%;
       position: absolute;
@@ -21,7 +21,8 @@
         margin: 0;
         height: 100%;
         a {
-          padding-top: 31.1%;
+          width: 200px;
+          padding-top: 40.1%;
           display: inline-block;
           color: transparent;
           height: 100%;
@@ -128,22 +129,7 @@
   }
 }
 
-/* Small menu. */
-.menu-toggle,
-.main-navigation.toggled ul {
-  display: block;
-}
 
-@media screen and (min-width: $menu-break-point) {
-  .menu-toggle {
-    display: none;
-  }
-  .main-navigation > div > ul {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-}
 
 .comment-navigation,
 .posts-navigation,

@@ -67,9 +67,13 @@ footer#colophon {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    > * {
+    > *:first-child {
+      flex: 0 0 auto;
+    }
+    > *:last-child {
       flex: 0 0 33%;
     }
+
   }
   ul {
     display: flex;

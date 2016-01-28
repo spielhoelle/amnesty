@@ -15,51 +15,52 @@
 get_header(); ?>
 
 <div id="primary" class="content-area">
-	<main id="main" class="site-main" role="main">
+    <main id="main" class="site-main" role="main">
 
-		<?php // news page is page
-		if ( have_posts() ) : ?>
+        <?php // news page is page
+        if (have_posts()) : ?>
 
-			<?php if ( is_home() && ! is_front_page() ) : ?>
-				<header>
-					<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-				</header>
-			<?php endif; ?>
-
-
-			<header class="entry-header">
-				<h2 class="entry-title">News</h2>
-			</header>
-			<?php get_search_form(); ?>
-
-			<?php while ( have_posts() ) : the_post(); ?>
-				<?php get_template_part( 'template-parts/content', 'post' ); ?>
-			<?php endwhile; ?>
-			<!-- index -->
-			<nav class="pagination">
-				<?php
-				global $wp_query;
-
-				$big = 999999999; // need an unlikely integer
-
-				echo paginate_links( array(
-					'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-					'format' => '?paged=%#%',
-					'current' => max( 1, get_query_var( 'paged' ) ),
-					'total' => $wp_query->max_num_pages
-				) );
-				?>
-			</nav>
-
-		<?php else : ?>
-
-			<?php get_template_part( 'template-parts/content', 'none' ); ?>
-
-		<?php endif; ?>
+            <?php if (is_home() && !is_front_page()) : ?>
+                <header>
+                    <h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
+                </header>
+            <?php endif; ?>
 
 
-	</main>
-	<!-- #main -->
+            <header class="entry-header">
+                <h1 class="entry-title">Alle News</h1>
+            </header>
+            <?php get_search_form(); ?>
+            <div class="grid">
+                <?php while (have_posts()) : the_post(); ?>
+                    <?php get_template_part('template-parts/content', ''); ?>
+                <?php endwhile; ?>
+            </div>
+            <!-- index -->
+            <nav class="pagination">
+                <?php
+                global $wp_query;
+
+                $big = 999999999; // need an unlikely integer
+
+                echo paginate_links(array(
+                    'base'    => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                    'format'  => '?paged=%#%',
+                    'current' => max(1, get_query_var('paged')),
+                    'total'   => $wp_query->max_num_pages
+                ));
+                ?>
+            </nav>
+
+        <?php else : ?>
+
+            <?php get_template_part('template-parts/content', 'none'); ?>
+
+        <?php endif; ?>
+
+
+    </main>
+    <!-- #main -->
 </div><!-- #primary -->
 
 <?php get_sidebar(); ?>

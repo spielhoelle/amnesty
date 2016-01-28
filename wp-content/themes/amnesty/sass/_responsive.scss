@@ -1,25 +1,48 @@
-body.responsive {
+//body.responsive {
+//
+//}
+
+$headerheight1: 40px;
+
+$breakpoint1: 1000px;
+$breakpoint2: 500px;
+
+/* Small menu. */
+.menu-toggle,
+.main-navigation.toggled ul {
+  display: block;
+}
+
+@media screen and (min-width: $breakpoint2) {
+  .menu-toggle {
+    display: none;
+  }
+  .main-navigation > div > ul {
+    display: flex !important;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+
+@media (max-width: $breakpoint1) { //1000
   #masthead {
     .top, .main-navigation a {
-      height: 40px;
+      height: $headerheight1;
     }
     .top {
       .site-branding .site-title a {
-        padding-top: 0;
+        width: 99px;
       }
     }
     .main-navigation {
       ul .sub-menu {
-        height: 40px;
+        height: $headerheight1;
       }
       a {
-        padding: 0 $gap/2;
+        padding: 0 $gap/6;
       }
     }
   }
-}
-
-@media (max-width: 800px) {
   figure.header {
     height: 33vh !important;
   }
@@ -41,7 +64,7 @@ body.responsive {
     }
   }
   #content {
-    margin-top: 40px;
+    margin-top: $headerheight1;
   }
   .columns {
     display: block;
@@ -50,12 +73,71 @@ body.responsive {
     }
   }
   .grid > article {
-    flex: 0 0 100%;
+    flex: 0 0 50%;
     max-width: none;
   }
 }
 
-@media (max-width: $breakpoint1) {
-  body {
+@media (max-width: $breakpoint2) { //500
+  #masthead {
+    .top .site-branding {
+      &, .site-title {
+        &, a {
+          height: 40px;
+        }
+      }
+    }
+    .main-navigation {
+      z-index: 1;
+      margin-top: 40px;
+      a {
+        padding: 5px 15px;
+      }
+    }
+
+    .top,
+    .main-navigation {
+      height: auto;
+      width: auto;
+      a {
+        height: auto;
+        display: block;
+      }
+      > div > ul > li {
+        height: auto;
+      }
+      ul .sub-menu {
+        height: auto;
+        left: auto;
+        position: relative;
+        background: $white;
+        margin-left: 10px;
+        z-index: 0;
+        &, a {
+          color: $black;
+        }
+        a {
+          margin: 0;
+        }
+      }
+      .current_page_item > a,
+      .current-menu-item > a,
+      .current_page_ancestor > a,
+      .current-menu-ancestor > a {
+        background: black;
+        color: $white !important;
+      }
+    }
+  }
+  .archive .page-header h1,
+  .single .entry-content h1.entry-title,
+  .slider figure figcaption h1,
+  .page .wrap .entry-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .grid > article {
+    flex: 0 0 100%;
+    max-width: none;
   }
 }

@@ -6,32 +6,29 @@
  *
  * @package amnesty
  */
-if (has_post_thumbnail()) : ?><?php $thumb = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
-    $output = ' style="background-image: url(' . $thumb[0] . ')"';
-endif;
+$img = '';
+$classes = [];
+if (has_post_thumbnail()) {
+    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
+    $classes[] = 'header';
+}
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
-    <?php $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
-    $content = get_post_field('post_content', get_the_ID());
-    $content_parts = get_extended($content); ?>
-
-    <figure class="header">
+    <figure class="<?php echo implode(' ', $classes) ?>">
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+        <figcaption>
+            <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+        </figcaption>
     </figure>
-
 
     <div class="wrap">
         <div class="content-wrapper">
 
             <div class="entry-content">
                 <?php
-                if (is_single()) {
-                    the_title('<h1 class="entry-title">', '</h1>');
-                } else {
-                    the_title('<h2 class="entry-title"><a href="' . esc_url(get_permalink()) . '" rel="bookmark">', '</a></h2>');
-                }
+
 
                 if ('post' === get_post_type()) : ?>
                     <div class="entry-meta">

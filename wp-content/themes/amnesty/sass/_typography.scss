@@ -4,7 +4,7 @@ button,
 input,
 select,
 textarea {
-  color: $darkgrey;
+  color: $black;
   font-family: $font__main;
   @include font-size(0.875);
   line-height: $font__line-height-body;

@@ -72,6 +72,7 @@ ul, ol {
 ul {
   list-style: none;
 }
+
 ol {
   padding-left: 20px;
 }
@@ -94,26 +95,34 @@ table {
   width: 100%;
 }
 
+figcaption {
+  margin-left: 20px;
+  h1.entry-title, h1.page-title {
+    font-size: 3rem;
+  }
+}
+
 figure {
   margin: 0;
+  position: relative;
   img {
     background: transparent none no-repeat scroll center center / cover;
-    width: 100%;
     display: block;
-    height: 100%;
+    width: auto;
+    height: auto;
   }
-  figcaption {
+  &.header img {
+    height: 100%;
+    width: 100%;
+  }
+
+  &.header figcaption,
+  .grid & figcaption {
     position: absolute;
     bottom: 20px;
-    left: 20px;
     color: $black;
-    right: 20px;
     h1, h2, .more-link {
       padding: 0.5em;
-    }
-    h1 {
-      color: $white;
-      background: rgba(0, 0, 0, 0.9);
     }
     h2 {
       margin-top: 20px;
@@ -129,6 +138,9 @@ figure {
   color: transparent;
   width: 40px;
   height: 40px;
+  right: 0;
+  top: 0;
+  position: absolute;
   &:before {
     position: absolute;
     right: 0;

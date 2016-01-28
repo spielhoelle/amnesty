@@ -4,7 +4,7 @@
   flex-flow: column;
   align-items: center;
   margin: 0 auto;
-  transition: opacity .3s ease;
+  transition: opacity .5s ease;
   &.page-hidden {
     opacity: 0;
   }
@@ -26,6 +26,7 @@ section {
 
 figure.header {
   height: 600px;
+  position: relative;
 }
 
 .content-button {
@@ -145,6 +146,10 @@ figure .more-link {
     flex: 0 0 350px;
     max-width: 33.3333%;
     padding: 0 #{$gap/2} $gap #{$gap/2};
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

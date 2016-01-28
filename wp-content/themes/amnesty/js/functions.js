@@ -10,7 +10,7 @@
             pause: 10000,
             nextText: '<i class="fa fa-angle-right"></i>',
             prevText: '<i class="fa fa-angle-left"></i>',
-            auto: true,
+            //auto: true,
             pagerCustom: '.custom-pager',
 
             onSlideAfter: function (currentSlideNumber, totalSlideQty, currentSlideHtmlObject) {
@@ -32,34 +32,34 @@
         /**
          * add class to body if menu is to big for screen
          */
-        function responsiveClass() {
-            var size = 0;
-            var menu = $('#primary-menu');
-            var lis = $('#primary-menu>li')
+        //function responsiveClass() {
+        //    var size = 0;
+        //    var menu = $('#primary-menu');
+        //    var lis = $('#primary-menu>li')
+        //
+        //    lis.each(function () {
+        //        size = size + $(this).width();
+        //    });
+        //    if (size > menu.width()) {
+        //        $('body').addClass('responsive');
+        //    } else {
+        //        $('body').removeClass('responsive');
+        //    }
+        //}
 
-            lis.each(function () {
-                size = size + $(this).width();
-            });
-            if (size > menu.width()) {
-                $('body').addClass('responsive');
-            } else {
-                $('body').removeClass('responsive');
-            }
-        }
-
-        responsiveClass();
+        //responsiveClass();
 
 
-        $(window).resize(function () {
-            if (timer) {
-                window.clearTimeout(timer);
-            }
-            timer = window.setTimeout(function () {
-                responsiveClass();
-            }, 500);
-
-        });
-        var timer;
+        //$(window).resize(function () {
+        //    if (timer) {
+        //        window.clearTimeout(timer);
+        //    }
+        //    timer = window.setTimeout(function () {
+        //        responsiveClass();
+        //    }, 500);
+        //
+        //});
+        //var timer;
     });
 
 }(jQuery));

@@ -6,19 +6,24 @@
  *
  * @package amnesty
  */
-$img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
-
+$img = '';
+$classes = [];
+if (has_post_thumbnail()) {
+    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full');
+    $classes[] = 'header';
+}
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    <?php if($img !== ''){ ?>
-        <figure class="header">
+    <figure class="<?php echo implode(' ', $classes) ?>">
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+        <figcaption>
+            <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+
+        </figcaption>
     </figure>
-    <?php } ?>
     <div class="wrap">
         <header class="entry-header">
-            <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
         </header><!-- .entry-header -->
 
         <div class="entry-content">
@@ -32,4 +37,4 @@ $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_i
             ?>
         </div><!-- .entry-content --></div>
 
-</article><!-- #post-## -->
+</article><!--content-page.php-->
