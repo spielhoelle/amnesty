@@ -77,6 +77,9 @@ footer#colophon {
     i {
       padding: 20px;
       font-size: 2em;
+      &:hover {
+        color: lighten($grey, 20);
+      }
     }
   }
 

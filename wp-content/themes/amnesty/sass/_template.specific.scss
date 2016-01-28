@@ -29,8 +29,7 @@ section[rel="Über uns"] {
     text-align: center;
   }
   i {
-    font-size: 5rem;
-
+    font-size: 6rem;
   }
 }
 
@@ -42,16 +41,33 @@ h1.entry-title, h1.page-title {
 }
 
 article.has-post-thumbnail {
-  &:not(.grid &) {
+  h1.entry-title, h1.page-title {
+    transform: translate(0, -4em);
+    position: absolute;
+  }
+}
+
+.grid {
+  article.has-post-thumbnail {
     h1.entry-title, h1.page-title {
-      transform: translate(0, -4em);
-      position: absolute;
+      transform: translate(0, 0);
+      position: relative;
     }
   }
 }
 
-.archive {
-  .page-header h1 {
-    transform: translate(20px, -4em);
-  }
+.archive .page-header h1,
+.single .entry-content h1.entry-title {
+  transform: translate(20px, -4em);
+  position: absolute;
+}
+
+.archive .page-header h1,
+.single .entry-content h1.entry-title,
+.slider figure figcaption h1,
+.page .wrap .entry-header h1 {
+  background: $white;
+  color: $black;
+  font-size: 4rem;
+  padding: 0.8rem;
 }

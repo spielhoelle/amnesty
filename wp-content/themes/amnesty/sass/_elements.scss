@@ -66,8 +66,14 @@ hr {
 
 ul, ol {
   margin: 0;
-  list-style: none;
   padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+ol {
+  padding-left: 20px;
 }
 
 dt {
@@ -98,9 +104,10 @@ figure {
   }
   figcaption {
     position: absolute;
-    bottom: 40px;
-    left: 40px;
+    bottom: 20px;
+    left: 20px;
     color: $black;
+    right: 20px;
     h1, h2, .more-link {
       padding: 0.5em;
     }

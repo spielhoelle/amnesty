@@ -365,8 +365,13 @@ hr {
 
 ul, ol {
   margin: 0;
-  list-style: none;
   padding: 0; }
+
+ul {
+  list-style: none; }
+
+ol {
+  padding-left: 20px; }
 
 dt {
   font-weight: bold; }
@@ -393,9 +398,10 @@ figure {
     height: 100%; }
   figure figcaption {
     position: absolute;
-    bottom: 40px;
-    left: 40px;
-    color: #000; }
+    bottom: 20px;
+    left: 20px;
+    color: #000;
+    right: 20px; }
     figure figcaption h1, figure figcaption h2, figure figcaption .more-link {
       padding: 0.5em; }
     figure figcaption h1 {
@@ -1036,6 +1042,8 @@ footer#colophon {
   .footer-below ul i {
     padding: 20px;
     font-size: 2em; }
+    .footer-below ul i:hover {
+      color: white; }
 
 ul.children {
   padding-left: 10px; }
@@ -1207,10 +1215,7 @@ section[rel="Startseite"] {
     transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s;
-    background-color: #fff;
-    color: #000;
-    font-size: 4rem;
-    padding: 0.8rem; }
+    color: #000; }
     .slider figure figcaption h1:before {
       font-size: 2.5rem; }
   .slider figure figcaption h2 {
@@ -1252,7 +1257,7 @@ section[rel="Über uns"] .entry-content {
   text-align: center; }
 
 section[rel="Über uns"] i {
-  font-size: 5rem; }
+  font-size: 6rem; }
 
 h1.entry-title, h1.page-title {
   display: inline-block;
@@ -1260,16 +1265,33 @@ h1.entry-title, h1.page-title {
   padding: 0.3em;
   color: #fff; }
 
-article.has-post-thumbnail:not(.grid &) h1.entry-title, article.has-post-thumbnail:not(.grid &) h1.page-title {
+article.has-post-thumbnail h1.entry-title, article.has-post-thumbnail h1.page-title {
   -webkit-transform: translate(0, -4em);
       -ms-transform: translate(0, -4em);
           transform: translate(0, -4em);
   position: absolute; }
 
-.archive .page-header h1 {
+.grid article.has-post-thumbnail h1.entry-title, .grid article.has-post-thumbnail h1.page-title {
+  -webkit-transform: translate(0, 0);
+      -ms-transform: translate(0, 0);
+          transform: translate(0, 0);
+  position: relative; }
+
+.archive .page-header h1,
+.single .entry-content h1.entry-title {
   -webkit-transform: translate(20px, -4em);
       -ms-transform: translate(20px, -4em);
-          transform: translate(20px, -4em); }
+          transform: translate(20px, -4em);
+  position: absolute; }
+
+.archive .page-header h1,
+.single .entry-content h1.entry-title,
+.slider figure figcaption h1,
+.page .wrap .entry-header h1 {
+  background: #fff;
+  color: #000;
+  font-size: 4rem;
+  padding: 0.8rem; }
 
 /**
  * WP admin bar
