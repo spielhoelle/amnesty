@@ -40,8 +40,6 @@
             lis.each(function () {
                 size = size + $(this).width();
             });
-            console.log(size);
-            console.log(menu.width());
             if (size > menu.width()) {
                 $('body').addClass('responsive');
             } else {
