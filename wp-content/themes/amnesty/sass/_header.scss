@@ -12,7 +12,7 @@
 
   .top {
     display: flex;
-    height: 80px;
+    height: $headerheight;
     .site-branding {
       height: 100%;
       position: absolute;
@@ -50,7 +50,7 @@
     > ul {
       height: 100%;
       > .sub-menu {
-        top: 80px;
+        top: $headerheight;
         display: flex;
         justify-content: center;
         .sub-menu {
@@ -74,7 +74,7 @@
 
     .sub-menu {
       background: $black;
-      height: 80px;
+      height: $headerheight;
       position: absolute;
       z-index: -1;
       justify-content: center;
@@ -102,7 +102,7 @@
     }
   }
   a {
-    height: 80px;
+    height: $headerheight;
     text-decoration: none;
     font-family: $font__title;
     padding: 0 30px;

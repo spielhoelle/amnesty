@@ -668,15 +668,30 @@ figure .more-link {
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-  margin: 0 -15px;
+  margin: 0 -30px;
   padding: 30px 0 0; }
-  .grid figcaption {
-    padding-right: 10px; }
+  .grid figure {
+    overflow: hidden;
+    background-color: #fff; }
+    .grid figure img {
+      transition: opacity .3s ease, -webkit-transform .3s ease;
+      transition: transform .3s ease, opacity .3s ease;
+      transition: transform .3s ease, opacity .3s ease, -webkit-transform .3s ease; }
+    .grid figure:hover img {
+      -webkit-transform: scale(1.1);
+          -ms-transform: scale(1.1);
+              transform: scale(1.1);
+      opacity: 0.5; }
+    .grid figure figcaption {
+      padding-right: 10px; }
+      .grid figure figcaption h1 {
+        font-size: 1.5rem; }
+      .grid figure figcaption h2 {
+        display: none; }
   .grid > article {
-    -webkit-flex: 0 0 350px;
-        -ms-flex: 0 0 350px;
-            flex: 0 0 350px;
-    max-width: 33.3333%;
+    -webkit-flex: 0 0 33%;
+        -ms-flex: 0 0 33%;
+            flex: 0 0 33%;
     padding: 0 15px 30px 15px; }
     .grid > article img {
       width: 100%;
@@ -739,7 +754,7 @@ a.post-state-format.format-standard:before {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    height: 80px; }
+    height: 60px; }
     #masthead .top .site-branding {
       height: 100%;
       position: absolute;
@@ -783,7 +798,7 @@ a.post-state-format.format-standard:before {
     .main-navigation > div > ul {
       height: 100%; }
       .main-navigation > div > ul > .sub-menu {
-        top: 80px;
+        top: 60px;
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
@@ -804,7 +819,7 @@ a.post-state-format.format-standard:before {
     padding-left: 0; }
     .main-navigation ul .sub-menu {
       background: #000;
-      height: 80px;
+      height: 60px;
       position: absolute;
       z-index: -1;
       -webkit-justify-content: center;
@@ -829,7 +844,7 @@ a.post-state-format.format-standard:before {
     .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu > li > a {
       margin: 0; }
   .main-navigation a {
-    height: 80px;
+    height: 60px;
     text-decoration: none;
     font-family: "Trade Gothic";
     padding: 0 30px;
@@ -994,6 +1009,8 @@ footer#colophon {
     margin-right: 20px; }
     .footer-top section h2 {
       border-bottom: 1px solid #333333; }
+  .footer-top a:not(.content-button):hover {
+    text-decoration: underline; }
 
 .footer-below .tommy {
   text-align: center; }
@@ -1167,11 +1184,15 @@ object {
       -webkit-align-items: center;
           -ms-flex-align: center;
               align-items: center;
-      text-decoration: none; }
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity .3s ease; }
       .bx-wrapper .bx-controls a.bx-prev:hover, .bx-wrapper .bx-controls a.bx-next:hover {
         background: rgba(0, 0, 0, 0.1); }
       .bx-wrapper .bx-controls a.bx-prev.bx-next, .bx-wrapper .bx-controls a.bx-next.bx-next {
         right: 0; }
+  .bx-wrapper:hover .bx-controls a.bx-prev, .bx-wrapper:hover .bx-controls a.bx-next {
+    opacity: 1; }
 
 section[rel="Startseite"] {
   position: relative; }
@@ -1236,27 +1257,10 @@ section[rel="Startseite"] {
         -ms-transform: translate(0, 0);
             transform: translate(0, 0); }
 
-.grid figure {
-  overflow: hidden;
-  background-color: #000; }
-  .grid figure img {
-    transition: opacity .3s ease, -webkit-transform .3s ease;
-    transition: transform .3s ease, opacity .3s ease;
-    transition: transform .3s ease, opacity .3s ease, -webkit-transform .3s ease; }
-  .grid figure:hover img {
-    -webkit-transform: scale(1.1);
-        -ms-transform: scale(1.1);
-            transform: scale(1.1);
-    opacity: 0.5; }
-  .grid figure figcaption h1 {
-    font-size: 1.5rem; }
-  .grid figure figcaption h2 {
-    display: none; }
-
-section[rel="Über uns"] .entry-content {
+section .entry-content {
   text-align: center; }
 
-section[rel="Über uns"] i {
+section i.fa {
   font-size: 6rem; }
 
 h1.entry-title, h1.page-title {
@@ -1268,7 +1272,7 @@ h1.entry-title, h1.page-title {
 .slider figure figcaption h1 {
   margin-bottom: 10px;
   display: inline-block;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9);
   color: #000; }
 
 /**

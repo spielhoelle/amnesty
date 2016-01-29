@@ -10,7 +10,7 @@
             pause: 10000,
             nextText: '<i class="fa fa-angle-right"></i>',
             prevText: '<i class="fa fa-angle-left"></i>',
-            //auto: true,
+            auto: true,
             pagerCustom: '.custom-pager',
 
             onSlideAfter: function (currentSlideNumber, totalSlideQty, currentSlideHtmlObject) {

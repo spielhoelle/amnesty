@@ -137,14 +137,35 @@ figure .more-link {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin: 0 #{-$gap/2};
+  margin: 0 #{-$gap};
   padding: $gap 0 0;
-  figcaption {
-    padding-right: 10px;
+  figure {
+    overflow: hidden;
+    background-color: $white;
+
+    img {
+      transition: transform .3s ease, opacity .3s ease;
+    }
+    &:hover {
+      img {
+        transform: scale(1.1);
+        opacity: 0.5;
+      }
+    }
+    figcaption {
+      padding-right: 10px;
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        display: none;
+      }
+    }
   }
+
   > article {
-    flex: 0 0 350px;
-    max-width: 33.3333%;
+    flex: 0 0 33%;
     padding: 0 #{$gap/2} $gap #{$gap/2};
     img {
       width: 100%;

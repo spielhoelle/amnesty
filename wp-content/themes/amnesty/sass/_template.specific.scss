@@ -1,34 +1,11 @@
 .grid {
-  figure {
-    overflow: hidden;
-    background-color: $black;
-
-    img {
-      transition: transform .3s ease, opacity .3s ease;
-    }
-    &:hover {
-      img {
-        transform: scale(1.1);
-        opacity: 0.5;
-      }
-    }
-    figcaption {
-      h1 {
-        font-size: 1.5rem;
-      }
-
-      h2 {
-        display: none;
-      }
-    }
-  }
 }
 
-section[rel="Über uns"] {
+section {
   .entry-content {
     text-align: center;
   }
-  i {
+  i.fa {
     font-size: 6rem;
   }
 }
@@ -67,6 +44,6 @@ h1.entry-title, h1.page-title {
 .slider figure figcaption h1 {
   margin-bottom: 10px;
   display: inline-block;
-  background-color: $white;
+  background-color: transparentize(#fff, 0.1);
   color: $black;
 }

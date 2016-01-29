@@ -41,6 +41,9 @@ footer#colophon {
       border-bottom: 1px solid lighten($black, 20);
     }
   }
+  a:not(.content-button):hover {
+    text-decoration: underline;
+  }
 }
 
 .footer-below {
@@ -60,6 +63,7 @@ footer#colophon {
       }
       a {
         color: $grey;
+
       }
     }
   }
