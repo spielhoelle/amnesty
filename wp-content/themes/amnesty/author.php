@@ -9,7 +9,7 @@
             ?>
             <figure>
                 <figcaption>
-                    <h1 class="page-title">About: <?php echo $curauth->nickname; ?></h1>
+                    <h1 class="page-title">About: <?php echo $curauth->nickname . ' ' . $curauth->last_name; ?></h1>
                 </figcaption>
             </figure>
 
@@ -21,11 +21,11 @@
                     <?php } ?>
 
                     <div class="profile">
-                        <?php echo ($curauth->user_url) ? '<dt>Website</dt><dd><a href="' . $curauth->user_url . '">' . $curauth->user_url . '</a></dd>' : '' ?>
                         <?php if ($curauth->user_description !== '') { ?>
                             <h2>Über</h2>
                             <p><?php echo $curauth->user_description; ?></p>
                         <?php } ?>
+                        <?php echo ($curauth->user_url) ? '<dt>Website</dt><dd><a href="' . $curauth->user_url . '">' . $curauth->user_url . '</a></dd>' : '' ?>
                     </div>
                 </div>
                 <h2>Beiträge von <span class="author vcard"><?php echo $curauth->nickname; ?></span>:</h2>
