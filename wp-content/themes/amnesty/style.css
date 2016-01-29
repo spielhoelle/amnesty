@@ -754,7 +754,7 @@ a.post-state-format.format-standard:before {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    height: 60px; }
+    height: 80px; }
     #masthead .top .site-branding {
       height: 100%;
       position: absolute;
@@ -798,7 +798,7 @@ a.post-state-format.format-standard:before {
     .main-navigation > div > ul {
       height: 100%; }
       .main-navigation > div > ul > .sub-menu {
-        top: 60px;
+        top: 80px;
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
@@ -819,7 +819,7 @@ a.post-state-format.format-standard:before {
     padding-left: 0; }
     .main-navigation ul .sub-menu {
       background: #000;
-      height: 60px;
+      height: 80px;
       position: absolute;
       z-index: -1;
       -webkit-justify-content: center;
@@ -844,7 +844,7 @@ a.post-state-format.format-standard:before {
     .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu > li > a {
       margin: 0; }
   .main-navigation a {
-    height: 60px;
+    height: 80px;
     text-decoration: none;
     font-family: "Trade Gothic";
     padding: 0 30px;

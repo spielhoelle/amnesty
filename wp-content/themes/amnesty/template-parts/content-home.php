@@ -15,7 +15,7 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                     <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
                 </a>
 
-                <figcaption class="bubble">
+                <figcaption>
                     <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
                     <h2><?php echo $content_parts['main'] ?></h2>
                     <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
@@ -33,6 +33,5 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                class="entry-title post-format-icon post-format-<?php echo $format ?>"></a>
         <?php $i++; endwhile; ?>
     </div>
-    <span class="arrowdown"></span>
     <!--content-home.php-->
 <?php wp_reset_postdata();
