@@ -580,7 +580,15 @@ span.author {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  padding: 100px 0; }
+  padding: 100px 0;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
+  .userinfo > * {
+    padding: 20px;
+    -webkit-flex: 0 1 600px;
+        -ms-flex: 0 1 600px;
+            flex: 0 1 600px; }
   .userinfo img {
     border-radius: 50%;
     height: 300px;
@@ -588,8 +596,6 @@ span.author {
         -ms-flex: 0 0 300px;
             flex: 0 0 300px;
     background-size: cover; }
-  .userinfo > * {
-    padding: 20px; }
 
 .more-link {
   display: inline-block;

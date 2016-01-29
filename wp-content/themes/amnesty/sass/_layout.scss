@@ -49,15 +49,19 @@ span.author {
 .userinfo {
   display: flex;
   padding: 100px 0;
+  flex-flow: row wrap;
+  > * {
+    padding: 20px;
+    flex: 0 1 600px;
+  }
   img {
     border-radius: 50%;
     height: 300px;
     flex: 0 0 300px;
     background-size: cover;
+
   }
-  > * {
-    padding: 20px;
-  }
+
 }
 
 .more-link {
