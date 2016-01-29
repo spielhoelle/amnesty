@@ -52,7 +52,7 @@ span.author {
   img {
     border-radius: 50%;
     height: 300px;
-    flex: 1 0 300px;
+    flex: 0 0 300px;
     background-size: cover;
   }
   > * {
@@ -122,6 +122,7 @@ figure .more-link {
     padding: .6rem 0;
     .posted-on, .author {
       a {
+        text-decoration: none;
         font-weight: bold;
       }
     }

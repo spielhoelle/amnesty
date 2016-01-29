@@ -15,20 +15,22 @@
 
             <div class="wrap">
                 <div class="userinfo">
-                    <img src="/wp-includes/images/blank.gif"
-                         style="background-image:url(<?php echo get_wp_user_avatar_src(); ?>)">
-
+                    <?php if (get_wp_user_avatar_src() !== '') { ?>
+                        <img src="/wp-includes/images/blank.gif"
+                             style="background-image:url(<?php echo get_wp_user_avatar_src(); ?>)">
+                    <?php } ?>
 
                     <div class="profile">
                         <?php echo ($curauth->user_url) ? '<dt>Website</dt><dd><a href="' . $curauth->user_url . '">' . $curauth->user_url . '</a></dd>' : '' ?>
-                        <h2>Über</h2>
-                        <p><?php echo $curauth->user_description; ?></p>
+                        <?php if ($curauth->user_description !== '') { ?>
+                            <h2>Über</h2>
+                            <p><?php echo $curauth->user_description; ?></p>
+                        <?php } ?>
                     </div>
                 </div>
                 <h2>Beiträge von <span class="author vcard"><?php echo $curauth->nickname; ?></span>:</h2>
 
             </div>
-
 
 
             <div class="grid">

@@ -584,9 +584,9 @@ span.author {
   .userinfo img {
     border-radius: 50%;
     height: 300px;
-    -webkit-flex: 1 0 300px;
-        -ms-flex: 1 0 300px;
-            flex: 1 0 300px;
+    -webkit-flex: 0 0 300px;
+        -ms-flex: 0 0 300px;
+            flex: 0 0 300px;
     background-size: cover; }
   .userinfo > * {
     padding: 20px; }
@@ -649,6 +649,7 @@ figure .more-link {
   border-top: 1px solid #dadada;
   padding: .6rem 0; }
   .single .entry-meta .posted-on a, .single .entry-meta .author a {
+    text-decoration: none;
     font-weight: bold; }
 
 .single .entry-footer {
