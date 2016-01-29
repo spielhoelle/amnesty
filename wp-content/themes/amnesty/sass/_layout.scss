@@ -184,13 +184,21 @@ figure .more-link {
   -moz-osx-font-smoothing: grayscale
 }
 
+.post-format-icon {
+  &:before {
+    font-size: 2rem;
+  }
+}
+
 .post-format-icon.post-format-standard:before,
 .post-state-format.post-format-standard:before,
 a.post-state-format.format-standard:before {
   content: "\f109"
 }
 
-.post-format-icon.post-format-image:before, .post-state-format.post-format-image:before, a.post-state-format.format-image:before {
+.post-format-icon.post-format-image:before,
+.post-state-format.post-format-image:before,
+a.post-state-format.format-image:before {
   content: "\f128"
 }
 

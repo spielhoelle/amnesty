@@ -12,6 +12,7 @@ if (has_post_thumbnail()) {
     $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
     $classes[] = 'header';
 }
+$format = (get_post_format()) ? get_post_format() : 'standard';
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -19,7 +20,7 @@ if (has_post_thumbnail()) {
     <figure class="<?php echo implode(' ', $classes) ?>">
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <figcaption>
-            <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+            <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
         </figcaption>
     </figure>
 
@@ -41,7 +42,7 @@ if (has_post_thumbnail()) {
                 <?php
                 the_content(sprintf(
                 /* translators: %s: Name of current post. */
-                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
+                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'),  array('span' => array('class' => array()))),
                     the_title('<span class="screen-reader-text">"', '"</span>', false)
                 ));
 

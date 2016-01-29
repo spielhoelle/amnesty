@@ -88,10 +88,6 @@ section[rel="Startseite"] {
     h1 {
       display: inline;
       transition: opacity .5s ease 0s, transform .5s ease 0s;
-
-      &:before {
-        font-size: 2.5rem;
-      }
     }
     h2 {
       margin-top: 20px;

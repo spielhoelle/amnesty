@@ -706,12 +706,17 @@ figure .more-link {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
+.post-format-icon:before {
+  font-size: 2rem; }
+
 .post-format-icon.post-format-standard:before,
 .post-state-format.post-format-standard:before,
 a.post-state-format.format-standard:before {
   content: "\f109"; }
 
-.post-format-icon.post-format-image:before, .post-state-format.post-format-image:before, a.post-state-format.format-image:before {
+.post-format-icon.post-format-image:before,
+.post-state-format.post-format-image:before,
+a.post-state-format.format-image:before {
   content: "\f128"; }
 
 .post-format-icon.post-format-gallery:before, .post-state-format.post-format-gallery:before, a.post-state-format.format-gallery:before {
@@ -1238,8 +1243,6 @@ section[rel="Startseite"] {
     transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s;
     transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
-    .slider figure figcaption h1:before {
-      font-size: 2.5rem; }
   .slider figure figcaption h2 {
     margin-top: 20px;
     background: rgba(0, 0, 0, 0.9);

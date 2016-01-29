@@ -25,13 +25,12 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
         <?php endwhile; ?>
     </div>
     <div class='custom-pager'>
-        <?php
-        $i = 0 ;
+        <?php $i = 0;
         while ($the_query->have_posts()) : $the_query->the_post();
             $format = (get_post_format()) ? get_post_format() : 'standard'; ?>
             <a data-slide-index="<?php echo $i ?>" href="<?php the_permalink() ?>"
                class="entry-title post-format-icon post-format-<?php echo $format ?>"></a>
-        <?php $i++; endwhile; ?>
+            <?php $i++; endwhile; ?>
     </div>
     <!--content-home.php-->
 <?php wp_reset_postdata();
