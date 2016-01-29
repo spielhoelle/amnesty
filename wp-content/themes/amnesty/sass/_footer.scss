@@ -1,5 +1,4 @@
 footer#colophon {
-  padding: 0 20px;
   background: black;
   width: 100%;
   &, a {
@@ -44,6 +43,11 @@ footer#colophon {
   a:not(.content-button):hover {
     text-decoration: underline;
   }
+
+
+
+
+  
 }
 
 .footer-below {
@@ -71,6 +75,7 @@ footer#colophon {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-flow: row wrap;
     > *:first-child {
       flex: 0 0 auto;
     }
@@ -85,8 +90,10 @@ footer#colophon {
     i {
       padding: 20px;
       font-size: 2em;
+      transition: transform .3s ease;
       &:hover {
         color: lighten($grey, 20);
+        transform: scale(1.5)
       }
     }
   }

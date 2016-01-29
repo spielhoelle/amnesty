@@ -19,7 +19,9 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                         icons();
                         echo get_the_title() ?>
                     </h1>
+                    <br>
                     <h2><?php echo $content_parts['main'] ?></h2>
+                    <br>
                     <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
                 </figcaption>
             </figure>

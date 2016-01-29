@@ -133,9 +133,14 @@ $breakpoint2: 500px;
   .single .entry-content h1.entry-title,
   .slider figure figcaption h1,
   .page .wrap .entry-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
+  .slider figure figcaption {
+    margin: $gap;
+    pointer-events: none;
 
+
+  }
   .grid > article {
     flex: 0 0 100%;
     max-width: none;

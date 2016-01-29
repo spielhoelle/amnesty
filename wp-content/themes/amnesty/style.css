@@ -390,7 +390,7 @@ table {
   width: 100%; }
 
 figcaption {
-  margin-left: 20px; }
+  margin: 20px; }
   figcaption h1.entry-title, figcaption h1.page-title {
     font-size: 3rem; }
 
@@ -581,6 +581,8 @@ figure.header {
   margin-bottom: 30px;
   background: #fff;
   border: 1px solid #000; }
+  [rel="News"] .more-link {
+    margin: 30px 0 0 0; }
   .more-link:hover {
     background: #000;
     color: #fff; }
@@ -590,8 +592,8 @@ figure .more-link {
   border: 0 none;
   margin-bottom: 0; }
 
-.wrap {
-  padding: 0 20px; }
+.wrap, #colophon {
+  padding: 0 15px; }
 
 .single .wrap {
   display: -webkit-flex;
@@ -620,6 +622,8 @@ figure .more-link {
 
 .single .entry-content {
   border-bottom: 1px solid #dadada; }
+  .single .entry-content a {
+    text-decoration: underline; }
 
 .single .entry-meta {
   font-family: "Trade Gothic";
@@ -668,8 +672,8 @@ figure .more-link {
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-  margin: 0 -30px;
-  padding: 30px 0 0; }
+  margin: 0;
+  padding: 0; }
   .grid figure {
     overflow: hidden;
     background-color: #fff; }
@@ -689,10 +693,10 @@ figure .more-link {
       .grid figure figcaption h2 {
         display: none; }
   .grid > article {
-    -webkit-flex: 0 0 33%;
-        -ms-flex: 0 0 33%;
-            flex: 0 0 33%;
-    padding: 0 15px 30px 15px; }
+    -webkit-flex: 0 0 33.33333333%;
+        -ms-flex: 0 0 33.33333333%;
+            flex: 0 0 33.33333333%;
+    padding: 0; }
     .grid > article img {
       width: 100%;
       height: 100%; }
@@ -935,7 +939,6 @@ figure .more-link {
     max-width: 100%; }
 
 footer#colophon {
-  padding: 0 20px;
   background: black;
   width: 100%; }
   footer#colophon, footer#colophon a {
@@ -1009,7 +1012,10 @@ footer#colophon {
           justify-content: space-between;
   -webkit-align-items: center;
       -ms-flex-align: center;
-          align-items: center; }
+          align-items: center;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap; }
   .footer-below .rest > *:first-child {
     -webkit-flex: 0 0 auto;
         -ms-flex: 0 0 auto;
@@ -1028,9 +1034,15 @@ footer#colophon {
           flex-flow: row nowrap; }
   .footer-below ul i {
     padding: 20px;
-    font-size: 2em; }
+    font-size: 2em;
+    transition: -webkit-transform .3s ease;
+    transition: transform .3s ease;
+    transition: transform .3s ease, -webkit-transform .3s ease; }
     .footer-below ul i:hover {
-      color: white; }
+      color: white;
+      -webkit-transform: scale(1.5);
+          -ms-transform: scale(1.5);
+              transform: scale(1.5); }
 
 ul.children {
   padding-left: 10px; }
@@ -1199,6 +1211,10 @@ section[rel="Startseite"] {
   .slider figure figcaption a:not(.more-link) {
     color: white;
     text-decoration: underline; }
+  .slider figure figcaption h1, .slider figure figcaption h2 {
+    text-align: left !important; }
+    .slider figure figcaption h1:empty, .slider figure figcaption h2:empty {
+      display: none; }
   .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
     opacity: 0;
     -webkit-transform: translate(-50px, 0);
@@ -1215,7 +1231,8 @@ section[rel="Startseite"] {
     color: white;
     transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
     transition: opacity .5s ease .5s, transform .5s ease .5s;
-    transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
+    transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s;
+    display: inline-block; }
   .slider figure figcaption .more-link {
     transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
     transition: opacity .5s ease .8s, transform .5s ease .8s;
@@ -1785,7 +1802,10 @@ html[lang] {
   .single .entry-content h1.entry-title,
   .slider figure figcaption h1,
   .page .wrap .entry-header h1 {
-    font-size: 2.5rem; }
+    font-size: 2rem; }
+  .slider figure figcaption {
+    margin: 30px;
+    pointer-events: none; }
   .grid > article {
     -webkit-flex: 0 0 100%;
         -ms-flex: 0 0 100%;

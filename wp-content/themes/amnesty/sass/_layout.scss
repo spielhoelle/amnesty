@@ -48,6 +48,9 @@ figure.header {
   padding: 1rem 2rem;
   font-family: $font__title;
   margin-bottom: $gap;
+  [rel="News"] & {
+    margin: $gap 0 0 0;
+  }
   background: $white;
   border: 1px solid $black;
   &:hover {
@@ -62,8 +65,11 @@ figure .more-link {
   margin-bottom: 0;
 }
 
-.wrap {
-  padding: 0 20px;
+.wrap, #colophon {
+  padding: 0 15px;
+  .grid, .columnwrapper {
+    // margin: 0 #{-$gap/2};
+  }
 }
 
 .single {
@@ -85,6 +91,9 @@ figure .more-link {
     }
   }
   .entry-content {
+    a {
+      text-decoration: underline;
+    }
     border-bottom: 1px solid $grey;
   }
 
@@ -137,8 +146,8 @@ figure .more-link {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin: 0 #{-$gap};
-  padding: $gap 0 0;
+  margin: 0;
+  padding: 0;
   figure {
     overflow: hidden;
     background-color: $white;
@@ -165,8 +174,8 @@ figure .more-link {
   }
 
   > article {
-    flex: 0 0 33%;
-    padding: 0 #{$gap/2} $gap #{$gap/2};
+    flex: 0 0 33.33333333%;
+    padding: 0;
     img {
       width: 100%;
       height: 100%;

@@ -84,6 +84,12 @@ section[rel="Startseite"] {
       text-decoration: underline;
 
     }
+    h1, h2 {
+      text-align: left !important;
+      &:empty {
+        display: none;
+      }
+    }
     h1, h2, .more-link {
       opacity: 0;
       transform: translate(-50px, 0);
@@ -98,6 +104,7 @@ section[rel="Startseite"] {
       background: rgba(0, 0, 0, 0.9);
       color: white;
       transition: opacity .5s ease .5s, transform .5s ease .5s;
+      display:inline-block;
     }
     .more-link {
       transition: opacity .5s ease .8s, transform .5s ease .8s;

@@ -6,8 +6,12 @@
  *
  * @package amnesty
  */
-$img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
-
+$img = '';
+$classes = [];
+if (z_taxonomy_image_url($cat->term_id)) {
+    $img = z_taxonomy_image_url($cat->term_id);
+    $classes[] = 'header';
+}
 get_header(); ?>
 
     <div id="primary" class="content-area">
@@ -17,8 +21,8 @@ get_header(); ?>
             if (have_posts()) : ?>
 
 
-            <figure class="header">
-                <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+            <figure class="<?php echo implode(' ', $classes) ?>"><img src="/wp-includes/images/blank.gif"
+                                                                      style="background-image:url(<?php echo $img ?>)">
                 <figcaption>
                     <h1 class="page-title"><?php icons();
                         the_archive_title(); ?></h1>
