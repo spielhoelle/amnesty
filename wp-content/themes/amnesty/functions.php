@@ -45,7 +45,7 @@ if (!function_exists('amnesty_setup')) :
         // This theme uses wp_nav_menu() in one location.
         register_nav_menus(array(
             'primary' => esc_html__('Primary Menu', 'amnesty'),
-            'footer' => esc_html__('Footer Menu', 'amnesty'),
+            'footer'  => esc_html__('Footer Menu', 'amnesty'),
 
         ));
 
@@ -59,18 +59,6 @@ if (!function_exists('amnesty_setup')) :
             'comment-list',
             'gallery',
             'caption',
-        ));
-
-        /*
-         * Enable support for Post Formats.
-         * See https://developer.wordpress.org/themes/functionality/post-formats/
-         */
-        add_theme_support('post-formats', array(
-            'aside',
-            'image',
-            'video',
-            'quote',
-            'link',
         ));
 
         // Set up the WordPress core custom background feature.
@@ -102,13 +90,13 @@ add_action('after_setup_theme', 'amnesty_content_width', 0);
  */
 function amnesty_widgets_init() {
     register_sidebar(array(
-        'name' => esc_html__('Footer', 'amnesty'),
-        'id' => 'footer',
-        'description' => '',
+        'name'          => esc_html__('Footer', 'amnesty'),
+        'id'            => 'footer',
+        'description'   => '',
         'before_widget' => '<section id="%1$s" class="widget %2$s">',
-        'after_widget' => '</section>',
-        'before_title' => '<h2 class="widget-title">',
-        'after_title' => '</h2>',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h2 class="widget-title">',
+        'after_title'   => '</h2>',
     ));
 }
 
@@ -120,7 +108,7 @@ add_action('widgets_init', 'amnesty_widgets_init');
 function amnesty_scripts() {
     wp_enqueue_style('amnesty-style', get_stylesheet_uri());
 
-    wp_enqueue_style( 'dashicons' );
+    wp_enqueue_style('dashicons');
 
     wp_enqueue_style('font-awesome', get_bloginfo('stylesheet_directory') . '/sass/font-awesome.min.css');
 
@@ -169,15 +157,12 @@ require get_template_directory() . '/inc/tinymce.php';
 require get_template_directory() . '/inc/remove.comments.php';
 
 
-
-
 /**
  * show page name in <title> to see which page is currently edited.
  */
 add_filter('admin_title', 'my_admin_title', 10, 2);
 
-function my_admin_title($admin_title, $title)
-{
+function my_admin_title($admin_title, $title) {
     $currentScreen = get_current_screen();
     if ($currentScreen->id === 'page' || $currentScreen->id === 'post' || $currentScreen->id === 'project' || $currentScreen->id === 'product') {
         return 'e-' . get_the_title();
@@ -199,6 +184,19 @@ function load_admin_style() {
 
 
 function my_theme_add_editor_styles() {
-    add_editor_style( 'editor.css' );
+    add_editor_style('editor.css');
 }
-add_action( 'admin_init', 'my_theme_add_editor_styles' );
+
+add_action('admin_init', 'my_theme_add_editor_styles');
+
+function icons($link = true) {
+    global $post;
+    foreach (get_the_category($post->ID) as $category) {
+        if ($category->category_description !== '') {
+            // Get the ID of a given category
+            echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
+            echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
+            echo ($link) ? '</a>' : '';
+        }
+    }
+}

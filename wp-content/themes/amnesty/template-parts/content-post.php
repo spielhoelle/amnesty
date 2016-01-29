@@ -12,7 +12,6 @@ if (has_post_thumbnail()) {
     $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
     $classes[] = 'header';
 }
-$format = (get_post_format()) ? get_post_format() : 'standard';
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -20,7 +19,12 @@ $format = (get_post_format()) ? get_post_format() : 'standard';
     <figure class="<?php echo implode(' ', $classes) ?>">
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <figcaption>
-            <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
+
+            <h1 class="entry-title ">
+                <?php
+                icons();
+                echo get_the_title() ?>
+            </h1>
         </figcaption>
     </figure>
 
@@ -42,7 +46,7 @@ $format = (get_post_format()) ? get_post_format() : 'standard';
                 <?php
                 the_content(sprintf(
                 /* translators: %s: Name of current post. */
-                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'),  array('span' => array('class' => array()))),
+                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
                     the_title('<span class="screen-reader-text">"', '"</span>', false)
                 ));
 
@@ -72,13 +76,17 @@ $format = (get_post_format()) ? get_post_format() : 'standard';
 
                 $recent_posts = new WP_Query($args);
 
-                while ($recent_posts->have_posts()) : $recent_posts->the_post();
-                    $format = (get_post_format()) ? get_post_format() : 'standard'; ?>
-                    <h3>
-                        <a id="" href="<?php the_permalink() ?>"
-                           class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></a>
+                while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
+                    <h3 class="entry-title">
+                        <a href="<?php the_permalink() ?>" class="entry-title ">
+                            <?php
+                            echo get_the_title();
+                            icons();
+                            ?>
+                        </a>
                     </h3>
                     <?php
+
                 endwhile;
                 wp_reset_postdata(); ?>
 

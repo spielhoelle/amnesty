@@ -697,51 +697,14 @@ figure .more-link {
       width: 100%;
       height: 100%; }
 
-.post-format-icon:before {
-  position: relative;
-  display: inline-block;
-  margin-right: 7px;
-  font: 400 20px/1 dashicons;
-  speak: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
-
-.post-format-icon:before {
-  font-size: 2rem; }
-
-.post-format-icon.post-format-standard:before,
-.post-state-format.post-format-standard:before,
-a.post-state-format.format-standard:before {
-  content: "\f109"; }
-
-.post-format-icon.post-format-image:before,
-.post-state-format.post-format-image:before,
-a.post-state-format.format-image:before {
-  content: "\f128"; }
-
-.post-format-icon.post-format-gallery:before, .post-state-format.post-format-gallery:before, a.post-state-format.format-gallery:before {
-  content: "\f161"; }
-
-.post-format-icon.post-format-audio:before, .post-state-format.post-format-audio:before, a.post-state-format.format-audio:before {
-  content: "\f127"; }
-
-.post-format-icon.post-format-video:before, .post-state-format.post-format-video:before, a.post-state-format.format-video:before {
-  content: "\f126"; }
-
-.post-format-icon.post-format-chat:before, .post-state-format.post-format-chat:before, a.post-state-format.format-chat:before {
-  content: "\f125"; }
-
-.post-format-icon.post-format-status:before, .post-state-format.post-format-status:before, a.post-state-format.format-status:before {
-  content: "\f130"; }
-
-.post-format-icon.post-format-aside:before, .post-state-format.post-format-aside:before, a.post-state-format.format-aside:before {
-  content: "\f123"; }
-
-.post-format-icon.post-format-quote:before, .post-state-format.post-format-quote:before, a.post-state-format.format-quote:before {
-  content: "\f122"; }
-
-.post-format-icon.post-format-link:before, .post-state-format.post-format-link:before, a.post-state-format.format-link:before {
-  content: "\f103"; }
+.entry-title .fa, .page-title .fa {
+  margin-right: 5px; }
+  .entry-title .fa:before, .page-title .fa:before {
+    color: #fff; }
+  aside .entry-title .fa, aside .page-title .fa {
+    margin-left: 5px; }
+    aside .entry-title .fa:before, aside .page-title .fa:before {
+      color: #000; }
 
 #masthead {
   position: fixed;
@@ -1233,6 +1196,9 @@ section[rel="Startseite"] {
     height: 100%; }
   .slider figure img {
     transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84); }
+  .slider figure figcaption a:not(.more-link) {
+    color: white;
+    text-decoration: underline; }
   .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
     opacity: 0;
     -webkit-transform: translate(-50px, 0);
@@ -1263,7 +1229,7 @@ section[rel="Startseite"] {
 section .entry-content {
   text-align: center; }
 
-section i.fa {
+section[rel="Über uns"] i.fa {
   font-size: 6rem; }
 
 h1.entry-title, h1.page-title {
@@ -1277,6 +1243,24 @@ h1.entry-title, h1.page-title {
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.9);
   color: #000; }
+
+section[rel="Startseite"] .custom-pager i.fa {
+  text-align: center;
+  width: 3rem;
+  display: block;
+  padding: 2px;
+  margin-right: 0; }
+  section[rel="Startseite"] .custom-pager i.fa, section[rel="Startseite"] .custom-pager i.fa:before {
+    font-size: 2rem;
+    color: #000; }
+  section[rel="Startseite"] .custom-pager i.fa:hover:before {
+    color: #fff; }
+
+section[rel="Startseite"] .fa:before {
+  color: #000; }
+
+section[rel="Startseite"] a.active .fa:before {
+  color: #fff; }
 
 /**
  * WP admin bar

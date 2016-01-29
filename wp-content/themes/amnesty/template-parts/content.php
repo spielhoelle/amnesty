@@ -14,7 +14,6 @@ $content_parts = get_extended($content);
          rel="<?php echo get_the_title() ?>"
          id="post-<?php the_ID(); ?>" <?php post_class((has_post_thumbnail()) ? 'has_post_thumbnail' : ''); ?>>
     <?php
-    $format = (get_post_format()) ? get_post_format() : 'standard';
     ?>
 
     <figure>
@@ -23,7 +22,9 @@ $content_parts = get_extended($content);
         </a>
 
         <figcaption>
-            <h1 class="entry-title post-format-icon post-format-<?php echo $format ?>"><?php echo get_the_title() ?></h1>
+            <h1 class="entry-title"><?php
+                icons();
+                echo get_the_title() ?></h1>
             <br>
             <h2><?php echo $content_parts['main'] ?></h2>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>

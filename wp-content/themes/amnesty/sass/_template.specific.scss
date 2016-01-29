@@ -5,7 +5,7 @@ section {
   .entry-content {
     text-align: center;
   }
-  i.fa {
+  &[rel="Über uns"] i.fa {
     font-size: 6rem;
   }
 }
@@ -46,4 +46,27 @@ h1.entry-title, h1.page-title {
   display: inline-block;
   background-color: transparentize(#fff, 0.1);
   color: $black;
+}
+
+section[rel="Startseite"] {
+  .custom-pager i.fa {
+    &, &:before {
+      font-size: 2rem;
+      color: $black;
+    }
+    &:hover:before {
+      color: $white;
+    }
+    text-align: center;
+    width: 3rem;
+    display: block;
+    padding: 2px;
+    margin-right: 0;
+  }
+  .fa:before {
+    color: $black;
+  }
+  a.active .fa:before {
+    color: $white;
+  }
 }

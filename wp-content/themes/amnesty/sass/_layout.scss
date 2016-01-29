@@ -174,62 +174,18 @@ figure .more-link {
   }
 }
 
-.post-format-icon:before {
-  position: relative;
-  display: inline-block;
-  margin-right: 7px;
-  font: 400 20px/1 dashicons;
-  speak: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale
-}
+.entry-title, .page-title {
+  .fa {
+    margin-right: 5px;
+    &:before {
+      color: $white;
+    }
+    aside & {
+      margin-left: 5px;
+      &:before {
+        color: $black;
+      }
 
-.post-format-icon {
-  &:before {
-    font-size: 2rem;
+    }
   }
-}
-
-.post-format-icon.post-format-standard:before,
-.post-state-format.post-format-standard:before,
-a.post-state-format.format-standard:before {
-  content: "\f109"
-}
-
-.post-format-icon.post-format-image:before,
-.post-state-format.post-format-image:before,
-a.post-state-format.format-image:before {
-  content: "\f128"
-}
-
-.post-format-icon.post-format-gallery:before, .post-state-format.post-format-gallery:before, a.post-state-format.format-gallery:before {
-  content: "\f161"
-}
-
-.post-format-icon.post-format-audio:before, .post-state-format.post-format-audio:before, a.post-state-format.format-audio:before {
-  content: "\f127"
-}
-
-.post-format-icon.post-format-video:before, .post-state-format.post-format-video:before, a.post-state-format.format-video:before {
-  content: "\f126"
-}
-
-.post-format-icon.post-format-chat:before, .post-state-format.post-format-chat:before, a.post-state-format.format-chat:before {
-  content: "\f125"
-}
-
-.post-format-icon.post-format-status:before, .post-state-format.post-format-status:before, a.post-state-format.format-status:before {
-  content: "\f130"
-}
-
-.post-format-icon.post-format-aside:before, .post-state-format.post-format-aside:before, a.post-state-format.format-aside:before {
-  content: "\f123"
-}
-
-.post-format-icon.post-format-quote:before, .post-state-format.post-format-quote:before, a.post-state-format.format-quote:before {
-  content: "\f122"
-}
-
-.post-format-icon.post-format-link:before, .post-state-format.post-format-link:before, a.post-state-format.format-link:before {
-  content: "\f103"
 }
