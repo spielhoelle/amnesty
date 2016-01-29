@@ -573,6 +573,24 @@ figure.header {
     background: #fff;
     color: #000; }
 
+span.author {
+  text-transform: capitalize; }
+
+.userinfo {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 100px 0; }
+  .userinfo img {
+    border-radius: 50%;
+    height: 300px;
+    -webkit-flex: 1 0 300px;
+        -ms-flex: 1 0 300px;
+            flex: 1 0 300px;
+    background-size: cover; }
+  .userinfo > * {
+    padding: 20px; }
+
 .more-link {
   display: inline-block;
   text-decoration: none;

@@ -21,17 +21,18 @@ get_header(); ?>
             if (have_posts()) : ?>
 
 
-            <figure class="<?php echo implode(' ', $classes) ?>"><img src="/wp-includes/images/blank.gif"
-                                                                      style="background-image:url(<?php echo $img ?>)">
+            <figure class="<?php echo implode(' ', $classes) ?>">
+                <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
                 <figcaption>
-                    <h1 class="page-title"><?php icons();
+                    <h1 class="page-title">
+                        <?php if (!is_author()) {
+                            icons();
+                        }
                         the_archive_title(); ?></h1>
 
                 </figcaption>
             </figure>
 
-            <header class="page-header">
-            </header><!-- .page-header -->
 
             <div class="grid">
                 <?php
@@ -44,7 +45,6 @@ get_header(); ?>
                      * called content-___.php (where ___ is the Post Format name) and that will be used instead.
                      */
                     get_template_part('template-parts/content', '');
-
                 endwhile;
 
                 the_posts_navigation();
