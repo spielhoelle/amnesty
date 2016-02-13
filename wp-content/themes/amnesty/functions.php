@@ -265,17 +265,25 @@ function get_parent_cat()
 
 function get_thumbnail()
 {
-    if (has_post_thumbnail()) {
-        $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
-    } else if (function_exists('z_taxonomy_image_url')) {
-        $parent = get_parent_cat();
-        $img = z_taxonomy_image_url($parent->term_id);
-    } else {
+    $img = '';
+    if (get_post_type() == 'page') {
         $rand = rand(1, 4);
         $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
-    }
+    } else {
+        if (has_post_thumbnail()) {
+            $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
+        } else if (function_exists('z_taxonomy_image_url')) {
+            $parent = get_parent_cat();
+            $img = z_taxonomy_image_url($parent->term_id);
+        }
+        if ($img == '') {
+            $rand = rand(1, 4);
+            $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
 
+        }
+    }
     return $img;
+
 }
 
 

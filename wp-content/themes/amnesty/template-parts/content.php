@@ -29,7 +29,7 @@ $content_parts = get_extended($content);
                 icons();
                 echo get_the_title() ?></h1>
             <br>
-            <h2><?php echo $content_parts['main'] ?></h2>
+            <h2><?php echo (is_page()) ? $content_parts['main'] : '' ?></h2>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
         </figcaption>
     </figure>

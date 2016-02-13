@@ -6,12 +6,9 @@
  *
  * @package amnesty
  */
-$img = '';
 $classes = [];
-if (has_post_thumbnail()) {
-    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
-    $classes[] = 'header';
-}
+$img = get_thumbnail();
+
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -33,8 +30,6 @@ if (has_post_thumbnail()) {
 
             <div class="entry-content">
                 <?php
-
-
                 if ('post' === get_post_type()) : ?>
                     <div class="entry-meta">
                         <?php amnesty_posted_on(); ?>

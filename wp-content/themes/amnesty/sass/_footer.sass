@@ -14,14 +14,13 @@ footer.site-footer
     margin: 15px 0
   .footer-below, .tommy
     border-top: 1px solid lighten($black, 20)
-  \::selection
-    background: $white
-    /* WebKit/Blink Browsers
-    color: #000
-  \::-moz-selection
-    background: $white
-    /* Gecko Browsers
-    color: #000
+    ::selection
+      background: $white
+      color: #000
+    ::-moz-selection
+      background: $white
+      color: #000
+
 
 .footer-top
   display: flex
@@ -40,13 +39,8 @@ footer.site-footer
     justify-content: space-between
     align-items: center
     flex-flow: row wrap
-    > *:first-child
-      flex: 0 0 auto
-    > *:last-child
-      flex: 0 0 33%
   ul
     display: flex
-    flex-flow: row nowrap
     i
       padding: 20px
       font-size: 2em

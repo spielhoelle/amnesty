@@ -41,16 +41,17 @@ span.author
     flex: 0 0 300px
     background-size: cover
 
-.content-button, .more-link
-  padding: 1rem 2rem
+//
+//buttons
+//
+
+.content-button, 
+.more-link
   background: $white
   border: 1px solid black
   color: $black
   font-size: 1.5rem
-  &:hover
-    background: $black
-    color: $white
-
+  
 .content-button
   font-family: $font__title
   font-weight: 100
@@ -58,6 +59,9 @@ span.author
   cursor: pointer
   font-size: 1rem
 
+.more-link, input[type="search"], input[type="submit"]
+  font-family: $font__title
+  
 .more-link
   display: inline-block
   text-decoration: none
@@ -68,6 +72,43 @@ figure .more-link
   background: $yellow
   border: 0 none
   margin-bottom: 0
+
+.search-form
+  input[type="search"]
+    border-radius: 0
+    border-color: $grey
+  input[type="submit"]
+    border-radius: 0
+    background: $yellow
+    border: 0
+    box-shadow: none
+    text-shadow: none
+
+input[type="submit"],
+.content-button,
+.more-link
+  &:hover
+    background: $black
+    color: $white
+    box-shadow: none
+
+input[type="search"],
+input[type="submit"]
+  line-height: 3
+  font-size: 1rem
+input[type="search"],
+input[type="submit"],
+.content-button,
+.more-link
+  padding: 0 2rem
+
+body
+  &.blog, &.archive, &.search
+    .entry-header
+      margin: 0 30px
+      display: flex
+      justify-content: space-between
+      align-items: center
 
 .wrap, #colophon
   padding: 0 $gap
@@ -175,3 +216,15 @@ figure .more-link
       margin-left: 5px
       &:before
         color: $black
+
+
+nav.pagination
+  margin: 35px auto
+  a, span
+    display: inline-block
+    border: 1px solid $black
+    padding: 5px 10px
+    text-decoration: none
+    &.current, &:hover
+      background: $black
+      color: $white

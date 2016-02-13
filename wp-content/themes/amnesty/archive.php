@@ -17,44 +17,41 @@ get_header(); ?>
     <div id="primary" class="content-area">
         <main id="main" class="site-main" role="main">
 
-            <?php
+            <?php // news page is page
             if (have_posts()) : ?>
 
+                <header class="entry-header">
+                    <h1 class="entry-title">Alle News</h1>
+                    <?php get_search_form(); ?>
+                </header>
+                <div class="grid">
+                    <?php while (have_posts()) : the_post(); ?>
+                        <?php get_template_part('template-parts/content', ''); ?>
+                    <?php endwhile; ?>
+                </div>
+                <!-- index -->
+                <nav class="pagination">
+                    <?php
+                    global $wp_query;
 
-            <figure class="<?php echo implode(' ', $classes) ?>">
-                <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
-                <figcaption>
-                    <h1 class="page-title">
-                        <?php if (!is_author()) {
-                            icons();
-                        }
-                        the_archive_title(); ?></h1>
+                    $big = 999999999; // need an unlikely integer
 
-                </figcaption>
-            </figure>
+                    echo paginate_links(array(
+                        'base'    => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                        'format'  => '?paged=%#%',
+                        'current' => max(1, get_query_var('paged')),
+                        'total'   => $wp_query->max_num_pages
+                    ));
+                    ?>
+                </nav>
+
+            <?php else : ?>
+
+                <?php get_template_part('template-parts/content', 'none'); ?>
+
+            <?php endif; ?>
 
 
-            <div class="grid">
-                <?php
-                /* Start the Loop */
-                while (have_posts()) : the_post();
-
-                    /*
-                     * Include the Post-Format-specific template for the content.
-                     * If you want to override this in a child theme, then include a file
-                     * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-                     */
-                    get_template_part('template-parts/content', '');
-                endwhile;
-
-                the_posts_navigation();
-
-                else :
-
-                    get_template_part('template-parts/content', 'none');
-
-                endif; ?>
-            </div>
         </main><!-- #main -->
     </div><!-- #primary -->
 
