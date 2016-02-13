@@ -33,9 +33,9 @@
             </div>
 
             <div class="tommy">
-                <p>&copy; 2015 with <i class="fa fa-heart"></i> by
-                    <a target="_blank" href="http://www.thomaskuhnert.com">dystopie Spielhoelle Entertainment</a>
-                </p>
+                &copy; 2016 with <i class="fa fa-heart"></i>
+                by <a target="_blank" href="http://www.thomaskuhnert.com">Thomas Kuhnert</a>
+
             </div>
 
         </div>

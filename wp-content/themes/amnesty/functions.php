@@ -200,3 +200,31 @@ function icons($link = true) {
         }
     }
 }
+
+
+/**
+ * get header pic function for fallback images in posts
+ */
+
+
+function headerPic() {
+    if (wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0]) {
+        $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
+    } else {
+        $rand = rand(1, 4);
+        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
+    } ?>
+
+    <figure class="header">
+        <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+        <figcaption>
+
+            <h1 class="entry-title ">
+                <?php icons();
+                echo get_the_title() ?>
+            </h1>
+        </figcaption>
+    </figure>
+    <?php
+    return $img;
+}

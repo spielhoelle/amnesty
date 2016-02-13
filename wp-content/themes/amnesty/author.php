@@ -16,8 +16,10 @@
             <div class="wrap">
                 <div class="userinfo">
                     <?php if (get_wp_user_avatar_src() !== '') { ?>
-                        <img src="/wp-includes/images/blank.gif"
-                             style="background-image:url(<?php echo get_wp_user_avatar_src(); ?>)">
+                        <figure>
+                            <img src="/wp-includes/images/blank.gif"
+                                 style="background-image:url(<?php echo get_wp_user_avatar_src(); ?>)">
+                        </figure>
                     <?php } ?>
 
                     <div class="profile">

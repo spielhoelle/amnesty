@@ -15,8 +15,8 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                 </a>
 
                 <figcaption>
-                    <h1 class="entry-title"><?php
-                        icons();
+                    <h1 class="entry-title">
+                        <?php icons();
                         echo get_the_title() ?>
                     </h1>
                     <br>
@@ -31,11 +31,8 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
     <div class='custom-pager'>
         <?php $i = 0;
         while ($the_query->have_posts()) : $the_query->the_post(); ?>
-            <a data-slide-index="<?php echo $i ?>" href="<?php the_permalink() ?>"
-               class="entry-title">
-                <?php
-                icons(false);
-                ?>
+            <a data-slide-index="<?php echo $i ?>" href="<?php the_permalink() ?>" class="entry-title">
+                <?php icons(false); ?>
             </a>
             <?php $i++; endwhile; ?>
     </div>

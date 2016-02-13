@@ -1,5 +1,4 @@
 #page {
-  max-width: $viewport;
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -8,6 +7,11 @@
   &.page-hidden {
     opacity: 0;
   }
+}
+
+#masthead .top, #content, .footer-wrap {
+  max-width: $viewport;
+  margin: 0 auto;
 }
 
 #masthead, #content {
@@ -29,19 +33,6 @@ figure.header {
   position: relative;
 }
 
-.content-button {
-  padding: 0.9em;
-  background-color: black;
-  color: white;
-  font-family: $font__title;
-  font-weight: 100;
-  border: 1px solid black;
-  &:hover {
-    background: $white;
-    color: $black;
-  }
-}
-
 span.author {
   text-transform: capitalize;
 }
@@ -59,26 +50,34 @@ span.author {
     height: 300px;
     flex: 0 0 300px;
     background-size: cover;
-
   }
+}
 
+.content-button, .more-link {
+  padding: 1rem 2rem;
+  background: $white;
+  border: 1px solid black;
+  color: $black;
+  font-size: 1.5rem;
+  &:hover {
+    background: $black;
+    color: $white;
+  }
+}
+
+.content-button {
+  font-family: $font__title;
+  font-weight: 100;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
 .more-link {
   display: inline-block;
   text-decoration: none;
-  padding: 1rem 2rem;
   font-family: $font__title;
   margin-bottom: $gap;
-  [rel="News"] & {
-    margin: $gap 0 0 0;
-  }
-  background: $white;
-  border: 1px solid $black;
-  &:hover {
-    background: $black;
-    color: $white;
-  }
 }
 
 figure .more-link {
@@ -88,9 +87,22 @@ figure .more-link {
 }
 
 .wrap, #colophon {
-  padding: 0 15px;
+  padding: 0 $gap;
   .grid, .columnwrapper {
     // margin: 0 #{-$gap/2};
+  }
+}
+
+.columns {
+  padding: 0;
+  .column {
+    padding: 0 15px;
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+    }
   }
 }
 
@@ -169,7 +181,6 @@ figure .more-link {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
-  margin: 0;
   padding: 0;
   figure {
     overflow: hidden;
@@ -198,7 +209,7 @@ figure .more-link {
 
   > article {
     flex: 0 0 33.33333333%;
-    padding: 0;
+    padding: $gap;
     img {
       width: 100%;
       height: 100%;

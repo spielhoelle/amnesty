@@ -89,6 +89,9 @@ section[rel="Startseite"] {
       &:empty {
         display: none;
       }
+      i {
+        font-size: 0.8em;
+      }
     }
     h1, h2, .more-link {
       opacity: 0;
