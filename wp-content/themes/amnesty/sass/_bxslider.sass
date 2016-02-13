@@ -1,0 +1,89 @@
+.bx-wrapper
+  overflow: hidden
+  position: relative
+  .bx-controls
+    position: absolute
+    height: 100%
+    top: 0
+    width: 100%
+    a.bx-prev, a.bx-next
+      font-size: 5em
+      color: white
+      position: absolute
+      height: 60%
+      top: 20%
+      z-index: 51
+      width: 10vh
+      display: flex
+      justify-content: center
+      align-items: center
+      text-decoration: none
+      opacity: 0
+      transition: opacity .3s ease
+      &:hover
+        background: rgba(0, 0, 0, 0.1)
+      &.bx-next
+        right: 0
+  &:hover
+    .bx-controls
+      a.bx-prev, a.bx-next
+        opacity: 1
+
+section[rel="Startseite"]
+  position: relative
+
+.custom-pager
+  position: absolute
+  bottom: 0
+  right: 0
+  z-index: 51
+  display: flex
+  border: 1px solid black
+  a
+    display: block
+    background: $white
+    &:not(:last-child)
+      border-right: 1px solid $black
+    &.active, &:hover
+      background-color: $black
+      color: $white
+  .post-format-icon:before
+    padding: 0.5rem
+    margin: 0
+
+.slider figure
+  position: relative
+  &.active-slide img
+    transform: scale(1.2)
+  a
+    height: 100%
+  img
+    transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
+  figcaption
+    a:not(.more-link)
+      color: white
+      text-decoration: underline
+    h1, h2
+      text-align: left !important
+      &:empty
+        display: none
+      i
+        font-size: 0.8em
+    h1, h2, .more-link
+      opacity: 0
+      transform: translate(-50px, 0)
+    h1
+      display: inline
+      transition: opacity .5s ease 0s, transform .5s ease 0s
+    h2
+      margin-top: 20px
+      background: rgba(0, 0, 0, 0.9)
+      color: white
+      transition: opacity .5s ease .5s, transform .5s ease .5s
+      display: inline-block
+    .more-link
+      transition: opacity .5s ease .8s, transform .5s ease .8s
+  &.active-slide
+    h1, h2, .more-link
+      opacity: 1
+      transform: translate(0, 0)

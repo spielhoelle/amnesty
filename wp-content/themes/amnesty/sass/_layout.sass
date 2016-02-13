@@ -1,0 +1,177 @@
+#page
+  display: flex
+  flex-flow: column
+  align-items: center
+  margin: 0 auto
+  transition: opacity .5s ease
+  &.page-hidden
+    opacity: 0
+
+#masthead .top, #content, .footer-wrap
+  max-width: $viewport
+  margin: 0 auto
+
+#masthead, #content
+  width: 100%
+
+#content
+  margin-top: 80px
+
+section
+  .entry-footer
+    text-align: center
+
+figure.header
+  height: 600px
+  position: relative
+
+span.author
+  text-transform: capitalize
+
+.userinfo
+  display: flex
+  padding: 100px 0
+  flex-flow: row wrap
+  > *
+    padding: 20px
+    flex: 0 1 600px
+  img
+    border-radius: 50%
+    height: 300px
+    flex: 0 0 300px
+    background-size: cover
+
+.content-button, .more-link
+  padding: 1rem 2rem
+  background: $white
+  border: 1px solid black
+  color: $black
+  font-size: 1.5rem
+  &:hover
+    background: $black
+    color: $white
+
+.content-button
+  font-family: $font__title
+  font-weight: 100
+  display: inline-block
+  cursor: pointer
+  font-size: 1rem
+
+.more-link
+  display: inline-block
+  text-decoration: none
+  font-family: $font__title
+  margin-bottom: $gap
+
+figure .more-link
+  background: $yellow
+  border: 0 none
+  margin-bottom: 0
+
+.wrap, #colophon
+  padding: 0 $gap
+  .grid, .columnwrapper
+// margin: 0 #{-$gap/2};
+
+.columns
+  padding: 0
+  .column
+    padding: 0 15px
+    &:first-child
+      padding-left: 0
+    &:last-child
+      padding-right: 0
+
+.single
+  .wrap
+    display: flex
+    justify-content: space-between
+    align-items: flex-start
+    flex-flow: row wrap
+    .content-wrapper
+      flex: 0 0 50%
+    aside
+      margin: 20px 0
+      padding: 0 20px
+      flex: 0 0 33%
+      background: $grey
+      a
+  .entry-content
+    a
+      text-decoration: underline
+    border-bottom: 1px solid $grey
+  .entry-meta
+    font-family: $font__title
+    border-bottom: 1px solid $grey
+    border-top: 1px solid $grey
+    padding: .6rem 0
+    .posted-on, .author
+      a
+        text-decoration: none
+        font-weight: bold
+  .entry-footer
+    font-family: TradeGothicLT-BoldCondTwenty, HelveticaNeue-CondensedBold, 'Franklin Gothic Medium', sans-serif
+    span
+      display: block
+    ul
+      display: inline-flex
+    a
+      display: block
+      margin: 0
+      font-weight: 400
+      text-transform: uppercase
+      -webkit-font-feature-settings: 'kern'
+      font-feature-settings: 'kern'
+      -webkit-font-kerning: normal
+      font-kerning: normal
+      line-height: 1.1
+      white-space: nowrap
+      margin-right: 1.71429rem
+      margin-bottom: .85714rem
+      background-color: $lightgrey
+      letter-spacing: 0
+      padding: .71429rem
+      text-decoration: none
+      -webkit-transition: background-color .25s
+      transition: background-color .25s
+      &:hover
+        background-color: $grey
+
+.grid
+  display: flex
+  flex-flow: row wrap
+  justify-content: center
+  padding: 0
+  figure
+    overflow: hidden
+    background-color: $white
+    img
+      transition: transform .3s ease, opacity .3s ease
+    &:hover
+      img
+        transform: scale(1.1)
+        opacity: 0.5
+    figcaption
+      padding-right: 10px
+      h1
+        margin: 0 0 .5em 0
+        font-size: 1.5rem
+      h2
+        display: none
+  > article
+    flex: 0 0 33.33333333%
+    padding: $gap
+    img
+      width: 100%
+      height: 100%
+
+.entry-title, .page-title
+  .fa
+    margin-right: 5px
+    &:before
+      color: $white
+    aside &
+      margin-left: 5px
+      &:before
+        color: $black

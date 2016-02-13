@@ -3,12 +3,12 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     autoprefixer = require('gulp-autoprefixer'),
 
-    scssFiles = [
-        'wp-content/themes/amnesty/**/*.scss'
+    sassFiles = [
+        'wp-content/themes/amnesty/**/*.sass'
     ];
 
-gulp.task('scss', function() {
-    gulp.src(scssFiles, {base: 'wp-content/themes/amnesty'})
+gulp.task('sass', function() {
+    gulp.src(sassFiles, {base: 'wp-content/themes/amnesty'})
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer({
@@ -20,5 +20,5 @@ gulp.task('scss', function() {
 
 // watch task
 gulp.task('default',function() {
-    gulp.watch(scssFiles,['scss']);
+    gulp.watch(sassFiles,['sass']);
 });

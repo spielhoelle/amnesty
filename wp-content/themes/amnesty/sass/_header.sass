@@ -1,0 +1,114 @@
+#masthead
+  position: fixed
+  z-index: 52
+  background: white
+  max-width: $viewport
+  left: 50%
+  transform: translate(-50%, 0)
+  border-bottom: 1px solid $grey
+  a
+    text-transform: uppercase
+  .top
+    display: flex
+    height: $headerheight
+    .site-branding
+      height: 100%
+      position: absolute
+      left: 0
+      .site-title
+        margin: 0
+        height: 100%
+        a
+          width: 200px
+          padding-top: 40.1%
+          display: inline-block
+          color: transparent
+          height: 100%
+          background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain
+      .site-description
+        display: none
+
+.main-navigation
+  height: 100%
+  display: flex
+  width: 100%
+  flex-flow: column
+  > div
+    flex: 1 0 auto
+    display: flex
+    height: 100%
+    justify-content: center
+    flex-flow: column
+    > ul
+      height: 100%
+      > .sub-menu
+        top: $headerheight
+        display: flex
+        justify-content: center
+        .sub-menu
+          top: 160px
+          width: 100%
+          &:after
+            top: 160px
+      > li
+        height: 100%
+  ul
+    display: none
+    list-style: none
+    margin: 0
+    padding-left: 0
+    .sub-menu
+      background: $black
+      height: $headerheight
+      position: absolute
+      z-index: -1
+      justify-content: center
+      display: flex
+      flex-flow: row nowrap
+      width: 100%
+      left: -999em
+      .sub-menu
+        z-index: 0
+      a
+        color: $white
+        margin-top: -50px
+        transition: margin .3s ease
+  div > ul li.menu-item-has-children:hover
+    > .sub-menu
+      left: 0
+      > li > a
+        margin: 0
+  a
+    height: $headerheight
+    text-decoration: none
+    font-family: $font__title
+    padding: 0 $gap
+    display: flex
+    align-items: center
+    white-space: nowrap
+    &:hover
+      background: rgba(0, 0, 0, 0.1)
+  .current_page_item > a,
+  .current-menu-item > a,
+  .current_page_ancestor > a,
+  .current-menu-ancestor > a
+    background: black
+    color: $white
+    &:hover
+      background-color: black
+      color: darken($white, 10)
+  .menu-item-has-children
+
+.comment-navigation,
+.posts-navigation,
+.post-navigation
+  .site-main &
+    margin: 0 0 1.5em
+    overflow: hidden
+  .nav-previous
+    float: left
+    width: 50%
+  .nav-next
+    float: right
+    text-align: right
+    width: 50%
