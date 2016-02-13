@@ -563,7 +563,8 @@ span.author {
   background: white;
   border: 1px solid black;
   color: black;
-  font-size: 1.5rem; }
+  font-size: 1.5rem;
+  padding: 1em 2em; }
 
 .content-button {
   font-family: "Trade Gothic";
@@ -610,9 +611,7 @@ input[type="submit"] {
   font-size: 1rem; }
 
 input[type="search"],
-input[type="submit"],
-.content-button,
-.more-link {
+input[type="submit"] {
   padding: 0 2rem; }
 
 body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
@@ -770,7 +769,6 @@ nav.pagination {
   position: fixed;
   z-index: 52;
   background: white;
-  max-width: 1600px;
   left: 50%;
   -webkit-transform: translate(-50%, 0);
       -ms-transform: translate(-50%, 0);
