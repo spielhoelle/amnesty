@@ -105,6 +105,12 @@ figcaption {
 figure {
   margin: 0;
   position: relative;
+  figcaption {
+    pointer-events: none;
+    h1, h2, a {
+      pointer-events: all;
+    }
+  }
   img {
     background: transparent none no-repeat scroll center center / cover;
     display: block;

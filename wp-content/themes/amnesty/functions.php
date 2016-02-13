@@ -15,7 +15,8 @@ if (!function_exists('amnesty_setup')) :
      * runs before the init hook. The init hook is too late for some features, such
      * as indicating support for post thumbnails.
      */
-    function amnesty_setup() {
+    function amnesty_setup()
+    {
         /*
          * Make theme available for translation.
          * Translations can be filed in the /languages/ directory.
@@ -45,7 +46,7 @@ if (!function_exists('amnesty_setup')) :
         // This theme uses wp_nav_menu() in one location.
         register_nav_menus(array(
             'primary' => esc_html__('Primary Menu', 'amnesty'),
-            'footer'  => esc_html__('Footer Menu', 'amnesty'),
+            'footer' => esc_html__('Footer Menu', 'amnesty'),
 
         ));
 
@@ -77,7 +78,8 @@ add_action('after_setup_theme', 'amnesty_setup');
  *
  * @global int $content_width
  */
-function amnesty_content_width() {
+function amnesty_content_width()
+{
     $GLOBALS['content_width'] = apply_filters('amnesty_content_width', 640);
 }
 
@@ -88,15 +90,16 @@ add_action('after_setup_theme', 'amnesty_content_width', 0);
  *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
-function amnesty_widgets_init() {
+function amnesty_widgets_init()
+{
     register_sidebar(array(
-        'name'          => esc_html__('Footer', 'amnesty'),
-        'id'            => 'footer',
-        'description'   => '',
+        'name' => esc_html__('Footer', 'amnesty'),
+        'id' => 'footer',
+        'description' => '',
         'before_widget' => '<section id="%1$s" class="widget %2$s">',
-        'after_widget'  => '</section>',
-        'before_title'  => '<h2 class="widget-title">',
-        'after_title'   => '</h2>',
+        'after_widget' => '</section>',
+        'before_title' => '<h2 class="widget-title">',
+        'after_title' => '</h2>',
     ));
 }
 
@@ -105,7 +108,8 @@ add_action('widgets_init', 'amnesty_widgets_init');
 /**
  * Enqueue scripts and styles.
  */
-function amnesty_scripts() {
+function amnesty_scripts()
+{
     wp_enqueue_style('amnesty-style', get_stylesheet_uri());
 
     wp_enqueue_style('dashicons');
@@ -162,7 +166,8 @@ require get_template_directory() . '/inc/remove.comments.php';
  */
 add_filter('admin_title', 'my_admin_title', 10, 2);
 
-function my_admin_title($admin_title, $title) {
+function my_admin_title($admin_title, $title)
+{
     $currentScreen = get_current_screen();
     if ($currentScreen->id === 'page' || $currentScreen->id === 'post' || $currentScreen->id === 'project' || $currentScreen->id === 'product') {
         return 'e-' . get_the_title();
@@ -177,19 +182,22 @@ function my_admin_title($admin_title, $title) {
  */
 
 add_action('admin_enqueue_scripts', 'load_admin_style');
-function load_admin_style() {
+function load_admin_style()
+{
     //@TODO checken
     wp_enqueue_style('admin_css', get_template_directory_uri() . '/sass/admin-style.css', false, '1.0.0');
 }
 
 
-function my_theme_add_editor_styles() {
+function my_theme_add_editor_styles()
+{
     add_editor_style('editor.css');
 }
 
 add_action('admin_init', 'my_theme_add_editor_styles');
 
-function icons($link = true) {
+function icons($link = true)
+{
     global $post;
     foreach (get_the_category($post->ID) as $category) {
         if ($category->category_description !== '') {
@@ -207,7 +215,8 @@ function icons($link = true) {
  */
 
 
-function headerPic() {
+function headerPic()
+{
     if (wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0]) {
         $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
     } else {
@@ -227,4 +236,40 @@ function headerPic() {
     </figure>
     <?php
     return $img;
+}
+
+/**
+ * get thumbnail, get attachment, get category image
+ */
+
+
+function get_thumbnail()
+{
+    if (has_post_thumbnail()) {
+        $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
+    } else if (function_exists('z_taxonomy_image_url')) {
+        $categories = get_the_category();
+        foreach ($categories as $cat) {
+            if ($cat->category_parent !== 0) {
+                $parent = $cat->category_parent;
+            } else {
+                $parent = $cat;
+            }
+        }
+        $img = z_taxonomy_image_url($parent->term_id);
+    } else {
+        $rand = rand(1, 4);
+        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
+    }
+
+    return $img;
+}
+
+
+function dump($param)
+{
+    echo "<pre style='position:absolute; z-index: 999999; background: rgba(255, 255, 255, 0.31)'>";
+    var_dump($param);
+    echo "</pre>";
+
 }

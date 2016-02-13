@@ -397,6 +397,10 @@ figcaption {
 figure {
   margin: 0;
   position: relative; }
+  figure figcaption {
+    pointer-events: none; }
+    figure figcaption h1, figure figcaption h2, figure figcaption a {
+      pointer-events: all; }
   figure img {
     background: transparent none no-repeat scroll center center / cover;
     display: block;
@@ -723,6 +727,7 @@ figure .more-link {
     .grid figure figcaption {
       padding-right: 10px; }
       .grid figure figcaption h1 {
+        margin: 0 0 .5em 0;
         font-size: 1.5rem; }
       .grid figure figcaption h2 {
         display: none; }
