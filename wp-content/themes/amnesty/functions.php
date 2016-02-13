@@ -199,14 +199,17 @@ add_action('admin_init', 'my_theme_add_editor_styles');
 function icons($link = true)
 {
     global $post;
-    foreach (get_the_category($post->ID) as $category) {
-        if ($category->category_description !== '') {
-            // Get the ID of a given category
-            echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
-            echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
-            echo ($link) ? '</a>' : '';
-        }
+    $category = get_parent_cat();
+    if ($category->category_description !== '' && $category->category_description) {
+        echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
+        echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
+        echo ($link) ? '</a>' : '';
+    } else {
+        echo (!$link) ? file_get_contents("wp-content/themes/amnesty/img/amensty.svg") : '';
+
     }
+
+
 }
 
 
@@ -242,20 +245,30 @@ function headerPic()
  * get thumbnail, get attachment, get category image
  */
 
+/**
+ * get parent category
+ */
+
+
+function get_parent_cat()
+{
+    $categories = get_the_category();
+    foreach ($categories as $cat) {
+        if ($cat->category_parent !== 0) {
+            $parent = $cat->category_parent;
+        } else {
+            $parent = $cat;
+        }
+    }
+    return $parent;
+}
 
 function get_thumbnail()
 {
     if (has_post_thumbnail()) {
         $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
     } else if (function_exists('z_taxonomy_image_url')) {
-        $categories = get_the_category();
-        foreach ($categories as $cat) {
-            if ($cat->category_parent !== 0) {
-                $parent = $cat->category_parent;
-            } else {
-                $parent = $cat;
-            }
-        }
+        $parent = get_parent_cat();
         $img = z_taxonomy_image_url($parent->term_id);
     } else {
         $rand = rand(1, 4);
