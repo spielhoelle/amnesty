@@ -28,7 +28,7 @@
                     <li><a href="http://facebook.com/"><i class="fa fa-facebook"></i></a></li>
                     <li><a href="http://linkedin.com/"><i class="fa fa-linkedin"></i></a></li>
                     <li><a href="http://twitter.com/"><i class="fa fa-twitter"></i></a></li>
-                    <li><a href="http://plus.google.com/"><i class="fa fa-google-plus"></i> </a></li>
+                    <li><a href="http://plus.google.com/"><i class="fa fa-google-plus"></i></a></li>
                 </ul>
             </div>
 
@@ -40,6 +40,16 @@
 
         </div>
     </div>
+
+    <div id="nlpopup">
+        <div>
+
+            <?php echo do_shortcode('[contact-form-7 id="2202" title="Newsletter Formular"]') ?>
+
+            <span class="close closex fa fa-times fa-2"></span>
+        </div>
+    </div>
+
 </footer><!-- #colophon -->
 </div><!-- #page -->
 

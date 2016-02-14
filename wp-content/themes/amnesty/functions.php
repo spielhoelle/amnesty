@@ -286,6 +286,9 @@ function get_thumbnail()
 
 }
 
+/**
+ * debug helper
+ */
 
 function dump($param)
 {
@@ -294,3 +297,38 @@ function dump($param)
     echo "</pre>";
 
 }
+
+//
+///**
+// * add class to body by the first time
+// */
+//
+//add_action('init', 'wpse8170_init');
+//function wpse8170_init()
+//{
+//    if (!headers_sent() && !isset($_COOKIE['visited'])) {
+//        setcookie('visited', time(), time() + 3600, COOKIEPATH, COOKIE_DOMAIN);
+//        return;
+//    }
+//
+//    var_dump($_COOKIE['visited']);
+//    var_dump($_COOKIE['newsletter']);
+//
+//    if (!isset($_COOKIE['newsletter']) && isset($_COOKIE['visited']) && $_COOKIE["visited"] + 5 < time()) {
+//        setcookie('newsletter', time(), time() + 3600, COOKIEPATH, COOKIE_DOMAIN);
+//
+//        add_filter('body_class', 'multisite_body_classes');
+//        function multisite_body_classes($classes)
+//        {
+//            $classes[] = 'visited';
+//            return $classes;
+//        }
+//
+//    }
+//}
+//
+//add_action( 'wp_head', 'my_getcookie' );
+//function my_getcookie() {
+//    $alert = isset( $_COOKIE['visited'] ) ? $_COOKIE['visited'] : 'not set';
+//    echo "<script type='text/javascript'>alert('$alert')</script>";
+//}
