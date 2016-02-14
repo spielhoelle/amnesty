@@ -1,0 +1,100 @@
+msgid ""
+msgstr "MIME-Version: 1.0\n"
+
+#. Name.
+msgid "Frontend Registration - Contact Form 7"
+msgstr ""
+
+#. Short description.
+msgid "Contact Form 7 - Frontend Registration Form."
+msgstr ""
+
+#. Screenshot description.
+msgid "Screenshot 'screenshot-1.png' shows 'registration settings' tab in contact form edit section."
+msgstr ""
+
+#. Found in description header.
+msgid "Contact Form 7 - Frontend Registration Form Features List"
+msgstr ""
+
+#. Found in description list item.
+msgid "You can convert your Contact form 7 form into registration form."
+msgstr ""
+
+#. Found in description list item.
+msgid "Allows you to set fields for user name and email from admin settings."
+msgstr ""
+
+#. Found in description list item.
+msgid "Plugin can work in multiple forms on different page or single page."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Contact Form 7 (CF7) is the most reliable WordPress Plugin used by the millions of user. Now a day's so many add-on are available for Contact form 7."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "We have created same like one add on for contact from 7 in which you can convert contact from 7 into registration form or signup form for WordPress user."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "By using this plugin you can create registration form by which registered user will be register as a subscriber role in WordPress."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "You just need to add plugin and select fields for username and email ID from created fields. In order to use this plugin, make sure your Contact Form 7 is activated."
+msgstr ""
+
+#. Found in installation list item.
+msgid "There are two ways you can install this WordPress Plugin. Either Open https://wordpress.org/plugins/frontend-registration-contact-form-7/, which is the official WordPress Plugins’ directory page, or upload all files manually to your site’s server. click on the download button the page."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Now login to your WordPress site and activate the plugin. Then, select ‘edit’ option in ‘Contact Forms’."
+msgstr ""
+
+#. Found in installation list item.
+msgid "You will find a tab added to your Contact Form 7 - \"Registration Settings\""
+msgstr ""
+
+#. Found in installation list item.
+msgid "You can set registration fields from here, for all the fields added to your contact form."
+msgstr ""
+
+#. Found in changelog list item.
+msgid "Initial Release"
+msgstr ""
+
+#. Found in faq header.
+msgid "Do this plugin use any customization in contact form 7 plugin?"
+msgstr ""
+
+#. Found in faq header.
+msgid "Can we use it multiple Forms in single page?"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "No, this plugin does not need to customize in contat form 7 plugin core files."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "= Do users need to do any customization to set different field form signup form?"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "No, I believe in very quick solution and hence I make people reach out of any customizations."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Yes, you can use it in multiple forms. Every from has different option and you can set fields for each and every forms although if it is in single page."
+msgstr ""
+
+#. Found in remaining content header.
+msgid "Plugin Requirement"
+msgstr ""
+
+#. Found in remaining content paragraph.
+msgid ""
+"PHP version : 5.3 and latest\n"
+"WordPress   : Wordpress 3.0 and latest"
+msgstr ""
