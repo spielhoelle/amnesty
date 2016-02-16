@@ -1,5 +1,6 @@
 #nlpopup
   opacity: 0
+  pointer-events: none
   transition: opacity .3s ease
   color: $darkgrey
   position: fixed
@@ -47,9 +48,9 @@
 
   &.active
     opacity: 1
+    pointer-events: all
     > div
       opacity: 1
-
 
 #nlpopup
   h1

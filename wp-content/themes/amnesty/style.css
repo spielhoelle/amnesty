@@ -1302,6 +1302,7 @@ section[rel="Startseite"] {
 
 #nlpopup {
   opacity: 0;
+  pointer-events: none;
   transition: opacity .3s ease;
   color: #404040;
   position: fixed;
@@ -1344,7 +1345,8 @@ section[rel="Startseite"] {
     position: fixed;
     z-index: 999999; }
   #nlpopup.active {
-    opacity: 1; }
+    opacity: 1;
+    pointer-events: all; }
     #nlpopup.active > div {
       opacity: 1; }
 
