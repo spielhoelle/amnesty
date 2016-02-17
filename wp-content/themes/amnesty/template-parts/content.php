@@ -8,7 +8,7 @@
  */
 
 
-$img = get_thumbnail();
+$img = get_thumbnail('grid');
 
 $content = get_post_field('post_content', get_the_ID());
 $content_parts = get_extended($content);

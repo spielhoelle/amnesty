@@ -1370,12 +1370,11 @@ section[rel="Startseite"] {
   #nlpopup .closex:before {
     font-size: 2em; }
 
-#nlpopup [type="submit"] {
+#nlpopup [type="submit"], .textwidget [type="submit"] {
   margin-top: 30px; }
 
 .wpcf7-form-control-wrap input {
   margin-bottom: 1em;
-  width: 380px;
   background: #f8fafa;
   border-radius: 0;
   border: 1px solid #e4e9e9; }

@@ -4,7 +4,7 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
     <div class="slider" data-navigation="hidden">
 
         <?php while ($the_query->have_posts()) : $the_query->the_post();
-            $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0] : '';
+            $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'header')[0] : '';
             $content = get_post_field('post_content', get_the_ID());
             $content_parts = get_extended($content);
             ?>

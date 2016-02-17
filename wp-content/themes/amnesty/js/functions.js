@@ -17,9 +17,7 @@
             onSlideAfter: function (currentSlideNumber, totalSlideQty, currentSlideHtmlObject) {
                 $('.active-slide').removeClass('active-slide');
                 $('.slider > figure').eq(currentSlideHtmlObject).addClass('active-slide')
-            }
-
-            ,
+            },
             onSliderLoad: function () {
                 $('.slider > figure').eq(0).addClass('active-slide')
             }

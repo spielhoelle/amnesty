@@ -7,7 +7,7 @@
  * @package amnesty
  */
 $classes = [];
-$img = get_thumbnail();
+$img = get_thumbnail('header');
 
 ?>
 
@@ -38,16 +38,14 @@ $img = get_thumbnail();
                 endif; ?>
 
 
-                <?php
-                the_content(sprintf(
-                /* translators: %s: Name of current post. */
+                <?php the_content(sprintf(
                     wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
                     the_title('<span class="screen-reader-text">"', '"</span>', false)
                 ));
 
                 wp_link_pages(array(
                     'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
-                    'after'  => '</div>',
+                    'after' => '</div>',
                 ));
                 ?>
 
@@ -64,8 +62,8 @@ $img = get_thumbnail();
 
                 <?php
                 $args = array(
-                    'post__not_in'     => array($post->ID),
-                    'showposts'        => 5, // Corresponds to Number of related posts to be shown.
+                    'post__not_in' => array($post->ID),
+                    'showposts' => 5,
                     'caller_get_posts' => 1
                 );
 

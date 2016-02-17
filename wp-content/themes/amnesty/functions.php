@@ -214,34 +214,6 @@ function icons($link = true)
 
 
 /**
- * get header pic function for fallback images in posts
- */
-
-
-function headerPic()
-{
-    if (wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0]) {
-        $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
-    } else {
-        $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
-    } ?>
-
-    <figure class="header">
-        <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
-        <figcaption>
-
-            <h1 class="entry-title ">
-                <?php icons();
-                echo get_the_title() ?>
-            </h1>
-        </figcaption>
-    </figure>
-    <?php
-    return $img;
-}
-
-/**
  * get thumbnail, get attachment, get category image
  */
 
@@ -264,15 +236,19 @@ function get_parent_cat()
     return $parent;
 }
 
-function get_thumbnail()
+add_image_size( 'grid', 500, 500, true ); // Hard Crop Mode
+add_image_size( 'header', 1600, 700, true ); // Hard Crop Mode
+
+
+function get_thumbnail($size = '')
 {
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
+        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . $size  . '.jpg';
     } else {
         if (has_post_thumbnail()) {
-            $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
+            $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
         } else if (function_exists('z_taxonomy_image_url')) {
             $parent = get_parent_cat();
             $img = z_taxonomy_image_url($parent->term_id);
