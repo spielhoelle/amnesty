@@ -21,7 +21,7 @@ get_header(); ?>
             if (have_posts()) : ?>
 
                 <header class="entry-header">
-                    <h1 class="entry-title">Alle News</h1>
+                    <?php the_archive_title('<h1 class="entry-title">', '</h1>'); ?>
                     <?php get_search_form(); ?>
                 </header>
                 <div class="grid">
@@ -37,10 +37,10 @@ get_header(); ?>
                     $big = 999999999; // need an unlikely integer
 
                     echo paginate_links(array(
-                        'base'    => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
-                        'format'  => '?paged=%#%',
+                        'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                        'format' => '?paged=%#%',
                         'current' => max(1, get_query_var('paged')),
-                        'total'   => $wp_query->max_num_pages
+                        'total' => $wp_query->max_num_pages
                     ));
                     ?>
                 </nav>

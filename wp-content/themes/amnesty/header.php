@@ -31,6 +31,7 @@
                     <a href="<?php echo esc_url(home_url('/')); ?>" rel="home"><?php bloginfo('name'); ?></a>
                 </h1>
             </div><!-- .site-branding -->
+            <h2 id="site-description"><?php bloginfo( 'description' ); ?></h2>
 
             <nav id="site-navigation" class="main-navigation" role="navigation">
                 <button class="menu-toggle" aria-controls="primary-menu"

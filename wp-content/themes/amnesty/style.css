@@ -776,6 +776,14 @@ nav.pagination {
       -ms-transform: translate(-50%, 0);
           transform: translate(-50%, 0);
   border-bottom: 1px solid #dadada; }
+  #masthead:hover #site-description {
+    color: black; }
+  #masthead #site-description {
+    padding-left: 230px;
+    margin: 13px 0;
+    font-size: 1.2em;
+    width: 420px;
+    color: #ddd; }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -794,13 +802,10 @@ nav.pagination {
         height: 100%; }
         #masthead .top .site-branding .site-title a {
           width: 200px;
-          padding-top: 40.1%;
           display: inline-block;
           color: transparent;
           height: 100%;
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top/contain; }
-      #masthead .top .site-branding .site-description {
-        display: none; }
 
 .main-navigation {
   height: 100%;
@@ -1028,7 +1033,10 @@ footer.site-footer {
   display: flex;
   -webkit-flex-flow: row wrap;
       -ms-flex-flow: row wrap;
-          flex-flow: row wrap; }
+          flex-flow: row wrap;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
   .footer-top section {
     -webkit-flex: 0 0 200px;
         -ms-flex: 0 0 200px;
@@ -1881,6 +1889,10 @@ html[lang] {
             align-items: center; } }
 
 @media (max-width: 1000px) {
+  #masthead #site-description {
+    padding-left: 110px;
+    margin: 0 0;
+    font-size: 1em; }
   #masthead .top, #masthead .main-navigation a {
     height: 40px; }
   #masthead .top .site-branding .site-title a {
@@ -1914,6 +1926,8 @@ html[lang] {
     max-width: none; } }
 
 @media (max-width: 500px) {
+  #masthead #site-description {
+    padding-right: 30px; }
   #masthead .top .site-branding, #masthead .top .site-branding a, #masthead .top .site-branding .site-title, #masthead .top .site-branding .site-title a {
     height: 40px; }
   #masthead .main-navigation {
