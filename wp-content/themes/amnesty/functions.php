@@ -236,8 +236,8 @@ function get_parent_cat()
     return $parent;
 }
 
-add_image_size( 'grid', 500, 500, true ); // Hard Crop Mode
-add_image_size( 'header', 1600, 700, true ); // Hard Crop Mode
+add_image_size('grid', 500, 500, true); // Hard Crop Mode
+add_image_size('header', 1600, 700, true); // Hard Crop Mode
 
 
 function get_thumbnail($size = '')
@@ -245,17 +245,23 @@ function get_thumbnail($size = '')
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . $size  . '.jpg';
+        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . $size . '.jpg';
+        echo '<!--is_page-->';
     } else {
         if (has_post_thumbnail()) {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
+            echo '<!--has_post_thumb-->';
+
         } else if (function_exists('z_taxonomy_image_url')) {
             $parent = get_parent_cat();
             $img = z_taxonomy_image_url($parent->term_id);
+            echo '<!--get cat image-->';
+
         }
         if ($img == '') {
             $rand = rand(1, 4);
-            $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . '.jpg';
+            $img = get_template_directory_uri() . '/img/thumbnail-' . $rand . $size . '.jpg';
+            echo '<!--random fallback-->';
 
         }
     }
