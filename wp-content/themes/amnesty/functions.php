@@ -245,7 +245,7 @@ function get_thumbnail($size = '')
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-' . $rand .'-full.jpg';
+        $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand .'.jpg';
         echo '<!--is_page-->';
     } else {
         if (has_post_thumbnail()) {
@@ -260,7 +260,7 @@ function get_thumbnail($size = '')
         }
         if ($img == '') {
             $rand = rand(1, 4);
-            $img = get_template_directory_uri() . '/img/thumbnail-' . $rand .'-full.jpg';
+            $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand .'.jpg';
             echo '<!--random fallback-->';
 
         }
