@@ -37,7 +37,7 @@
 
             setTimeout(function () {
                 $("#nlpopup").addClass('active')
-            }, 2000);
+            }, 20000);
 
             localStorage.setItem('popState', 'shown')
         }
