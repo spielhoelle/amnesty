@@ -1,3 +1,8 @@
+article, section
+  &:focus
+    outline: none !important
+
+
 #page
   display: flex
   flex-flow: column
@@ -45,7 +50,7 @@ span.author
 //buttons
 //
 
-.content-button, 
+.content-button,
 .more-link
   background: $white
   border: 1px solid black
@@ -196,7 +201,9 @@ body
       padding-right: 10px
       h1
         margin: 0 0 .5em 0
+        max-height: 8rem
         font-size: 1.5rem
+        overflow: hidden
       h2
         display: none
   > article

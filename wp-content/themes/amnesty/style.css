@@ -377,7 +377,7 @@ figure {
   figure.header figcaption,
   .grid figure figcaption {
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     color: black; }
     figure.header figcaption h1, figure.header figcaption h2, figure.header figcaption .more-link,
     .grid figure figcaption h1,
@@ -503,6 +503,9 @@ input[type="color"] {
 textarea {
   padding-left: 3px;
   width: 100%; }
+
+article:focus, section:focus {
+  outline: none !important; }
 
 #page {
   display: -webkit-flex;
@@ -735,7 +738,9 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
       padding-right: 10px; }
       .grid figure figcaption h1 {
         margin: 0 0 .5em 0;
-        font-size: 1.5rem; }
+        max-height: 8rem;
+        font-size: 1.5rem;
+        overflow: hidden; }
       .grid figure figcaption h2 {
         display: none; }
   .grid > article {
@@ -779,6 +784,7 @@ nav.pagination {
   #masthead:hover #site-description {
     color: black; }
   #masthead #site-description {
+    transition: color .3s ease;
     padding-left: 230px;
     margin: 13px 0;
     font-size: 1.2em;
