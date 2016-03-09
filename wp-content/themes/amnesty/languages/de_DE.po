@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-02-14 06:05+0100\n"
+"PO-Revision-Date: 2016-03-09 23:11+0100\n"
 "Language-Team: \n"
 "X-Generator: Poedit 1.8.6\n"
 "Last-Translator: \n"
@@ -64,7 +64,7 @@ msgstr ""
 # @ _s
 #: comments.php:77
 msgid "Comments are closed."
-msgstr ""
+msgstr "Kommentare geschlossen"
 
 # @ _s
 #: footer.php:18
@@ -159,12 +159,6 @@ msgid "Edit %s"
 msgstr "Bearbeite %s"
 
 # @ _s
-#: search.php:18
-#, php-format
-msgid "Search Results for: %s"
-msgstr "Sucheergebnisse für %s"
-
-# @ _s
 #: template-parts/content-none.php:14
 msgid "Nothing Found"
 msgstr "Nichts gefunden"
@@ -177,8 +171,8 @@ msgstr ""
 
 # @ _s
 #: template-parts/content-none.php:24
-msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
-msgstr "Entschuldige, aber es gibt keine Übereinstimmungen. Versuche es noch einmal mit etwas anderem."
+msgid "Nothing is worse than no donuts, cold coffee or empty search results.  Please try again with some different keywords."
+msgstr "Es gibt nichts schlimmeres als keine Donuts, kalten Kaffee oder leere Suchergebnisse. Versuche es mit etwas anderem"
 
 # @ _s
 #: template-parts/content-none.php:29
@@ -210,8 +204,8 @@ msgstr ""
 #. Description of the plugin/theme
 msgid ""
 "Hi. I'm a starter theme called <code>_s</code>, or <em>underscores</em>, if you like. I'm a theme meant for hacking so "
-"don't use me as a <em>Parent Theme</em>. Instead try turning me into the next, most awesome, WordPress theme out "
-"there. That's what I'm here for."
+"don't use me as a <em>Parent Theme</em>. Instead try turning me into the next, most awesome, WordPress theme out there. "
+"That's what I'm here for."
 msgstr ""
 
 # @ _s
@@ -233,3 +227,6 @@ msgstr "Sei dabei!"
 #. Author URI of the plugin/theme
 msgid "For 50 years, ordinary people do extraordinary things. Also you can move mountains. With your email."
 msgstr "Seit 50 Jahren leisten gewöhnliche Menschen Außergewöhnliches. Auch du kannst Großes bewegen. Mit deiner E-Mail."
+
+msgid "search Hits for"
+msgstr "Suchtreffer für"

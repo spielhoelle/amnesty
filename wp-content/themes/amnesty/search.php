@@ -15,14 +15,24 @@ get_header(); ?>
         if (have_posts()) : ?>
 
             <header class="entry-header">
-                <h1 class="entry-title">Alle News</h1>
-                <?php get_search_form(); ?>
+              <?php
+                global $wp_query;
+                $total_results = $wp_query->found_posts;
+              ?>
+
+              <h1 class="page-title"><?php echo $total_results ?>
+                <?php esc_html_e( 'search Hits for', 'amnesty' ); ?>
+                <span><?php the_search_query(); ?></span>
+              </h1>
+              <?php get_search_form(); ?>
             </header>
+
             <div class="grid">
-                <?php while (have_posts()) : the_post(); ?>
+                <?php while (have_posts()) : the_post(); ?>^
                     <?php get_template_part('template-parts/content', ''); ?>
                 <?php endwhile; ?>
             </div>
+
             <!-- index -->
             <nav class="pagination">
                 <?php
@@ -35,8 +45,8 @@ get_header(); ?>
                     'format'  => '?paged=%#%',
                     'current' => max(1, get_query_var('paged')),
                     'total'   => $wp_query->max_num_pages
-                ));
-                ?>
+                ));?>
+
             </nav>
 
         <?php else : ?>

@@ -23,7 +23,7 @@
 
 			<?php elseif ( is_search() ) : ?>
 
-				<p><?php esc_html_e( 'Sorry, but nothing matched your search terms. Please try again with some different keywords.', 'amnesty' ); ?></p>
+				<p><?php esc_html_e( 'Nothing is worse than no donuts, cold coffee or empty search results.  Please try again with some different keywords.', 'amnesty' ); ?></p>
 
 
 				<?php
