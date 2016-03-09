@@ -42,7 +42,7 @@
     </div>
 
     <div id="nlpopup">
-        <div>
+        <div class="badge">
 
             <?php echo do_shortcode('[contact-form-7 id="2202" title="Newsletter Formular"]') ?>
 

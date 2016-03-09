@@ -1,40 +1,55 @@
-#nlpopup
-  opacity: 0
-  pointer-events: none
+.badge
   transition: opacity .3s ease
-  color: $darkgrey
-  position: fixed
-  z-index: 999999999999999
-  form
+  box-sizing: content-box
+  background: #fff url(img/amensty.svg) no-repeat 30px 380px
+  background-size: 40px
+  padding: 0 60px $gap 250px
+  text-align: left
+  width: 420px
+  top: 50%
+  left: 50%
+  margin-left: -390px
+  margin-top: -203px
+  form, > div
     padding: 0
     margin: 0
-
-  > div
-    opacity: 0
-    z-index: 999999999999999
-    transition: opacity .3s ease
-    box-sizing: content-box
-    background: #fff url(img/amensty.svg) no-repeat 30px 380px
-    background-size: 40px
-    padding: 0 60px $gap 250px
-    text-align: left
-    width: 420px
-    position: fixed
-    top: 50%
-    left: 50%
-    margin-left: -390px
-    margin-top: -203px
-
     &:after
       display: block
       content: ""
-      background-image: url("img/2000px-TK_email_icon.svg.png")
       width: 270px
       height: 270px
       position: absolute
       left: -50px
       top: -50px
       background-size: contain
+
+section.not-found
+  position: absolute
+  &.badge
+    form, >div
+     &::after
+      top: 0
+      width: 200px
+      height: 200px
+      background-image: url("img/donut.svg")
+
+#nlpopup
+  position: fixed
+  form, >div
+    &::after
+      background-image: url("img/2000px-TK_email_icon.svg.png")
+
+#nlpopup
+  &, >div
+    z-index: 999999999999999
+    opacity: 0
+    position: fixed
+
+  pointer-events: none
+  transition: opacity .3s ease
+  color: $darkgrey
+  z-index: 999999999999999
+
 
   &:after
     content: ""
