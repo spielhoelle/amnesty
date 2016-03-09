@@ -239,13 +239,13 @@ function get_parent_cat()
 add_image_size('grid', 500, 500, true); // Hard Crop Mode
 add_image_size('header', 1600, 700, true); // Hard Crop Mode
 
-
+//@todo for fallback images choose right sizes
 function get_thumbnail($size = '')
 {
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand .'.jpg';
+        $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
         echo '<!--is_page-->';
     } else {
         if (has_post_thumbnail()) {
@@ -260,7 +260,10 @@ function get_thumbnail($size = '')
         }
         if ($img == '') {
             $rand = rand(1, 4);
-            $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand .'.jpg';
+            if ($size === 'header') {
+                $size === 'full';
+            }
+            $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
             echo '<!--random fallback-->';
 
         }
