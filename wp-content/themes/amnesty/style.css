@@ -631,6 +631,11 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center; }
+  @media (max-width: 1200px) {
+    body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
+      -webkit-flex-flow: column;
+          -ms-flex-flow: column;
+              flex-flow: column; } }
 
 .wrap {
   padding: 60px 30px; }
@@ -795,6 +800,12 @@ nav.pagination {
     font-size: 1.2em;
     width: 420px;
     color: #ddd; }
+    @media (max-width: 1200px) {
+      #masthead #site-description {
+        padding-left: 110px;
+        margin: 0 0;
+        font-size: 1em;
+        height: 40px; } }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -1899,7 +1910,7 @@ html[lang] {
 .main-navigation.toggled ul {
   display: block; }
 
-@media screen and (min-width: 500px) {
+@media screen and (min-width: 800px) {
   .menu-toggle {
     display: none; }
   .main-navigation > div > ul {
@@ -1913,11 +1924,7 @@ html[lang] {
         -ms-flex-align: center;
             align-items: center; } }
 
-@media (max-width: 1000px) {
-  #masthead #site-description {
-    padding-left: 110px;
-    margin: 0 0;
-    font-size: 1em; }
+@media (max-width: 1200px) {
   #masthead .top, #masthead .main-navigation a {
     height: 40px; }
   #masthead .top .site-branding .site-title a {
@@ -1950,20 +1957,20 @@ html[lang] {
             flex: 0 0 50%;
     max-width: none; } }
 
-@media (max-width: 500px) {
+@media (max-width: 800px) {
   #masthead #site-description {
     padding-right: 30px; }
   #masthead .top .site-branding, #masthead .top .site-branding a, #masthead .top .site-branding .site-title, #masthead .top .site-branding .site-title a {
     height: 40px; }
   #masthead .main-navigation {
-    z-index: 1;
-    margin-top: 40px; }
+    z-index: 1; }
     #masthead .main-navigation a {
       padding: 5px 15px; }
   #masthead .top,
   #masthead .main-navigation {
     height: auto;
-    width: auto; }
+    width: 100%;
+    display: block; }
     #masthead .top a,
     #masthead .main-navigation a {
       height: auto;

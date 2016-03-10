@@ -41,7 +41,7 @@
 			menu.setAttribute( 'aria-expanded', 'true' );
 		}
 	};
-
+	//TODO Device menu behavior ?
 	// Get all the link elements within the menu.
 	links    = menu.getElementsByTagName( 'a' );
 	subMenus = menu.getElementsByTagName( 'ul' );
@@ -78,4 +78,5 @@
 			self = self.parentElement;
 		}
 	}
+
 } )();

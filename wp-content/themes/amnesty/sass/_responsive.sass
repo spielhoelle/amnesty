@@ -1,7 +1,4 @@
-$headerheight1: 40px
 
-$breakpoint1: 1000px
-$breakpoint2: 500px
 
 .menu-toggle,
 .main-navigation.toggled ul
@@ -12,26 +9,22 @@ $breakpoint2: 500px
     display: none
   .main-navigation > div > ul
     display: flex !important
-    justify-content: flex-end 
+    justify-content: flex-end
     align-items: center
 
 @media (max-width: $breakpoint1)
   //1000
   #masthead
     #site-description
-      padding-left: 110px
-      margin: 0 0
-      font-size: 1em
-
 
     .top, .main-navigation a
-      height: $headerheight1
+      height: $headerheight/2
     .top
       .site-branding .site-title a
         width: 99px
     .main-navigation
       ul .sub-menu
-        height: $headerheight1
+        height: $headerheight/2
       a
         padding: 0 $gap / 6
   figure.header
@@ -47,7 +40,7 @@ $breakpoint2: 500px
     h2
       font-size: 1.2em
   #content
-    margin-top: $headerheight1
+    margin-top: $headerheight/2
   .columns
     display: block
     .column
@@ -67,13 +60,13 @@ $breakpoint2: 500px
           height: 40px
     .main-navigation
       z-index: 1
-      margin-top: 40px
       a
         padding: 5px 15px
     .top,
     .main-navigation
       height: auto
-      width: auto
+      width: 100%
+      display: block
       a
         height: auto
         display: block
