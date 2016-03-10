@@ -22,13 +22,13 @@ get_header(); ?>
 
               <h1 class="page-title"><?php echo $total_results ?>
                 <?php esc_html_e( 'search Hits for', 'amnesty' ); ?>
-                <span><?php the_search_query(); ?></span>
+                <span>"<?php the_search_query(); ?>"</span>
               </h1>
               <?php get_search_form(); ?>
             </header>
 
             <div class="grid">
-                <?php while (have_posts()) : the_post(); ?>^
+                <?php while (have_posts()) : the_post(); ?>
                     <?php get_template_part('template-parts/content', ''); ?>
                 <?php endwhile; ?>
             </div>

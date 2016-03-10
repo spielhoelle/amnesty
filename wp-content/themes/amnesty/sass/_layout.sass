@@ -2,7 +2,6 @@ article, section
   &:focus
     outline: none !important
 
-
 #page
   display: flex
   flex-flow: column
@@ -115,11 +114,8 @@ body
       justify-content: space-between
       align-items: center
 
-.wrap, #colophon
-  padding: 0 $gap
-  .grid, .columnwrapper
-// margin: 0 #{-$gap/2};
-
+.wrap
+  padding: 2*$gap $gap
 .columns
   padding: 0
   .column
@@ -205,6 +201,7 @@ body
         max-height: 8rem
         font-size: 1.5rem
         overflow: hidden
+        hyphens: auto
       h2
         display: none
   > article

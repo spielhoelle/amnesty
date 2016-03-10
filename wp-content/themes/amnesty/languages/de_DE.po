@@ -172,7 +172,7 @@ msgstr ""
 # @ _s
 #: template-parts/content-none.php:24
 msgid "Nothing is worse than no donuts, cold coffee or empty search results.  Please try again with some different keywords."
-msgstr "Es gibt nichts schlimmeres als keine Donuts, kalten Kaffee oder leere Suchergebnisse. Versuche es mit etwas anderem"
+msgstr "Es gibt nichts schlimmeres als keine Donuts, kalten Kaffee oder leere Suchergebnisse. Versuche es doch mit etwas Anderem."
 
 # @ _s
 #: template-parts/content-none.php:29

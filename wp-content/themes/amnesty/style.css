@@ -632,8 +632,8 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
       -ms-flex-align: center;
           align-items: center; }
 
-.wrap, #colophon {
-  padding: 0 30px; }
+.wrap {
+  padding: 60px 30px; }
 
 .columns {
   padding: 0; }
@@ -741,7 +741,11 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
         margin: 0 0 .5em 0;
         max-height: 8rem;
         font-size: 1.5rem;
-        overflow: hidden; }
+        overflow: hidden;
+        -webkit-hyphens: auto;
+           -moz-hyphens: auto;
+            -ms-hyphens: auto;
+                hyphens: auto; }
       .grid figure figcaption h2 {
         display: none; }
   .grid > article {
@@ -1010,6 +1014,7 @@ nav.pagination {
 
 footer.site-footer {
   background: black;
+  padding: 0 30px;
   width: 100%; }
   footer.site-footer, footer.site-footer a {
     color: #dadada; }
@@ -1344,6 +1349,7 @@ section.not-found {
   position: absolute; }
   section.not-found.badge form::after, section.not-found.badge > div::after {
     top: 0;
+    left: 0;
     width: 200px;
     height: 200px;
     background-image: url("img/donut.svg"); }
