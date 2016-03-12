@@ -33,10 +33,10 @@
         /**
          * show newsletter popup after X seconds and just once overall
          */
-        if (localStorage.getItem('popState') != 'shown') {
+        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
 
             setTimeout(function () {
-                $("#nlpopup").addClass('active')
+                $(".site-footer > #nlpopup").addClass('active')
             }, 20000);
 
             localStorage.setItem('popState', 'shown')
@@ -45,15 +45,22 @@
         //close functions
         $('#nlpopup .close').click(function (e) // You are clicking the close button
         {
-            $("#nlpopup").fadeOut().removeClass("active");
+            $(".site-footer > #nlpopup").fadeOut().removeClass("active");
+        });
+
+        $(document).keydown(function(e) {
+            // ESCAPE key pressed
+            if (e.keyCode == 27) {
+              $(".site-footer > #nlpopup").fadeOut().removeClass("active");
+            }
         });
 
         $("body").click(function () {
-            $("#nlpopup").fadeOut().removeClass("active");
+            $(".site-footer > #nlpopup").fadeOut().removeClass("active");
         });
 
 //      Prevent events from getting pass .popup
-        $("#nlpopup div").click(function (e) {
+        $("#nlpopup .wpcf7").click(function (e) {
             e.stopPropagation();
         });
 
