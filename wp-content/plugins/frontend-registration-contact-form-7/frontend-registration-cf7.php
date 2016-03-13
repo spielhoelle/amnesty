@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Frontend Registration - Contact Form 7
- * Plugin URL: 
- * Description:  This plugin will convert your Contact form 7 in to registration form for WordPress.
- * Version: 1.0
+ * Plugin URL: http://jquerybuilder.com/product/frontend-registration-contact-form-7/
+ * Description:  This plugin will convert your Contact form 7 in to registration form for WordPress. PRO Plugin available now. Please visit our wordpress plugin page for Pro version Updates. 
+ * Version: 1.1
  * Author: David Pokorny
- * Author URI: http://#/
+ * Author URI: http://jquerybuilder.com
  * Developer: Pokorny David
  * Developer E-Mail: pokornydavid4@gmail.com
  * Text Domain: contact-form-7-freg
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-require_once(dirname(__FILE__) . '/frontend-registration-opt-cf7.php');
+require_once (dirname(__FILE__) . '/frontend-registration-opt-cf7.php');
 
 function cf7fr_editor_panels_reg ( $panels ) {
 		

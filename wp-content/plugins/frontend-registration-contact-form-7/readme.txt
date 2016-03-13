@@ -4,11 +4,11 @@ Tags: Contact Form 7, form, forms, contactform7, contact form, submit, Contact F
 Donate link: http://#/payment/
 Requires at least: 3.0.1
 Tested up to: 4.3.x
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv3 or later License
 Contact Form 7 requires at least: 3.0
 Contact Form 7 tested up to: 4.2
-Version: 1.0
+Version: 1.1
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Contact Form 7 - Frontend Registration Form.
@@ -28,6 +28,19 @@ You just need to add plugin and select fields for username and email ID from cre
 *	You can convert your Contact form 7 form into registration form.
 *	Allows you to set fields for user name and email from admin settings.
 *	Plugin can work in multiple forms on different page or single page.	
+
+> #### Contact Form 7 - Frontend Registration Pro Plug-in Features
+> * We have provide restriction of same name and email with registrations.
+> * You can select particular user role for the registration from settings.
+> * Also provide field for add link of login page if you are create custom login page.
+> * You can skip default email of Contact form 7 Pro.
+> * You can customize your registration mail which will be send to user with registration information.
+> * Easy understanding all setting from admin side.
+> * Also you can configured multiple Contact form 7 Pro for registration.
+> * Ability to set each and every different setting for different forms.
+>
+> [Get more information of Pro version here](http://jquerybuilder.com/product/frontend-registration-contact-form-7/)
+> ####
 
 == Plugin Requirement ==
 
