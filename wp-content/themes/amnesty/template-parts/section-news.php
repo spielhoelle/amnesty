@@ -9,7 +9,7 @@
 
         <div class="grid">
             <?php // switch WP to page for posts
-            $blog = new WP_Query('posts_per_page=10, page_id=' . get_option('page_for_posts'));
+            $blog = new WP_Query('posts_per_page=8, page_id=' . get_option('page_for_posts'));
 
             // loop through posts
             while ($blog->have_posts()) : $blog->the_post();
@@ -18,6 +18,7 @@
         </div>
 
         <?php wp_reset_postdata(); ?>
+        
         <footer class="entry-footer">
             <a class="more-link" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr News ...</a>
         </footer>

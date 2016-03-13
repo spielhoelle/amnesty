@@ -13,11 +13,8 @@ $img = get_thumbnail('grid');
 $content = get_post_field('post_content', get_the_ID());
 $content_parts = get_extended($content);
 ?>
-<article data-url="<?php the_permalink(); ?>"
-         rel="<?php echo get_the_title() ?>"
+<article data-url="<?php the_permalink(); ?>" rel="<?php echo get_the_title() ?>"
          id="post-<?php the_ID(); ?>" <?php post_class((has_post_thumbnail()) ? 'has_post_thumbnail' : ''); ?>>
-    <?php
-    ?>
 
     <figure>
         <a href="<?php the_permalink() ?>">
@@ -36,4 +33,3 @@ $content_parts = get_extended($content);
 
 </article>
 <!-- content.php grid-->
-
