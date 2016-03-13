@@ -383,7 +383,8 @@ figure {
     .grid figure figcaption h1,
     .grid figure figcaption h2,
     .grid figure figcaption .more-link {
-      padding: 0.5em; }
+      padding: 0.5em;
+      font-size: 1em; }
     figure.header figcaption h2,
     .grid figure figcaption h2 {
       margin-top: 20px;
@@ -751,12 +752,12 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
            -moz-hyphens: auto;
             -ms-hyphens: auto;
                 hyphens: auto; }
-      .grid figure figcaption h2 {
+      .grid figure figcaption h2, .grid figure figcaption h3, .grid figure figcaption h4, .grid figure figcaption h5 {
         display: none; }
   .grid > article {
-    -webkit-flex: 0 0 33.33333333%;
-        -ms-flex: 0 0 33.33333333%;
-            flex: 0 0 33.33333333%;
+    -webkit-flex: 0 0 25%;
+        -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
     padding: 30px; }
     .grid > article img {
       width: 100%;

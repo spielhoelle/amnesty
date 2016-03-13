@@ -9,7 +9,7 @@
 
         <div class="grid">
             <?php // switch WP to page for posts
-            $blog = new WP_Query('posts_per_page=6, page_id=' . get_option('page_for_posts'));
+            $blog = new WP_Query('posts_per_page=10, page_id=' . get_option('page_for_posts'));
 
             // loop through posts
             while ($blog->have_posts()) : $blog->the_post();
