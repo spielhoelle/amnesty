@@ -80,21 +80,18 @@
       justify-content: center
       display: flex
       flex-flow: row nowrap
-      width: 100%
       left: -999em
-      // left: 0
+
       .sub-menu
         z-index: 0
       a
         color: $white
-        margin-top: -50px
-        // margin-top: 0px
+        margin-top: 0px
         transition: margin .3s ease
   div > ul li.menu-item-has-children:hover
     > .sub-menu
-      left: 0
-      > li > a
-        margin: 0
+      left: auto
+
   a
     height: $headerheight
     text-decoration: none

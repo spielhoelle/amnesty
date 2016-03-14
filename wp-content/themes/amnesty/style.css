@@ -383,8 +383,7 @@ figure {
     .grid figure figcaption h1,
     .grid figure figcaption h2,
     .grid figure figcaption .more-link {
-      padding: 0.5em;
-      font-size: 1em; }
+      padding: 0.5em; }
     figure.header figcaption h2,
     .grid figure figcaption h2 {
       margin-top: 20px;
@@ -461,8 +460,9 @@ input[type="datetime"],
 input[type="datetime-local"],
 input[type="color"],
 textarea {
+  background: #f8fafa;
   color: #dadada;
-  border: 1px solid #404040; }
+  border: 1px solid #dadada; }
   input[type="text"]:focus,
   input[type="email"]:focus,
   input[type="url"]:focus,
@@ -482,7 +482,7 @@ textarea {
     color: black; }
 
 select {
-  border: 1px solid #404040; }
+  border: 1px solid #dadada; }
 
 input[type="text"],
 input[type="email"],
@@ -733,6 +733,8 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
       -ms-flex-pack: center;
           justify-content: center;
   padding: 0; }
+  .grid .more-link {
+    font-size: 1em; }
   .grid figure {
     overflow: hidden;
     background-color: white; }
@@ -897,18 +899,15 @@ nav.pagination {
       -webkit-flex-flow: row nowrap;
           -ms-flex-flow: row nowrap;
               flex-flow: row nowrap;
-      width: 100%;
       left: -999em; }
       .main-navigation ul .sub-menu .sub-menu {
         z-index: 0; }
       .main-navigation ul .sub-menu a {
         color: white;
-        margin-top: -50px;
+        margin-top: 0px;
         transition: margin .3s ease; }
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
-    left: 0; }
-    .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu > li > a {
-      margin: 0; }
+    left: auto; }
   .main-navigation a {
     height: 80px;
     text-decoration: none;
@@ -1431,9 +1430,7 @@ section.not-found {
 
 .wpcf7-form-control-wrap input {
   margin-bottom: 1em;
-  background: #f8fafa;
-  border-radius: 0;
-  border: 1px solid #e4e9e9; }
+  border-radius: 0; }
 
 .expired {
   display: block;
@@ -1448,9 +1445,6 @@ section.not-found {
   font-size: 18px;
   width: 299px;
   margin-left: 60px; }
-
-section .entry-content {
-  text-align: center; }
 
 section .column i.fa {
   font-size: 6rem; }
@@ -1490,6 +1484,9 @@ section[rel="Startseite"] a.active .fa:before, section[rel="Startseite"] a.activ
   color: white;
   fill: white; }
 
+section .wpcf7-form input {
+  width: 100%; }
+
 section[rel="News"] .more-link {
   margin: 0; }
 
@@ -1498,20 +1495,20 @@ section[rel="News"] .entry-footer {
 
 /**
  * WP admin bar */
-html[lang] {
-  margin-top: 0 !important; }
-
-#wpadminbar {
-  transition: top 0.2s;
-  top: -22px;
-  opacity: 0; }
-  #wpadminbar > * {
-    visibility: hidden; }
-  #wpadminbar:hover {
-    top: 0;
-    opacity: 1; }
-    #wpadminbar:hover > * {
-      visibility: visible; }
+@media screen and (min-width: 782px) {
+  html[lang] {
+    margin-top: 0 !important; }
+  #wpadminbar {
+    transition: top 0.2s;
+    top: -22px;
+    opacity: 0; }
+    #wpadminbar > * {
+      visibility: hidden; }
+    #wpadminbar:hover {
+      top: 0;
+      opacity: 1; }
+      #wpadminbar:hover > * {
+        visibility: visible; } }
 
 #main {
   display: -webkit-flex;
@@ -1996,7 +1993,7 @@ html[lang] {
       left: auto;
       position: relative;
       background: white;
-      margin-left: 10px;
+      padding-left: 10px;
       z-index: 0; }
       #masthead .top ul .sub-menu, #masthead .top ul .sub-menu a,
       #masthead .main-navigation ul .sub-menu,
