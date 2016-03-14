@@ -899,7 +899,10 @@ nav.pagination {
       -webkit-flex-flow: row nowrap;
           -ms-flex-flow: row nowrap;
               flex-flow: row nowrap;
-      left: -999em; }
+      left: -999em;
+      -webkit-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+              transform: translateX(-50%); }
       .main-navigation ul .sub-menu .sub-menu {
         z-index: 0; }
       .main-navigation ul .sub-menu a {

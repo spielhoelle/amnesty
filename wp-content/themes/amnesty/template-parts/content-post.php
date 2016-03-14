@@ -8,6 +8,7 @@
  */
 $classes = [];
 $img = get_thumbnail('header');
+$classes[] = 'header';
 
 ?>
 
