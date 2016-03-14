@@ -1487,6 +1487,9 @@ section[rel="Startseite"] a.active .fa:before, section[rel="Startseite"] a.activ
 section .wpcf7-form input {
   width: 100%; }
 
+section .wpcf7-form input, section .wpcf7-form textarea {
+  height: 3em; }
+
 section[rel="News"] .more-link {
   margin: 0; }
 
