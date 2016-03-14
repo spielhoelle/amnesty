@@ -650,6 +650,12 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
     .columns .column:last-child {
       padding-right: 0; }
 
+.single .wrap aside, .grey {
+  margin: 20px 0;
+  padding: 0 20px; }
+  .single .wrap aside ul, .grey ul {
+    margin: 20px 0px; }
+
 .single .wrap {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -663,17 +669,15 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
   -webkit-flex-flow: row wrap;
       -ms-flex-flow: row wrap;
           flex-flow: row wrap; }
+  .single .wrap aside {
+    background: #dadada;
+    -webkit-flex: 0 0 33%;
+        -ms-flex: 0 0 33%;
+            flex: 0 0 33%; }
   .single .wrap .content-wrapper {
     -webkit-flex: 0 0 50%;
         -ms-flex: 0 0 50%;
             flex: 0 0 50%; }
-  .single .wrap aside {
-    margin: 20px 0;
-    padding: 0 20px;
-    -webkit-flex: 0 0 33%;
-        -ms-flex: 0 0 33%;
-            flex: 0 0 33%;
-    background: #dadada; }
 
 .single .entry-content {
   border-bottom: 1px solid #dadada; }
@@ -782,6 +786,9 @@ nav.pagination {
     nav.pagination a.current, nav.pagination a:hover, nav.pagination span.current, nav.pagination span:hover {
       background: black;
       color: white; }
+
+.breadcrumb .current-page, .breadcrumb a {
+  color: white; }
 
 #masthead {
   position: fixed;

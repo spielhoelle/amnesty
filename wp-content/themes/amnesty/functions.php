@@ -159,6 +159,7 @@ require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/jetpack.php';
 require get_template_directory() . '/inc/tinymce.php';
 require get_template_directory() . '/inc/remove.comments.php';
+require get_template_directory() . '/inc/breadcrumbs.php';
 
 
 /**

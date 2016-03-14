@@ -127,20 +127,25 @@ body
     &:last-child
       padding-right: 0
 
+.single .wrap aside, .grey
+  margin: 20px 0
+  padding: 0 20px
+
+  ul
+    margin: 20px 0px
+
 .single
   .wrap
     display: flex
     justify-content: space-between
     align-items: flex-start
     flex-flow: row wrap
+    aside
+      background: $grey
+      flex: 0 0 33%
     .content-wrapper
       flex: 0 0 50%
-    aside
-      margin: 20px 0
-      padding: 0 20px
-      flex: 0 0 33%
-      background: $grey
-      a
+
   .entry-content
     a
       text-decoration: underline
@@ -234,3 +239,8 @@ nav.pagination
     &.current, &:hover
       background: $black
       color: $white
+
+.breadcrumb
+  
+  .current-page, a
+    color: white
