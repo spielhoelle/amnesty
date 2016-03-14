@@ -1,6 +1,12 @@
-.columns.active,
-.columns:hover {
-  outline: 1px dotted;
-  background-color: #f7f7f7; }
+.columns {
+  background: #eee;
+  padding: 0; }
+  .columns .column {
+    border: 1px solid #aaa;
+    background: #ddd;
+    margin: 5px; }
+  .columns.active, .columns:hover {
+    outline: 1px dotted;
+    background-color: #bbb; }
 
 /*# sourceMappingURL=columns.admin.css.map */

@@ -3,8 +3,7 @@ i.mce-i-columns {
   vertical-align: top;
   -moz-osx-font-smoothing: grayscale; }
 
-i.mce-i-columns:before,
-i.mce-i-columns:after {
+i.mce-i-columns:before, i.mce-i-columns:after {
   content: "\f333";
   display: block;
   width: 11px;
@@ -59,8 +58,7 @@ table.mce-columns-grid {
     background-color: #C8DEF4;
     color: #000;
     border-color: #a1a1a1; }
-  table.mce-columns-grid tr:hover:nth-child(2) td:hover ~ td span,
-  table.mce-columns-grid tr:hover:nth-child(2) td:first-child span {
+  table.mce-columns-grid tr:hover:nth-child(2) td:hover ~ td span, table.mce-columns-grid tr:hover:nth-child(2) td:first-child span {
     background-color: #fff;
     color: #D6D6D6;
     border-color: #D6D6D6; }
