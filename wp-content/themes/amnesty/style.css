@@ -940,9 +940,10 @@ nav.pagination {
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
     left: auto; }
   .main-navigation a {
+    font-family: "Trade Gothic"; }
+  .main-navigation a, .main-navigation i {
     height: 80px;
     text-decoration: none;
-    font-family: "Trade Gothic";
     padding: 0 30px;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -951,8 +952,15 @@ nav.pagination {
         -ms-flex-align: center;
             align-items: center;
     white-space: nowrap; }
-    .main-navigation a:hover {
+    .main-navigation a:hover, .main-navigation i:hover {
       background: rgba(0, 0, 0, 0.1); }
+  .main-navigation #menu-search .search-form {
+    position: absolute;
+    display: none;
+    right: 0;
+    padding: 20px;
+    background: #FFF;
+    border: 1px solid #eee; }
   .main-navigation .current_page_item,
   .main-navigation .current-menu-item,
   .main-navigation .current_page_ancestor,

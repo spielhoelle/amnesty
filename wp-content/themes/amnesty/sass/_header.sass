@@ -91,19 +91,28 @@
   div > ul li.menu-item-has-children:hover
     > .sub-menu
       left: auto
-
   a
+    font-family: $font__title
+
+  a, i
     height: $headerheight
     text-decoration: none
-    font-family: $font__title
     padding: 0 $gap
     display: flex
     align-items: center
     white-space: nowrap
     &:hover
       background: rgba(0, 0, 0, 0.1)
-  .current_page_item ,
-  .current-menu-item ,
+  #menu-search .search-form
+    position: absolute
+    display: none
+    right: 0
+    padding: 20px
+    background: #FFF
+    border: 1px solid #eee
+    
+  .current_page_item,
+  .current-menu-item,
   .current_page_ancestor,
   .current-menu-ancestor,
     background: black

@@ -65,6 +65,21 @@
         });
 
 
+        $('#menu-search').click(function(){
+          $('#menu-search .search-form').show()
+        })
+
+        $('body').click(function(){
+          if($('#menu-search .search-form').is(':visible')){
+            $('#menu-search .search-form').hide()
+          }
+        })
+
+        $('#menu-search').click(function (e) {
+            e.stopPropagation();
+        });
+
+
     });
 
 }(jQuery));
