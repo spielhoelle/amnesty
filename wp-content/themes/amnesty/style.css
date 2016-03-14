@@ -637,6 +637,37 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
       -webkit-flex-flow: column;
           -ms-flex-flow: column;
               flex-flow: column; } }
+  body.blog .entry-header .overview, body.archive .entry-header .overview, body.search .entry-header .overview {
+    -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto; }
+
+body .breadcrumb {
+  margin-bottom: 0.3em; }
+  body .breadcrumb .current-page, body .breadcrumb a {
+    color: white; }
+
+body .category_structure {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row;
+      -ms-flex-flow: row;
+          flex-flow: row;
+  font-size: 1.3em; }
+  body .category_structure > li:not(:last-child) {
+    margin-right: 10px; }
+  body .category_structure .current-cat a {
+    background-color: black;
+    color: white; }
+  body .category_structure a {
+    padding: 0.3em;
+    background: #f2f2f2;
+    display: inline-block;
+    margin-bottom: 0.3em; }
+    body .category_structure a:hover {
+      background-color: black;
+      color: white; }
 
 .wrap {
   padding: 60px 30px; }
@@ -788,9 +819,6 @@ nav.pagination {
     nav.pagination a.current, nav.pagination a:hover, nav.pagination span.current, nav.pagination span:hover {
       background: black;
       color: white; }
-
-.breadcrumb .current-page, .breadcrumb a {
-  color: white; }
 
 #masthead {
   position: fixed;
@@ -1144,7 +1172,7 @@ footer.site-footer {
   .footer-below:hover .tommy a {
     color: yellow !important; }
 
-ul.children {
+.footer-below ul.children {
   padding-left: 10px; }
 
 .sticky {

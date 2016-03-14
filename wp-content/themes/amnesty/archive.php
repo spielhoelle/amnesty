@@ -22,19 +22,24 @@ get_header(); ?>
 
                 <header class="entry-header">
 
-                    <div>
+                    <div class="overview">
                       <!-- <?php the_archive_title('<h1 class="entry-title">', '</h1>'); ?> -->
                       <?php if (function_exists('nav_breadcrumb')) nav_breadcrumb(); ?>
-                      <?php get_search_form(); ?>
-                      <h1>Ähnliches zu diesem Thema:</h1>
-                      <ul>
+                      <!-- <h1><?php echo get_cat_name($cat) .' '.  esc_html__( 'belongs to', 'amnesty' ) ?> </h1> -->
+                      <ul class="category_structure">
                         <?php
                         $cat_object = $wp_query->get_queried_object();
                         $parentcat = ($cat_object->category_parent) ? $cat_object->category_parent : $cat;
+                        // $parentcat = ($parentcat->category_parent) ? $parentcat->category_parent : $cat;
+                        // $parentcat = ($parentcat->category_parent) ? $parentcat->category_parent : $cat;
+
+
                         wp_list_categories("child_of=$parentcat&title_li");
                         ?>
                       </ul>
-                      
+                  </div>
+                  <div>
+                      <?php get_search_form(); ?>
                   </div>
 
                 </header>

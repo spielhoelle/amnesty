@@ -2,17 +2,17 @@
 function nav_breadcrumb() {
 
  $delimiter = '&raquo;';
- $home = 'Amnesty';
+ $home = '';
  $before = '<span class="current-page">';
  $after = '</span>';
 
  if ( !is_home() && !is_front_page() || is_paged() ) {
 
- echo '<h1 class="breadcrumb entry-title">Kategorien: ';
+ echo '<h1 class="breadcrumb entry-title">';
 
  global $post;
  $homeLink = get_bloginfo('url');
- echo '<a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
+ // echo '<a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
 
  if ( is_category()) {
  global $wp_query;

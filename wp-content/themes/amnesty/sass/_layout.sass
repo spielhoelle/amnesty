@@ -108,6 +108,7 @@ input[type="submit"]
 
 body
   &.blog, &.archive, &.search
+
     .entry-header
       margin: 0 30px
       display: flex
@@ -115,7 +116,31 @@ body
       align-items: center
       @media(max-width: $breakpoint1)
         flex-flow: column
+      .overview
+        flex: 1 1 auto
 
+  .breadcrumb
+    margin-bottom: 0.3em
+    .current-page, a
+      color: white
+
+  .category_structure
+    display: flex
+    flex-flow: row
+    font-size: 1.3em
+    >li:not(:last-child)
+      margin-right: 10px
+    .current-cat a
+      background-color: black
+      color: white
+    a
+      padding: 0.3em
+      background: darken(white, 5)
+      display: inline-block
+      margin-bottom: 0.3em
+      &:hover
+        background-color: black
+        color: white
 .wrap
   padding: 2*$gap $gap
 .columns
@@ -242,8 +267,3 @@ nav.pagination
     &.current, &:hover
       background: $black
       color: $white
-
-.breadcrumb
-
-  .current-page, a
-    color: white
