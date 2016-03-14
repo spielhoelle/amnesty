@@ -801,19 +801,6 @@ nav.pagination {
   border-bottom: 1px solid #dadada; }
   #masthead:hover #site-description {
     color: black; }
-  #masthead #site-description {
-    transition: color .3s ease;
-    padding-left: 230px;
-    margin: 13px 0;
-    font-size: 1.2em;
-    width: 420px;
-    color: #ddd; }
-    @media (max-width: 1200px) {
-      #masthead #site-description {
-        padding-left: 110px;
-        margin: 0 0;
-        font-size: 1em;
-        height: 40px; } }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -836,6 +823,20 @@ nav.pagination {
           color: transparent;
           height: 100%;
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top/contain; }
+
+#site-description {
+  transition: color .3s ease;
+  padding-left: 230px;
+  margin: 13px 0;
+  font-size: 1.2em;
+  width: 420px;
+  color: #ddd; }
+  @media (max-width: 1200px) {
+    #site-description {
+      padding-left: 110px;
+      margin: 0 0;
+      font-size: 1em;
+      height: 40px; } }
 
 .main-navigation {
   height: 100%;
@@ -922,18 +923,21 @@ nav.pagination {
     white-space: nowrap; }
     .main-navigation a:hover {
       background: rgba(0, 0, 0, 0.1); }
-  .main-navigation .current_page_item > a,
-  .main-navigation .current-menu-item > a,
-  .main-navigation .current_page_ancestor > a,
-  .main-navigation .current-menu-ancestor > a {
-    background: black;
-    color: white; }
-    .main-navigation .current_page_item > a:hover,
-    .main-navigation .current-menu-item > a:hover,
-    .main-navigation .current_page_ancestor > a:hover,
-    .main-navigation .current-menu-ancestor > a:hover {
-      background-color: black;
-      color: #e6e6e6; }
+  .main-navigation .current_page_item,
+  .main-navigation .current-menu-item,
+  .main-navigation .current_page_ancestor,
+  .main-navigation .current-menu-ancestor {
+    background: black; }
+    .main-navigation .current_page_item a,
+    .main-navigation .current-menu-item a,
+    .main-navigation .current_page_ancestor a,
+    .main-navigation .current-menu-ancestor a {
+      color: white; }
+    .main-navigation .current_page_item:hover,
+    .main-navigation .current-menu-item:hover,
+    .main-navigation .current_page_ancestor:hover,
+    .main-navigation .current-menu-ancestor:hover {
+      background-color: black; }
 
 .site-main .comment-navigation, .site-main
 .posts-navigation, .site-main
