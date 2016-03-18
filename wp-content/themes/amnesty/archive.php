@@ -23,24 +23,27 @@ get_header(); ?>
                 <header class="entry-header">
 
                     <div class="overview">
-                      <!-- <?php the_archive_title('<h1 class="entry-title">', '</h1>'); ?> -->
+
                       <?php if (function_exists('nav_breadcrumb')) nav_breadcrumb(); ?>
-                      <!-- <h1><?php echo get_cat_name($cat) .' '.  esc_html__( 'belongs to', 'amnesty' ) ?> </h1> -->
+
                       <ul class="category_structure">
                         <?php
-                        $cat_object = $wp_query->get_queried_object();
-                        $parentcat = ($cat_object->category_parent) ? $cat_object->category_parent : $cat;
-                        // $parentcat = ($parentcat->category_parent) ? $parentcat->category_parent : $cat;
-                        // $parentcat = ($parentcat->category_parent) ? $parentcat->category_parent : $cat;
+                        $args = array(
+                       	'child_of'           => (get_query_var('cat')) ? get_query_var('cat') : 1,
+                       	'title_li'           => '',
+                        'show_option_none'  => ''
+                           );
 
-
-                        wp_list_categories("child_of=$parentcat&title_li");
-                        ?>
+                           wp_list_categories( $args );
+                           ?>
                       </ul>
                   </div>
+
+
                   <div>
                       <?php get_search_form(); ?>
                   </div>
+
 
                 </header>
                 <div class="grid">
@@ -53,7 +56,7 @@ get_header(); ?>
                     <?php
                     global $wp_query;
 
-                    $big = 999999999; // need an unlikely integer
+                    $big = 999999999;
 
                     echo paginate_links(array(
                         'base' => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),

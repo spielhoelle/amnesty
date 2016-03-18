@@ -780,16 +780,24 @@ body .category_structure {
       opacity: 0.5; }
     .grid figure figcaption {
       padding-right: 10px; }
+      .grid figure figcaption > div {
+        background: black;
+        padding: 0.5em;
+        margin: 0 0 .5em 0; }
       .grid figure figcaption h1 {
-        margin: 0 0 .5em 0;
-        max-height: 8rem;
-        font-size: 1.5rem;
+        padding: 0;
+        margin: 0;
+        word-break: break-word;
+        max-height: 4.5em;
+        font-size: 1.5em;
         overflow: hidden;
         -webkit-hyphens: auto;
            -moz-hyphens: auto;
             -ms-hyphens: auto;
                 hyphens: auto; }
       .grid figure figcaption h2, .grid figure figcaption h3, .grid figure figcaption h4, .grid figure figcaption h5 {
+        display: none; }
+      .grid figure figcaption a:empty {
         display: none; }
   .grid > article {
     -webkit-flex: 0 0 25%;

@@ -22,11 +22,11 @@ $content_parts = get_extended($content);
         </a>
 
         <figcaption>
+          <div>
             <h1 class="entry-title"><?php
                 icons();
                 echo get_the_title() ?></h1>
-            <br>
-            <h2><?php echo (is_page()) ? $content_parts['main'] : '' ?></h2>
+          </div>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
         </figcaption>
     </figure>

@@ -231,13 +231,21 @@ body
         opacity: 0.5
     figcaption
       padding-right: 10px
-      h1
+      >div
+        background: black
+        padding: 0.5em
         margin: 0 0 .5em 0
-        max-height: 8rem
-        font-size: 1.5rem
+      h1
+        padding: 0
+        margin: 0
+        word-break: break-word
+        max-height: 4.5em
+        font-size: 1.5em
         overflow: hidden
         hyphens: auto
       h2, h3, h4, h5
+        display: none
+      a:empty
         display: none
   > article
     flex: 0 0 25%

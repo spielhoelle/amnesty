@@ -8,8 +8,7 @@
  */
 
 if (!function_exists('amnesty_setup')) :
-    function amnesty_setup()
-    {
+    function amnesty_setup() {
         load_theme_textdomain('amnesty', get_template_directory() . '/languages');
         add_theme_support('automatic-feed-links');
         add_theme_support('title-tag');
@@ -34,15 +33,13 @@ if (!function_exists('amnesty_setup')) :
     }
 endif;
 add_action('after_setup_theme', 'amnesty_setup');
-function amnesty_content_width()
-{
+function amnesty_content_width() {
     $GLOBALS['content_width'] = apply_filters('amnesty_content_width', 640);
 }
 
 
 add_action('after_setup_theme', 'amnesty_content_width', 0);
-function amnesty_widgets_init()
-{
+function amnesty_widgets_init() {
     register_sidebar(array(
         'name' => esc_html__('Footer', 'amnesty'),
         'id' => 'footer',
@@ -56,8 +53,7 @@ function amnesty_widgets_init()
 
 add_action('widgets_init', 'amnesty_widgets_init');
 
-function amnesty_scripts()
-{
+function amnesty_scripts() {
     wp_enqueue_style('amnesty-style', get_stylesheet_uri());
 
     wp_enqueue_style('dashicons');
@@ -90,8 +86,7 @@ require get_template_directory() . '/inc/remove.comments.php';
 require get_template_directory() . '/inc/breadcrumbs.php';
 
 add_filter('admin_title', 'my_admin_title', 10, 2);
-function my_admin_title($admin_title, $title)
-{
+function my_admin_title($admin_title, $title) {
     $currentScreen = get_current_screen();
     if ($currentScreen->id === 'page' || $currentScreen->id === 'post' || $currentScreen->id === 'project' || $currentScreen->id === 'product') {
         return 'e-' . get_the_title();
@@ -101,8 +96,7 @@ function my_admin_title($admin_title, $title)
 }
 
 add_action('admin_enqueue_scripts', 'load_admin_style');
-function load_admin_style()
-{
+function load_admin_style() {
     //@TODO checken
     wp_enqueue_style('admin_css', get_template_directory_uri() . '/sass/admin-style.css', false, '1.0.0');
 }
@@ -114,8 +108,7 @@ function my_theme_add_editor_styles()
 
 add_action('admin_init', 'my_theme_add_editor_styles');
 
-function icons($link = true)
-{
+function icons($link = true) {
     global $post;
     $category = get_parent_cat();
     if ($category->category_description !== '' && $category->category_description) {
@@ -140,8 +133,7 @@ function icons($link = true)
  */
 
 
-function get_parent_cat()
-{
+function get_parent_cat() {
     $categories = get_the_category();
     $parent = 0;
     foreach ($categories as $cat) {
@@ -158,22 +150,18 @@ add_image_size('grid', 500, 500, true); // Hard Crop Mode
 add_image_size('header', 1600, 700, true); // Hard Crop Mode
 
 //@todo for fallback images choose right sizes
-function get_thumbnail($size = '')
-{
+function get_thumbnail($size = '') {
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
         $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
-        echo '<!--is_page-->';
     } else {
         if (has_post_thumbnail()) {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
-            echo '<!--has_post_thumb-->';
 
         } else if (function_exists('z_taxonomy_image_url')) {
             $parent = get_parent_cat();
             $img = z_taxonomy_image_url($parent->term_id);
-            echo '<!--get cat image-->';
 
         }
         if ($img == '') {
@@ -182,7 +170,6 @@ function get_thumbnail($size = '')
                 $size === 'full';
             }
             $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
-            echo '<!--random fallback-->';
 
         }
     }
@@ -194,12 +181,10 @@ function get_thumbnail($size = '')
  * debug helper
  */
 
-function dump($param)
-{
+function dump($param) {
     echo "<pre style='position:absolute; z-index: 999999; background: rgba(255, 255, 255, 0.31)'>";
     var_dump($param);
     echo "</pre>";
-
 }
 
 
@@ -207,7 +192,7 @@ function dump($param)
 //add search button at the end of navi
 add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
 function add_loginout_link( $items, $args ) {
-    if ($args->theme_location == 'primary') {
+    if ($args->theme_location == 'primary' && !is_archive() && !is_search()) {
       $items .= '<li id="menu-search"><i class="fa fa-search"></i>';
       $items .=  get_search_form(false);
       $items .= '</li>';
