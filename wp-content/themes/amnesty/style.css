@@ -661,6 +661,7 @@ body .category_structure {
     background-color: black;
     color: white; }
   body .category_structure a {
+    font-family: "Trade Gothic";
     padding: 0.3em;
     background: #f2f2f2;
     display: inline-block;
@@ -939,6 +940,19 @@ nav.pagination {
       -webkit-transform: translateX(-50%);
           -ms-transform: translateX(-50%);
               transform: translateX(-50%); }
+      .main-navigation ul .sub-menu::after {
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        display: block;
+        content: "";
+        width: 300%;
+        left: -100%; }
+        @media (max-width: 800px) {
+          .main-navigation ul .sub-menu::after {
+            display: none; } }
       .main-navigation ul .sub-menu .sub-menu {
         z-index: 0; }
       .main-navigation ul .sub-menu a {
@@ -973,17 +987,12 @@ nav.pagination {
   .main-navigation .current-menu-item,
   .main-navigation .current_page_ancestor,
   .main-navigation .current-menu-ancestor {
-    background: black; }
-    .main-navigation .current_page_item a,
-    .main-navigation .current-menu-item a,
-    .main-navigation .current_page_ancestor a,
-    .main-navigation .current-menu-ancestor a {
-      color: white; }
+    background: rgba(0, 0, 0, 0.2); }
     .main-navigation .current_page_item:hover,
     .main-navigation .current-menu-item:hover,
     .main-navigation .current_page_ancestor:hover,
     .main-navigation .current-menu-ancestor:hover {
-      background-color: black; }
+      background: rgba(0, 0, 0, 0.3); }
 
 .site-main .comment-navigation, .site-main
 .posts-navigation, .site-main
@@ -1968,6 +1977,9 @@ section[rel="News"] .entry-footer {
 .menu-toggle,
 .main-navigation.toggled ul {
   display: block; }
+
+.main-navigation.toggled .sub-menu {
+  left: 50% !important; }
 
 @media screen and (min-width: 800px) {
   .menu-toggle {

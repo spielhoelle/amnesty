@@ -82,6 +82,18 @@
       flex-flow: row nowrap
       left: -999em
       transform: translateX(-50%)
+      &::after
+        height: 100%
+        position: absolute
+        z-index: -1
+        top: 0
+        left: 0
+        display: block
+        content: ""
+        width: 300%
+        left: -100%
+        @media (max-width: $breakpoint2)
+          display: none
       .sub-menu
         z-index: 0
       a
@@ -110,16 +122,16 @@
     padding: 20px
     background: #FFF
     border: 1px solid #eee
-    
+
   .current_page_item,
   .current-menu-item,
   .current_page_ancestor,
   .current-menu-ancestor,
-    background: black
+    background: rgba(0, 0, 0, 0.2)
     a
-      color: $white
+      // color: $white
     &:hover
-      background-color: black
+      background: rgba(0, 0, 0, 0.3)
 
 .comment-navigation,
 .posts-navigation,
