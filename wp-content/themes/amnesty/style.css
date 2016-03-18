@@ -632,11 +632,15 @@ body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center; }
-  @media (max-width: 1200px) {
+  @media (max-width: 800px) {
     body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
       -webkit-flex-flow: column;
           -ms-flex-flow: column;
-              flex-flow: column; } }
+              flex-flow: column;
+      -webkit-align-items: stretch;
+          -ms-flex-align: stretch;
+                  -ms-grid-row-align: stretch;
+              align-items: stretch; } }
   body.blog .entry-header .overview, body.archive .entry-header .overview, body.search .entry-header .overview {
     -webkit-flex: 1 1 auto;
         -ms-flex: 1 1 auto;
@@ -2021,6 +2025,7 @@ section[rel="News"] .entry-footer {
   .columns {
     display: block; }
     .columns .column {
+      padding: 0;
       width: 100% !important; }
   .grid > article {
     -webkit-flex: 0 0 50%;
