@@ -192,10 +192,17 @@ function dump($param) {
 //add search button at the end of navi
 add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
 function add_loginout_link( $items, $args ) {
-    if ($args->theme_location == 'primary' && !is_archive() && !is_search()) {
+    if ($args->theme_location == 'primary' && !is_archive() && !is_search() && !is_home()) {
       $items .= '<li id="menu-search"><i class="fa fa-search"></i>';
       $items .=  get_search_form(false);
       $items .= '</li>';
     }
     return $items;
 }
+
+
+
+add_theme_support( 'infinite-scroll', array(
+    'container' => 'infinite-scroll',
+    'footer' => 'page',
+) );

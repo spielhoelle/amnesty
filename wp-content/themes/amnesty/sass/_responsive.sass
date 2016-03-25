@@ -4,7 +4,7 @@
 .main-navigation.toggled .sub-menu
   left: 50% !important
 
-@media screen and (min-width: $breakpoint2)
+@media screen and (min-width: $breakpoint3)
   .menu-toggle
     display: none
   .main-navigation > div > ul
@@ -30,8 +30,10 @@
   figure.header
     height: 33vh !important
   .single .wrap
-    .content-wrapper, aside
+    .content-wrapper
       flex: 0 0 100%
+    aside
+      flex: 0 0 auto
   .slider figure figcaption
     h1
       font-size: 2em
@@ -46,11 +48,10 @@
     .column
       padding: 0
       width: 100% !important
-  .grid > article
-    flex: 0 0 50%
-    max-width: none
 
-@media (max-width: $breakpoint2)
+
+
+@media (max-width: $breakpoint3)
   //500
   #masthead
     #site-description
@@ -84,6 +85,13 @@
           color: $black
         a
           margin: 0
+      #menu-search
+        position: absolute
+        top: 0
+        right: 50px
+        font-size: 26px
+        i
+          padding: 7px
       .current_page_item > a,
       .current-menu-item > a,
       .current_page_ancestor > a,

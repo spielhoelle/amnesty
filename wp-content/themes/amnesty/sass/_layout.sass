@@ -113,10 +113,9 @@ body
       display: flex
       justify-content: space-between
       align-items: center
-      @media(max-width: $breakpoint2)
+      @media(max-width: $breakpoint3)
         flex-flow: column
         align-items: stretch
-
       .overview
         flex: 1 1 auto
 
@@ -127,7 +126,7 @@ body
 
   .category_structure
     display: flex
-    flex-flow: row
+    flex-flow: row wrap
     font-size: 1.3em
     >li:not(:last-child)
       margin-right: 10px
@@ -252,6 +251,9 @@ body
   > article
     flex: 0 0 25%
     padding: $gap
+    @media (max-width: $breakpoint1)
+      flex: 0 0 33.33333%
+      max-width: none
     img
       width: 100%
       height: 100%

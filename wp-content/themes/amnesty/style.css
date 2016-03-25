@@ -655,9 +655,9 @@ body .category_structure {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-flex-flow: row;
-      -ms-flex-flow: row;
-          flex-flow: row;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
   font-size: 1.3em; }
   body .category_structure > li:not(:last-child) {
     margin-right: 10px; }
@@ -809,6 +809,12 @@ body .category_structure {
         -ms-flex: 0 0 25%;
             flex: 0 0 25%;
     padding: 30px; }
+    @media (max-width: 1200px) {
+      .grid > article {
+        -webkit-flex: 0 0 33.33333%;
+            -ms-flex: 0 0 33.33333%;
+                flex: 0 0 33.33333%;
+        max-width: none; } }
     .grid > article img {
       width: 100%;
       height: 100%; }
@@ -968,7 +974,7 @@ nav.pagination {
   .main-navigation a {
     font-family: "Trade Gothic"; }
   .main-navigation a, .main-navigation i {
-    height: 80px;
+    height: 100%;
     text-decoration: none;
     padding: 0 30px;
     display: -webkit-flex;
@@ -2010,10 +2016,14 @@ section[rel="News"] .entry-footer {
     padding: 0 5px; }
   figure.header {
     height: 33vh !important; }
-  .single .wrap .content-wrapper, .single .wrap aside {
+  .single .wrap .content-wrapper {
     -webkit-flex: 0 0 100%;
         -ms-flex: 0 0 100%;
             flex: 0 0 100%; }
+  .single .wrap aside {
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto; }
   .slider figure figcaption h1 {
     font-size: 2em; }
     .slider figure figcaption h1:before {
@@ -2026,12 +2036,7 @@ section[rel="News"] .entry-footer {
     display: block; }
     .columns .column {
       padding: 0;
-      width: 100% !important; }
-  .grid > article {
-    -webkit-flex: 0 0 50%;
-        -ms-flex: 0 0 50%;
-            flex: 0 0 50%;
-    max-width: none; } }
+      width: 100% !important; } }
 
 @media (max-width: 800px) {
   #masthead #site-description {
@@ -2069,6 +2074,15 @@ section[rel="News"] .entry-footer {
       #masthead .top ul .sub-menu a,
       #masthead .main-navigation ul .sub-menu a {
         margin: 0; }
+    #masthead .top #menu-search,
+    #masthead .main-navigation #menu-search {
+      position: absolute;
+      top: 0;
+      right: 50px;
+      font-size: 26px; }
+      #masthead .top #menu-search i,
+      #masthead .main-navigation #menu-search i {
+        padding: 7px; }
     #masthead .top .current_page_item > a,
     #masthead .top .current-menu-item > a,
     #masthead .top .current_page_ancestor > a,

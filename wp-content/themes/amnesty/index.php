@@ -20,11 +20,34 @@ get_header(); ?>
         <?php // news page is page
         if (have_posts()) : ?>
 
-            <header class="entry-header">
-                <h1 class="entry-title">Alle News</h1>
-                <?php get_search_form(); ?>
-            </header>
-            <div class="grid">
+        <header class="entry-header">
+
+            <div class="overview">
+              <h1><?php esc_html_e( 'Most Used Categories', 'amnesty' ); ?></h1>
+              <?php if (function_exists('nav_breadcrumb')) nav_breadcrumb(); ?>
+
+              <ul class="category_structure">
+                <?php
+                $args = array(
+                'depth'              => 1,
+                'title_li'           => '',
+                'show_option_none'   => '',
+                'exclude'            => 1
+                );
+
+                   wp_list_categories( $args );
+                   ?>
+              </ul>
+          </div>
+
+
+          <div>
+              <?php get_search_form(); ?>
+          </div>
+
+
+        </header>
+            <div id="infinite-scroll" class="grid">
                 <?php while (have_posts()) : the_post(); ?>
                     <?php get_template_part('template-parts/content', ''); ?>
                 <?php endwhile; ?>
