@@ -22,13 +22,16 @@
 
             <div class="rest">
                 <div>
-                    <p>Privacy Policy | Cookie Statement | Permissions © 2016 AMNESTY INTERNATIONAL</p>
+                    <a title="Impressum" href="<?php echo get_permalink( get_page_by_path( 'impressum' ) ) ?>">Impressum</a> |
+                    <a title="Datenschutz" href="<?php echo get_permalink( get_page_by_path( 'datenschutz' ) )?>">Datenschutz</a> |
+                    © 2016 AMNESTY INTERNATIONAL
                 </div>
                 <ul>
-                    <li><a href="http://facebook.com/"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="http://linkedin.com/"><i class="fa fa-linkedin"></i></a></li>
-                    <li><a href="http://twitter.com/"><i class="fa fa-twitter"></i></a></li>
-                    <li><a href="http://plus.google.com/"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a title="Amnesty International Deutschland" href="https://www.amnesty.de"><i class="fa fa-globe"></i></a></li>
+                    <li><a title="Facebook" href="https://www.facebook.com/AmnestyDeutschland"><i class="fa fa-facebook"></i></a></li>
+                    <li><a title="Twitter" href="https://twitter.com/amnesty_de"><i class="fa fa-twitter"></i></a></li>
+                    <li><a title="Google Plus" href="https://plus.google.com/u/0/b/110370722626798674939/+AmnestyDeutschland"><i class="fa fa-google-plus"></i></a></li>
+                    <li><a title="Youtube" href="https://www.youtube.com/channel/UC5jDXV8yNFtmJZE_Yo4AFlw"><i class="fa fa-youtube"></i></a></li>
                 </ul>
             </div>
 

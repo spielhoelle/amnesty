@@ -100,6 +100,8 @@
         color: $white
         margin-top: 0px
         transition: margin .3s ease
+        &:hover
+          background-color: #333
   div > ul li.menu-item-has-children:hover
     > .sub-menu
       left: auto
@@ -123,15 +125,17 @@
     background: #FFF
     border: 1px solid #eee
 
-  .current_page_item,
-  .current-menu-item,
-  .current_page_ancestor,
-  .current-menu-ancestor,
-    background: rgba(0, 0, 0, 0.2)
-    a
-      // color: $white
-    &:hover
-      background: rgba(0, 0, 0, 0.3)
+.current_page_item,
+.current-menu-item,
+.current_page_ancestor,
+.current-menu-ancestor,
+  background-color: rgba(0, 0, 0, 0.2)
+  .sub-menu &
+    background-color: #333
+  &:hover
+    background-color: rgba(0, 0, 0, 0.3)
+    .sub-menu &
+      background-color: #444
 
 .comment-navigation,
 .posts-navigation,

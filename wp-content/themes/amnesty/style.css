@@ -668,7 +668,7 @@ body .category_structure {
       color: white; }
 
 .wrap {
-  padding: 60px 30px; }
+  padding: 30px; }
 
 .columns {
   padding: 0; }
@@ -679,10 +679,12 @@ body .category_structure {
     .columns .column:last-child {
       padding-right: 0; }
 
-.single .wrap aside, .grey {
+.single .wrap aside,
+.grey {
   margin: 20px 0;
   padding: 0 20px; }
-  .single .wrap aside ul, .grey ul {
+  .single .wrap aside ul,
+  .grey ul {
     margin: 20px 0px; }
 
 .single .wrap {
@@ -752,13 +754,37 @@ body .category_structure {
       background-color: #dadada; }
 
 .infinite-loader {
-  width: 100%; }
+  width: 100%;
+  display: block;
+  height: auto;
+  margin-bottom: 30px; }
   .infinite-loader .spinner {
+    position: relative !important;
     margin: 0 auto;
-    left: 0 !important; }
+    width: 40px !important;
+    height: 40px;
+    text-indent: 0;
+    background: url("img/donut.svg");
+    background-size: 40px 40px;
+    -webkit-animation: spin .5s linear infinite;
+            animation: spin .5s linear infinite; }
+    .infinite-loader .spinner * {
+      display: none; }
 
 #infinite-footer {
   display: none; }
+
+@-webkit-keyframes spin {
+  50% {
+    opacity: 0.3;
+    -webkit-filter: grayscale(1);
+    /* Old WebKit */
+    filter: grayscale(1); }
+  100% {
+    opacity: 1;
+    -webkit-filter: grayscale(0);
+    /* Old WebKit */
+    filter: grayscale(0); } }
 
 .grid, .infinite-wrap {
   display: -webkit-flex;
@@ -970,6 +996,8 @@ nav.pagination {
         color: white;
         margin-top: 0px;
         transition: margin .3s ease; }
+        .main-navigation ul .sub-menu a:hover {
+          background-color: #333; }
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
     left: auto; }
   .main-navigation a {
@@ -994,16 +1022,27 @@ nav.pagination {
     padding: 20px;
     background: #FFF;
     border: 1px solid #eee; }
-  .main-navigation .current_page_item,
-  .main-navigation .current-menu-item,
-  .main-navigation .current_page_ancestor,
-  .main-navigation .current-menu-ancestor {
-    background: rgba(0, 0, 0, 0.2); }
-    .main-navigation .current_page_item:hover,
-    .main-navigation .current-menu-item:hover,
-    .main-navigation .current_page_ancestor:hover,
-    .main-navigation .current-menu-ancestor:hover {
-      background: rgba(0, 0, 0, 0.3); }
+
+.current_page_item,
+.current-menu-item,
+.current_page_ancestor,
+.current-menu-ancestor {
+  background-color: rgba(0, 0, 0, 0.2); }
+  .sub-menu .current_page_item, .sub-menu
+  .current-menu-item, .sub-menu
+  .current_page_ancestor, .sub-menu
+  .current-menu-ancestor {
+    background-color: #333; }
+  .current_page_item:hover,
+  .current-menu-item:hover,
+  .current_page_ancestor:hover,
+  .current-menu-ancestor:hover {
+    background-color: rgba(0, 0, 0, 0.3); }
+    .sub-menu .current_page_item:hover, .sub-menu
+    .current-menu-item:hover, .sub-menu
+    .current_page_ancestor:hover, .sub-menu
+    .current-menu-ancestor:hover {
+      background-color: #444; }
 
 .site-main .comment-navigation, .site-main
 .posts-navigation, .site-main
@@ -1107,13 +1146,6 @@ footer.site-footer {
   width: 100%; }
   footer.site-footer, footer.site-footer a {
     color: #dadada; }
-  footer.site-footer .content-button {
-    border: 1px solid white;
-    background: black;
-    transition: color .3s ease, background .3s ease; }
-    footer.site-footer .content-button:hover {
-      background: white;
-      color: black; }
   footer.site-footer li {
     margin: 15px 0; }
   footer.site-footer .footer-below, footer.site-footer .tommy {
@@ -1145,6 +1177,15 @@ footer.site-footer {
     margin-right: 20px; }
     .footer-top section h2 {
       border-bottom: 1px solid white; }
+    .footer-top section input[type="submit"], .footer-top section butto, .footer-top section .content-button {
+      border: 1px solid white;
+      background: black;
+      transition: color .3s ease, background .3s ease;
+      margin-top: 20px;
+      color: white; }
+      .footer-top section input[type="submit"]:hover, .footer-top section butto:hover, .footer-top section .content-button:hover {
+        background: white;
+        color: black; }
   .footer-top a:not(.content-button):hover {
     text-decoration: underline; }
 
@@ -1160,7 +1201,8 @@ footer.site-footer {
           align-items: center;
   -webkit-flex-flow: row wrap;
       -ms-flex-flow: row wrap;
-          flex-flow: row wrap; }
+          flex-flow: row wrap;
+  word-spacing: 5px; }
 
 .footer-below ul {
   display: -webkit-flex;
@@ -1491,9 +1533,6 @@ section.not-found {
   right: 20px; }
   #nlpopup .closex:before {
     font-size: 2em; }
-
-#nlpopup [type="submit"], .textwidget [type="submit"] {
-  margin-top: 30px; }
 
 .wpcf7-form-control-wrap input {
   margin-bottom: 1em;

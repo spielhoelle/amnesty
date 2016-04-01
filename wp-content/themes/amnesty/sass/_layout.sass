@@ -143,7 +143,7 @@ body
         background-color: black
         color: white
 .wrap
-  padding: 2*$gap $gap
+  padding: $gap
 .columns
   padding: 0
   .column
@@ -153,10 +153,10 @@ body
     &:last-child
       padding-right: 0
 
-.single .wrap aside, .grey
+.single .wrap aside,
+.grey
   margin: 20px 0
   padding: 0 20px
-
   ul
     margin: 20px 0px
 
@@ -215,11 +215,34 @@ body
 
 .infinite-loader
   width: 100%
+  display: block
+  height: auto
+  margin-bottom: 30px
   .spinner
-    margin: 0 auto;
-    left: 0 !important
+    position: relative !important
+    margin: 0 auto
+    width: 40px !important
+    height: 40px
+    text-indent: 0
+    background: url("img/donut.svg");
+    background-size: 40px 40px;
+    animation: spin .5s linear infinite
+    *
+      display: none
+
 #infinite-footer
   display: none
+
+@-webkit-keyframes spin
+  50%
+    opacity: 0.3
+    -webkit-filter: grayscale(1); /* Old WebKit */
+    filter: grayscale(1);
+  100%
+    opacity: 1
+    -webkit-filter: grayscale(0); /* Old WebKit */
+    filter: grayscale(0);
+
 
 
 

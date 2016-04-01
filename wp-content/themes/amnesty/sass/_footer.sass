@@ -5,12 +5,8 @@ footer.site-footer
   &, a
     color: $grey
   .content-button
-    border: 1px solid $white
-    background: $black
-    transition: color .3s ease, background .3s ease
-    &:hover
-      background: $white
-      color: $black
+
+
   li
     margin: 15px 0
   .footer-below, .tommy
@@ -32,6 +28,15 @@ footer.site-footer
     margin-right: 20px
     h2
       border-bottom: 1px solid $white
+    input[type="submit"], butto, .content-button
+      border: 1px solid $white
+      background: $black
+      transition: color .3s ease, background .3s ease
+      margin-top: 20px
+      color: white
+      &:hover
+        background: $white
+        color: $black
   a:not(.content-button):hover
     text-decoration: underline
 
@@ -41,6 +46,7 @@ footer.site-footer
     justify-content: space-between
     align-items: center
     flex-flow: row wrap
+    word-spacing: 5px
   ul
     display: flex
     i
