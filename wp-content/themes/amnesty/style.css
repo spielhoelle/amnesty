@@ -786,6 +786,18 @@ body .category_structure {
     /* Old WebKit */
     filter: grayscale(0); } }
 
+@keyframes spin {
+  50% {
+    opacity: 0.3;
+    -webkit-filter: grayscale(1);
+    /* Old WebKit */
+    filter: grayscale(1); }
+  100% {
+    opacity: 1;
+    -webkit-filter: grayscale(0);
+    /* Old WebKit */
+    filter: grayscale(0); } }
+
 .grid, .infinite-wrap {
   display: -webkit-flex;
   display: -ms-flexbox;
