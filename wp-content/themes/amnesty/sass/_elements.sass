@@ -4,24 +4,20 @@ html
 *,
 *:before,
 *:after
-  /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior; see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
   box-sizing: inherit
   &:focus
     outline: 0
 
 \::selection
   background: #000
-  /* WebKit/Blink Browsers
   color: $white
 
 \::-moz-selection
   background: #000
-  /* Gecko Browsers
   color: $white
 
 body
   background: $white
-/* Fallback for when there is no custom background color defined.
 
 a
   color: $darkgrey
@@ -71,9 +67,7 @@ dd
 
 img
   height: auto
-  /* Make sure images are scaled correctly.
   max-width: 100%
-/* Adhere to container width.
 
 table
   margin: 0 0 1.5em
@@ -99,17 +93,18 @@ figure
   &.header img
     height: 100%
     width: 100%
-  &.header figcaption,
-  .grid & figcaption
-    position: absolute
-    bottom: $gap
-    color: $black
-    h1, h2, .more-link
-      padding: 0.5em
-    h2
-      margin-top: 20px
-      background: rgba(0, 0, 0, 0.9)
-      color: white
+  &.header,
+  .grid &, .infinite-scroll &
+    figcaption
+      position: absolute
+      bottom: $gap
+      color: $black
+      h1, h2, .more-link
+        padding: 0.5em
+      h2
+        margin-top: 20px
+        background: rgba(0, 0, 0, 0.9)
+        color: white
 
 .menu-toggle
   background: transparent

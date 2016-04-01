@@ -202,7 +202,28 @@ function add_loginout_link( $items, $args ) {
 
 
 
-add_theme_support( 'infinite-scroll', array(
-    'container' => 'infinite-scroll',
-    'footer' => 'page',
-) );
+/**
+ * Add theme support for infinite scroll.
+ *
+ * @uses add_theme_support
+ * @return void
+ */
+function infinite_scroll_init() {
+    add_theme_support( 'infinite-scroll', array (
+        'container'      => 'infinite-scroll',
+        'type'           => 'scroll',
+        'footer_widgets' => false,
+        'render'         => gridloop,
+        'posts_per_page' => 12,
+        'wrapper'        => false
+    ) );
+}
+add_action( 'after_setup_theme', 'infinite_scroll_init' );
+
+
+
+function gridloop() {
+  while (have_posts()) : the_post();
+       get_template_part('template-parts/content', '');
+   endwhile;
+}

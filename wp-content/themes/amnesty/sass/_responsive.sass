@@ -1,10 +1,12 @@
 .menu-toggle,
 .main-navigation.toggled ul
   display: block
+
 .main-navigation.toggled .sub-menu
   left: 50% !important
 
 @media screen and (min-width: $breakpoint3)
+  //above 800
   .menu-toggle
     display: none
   .main-navigation > div > ul
@@ -13,18 +15,17 @@
     align-items: center
 
 @media (max-width: $breakpoint1)
-  //1000
+  //1200
   #masthead
     #site-description
-
     .top, .main-navigation a
-      height: $headerheight/2
+      height: $headerheight / 2
     .top
       .site-branding .site-title a
         width: 99px
     .main-navigation
       ul .sub-menu
-        height: $headerheight/2
+        height: $headerheight / 2
       a
         padding: 0 $gap / 6
   figure.header
@@ -42,17 +43,17 @@
     h2
       font-size: 1.2em
   #content
-    margin-top: $headerheight/2
-  .columns
+    margin-top: $headerheight / 2
+  .columns.columns-4
     display: block
     .column
-      padding: 0
-      width: 100% !important
-
-
+      width: 50%
 
 @media (max-width: $breakpoint3)
-  //500
+  .columns.columns-3
+    display: block
+    .column
+      width: 100%
   #masthead
     #site-description
       padding-right: 30px
@@ -98,6 +99,7 @@
       .current-menu-ancestor > a
         background: black
         color: $white !important
+
   .archive .page-header h1,
   .single .entry-content h1.entry-title,
   .slider figure figcaption h1,

@@ -276,7 +276,6 @@ html {
 *,
 *:before,
 *:after {
-  /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior; see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/ */
   box-sizing: inherit; }
   *:focus,
   *:before:focus,
@@ -285,23 +284,19 @@ html {
 
 \::-moz-selection {
   background: #000;
-  /* WebKit/Blink Browsers */
   color: white; }
 
 \::selection {
   background: #000;
-  /* WebKit/Blink Browsers */
   color: white; }
 
 \::-moz-selection {
   background: #000;
-  /* Gecko Browsers */
   color: white; }
 
 body {
   background: white; }
 
-/* Fallback for when there is no custom background color defined. */
 a {
   color: #404040;
   text-decoration: none; }
@@ -346,10 +341,8 @@ dd {
 
 img {
   height: auto;
-  /* Make sure images are scaled correctly. */
   max-width: 100%; }
 
-/* Adhere to container width. */
 table {
   margin: 0 0 1.5em;
   width: 100%; }
@@ -375,17 +368,17 @@ figure {
     height: 100%;
     width: 100%; }
   figure.header figcaption,
-  .grid figure figcaption {
+  .grid figure figcaption, .infinite-scroll figure figcaption {
     position: absolute;
     bottom: 30px;
     color: black; }
     figure.header figcaption h1, figure.header figcaption h2, figure.header figcaption .more-link,
     .grid figure figcaption h1,
     .grid figure figcaption h2,
-    .grid figure figcaption .more-link {
+    .grid figure figcaption .more-link, .infinite-scroll figure figcaption h1, .infinite-scroll figure figcaption h2, .infinite-scroll figure figcaption .more-link {
       padding: 0.5em; }
     figure.header figcaption h2,
-    .grid figure figcaption h2 {
+    .grid figure figcaption h2, .infinite-scroll figure figcaption h2 {
       margin-top: 20px;
       background: rgba(0, 0, 0, 0.9);
       color: white; }
@@ -758,7 +751,16 @@ body .category_structure {
     .single .entry-footer a:hover {
       background-color: #dadada; }
 
-.grid {
+.infinite-loader {
+  width: 100%; }
+  .infinite-loader .spinner {
+    margin: 0 auto;
+    left: 0 !important; }
+
+#infinite-footer {
+  display: none; }
+
+.grid, .infinite-wrap {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -769,27 +771,27 @@ body .category_structure {
       -ms-flex-pack: center;
           justify-content: center;
   padding: 0; }
-  .grid .more-link {
+  .grid .more-link, .infinite-wrap .more-link {
     font-size: 1em; }
-  .grid figure {
+  .grid figure, .infinite-wrap figure {
     overflow: hidden;
     background-color: white; }
-    .grid figure img {
+    .grid figure img, .infinite-wrap figure img {
       transition: opacity .3s ease, -webkit-transform .3s ease;
       transition: transform .3s ease, opacity .3s ease;
       transition: transform .3s ease, opacity .3s ease, -webkit-transform .3s ease; }
-    .grid figure:hover img {
+    .grid figure:hover img, .infinite-wrap figure:hover img {
       -webkit-transform: scale(1.1);
           -ms-transform: scale(1.1);
               transform: scale(1.1);
       opacity: 0.5; }
-    .grid figure figcaption {
+    .grid figure figcaption, .infinite-wrap figure figcaption {
       padding-right: 10px; }
-      .grid figure figcaption > div {
+      .grid figure figcaption > div, .infinite-wrap figure figcaption > div {
         background: black;
         padding: 0.5em;
         margin: 0 0 .5em 0; }
-      .grid figure figcaption h1 {
+      .grid figure figcaption h1, .infinite-wrap figure figcaption h1 {
         padding: 0;
         margin: 0;
         word-break: break-word;
@@ -797,25 +799,24 @@ body .category_structure {
         font-size: 1.5em;
         overflow: hidden;
         -webkit-hyphens: auto;
-           -moz-hyphens: auto;
             -ms-hyphens: auto;
                 hyphens: auto; }
-      .grid figure figcaption h2, .grid figure figcaption h3, .grid figure figcaption h4, .grid figure figcaption h5 {
+      .grid figure figcaption h2, .grid figure figcaption h3, .grid figure figcaption h4, .grid figure figcaption h5, .infinite-wrap figure figcaption h2, .infinite-wrap figure figcaption h3, .infinite-wrap figure figcaption h4, .infinite-wrap figure figcaption h5 {
         display: none; }
-      .grid figure figcaption a:empty {
+      .grid figure figcaption a:empty, .infinite-wrap figure figcaption a:empty {
         display: none; }
-  .grid > article {
+  .grid > article, .infinite-wrap > article {
     -webkit-flex: 0 0 25%;
         -ms-flex: 0 0 25%;
             flex: 0 0 25%;
     padding: 30px; }
     @media (max-width: 1200px) {
-      .grid > article {
+      .grid > article, .infinite-wrap > article {
         -webkit-flex: 0 0 33.33333%;
             -ms-flex: 0 0 33.33333%;
                 flex: 0 0 33.33333%;
         max-width: none; } }
-    .grid > article img {
+    .grid > article img, .infinite-wrap > article img {
       width: 100%;
       height: 100%; }
 
@@ -2032,13 +2033,16 @@ section[rel="News"] .entry-footer {
     font-size: 1.2em; }
   #content {
     margin-top: 40px; }
-  .columns {
+  .columns.columns-4 {
     display: block; }
-    .columns .column {
-      padding: 0;
-      width: 100% !important; } }
+    .columns.columns-4 .column {
+      width: 50%; } }
 
 @media (max-width: 800px) {
+  .columns.columns-3 {
+    display: block; }
+    .columns.columns-3 .column {
+      width: 100%; }
   #masthead #site-description {
     padding-right: 30px; }
   #masthead .top .site-branding, #masthead .top .site-branding a, #masthead .top .site-branding .site-title, #masthead .top .site-branding .site-title a {
