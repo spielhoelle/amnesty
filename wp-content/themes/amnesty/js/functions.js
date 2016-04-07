@@ -66,7 +66,11 @@
 
 
         $('#menu-search').click(function(){
-          $('#menu-search .search-form').show()
+          if($('#menu-search .search-form').is(':visible')){
+              $('#menu-search .search-form').hide()
+            } else {
+            $('#menu-search .search-form').show()
+          }
         })
 
         $('body').click(function(){
