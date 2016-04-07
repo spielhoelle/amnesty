@@ -110,8 +110,10 @@ add_action('admin_init', 'my_theme_add_editor_styles');
 
 function icons($link = true) {
     global $post;
-    $category = get_parent_cat();
-    if ($category->category_description !== '' && $category->category_description) {
+    $categories = get_parent_cats();
+
+    foreach($categories as $category){
+      if ($category->category_description !== '' && $category->category_description) {
         echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
         echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
         echo ($link) ? '</a>' : '';
@@ -119,6 +121,7 @@ function icons($link = true) {
         echo (!$link) ? file_get_contents("wp-content/themes/amnesty/img/amensty.svg") : '';
 
     }
+  }
 
 
 }
@@ -133,17 +136,25 @@ function icons($link = true) {
  */
 
 
-function get_parent_cat() {
-    $categories = get_the_category();
-    $parent = 0;
-    foreach ($categories as $cat) {
-        if ($cat->category_parent !== 0) {
-            $parent = $cat->category_parent;
-        } else {
-            $parent = $cat;
-        }
-    }
-    return $parent;
+function get_parent_cats() {
+  $categories = get_the_category();
+  $parents = [];
+
+  foreach ($categories as $cat) {
+      if ($cat->category_parent !== 0) {
+          $parent = get_category($cat->category_parent);
+          if ($parent->category_parent !== 0) {
+              $parent = get_category($parent->category_parent);
+              if ($parent->category_parent !== 0) {
+                  $parent = get_category($parent->category_parent);
+              }
+          }
+      } else {
+        $parent = $cat;
+      }
+      $parents[$parent->term_id] = $parent;
+  }
+  return $parents;
 }
 
 add_image_size('grid', 500, 500, true); // Hard Crop Mode
@@ -160,8 +171,8 @@ function get_thumbnail($size = '') {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
 
         } else if (function_exists('z_taxonomy_image_url')) {
-            $parent = get_parent_cat();
-            $img = z_taxonomy_image_url($parent->term_id);
+            $parents = get_parent_cats();
+            $img = z_taxonomy_image_url($parents->term_id);
 
         }
         if ($img == '') {

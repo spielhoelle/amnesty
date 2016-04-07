@@ -513,7 +513,7 @@ function wp_dropdown_categories( $args = '' ) {
  *     @type int|array    $current_category      ID of category, or array of IDs of categories, that should get the
  *                                               'current-cat' class. Default 0.
  *     @type bool         $hierarchical          Whether to include terms that have non-empty descendants.
- *                                               See {@link get_terms()}. Default true.
+ *                                               Saee {@link get_terms()}. Default true.
  *     @type string       $title_li              Text to use for the list title `<li>` element. Pass an empty string
  *                                               to disable. Default 'Categories'.
  *     @type bool         $hide_title_if_empty   Whether to hide the `$title_li` element if there are no terms in

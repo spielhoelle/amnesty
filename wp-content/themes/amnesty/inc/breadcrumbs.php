@@ -13,7 +13,7 @@ function nav_breadcrumb() {
  global $post;
  $homeLink = get_bloginfo('url');
  // echo '<a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
-
+    icons();
  if ( is_category()) {
  global $wp_query;
  $cat_obj = $wp_query->get_queried_object();
