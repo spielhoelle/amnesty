@@ -311,11 +311,14 @@ a {
 
 blockquote, q {
   margin: 0;
-  quotes: "" "";
+  quotes: '"' '"';
   border-left: 15px solid #000;
-  padding-left: 1.5rem; }
+  padding-left: 1.5rem;
+  font-size: 1.2rem;
+  font-style: italic;
+  font-family: "Trade Gothic"; }
   blockquote:before, blockquote:after, q:before, q:after {
-    content: ""; }
+    content: '"'; }
 
 hr {
   background-color: white;
@@ -557,6 +560,12 @@ span.author {
         -ms-flex: 0 0 300px;
             flex: 0 0 300px;
     background-size: cover; }
+
+.content-button,
+.more-link,
+.wpcf7-form input,
+input[type="submit"] {
+  transition: color .3s ease, background .3s ease; }
 
 .content-button,
 .more-link {
@@ -1186,13 +1195,12 @@ footer.site-footer {
     margin-right: 20px; }
     .footer-top section h2 {
       border-bottom: 1px solid white; }
-    .footer-top section input[type="submit"], .footer-top section butto, .footer-top section .content-button {
+    .footer-top section input[type="submit"], .footer-top section button, .footer-top section .content-button {
       border: 1px solid white;
       background: black;
-      transition: color .3s ease, background .3s ease;
       margin-top: 20px;
       color: white; }
-      .footer-top section input[type="submit"]:hover, .footer-top section butto:hover, .footer-top section .content-button:hover {
+      .footer-top section input[type="submit"]:hover, .footer-top section button:hover, .footer-top section .content-button:hover {
         background: white;
         color: black; }
   .footer-top a:not(.content-button):hover {
@@ -1460,6 +1468,10 @@ section[rel="Startseite"] {
         -ms-transform: translate(0, 0);
             transform: translate(0, 0); }
 
+.subslider {
+  background-color: #eee;
+  text-align: center; }
+
 .badge {
   transition: opacity .3s ease;
   box-sizing: content-box;
@@ -1598,9 +1610,6 @@ section[rel="Startseite"] .fa:before {
 section[rel="Startseite"] a.active .fa:before, section[rel="Startseite"] a.active svg path {
   color: white;
   fill: white; }
-
-section .wpcf7-form input {
-  width: 100%; }
 
 section .wpcf7-form input, section .wpcf7-form textarea {
   height: 3em; }
@@ -2059,9 +2068,9 @@ section[rel="News"] .entry-footer {
     display: -webkit-flex !important;
     display: -ms-flexbox !important;
     display: flex !important;
-    -webkit-justify-content: flex-end;
-        -ms-flex-pack: end;
-            justify-content: flex-end;
+    -webkit-justify-content: space-around;
+        -ms-flex-pack: distribute;
+            justify-content: space-around;
     -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center; } }

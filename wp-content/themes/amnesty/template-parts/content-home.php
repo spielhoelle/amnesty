@@ -4,6 +4,8 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
     <div class="slider" data-navigation="hidden">
 
         <?php while ($the_query->have_posts()) : $the_query->the_post();
+            if (get_post_status(get_the_ID()) !== "private") {
+
             $img = (has_post_thumbnail()) ? wp_get_attachment_image_src(get_post_thumbnail_id(), 'header')[0] : '';
             $content = get_post_field('post_content', get_the_ID());
             $content_parts = get_extended($content);
@@ -26,15 +28,27 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                 </figcaption>
             </figure>
 
-        <?php endwhile; ?>
+        <?php
+        }
+       endwhile; ?>
+
     </div>
     <div class='custom-pager'>
         <?php $i = 0;
-        while ($the_query->have_posts()) : $the_query->the_post(); ?>
+        while ($the_query->have_posts()) : $the_query->the_post();
+          if (get_post_status(get_the_ID()) !== "private") { ?>
             <a data-slide-index="<?php echo $i ?>" href="<?php the_permalink() ?>" class="entry-title">
-                <?php icons(false); ?>
+              <?php icons(false); ?>
             </a>
-            <?php $i++; endwhile; ?>
+          <?php $i++;
+          }
+        endwhile;
+        ?>
     </div>
+    <div class="subslider">
+      <h1>We campaign for a world where human rights are enjoyed by all</h1>
+      <p>Amnesty International is a global movement of more than 7 million people in over 150 countries and territories who campaign to end abuses of human rights.</p>
+    </div>
+
     <!--content-home.php-->
 <?php wp_reset_postdata();

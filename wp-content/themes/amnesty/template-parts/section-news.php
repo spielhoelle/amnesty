@@ -13,12 +13,14 @@
 
             // loop through posts
             while ($blog->have_posts()) : $blog->the_post();
+              if (get_post_status(get_the_ID()) !== "private") {
                 get_template_part('template-parts/content', '');
+              }
             endwhile; ?>
         </div>
 
         <?php wp_reset_postdata(); ?>
-        
+
         <footer class="entry-footer">
             <a class="more-link" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr News ...</a>
         </footer>

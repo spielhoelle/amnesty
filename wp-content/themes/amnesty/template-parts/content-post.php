@@ -50,13 +50,14 @@ $classes[] = 'header';
                 ));
                 ?>
 
-
             </div><!-- .entry-content -->
             <footer class="entry-footer">
                 <?php amnesty_entry_footer(); ?>
             </footer><!-- .entry-footer -->
 
         </div>
+
+
         <?php if (is_single()) { ?>
             <aside>
                 <h2>Letzte Beiträge</h2>
@@ -70,22 +71,23 @@ $classes[] = 'header';
 
                 $recent_posts = new WP_Query($args);
 
-                while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
+                while ($recent_posts->have_posts()) : $recent_posts->the_post();
+                  if (get_post_status(get_the_ID()) !== "private") { ?>
                     <h3 class="entry-title">
-                        <a href="<?php the_permalink() ?>" class="entry-title ">
-                            <?php
-                            echo get_the_title();
-                            icons();
-                            ?>
-                        </a>
+                      <a href="<?php the_permalink() ?>" class="entry-title ">
+                        <?php
+                        echo get_the_title();
+                        icons();
+                        ?>
+                      </a>
                     </h3>
-                    <?php
-
+                  <?php }
                 endwhile;
                 wp_reset_postdata(); ?>
-
             </aside>
+
         <?php } ?>
+        
     </div>
 
 
