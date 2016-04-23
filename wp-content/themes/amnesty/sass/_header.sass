@@ -5,10 +5,6 @@
   left: 50%
   transform: translate(-50%, 0)
   border-bottom: 1px solid $grey
-  &:hover
-    #site-description
-      color: $black
-
   a
     text-transform: uppercase
   .top
@@ -32,11 +28,11 @@
 
 #site-description
   transition: color .3s ease
-  padding-left: 230px
+  padding-left: calc(200px + 2%)
   margin: 13px 0
   font-size: 1.2em
   width: 420px
-  color: #ddd
+  color: $black
   @media (max-width: $breakpoint1)
     padding-left: 110px
     margin: 0 0

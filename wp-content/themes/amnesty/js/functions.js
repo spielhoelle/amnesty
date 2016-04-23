@@ -65,7 +65,7 @@
         });
 
 
-        $('#menu-search').click(function(){
+        $('#menu-search .fa').click(function(){
           if($('#menu-search .search-form').is(':visible')){
               $('#menu-search .search-form').hide()
             } else {

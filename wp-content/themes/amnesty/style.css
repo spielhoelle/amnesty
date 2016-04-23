@@ -821,8 +821,7 @@ body .category_structure {
     .grid figure:hover img, .infinite-wrap figure:hover img {
       -webkit-transform: scale(1.1);
           -ms-transform: scale(1.1);
-              transform: scale(1.1);
-      opacity: 0.5; }
+              transform: scale(1.1); }
     .grid figure figcaption, .infinite-wrap figure figcaption {
       padding-right: 10px; }
       .grid figure figcaption > div, .infinite-wrap figure figcaption > div {
@@ -887,8 +886,6 @@ nav.pagination {
       -ms-transform: translate(-50%, 0);
           transform: translate(-50%, 0);
   border-bottom: 1px solid #dadada; }
-  #masthead:hover #site-description {
-    color: black; }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -914,11 +911,11 @@ nav.pagination {
 
 #site-description {
   transition: color .3s ease;
-  padding-left: 230px;
+  padding-left: calc(200px + 2%);
   margin: 13px 0;
   font-size: 1.2em;
   width: 420px;
-  color: #ddd; }
+  color: black; }
   @media (max-width: 1200px) {
     #site-description {
       padding-left: 110px;
@@ -1607,6 +1604,18 @@ section .wpcf7-form input {
 
 section .wpcf7-form input, section .wpcf7-form textarea {
   height: 3em; }
+
+div.wpcf7-mail-sent-ok {
+  border: 1px solid #398f14; }
+
+div.wpcf7-mail-sent-ng {
+  border: 1px solid #ff0000; }
+
+div.wpcf7-spam-blocked {
+  border: 1px solid #ffa500; }
+
+div.wpcf7-validation-errors {
+  border: 1px solid #f7e700; }
 
 section[rel="News"] .more-link {
   margin: 0; }
