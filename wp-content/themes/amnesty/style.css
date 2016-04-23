@@ -1402,7 +1402,7 @@ section[rel="Startseite"] {
 
 .custom-pager {
   position: absolute;
-  top: calc(33vh - 3em);
+  bottom: 0;
   right: 0;
   z-index: 51;
   display: -webkit-flex;
