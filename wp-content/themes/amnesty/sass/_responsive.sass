@@ -26,8 +26,6 @@
     .main-navigation
       ul .sub-menu
         height: $headerheight / 2
-      a
-        padding: 0 $gap / 6
   figure.header
     height: 33vh !important
   .single .wrap
@@ -65,6 +63,9 @@
       z-index: 1
       a
         padding: 5px 15px
+        &:hover
+          background-color: rgba(0, 0, 0, 0.1);
+
     .top,
     .main-navigation
       height: auto
@@ -117,3 +118,13 @@
       margin-top: 10px
   .slider figure figcaption h2
     display: none
+
+  .badge
+    padding: 0
+    margin: 0
+    position: relative !important
+    left: 0
+    margin: 0 auto
+    div:before
+      position: relative
+      margin: 0 auto

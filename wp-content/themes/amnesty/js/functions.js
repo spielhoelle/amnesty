@@ -70,6 +70,8 @@
               $('#menu-search .search-form').hide()
             } else {
             $('#menu-search .search-form').show()
+            $('#menu-search .search-form .search-field').focus()
+
           }
         })
 

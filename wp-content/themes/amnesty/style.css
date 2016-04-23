@@ -314,11 +314,16 @@ blockquote, q {
   quotes: '"' '"';
   border-left: 15px solid #000;
   padding-left: 1.5rem;
-  font-size: 1.2rem;
-  font-style: italic;
-  font-family: "Trade Gothic"; }
+  font-size: 1.5rem;
+  font-family: "Trade Gothic";
+  position: relative;
+  color: gray; }
   blockquote:before, blockquote:after, q:before, q:after {
-    content: '"'; }
+    content: '"';
+    position: absolute;
+    font-size: 2em;
+    left: 5px;
+    top: -0.3em; }
 
 hr {
   background-color: white;
@@ -480,23 +485,6 @@ textarea {
 select {
   border: 1px solid #dadada; }
 
-input[type="text"],
-input[type="email"],
-input[type="url"],
-input[type="password"],
-input[type="search"],
-input[type="number"],
-input[type="tel"],
-input[type="range"],
-input[type="date"],
-input[type="month"],
-input[type="week"],
-input[type="time"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="color"] {
-  padding: 3px; }
-
 textarea {
   padding-left: 3px;
   width: 100%; }
@@ -582,8 +570,14 @@ input[type="submit"] {
   cursor: pointer;
   font-size: 1rem; }
 
-.more-link, input[type="search"], input[type="submit"] {
-  font-family: "Trade Gothic"; }
+.more-link, input, textarea {
+  font-family: "Trade Gothic";
+  line-height: 3;
+  font-size: 1rem;
+  padding: 0 2rem; }
+
+input[type="submit"] {
+  font-size: 1.5em; }
 
 .more-link {
   display: inline-block;
@@ -613,15 +607,6 @@ input[type="submit"]:hover,
   background: black;
   color: white;
   box-shadow: none; }
-
-input[type="search"],
-input[type="submit"] {
-  line-height: 3;
-  font-size: 1rem; }
-
-input[type="search"],
-input[type="submit"] {
-  padding: 0 2rem; }
 
 body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
   margin: 0 30px;
@@ -971,7 +956,10 @@ nav.pagination {
           .main-navigation > div > ul > .sub-menu .sub-menu:after {
             top: 160px; }
       .main-navigation > div > ul > li {
-        height: 100%; }
+        height: 100%;
+        -webkit-flex: 1 0 auto;
+            -ms-flex: 1 0 auto;
+                flex: 1 0 auto; }
   .main-navigation ul {
     display: none;
     list-style: none;
@@ -995,6 +983,11 @@ nav.pagination {
       -webkit-transform: translateX(-50%);
           -ms-transform: translateX(-50%);
               transform: translateX(-50%); }
+      .main-navigation ul .sub-menu a {
+        padding: 0 30px; }
+      @media (max-width: 1000px) {
+        .main-navigation ul .sub-menu {
+          padding: 0 5px; } }
       .main-navigation ul .sub-menu::after {
         height: 100%;
         position: absolute;
@@ -1019,11 +1012,13 @@ nav.pagination {
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
     left: auto; }
   .main-navigation a {
-    font-family: "Trade Gothic"; }
+    font-family: "Trade Gothic";
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
   .main-navigation a, .main-navigation i {
     height: 100%;
     text-decoration: none;
-    padding: 0 30px;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
@@ -1033,6 +1028,8 @@ nav.pagination {
     white-space: nowrap; }
     .main-navigation a:hover, .main-navigation i:hover {
       background: rgba(0, 0, 0, 0.1); }
+  .main-navigation i:before {
+    margin: 0 auto; }
   .main-navigation #menu-search .search-form {
     position: absolute;
     display: none;
@@ -1270,6 +1267,9 @@ footer.site-footer {
 .footer-below ul.children {
   padding-left: 10px; }
 
+.infinite-scroll .posts-navigation, .infinite-scroll.neverending .site-footer {
+  display: block !important; }
+
 .sticky {
   display: block; }
 
@@ -1402,12 +1402,13 @@ section[rel="Startseite"] {
 
 .custom-pager {
   position: absolute;
-  bottom: 0;
+  top: calc(33vh - 3em);
   right: 0;
   z-index: 51;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  height: 3em;
   border: 1px solid black; }
   .custom-pager a {
     display: block;
@@ -1470,12 +1471,15 @@ section[rel="Startseite"] {
 
 .subslider {
   background-color: #eee;
-  text-align: center; }
+  text-align: center;
+  padding: 10px; }
+  .subslider * {
+    display: block;
+    margin: 10px; }
 
 .badge {
   transition: opacity .3s ease;
   box-sizing: content-box;
-  background: #fff url(img/amensty.svg) no-repeat 30px 380px;
   background-size: 40px;
   padding: 0 60px 30px 250px;
   text-align: left;
@@ -1484,10 +1488,10 @@ section[rel="Startseite"] {
   left: 50%;
   margin-left: -390px;
   margin-top: -203px; }
-  .badge form, .badge > div {
+  .badge > div {
     padding: 0;
     margin: 0; }
-    .badge form:after, .badge > div:after {
+    .badge > div:before {
       display: block;
       content: "";
       width: 270px;
@@ -1499,7 +1503,7 @@ section[rel="Startseite"] {
 
 section.not-found {
   position: absolute; }
-  section.not-found.badge form::after, section.not-found.badge > div::after {
+  section.not-found.badge > div::before {
     top: 0;
     left: 0;
     width: 200px;
@@ -1508,7 +1512,7 @@ section.not-found {
 
 #nlpopup {
   position: fixed; }
-  #nlpopup form::after, #nlpopup > div::after {
+  #nlpopup > div::before {
     background-image: url("img/2000px-TK_email_icon.svg.png"); }
 
 #nlpopup {
@@ -2082,8 +2086,6 @@ section[rel="News"] .entry-footer {
     width: 99px; }
   #masthead .main-navigation ul .sub-menu {
     height: 40px; }
-  #masthead .main-navigation a {
-    padding: 0 5px; }
   figure.header {
     height: 33vh !important; }
   .single .wrap .content-wrapper {
@@ -2120,6 +2122,8 @@ section[rel="News"] .entry-footer {
     z-index: 1; }
     #masthead .main-navigation a {
       padding: 5px 15px; }
+      #masthead .main-navigation a:hover {
+        background-color: rgba(0, 0, 0, 0.1); }
   #masthead .top,
   #masthead .main-navigation {
     height: auto;
@@ -2184,6 +2188,15 @@ section[rel="News"] .entry-footer {
     .search-form input[type="submit"] {
       margin-top: 10px; }
   .slider figure figcaption h2 {
-    display: none; } }
+    display: none; }
+  .badge {
+    padding: 0;
+    margin: 0;
+    position: relative !important;
+    left: 0;
+    margin: 0 auto; }
+    .badge div:before {
+      position: relative;
+      margin: 0 auto; } }
 
 /*# sourceMappingURL=style.css.map */

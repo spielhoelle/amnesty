@@ -70,9 +70,15 @@ input[type="submit"]
   font-size: 1rem
 
 
-.more-link, input[type="search"], input[type="submit"]
+.more-link, input, textarea
   font-family: $font__title
+  line-height: 3
+  font-size: 1rem
+  padding: 0 2rem
 
+
+input[type="submit"]
+  font-size: 1.5em
 .more-link
   display: inline-block
   text-decoration: none
@@ -103,13 +109,7 @@ input[type="submit"],
     color: $white
     box-shadow: none
 
-input[type="search"],
-input[type="submit"]
-  line-height: 3
-  font-size: 1rem
-input[type="search"],
-input[type="submit"]
-  padding: 0 2rem
+
 
 body
   &.blog, &.archive, &.search

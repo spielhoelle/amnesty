@@ -1,7 +1,6 @@
 .badge
   transition: opacity .3s ease
   box-sizing: content-box
-  background: #fff url(img/amensty.svg) no-repeat 30px 380px
   background-size: 40px
   padding: 0 60px $gap 250px
   text-align: left
@@ -10,10 +9,10 @@
   left: 50%
   margin-left: -390px
   margin-top: -203px
-  form, > div
+  > div
     padding: 0
     margin: 0
-    &:after
+    &:before
       display: block
       content: ""
       width: 270px
@@ -26,8 +25,8 @@
 section.not-found
   position: absolute
   &.badge
-    form, >div
-     &::after
+    >div
+     &::before
       top: 0
       left: 0
       width: 200px
@@ -36,8 +35,8 @@ section.not-found
 
 #nlpopup
   position: fixed
-  form, >div
-    &::after
+  >div
+    &::before
       background-image: url("img/2000px-TK_email_icon.svg.png")
 
 #nlpopup

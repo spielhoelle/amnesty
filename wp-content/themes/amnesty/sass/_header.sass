@@ -63,12 +63,18 @@
             top: 160px
       > li
         height: 100%
+        flex: 1 0 auto
+
   ul
     display: none
     list-style: none
     margin: 0
     padding-left: 0
     .sub-menu
+      a
+        padding: 0 30px
+      @media (max-width: $breakpoint2)
+        padding: 0 5px
       background: $black
       height: $headerheight
       position: absolute
@@ -103,16 +109,19 @@
       left: auto
   a
     font-family: $font__title
+    justify-content: center
 
   a, i
     height: 100%
     text-decoration: none
-    padding: 0 $gap
     display: flex
     align-items: center
     white-space: nowrap
     &:hover
       background: rgba(0, 0, 0, 0.1)
+  i:before
+    margin: 0 auto
+
   #menu-search .search-form
     position: absolute
     display: none
