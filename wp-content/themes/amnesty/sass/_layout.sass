@@ -79,7 +79,7 @@ input[type="submit"]
 
 input[type="submit"]
   font-size: 1.5em
-  
+
 .more-link
   display: inline-block
   text-decoration: none
@@ -93,7 +93,6 @@ figure .more-link
 
 .search-form
   input[type="search"]
-    border-radius: 0
     border-color: $grey
   input[type="submit"]
     border-radius: 0
@@ -279,6 +278,7 @@ body
         font-size: 1.5em
         overflow: hidden
         hyphens: auto
+        display: block
       h2, h3, h4, h5
         display: none
       a:empty
@@ -293,13 +293,26 @@ body
       width: 100%
       height: 100%
 
+.entry-title, .page-title, .tommy, .custom-pager
+  i, svg
+    animation-name: heart
+    animation-duration: 1s
+    animation-iteration-count: infinite
+    animation-timing-function: ease
+    padding: 0 5px
+    animation-play-state: paused
+    transition: color .3s ease
+.entry-title, .page-title
+  &:hover
+    i,svg
+      animation-play-state: running
 .entry-title, .page-title
   .fa
-    margin-right: 5px
+    margin-right: 0.3em
     &:before
       color: $white
     aside &
-      margin-left: 5px
+      margin-left: 0.3em
       &:before
         color: $black
 

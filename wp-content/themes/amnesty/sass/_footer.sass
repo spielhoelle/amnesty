@@ -4,8 +4,14 @@ footer.site-footer
   width: 100%
   &, a
     color: $grey
+  a
+    &:hover
+      &, i
+        text-decoration: none
+        color: $yellow
   .content-button
-
+  input
+    font-size: 1rem !important
 
   li
     margin: 15px 0
@@ -37,16 +43,20 @@ footer.site-footer
       &:hover
         background: $white
         color: $black
-  a:not(.content-button):hover
-    text-decoration: underline
 
 .footer-below
+  font-family: $font__title
+
   .rest
     display: flex
     justify-content: space-between
     align-items: center
     flex-flow: row wrap
     word-spacing: 5px
+    > div
+      padding: 20px
+
+
   ul
     display: flex
     i
@@ -63,14 +73,6 @@ footer.site-footer
     &, a
       color: $darkgrey
       transition: color 1s ease
-    i
-      animation-name: heart
-      animation-duration: 1s
-      animation-iteration-count: infinite
-      animation-timing-function: ease
-      padding: 0 5px
-      animation-play-state: paused
-      transition: color .3s ease
   &:hover .tommy
     color: $white
     i
