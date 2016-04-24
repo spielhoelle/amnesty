@@ -4,10 +4,10 @@
   background-size: 40px
   padding: 0 60px $gap 250px
   text-align: left
-  width: 420px
+  width: 320px
   top: 50%
   left: 50%
-  margin-left: -390px
+  margin-left: -310px
   margin-top: -203px
   > div
     padding: 0
@@ -35,9 +35,19 @@ section.not-found
 
 #nlpopup
   position: fixed
-  >div
+  .wpcf7:before
+    background-image: url("img/donut.svg")
+    left: -100px
+  .badge
+    padding: 0 60px 30px 200px
+    background: #fff no-repeat 30px 380px
     &::before
       background-image: url("img/2000px-TK_email_icon.svg.png")
+body.nl-open
+  overflow: hidden
+  margin-right: 20px
+  #masthead, #content, .footer-wrap
+    filter: blur(4px)
 
 #nlpopup
   &, >div

@@ -61,6 +61,12 @@ section[rel="Startseite"]
   img
     transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
   figcaption
+    display: flex
+    flex-flow: column
+    align-items: flex-start
+    > *
+      flex: 0 0 auto
+
     a:not(.more-link)
       color: white
       text-decoration: underline
@@ -71,19 +77,19 @@ section[rel="Startseite"]
       i
         font-size: 0.8em
     h1, h2, .more-link
+      margin:  0 0 10px 0
       opacity: 0
       transform: translate(-50px, 0)
+
+
     h1
-      display: inline
       transition: opacity .5s ease 0s, transform .5s ease 0s
     h2
       font-family: $font__main
       font-weight: 100
-      margin-top: 20px
       background: rgba(0, 0, 0, 0.9)
       color: white
       transition: opacity .5s ease .5s, transform .5s ease .5s
-      display: inline-block
     .more-link
       transition: opacity .5s ease .8s, transform .5s ease .8s
   &.active-slide

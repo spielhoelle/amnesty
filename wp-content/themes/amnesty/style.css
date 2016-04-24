@@ -385,7 +385,7 @@ figure {
     .grid figure figcaption h1,
     .grid figure figcaption h2,
     .grid figure figcaption .more-link, .infinite-scroll figure figcaption h1, .infinite-scroll figure figcaption h2, .infinite-scroll figure figcaption .more-link {
-      padding: 10px;
+      padding: 0.5em 20px;
       display: inline; }
     figure.header figcaption h2,
     .grid figure figcaption h2, .infinite-scroll figure figcaption h2 {
@@ -1442,39 +1442,51 @@ section[rel="Startseite"] {
     height: 100%; }
   .slider figure img {
     transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84); }
-  .slider figure figcaption a:not(.more-link) {
-    color: white;
-    text-decoration: underline; }
-  .slider figure figcaption h1, .slider figure figcaption h2 {
-    text-align: left !important; }
-    .slider figure figcaption h1:empty, .slider figure figcaption h2:empty {
-      display: none; }
-    .slider figure figcaption h1 i, .slider figure figcaption h2 i {
-      font-size: 0.8em; }
-  .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
-    opacity: 0;
-    -webkit-transform: translate(-50px, 0);
-        -ms-transform: translate(-50px, 0);
-            transform: translate(-50px, 0); }
-  .slider figure figcaption h1 {
-    display: inline;
-    transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
-    transition: opacity .5s ease 0s, transform .5s ease 0s;
-    transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
-  .slider figure figcaption h2 {
-    font-family: "Droid Sans", sans-serif;
-    font-weight: 100;
-    margin-top: 20px;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
-    transition: opacity .5s ease .5s, transform .5s ease .5s;
-    transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s;
-    display: inline-block; }
-  .slider figure figcaption .more-link {
-    transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
-    transition: opacity .5s ease .8s, transform .5s ease .8s;
-    transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
+  .slider figure figcaption {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column;
+    -webkit-align-items: flex-start;
+        -ms-flex-align: start;
+            align-items: flex-start; }
+    .slider figure figcaption > * {
+      -webkit-flex: 0 0 auto;
+          -ms-flex: 0 0 auto;
+              flex: 0 0 auto; }
+    .slider figure figcaption a:not(.more-link) {
+      color: white;
+      text-decoration: underline; }
+    .slider figure figcaption h1, .slider figure figcaption h2 {
+      text-align: left !important; }
+      .slider figure figcaption h1:empty, .slider figure figcaption h2:empty {
+        display: none; }
+      .slider figure figcaption h1 i, .slider figure figcaption h2 i {
+        font-size: 0.8em; }
+    .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
+      margin: 0 0 10px 0;
+      opacity: 0;
+      -webkit-transform: translate(-50px, 0);
+          -ms-transform: translate(-50px, 0);
+              transform: translate(-50px, 0); }
+    .slider figure figcaption h1 {
+      transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
+      transition: opacity .5s ease 0s, transform .5s ease 0s;
+      transition: opacity .5s ease 0s, transform .5s ease 0s, -webkit-transform .5s ease 0s; }
+    .slider figure figcaption h2 {
+      font-family: "Droid Sans", sans-serif;
+      font-weight: 100;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
+      transition: opacity .5s ease .5s, transform .5s ease .5s;
+      transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
+    .slider figure figcaption .more-link {
+      transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
+      transition: opacity .5s ease .8s, transform .5s ease .8s;
+      transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
   .slider figure.active-slide h1, .slider figure.active-slide h2, .slider figure.active-slide .more-link {
     opacity: 1;
     -webkit-transform: translate(0, 0);
@@ -1495,10 +1507,10 @@ section[rel="Startseite"] {
   background-size: 40px;
   padding: 0 60px 30px 250px;
   text-align: left;
-  width: 420px;
+  width: 320px;
   top: 50%;
   left: 50%;
-  margin-left: -390px;
+  margin-left: -310px;
   margin-top: -203px; }
   .badge > div {
     padding: 0;
@@ -1524,8 +1536,21 @@ section.not-found {
 
 #nlpopup {
   position: fixed; }
-  #nlpopup > div::before {
-    background-image: url("img/2000px-TK_email_icon.svg.png"); }
+  #nlpopup .wpcf7:before {
+    background-image: url("img/donut.svg");
+    left: -100px; }
+  #nlpopup .badge {
+    padding: 0 60px 30px 200px;
+    background: #fff no-repeat 30px 380px; }
+    #nlpopup .badge::before {
+      background-image: url("img/2000px-TK_email_icon.svg.png"); }
+
+body.nl-open {
+  overflow: hidden;
+  margin-right: 20px; }
+  body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
+    -webkit-filter: blur(4px);
+            filter: blur(4px); }
 
 #nlpopup {
   pointer-events: none;
@@ -1594,8 +1619,9 @@ section .column i.fa {
 
 h1.entry-title, h1.page-title {
   display: inline-block;
+  line-height: 1;
   background-color: black;
-  padding: 0.3em;
+  padding: 10px;
   color: white; }
 
 .slider figure figcaption h1 {
@@ -1635,16 +1661,24 @@ section .wpcf7-form input, section .wpcf7-form textarea {
   height: 3em; }
 
 div.wpcf7-mail-sent-ok {
-  border: 1px solid #398f14; }
+  border: none;
+  border-left: 3px solid #398f14;
+  margin: 0; }
 
 div.wpcf7-mail-sent-ng {
-  border: 1px solid #ff0000; }
+  border: none;
+  border-left: 3px solid #ff0000;
+  margin: 0; }
 
 div.wpcf7-spam-blocked {
-  border: 1px solid #ffa500; }
+  border: none;
+  border-left: 3px solid #ffa500;
+  margin: 0; }
 
 div.wpcf7-validation-errors {
-  border: 1px solid #f7e700; }
+  border: none;
+  border-left: 3px solid #f7e700;
+  margin: 0; }
 
 section[rel="News"] .more-link {
   margin: 0; }
