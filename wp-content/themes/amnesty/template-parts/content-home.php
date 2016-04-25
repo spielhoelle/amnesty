@@ -22,7 +22,13 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                           <?php icons();
                           echo get_the_title() ?>
                       </h1>
-                      <h2><?php echo $content_parts['main'] ?></h2>
+                      <h2><?php
+                      // if( strpos( $post->post_content, '<!--more-->' ) ) {
+                        echo wp_strip_all_tags( $content_parts['main']);
+                      // } else {
+                      //   echo substr(get_post_field('post_content', get_the_ID()), 0, 50);
+                      // }
+                      ?></h2>
                       <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
                   </figcaption>
               </figure>
