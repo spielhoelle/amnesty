@@ -1455,7 +1455,8 @@ section[rel="Startseite"] {
     .slider figure figcaption > * {
       -webkit-flex: 0 0 auto;
           -ms-flex: 0 0 auto;
-              flex: 0 0 auto; }
+              flex: 0 0 auto;
+      line-height: 1; }
     .slider figure figcaption a:not(.more-link) {
       color: white;
       text-decoration: underline; }
@@ -1619,7 +1620,6 @@ section .column i.fa {
 
 h1.entry-title, h1.page-title {
   display: inline-block;
-  line-height: 1;
   background-color: black;
   padding: 10px;
   color: white; }
