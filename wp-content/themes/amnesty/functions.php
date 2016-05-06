@@ -135,7 +135,6 @@ function icons($link = true) {
  * get parent category
  */
 
-
 function get_parent_cats() {
   $categories = get_the_category();
   $parents = [];
@@ -162,42 +161,30 @@ add_image_size('header', 1600, 700, true); // Hard Crop Mode
 
 //@todo for fallback images choose right sizes
 function get_thumbnail($size = '') {
+    $directory = 'wp-content/themes/amnesty/img/';
+    $files = array_slice(scandir('wp-content/themes/amnesty/img/fallback/full'), 2);
+
     $img = '';
     if (get_post_type() == 'page') {
         $rand = rand(1, 4);
-        $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
+        $img = get_template_directory_uri() . '/img/fallback/full/thumbnail-full-' . $rand . '.jpg';
     } else {
         if (has_post_thumbnail()) {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
-
         } else if (function_exists('z_taxonomy_image_url')) {
             $parents = get_parent_cats();
             $img = z_taxonomy_image_url($parents->term_id);
-
         }
         if ($img == '') {
             $rand = rand(1, 4);
             if ($size === 'header') {
-                $size === 'full';
+                $size = 'full';
             }
-            $img = get_template_directory_uri() . '/img/thumbnail-full-' . $rand . '.jpg';
-
+            $img = get_template_directory_uri() . '/img/fallback/'.$size.'/thumbnail-'.$size.'-' . $rand . '.jpg';
         }
     }
     return $img;
-
 }
-
-/**
- * debug helper
- */
-
-function dump($param) {
-    echo "<pre style='position:absolute; z-index: 999999; background: rgba(255, 255, 255, 0.31)'>";
-    var_dump($param);
-    echo "</pre>";
-}
-
 
 
 //add search button at the end of navi

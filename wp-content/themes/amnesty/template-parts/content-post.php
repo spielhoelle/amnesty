@@ -7,9 +7,12 @@
  * @package amnesty
  */
 $classes = [];
-$img = get_thumbnail('header');
-$classes[] = 'header';
-
+$img =  wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0];
+if($img) {
+  $classes[] = 'header';
+} else {
+  $classes[] = 'noheader';
+}
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -74,11 +77,11 @@ $classes[] = 'header';
                 while ($recent_posts->have_posts()) : $recent_posts->the_post();
                   if (get_post_status(get_the_ID()) !== "private") { ?>
                     <h3 class="entry-title">
+                      <?php icons(); ?>
                       <a href="<?php the_permalink() ?>" class="entry-title ">
                         <?php
                         echo get_the_title();
-                        icons();
-                        ?>
+                      ?>
                       </a>
                     </h3>
                   <?php }
@@ -87,7 +90,7 @@ $classes[] = 'header';
             </aside>
 
         <?php } ?>
-        
+
     </div>
 
 

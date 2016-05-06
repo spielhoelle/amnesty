@@ -224,8 +224,7 @@ select,
 textarea {
   color: black;
   font-family: "Droid Sans", sans-serif;
-  font-size: 14px;
-  font-size: 0.875rem;
+  font-size: 1em;
   line-height: 1.5; }
 
 h1, h2, h3, h4, h5, h6 {
@@ -527,6 +526,9 @@ figure.header {
   height: 600px;
   position: relative; }
 
+figure.noheader {
+  margin-bottom: -40px; }
+
 span.author {
   text-transform: capitalize; }
 
@@ -596,6 +598,7 @@ figure .more-link {
   border-color: #dadada; }
 
 .search-form input[type="submit"] {
+  margin-top: 20px;
   border-radius: 0;
   background: yellow;
   border: 0;
@@ -700,6 +703,12 @@ body .category_structure {
     -webkit-flex: 0 0 33%;
         -ms-flex: 0 0 33%;
             flex: 0 0 33%; }
+    .single .wrap aside h3 .entry-title {
+      display: inline-block;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden; }
   .single .wrap .content-wrapper {
     -webkit-flex: 0 0 50%;
         -ms-flex: 0 0 50%;
@@ -709,6 +718,8 @@ body .category_structure {
   border-bottom: 1px solid #dadada; }
   .single .entry-content a {
     text-decoration: underline; }
+    .single .entry-content a:hover {
+      background: yellow; }
 
 .single .entry-meta {
   font-family: "Trade Gothic";
@@ -876,7 +887,9 @@ body .category_structure {
   .entry-title .fa:before, .page-title .fa:before {
     color: white; }
   aside .entry-title .fa, aside .page-title .fa {
-    margin-left: 0.3em; }
+    margin-left: 0.3em;
+    line-height: 2em;
+    vertical-align: text-bottom; }
     aside .entry-title .fa:before, aside .page-title .fa:before {
       color: black; }
 
@@ -926,14 +939,13 @@ nav.pagination {
 #site-description {
   transition: color .3s ease;
   padding-left: calc(200px + 2%);
-  margin: 13px 0;
+  margin: 13px 40px 0 0;
   font-size: 1.2em;
-  width: 420px;
   color: black; }
   @media (max-width: 1200px) {
     #site-description {
       padding-left: 110px;
-      margin: 0 0;
+      margin: 0 20px 0 0;
       font-size: 1em;
       height: 40px; } }
 
@@ -1008,6 +1020,8 @@ nav.pagination {
       @media (max-width: 1000px) {
         .main-navigation ul .sub-menu {
           padding: 0 5px; } }
+      .main-navigation ul .sub-menu li {
+        height: 100%; }
       .main-navigation ul .sub-menu::after {
         height: 100%;
         position: absolute;
@@ -1211,9 +1225,9 @@ footer.site-footer {
       -ms-flex-pack: justify;
           justify-content: space-between; }
   .footer-top section {
-    -webkit-flex: 0 0 200px;
-        -ms-flex: 0 0 200px;
-            flex: 0 0 200px;
+    -webkit-flex: 1 0 200px;
+        -ms-flex: 1 0 200px;
+            flex: 1 0 200px;
     margin-right: 20px; }
     .footer-top section h2 {
       border-bottom: 1px solid white; }
@@ -1657,8 +1671,8 @@ section[rel="Startseite"] a.active:hover .fa:before, section[rel="Startseite"] a
   color: white;
   fill: white; }
 
-section .wpcf7-form input, section .wpcf7-form textarea {
-  height: 3em; }
+section .wpcf7-form input[type="email"], section .wpcf7-form textarea[type="email"] {
+  width: 100%; }
 
 div.wpcf7-mail-sent-ok {
   border: none;

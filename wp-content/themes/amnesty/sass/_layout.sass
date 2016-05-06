@@ -29,6 +29,8 @@ section
 figure.header
   height: 600px
   position: relative
+figure.noheader
+  margin-bottom: -40px
 
 span.author
   text-transform: capitalize
@@ -95,6 +97,7 @@ figure .more-link
   input[type="search"]
     border-color: $grey
   input[type="submit"]
+    margin-top: 20px
     border-radius: 0
     background: $yellow
     border: 0
@@ -174,12 +177,21 @@ body
     aside
       background: $grey
       flex: 0 0 33%
+      h3
+        .entry-title
+          display: inline-block
+          text-overflow: ellipsis
+          max-width: 200px
+          white-space: nowrap
+          overflow: hidden
     .content-wrapper
       flex: 0 0 50%
 
   .entry-content
     a
       text-decoration: underline
+      &:hover
+        background: $yellow
     border-bottom: 1px solid $grey
   .entry-meta
     font-family: $font__title
@@ -313,6 +325,8 @@ body
       color: $white
     aside &
       margin-left: 0.3em
+      line-height: 2em
+      vertical-align: text-bottom
       &:before
         color: $black
 
