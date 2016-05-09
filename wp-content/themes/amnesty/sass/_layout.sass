@@ -305,7 +305,7 @@ body
       width: 100%
       height: 100%
 
-.entry-title, .page-title, .tommy, .custom-pager
+.tommy
   i, svg
     animation-name: heart
     animation-duration: 1s
@@ -313,11 +313,16 @@ body
     animation-timing-function: ease
     padding: 0 5px
     animation-play-state: paused
-    transition: color .3s ease
+.entry-title, .page-title, .tommy
+  i, svg
+    transition: color .3s ease, transform .3s ease
+
 .entry-title, .page-title
   &:hover
     i,svg
-      animation-play-state: running
+      // animation-play-state: running
+      transform: scale(1.3)
+
 .entry-title, .page-title
   .fa
     margin-right: 0.3em

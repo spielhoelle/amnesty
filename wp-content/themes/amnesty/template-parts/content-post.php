@@ -13,6 +13,10 @@ if($img) {
 } else {
   $classes[] = 'noheader';
 }
+
+$content = get_post_field('post_content', get_the_ID());
+$content_parts = get_extended($content);
+
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -42,10 +46,8 @@ if($img) {
                 endif; ?>
 
 
-                <?php the_content(sprintf(
-                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
-                    the_title('<span class="screen-reader-text">"', '"</span>', false)
-                ));
+                <?php
+                echo $content_parts['extended'];
 
                 wp_link_pages(array(
                     'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
