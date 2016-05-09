@@ -26,7 +26,9 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                       </h1>
                       <h2><?php
                       // if( strpos( $post->post_content, '<!--more-->' ) ) {
-                        echo wp_strip_all_tags( $content_parts['main']);
+                        // echo wp_strip_all_tags( $content_parts['main']);
+                        $bla = get_the_excerpt();
+                        echo wp_strip_all_tags($bla);
                       // } else {
                       //   echo substr(get_post_field('post_content', get_the_ID()), 0, 50);
                       // }

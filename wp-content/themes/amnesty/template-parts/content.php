@@ -21,11 +21,11 @@ $content_parts = get_extended($content);
             <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         </a>
 
+        <span class="icons"><?php icons(); ?></span>
         <figcaption>
           <div>
-            <h1 class="entry-title"><?php
-                icons();
-                echo get_the_title() ?></h1>
+            <h1 class="entry-title">
+              <?php echo get_the_title() ?></h1>
           </div>
             <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
         </figcaption>

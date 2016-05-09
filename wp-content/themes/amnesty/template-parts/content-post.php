@@ -45,9 +45,14 @@ $content_parts = get_extended($content);
                     <?php
                 endif; ?>
 
-
                 <?php
-                echo $content_parts['extended'];
+
+                the_content(sprintf(
+                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
+                    the_title('<span class="screen-reader-text">"', '"</span>', false)
+                ));
+
+                // echo $content_parts['extended'];
 
                 wp_link_pages(array(
                     'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
@@ -92,8 +97,21 @@ $content_parts = get_extended($content);
             </aside>
 
         <?php } ?>
-
     </div>
+    <div class="grid">
+      <h1> Mehr? </h1>
+    </div>
+    <div class="grid">
+      <?php // switch WP to page for posts
+      $blog = new WP_Query('posts_per_page=5, page_id=' . get_option('page_for_posts'));
+
+      // loop through posts
+      while ($blog->have_posts()) : $blog->the_post();
+      if (get_post_status(get_the_ID()) !== "private") {
+        get_template_part('template-parts/content', '');
+      }
+    endwhile; ?>
+  </div>
 
 
 </article><!-- content-post.php -->

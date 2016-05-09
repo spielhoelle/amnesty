@@ -39,6 +39,8 @@ section[rel="Startseite"]
   z-index: 51
   display: flex
   border: 1px solid black
+  max-height: 2.4em
+  overflow: hidden
   a
     display: block
     background: $white
@@ -63,6 +65,7 @@ section[rel="Startseite"]
     display: flex
     flex-flow: column
     align-items: flex-start
+    max-width: 100%
     > *
       flex: 0 0 auto
       line-height: 1
@@ -74,8 +77,9 @@ section[rel="Startseite"]
       text-align: left !important
       &:empty
         display: none
-      i
+      i.fa
         font-size: 0.8em
+        margin-left: 0
     h1, h2, .more-link
       margin:  0 0 10px 0
       opacity: 0
@@ -90,6 +94,13 @@ section[rel="Startseite"]
       background: rgba(0, 0, 0, 0.9)
       color: white
       transition: opacity .5s ease .5s, transform .5s ease .5s
+      white-space: nowrap
+      text-overflow: ellipsis
+      overflow: hidden
+      max-width: 100%
+      *
+        margin: 0
+        padding: 0
     .more-link
       transition: opacity .5s ease .8s, transform .5s ease .8s
   &.active-slide

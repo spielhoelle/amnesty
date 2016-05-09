@@ -109,27 +109,22 @@ function my_theme_add_editor_styles()
 add_action('admin_init', 'my_theme_add_editor_styles');
 
 function icons($link = true) {
-    global $post;
-    $categories = get_parent_cats();
+  global $post;
+  $categories = get_parent_cats();
 
-    foreach($categories as $category){
-      if ($category->category_description !== '' && $category->category_description) {
-        echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
-        echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
-        echo ($link) ? '</a>' : '';
+  //all categorys
+  foreach($categories as $category){
+    if ($category->category_description !== '' && $category->category_description) {
+      echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
+      echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
+      echo ($link) ? '</a>' : '';
     } else {
         echo (!$link) ? file_get_contents("wp-content/themes/amnesty/img/amensty.svg") : '';
-
     }
   }
-
-
 }
 
 
-/**
- * get thumbnail, get attachment, get category image
- */
 
 /**
  * get parent category
@@ -158,6 +153,12 @@ function get_parent_cats() {
 
 add_image_size('grid', 500, 500, true); // Hard Crop Mode
 add_image_size('header', 1600, 700, true); // Hard Crop Mode
+
+
+
+/**
+ * get thumbnail, get attachment, get category image
+ */
 
 //@todo for fallback images choose right sizes
 function get_thumbnail($size = '') {
