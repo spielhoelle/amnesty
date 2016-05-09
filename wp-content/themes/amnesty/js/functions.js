@@ -66,6 +66,7 @@
           $(".site-footer > #nlpopup").addClass('active')
           $(body).addClass('nl-open')
         }
+        openPopup()
 
         /**
          * header navigation SEARCH
@@ -90,7 +91,15 @@
             e.stopPropagation();
         });
 
-
+        //contactform spinner
+        $('.wpcf7 input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
+        $('.wpcf7 input[type="submit"]').on('click', function(){
+            $('.wpcf7 .fa-spinner').css({'visibility': 'visible'})
+        })
     });
+
+    $(document).on('mailsent.wpcf7', function() {
+      $('.wpcf7 .fa-spinner').removeAttr('style')
+    })
 
 }(jQuery));

@@ -1708,6 +1708,13 @@ section[rel="Startseite"] a.active:hover .fa:before, section[rel="Startseite"] a
 section .wpcf7-form input[type="email"], section .wpcf7-form textarea[type="email"] {
   width: 100%; }
 
+.wpcf7 .ajax-loader {
+  display: none !important; }
+
+.wpcf7 .fa-spinner {
+  margin-left: 20px;
+  visibility: hidden; }
+
 div.wpcf7-mail-sent-ok {
   border: none;
   border-left: 3px solid #398f14;
