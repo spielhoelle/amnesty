@@ -66,7 +66,6 @@
           $(".site-footer > #nlpopup").addClass('active')
           $(body).addClass('nl-open')
         }
-        openPopup()
 
         /**
          * header navigation SEARCH
