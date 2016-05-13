@@ -816,7 +816,8 @@ body .category_structure {
           justify-content: center;
   padding: 0; }
   .grid .more-link, .infinite-wrap .more-link {
-    font-size: 1em; }
+    font-size: 1em;
+    display: inline; }
   .grid figure, .infinite-wrap figure {
     overflow: hidden;
     background-color: white; }
@@ -2280,10 +2281,10 @@ ter {
   .single .entry-content h1.entry-title,
   .slider figure figcaption h1,
   .page .wrap .entry-header h1 {
-    font-size: 2rem; }
+    font-size: 1.2rem; }
   .slider figure figcaption {
-    margin: 30px;
-    pointer-events: none; }
+    pointer-events: none;
+    padding: 0px 10px; }
   .grid > article {
     -webkit-flex: 0 0 100%;
         -ms-flex: 0 0 100%;
