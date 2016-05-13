@@ -99,6 +99,9 @@
 
     $(document).on('mailsent.wpcf7', function() {
       $('.wpcf7 .fa-spinner').removeAttr('style')
+      setTimeout(function() {
+          closePopup()
+      }, 2000);
     })
 
 }(jQuery));
