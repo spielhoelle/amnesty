@@ -33,7 +33,7 @@
         if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
             setTimeout(function() {
                 openPopup()
-            }, 1000);
+            }, 20000);
             localStorage.setItem('popState', 'shown')
         }
 
