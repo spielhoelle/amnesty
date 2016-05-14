@@ -8,82 +8,9 @@ body.toggled
     .sub-menu
       left: 50% !important
 
-@media (max-width: $breakpoint1)
-  .columns.columns-4
-    display: block
-    .column
-      width: 50%
-
 @media (max-width: $breakpoint3)
-  #masthead
-    .top .site-branding
-      &, .site-title
-        &, a
-          height: 40px
-    .main-navigation
-      z-index: 1
-      a
-        padding: 5px 15px
-        &:hover
-          background-color: rgba(0, 0, 0, 0.1);
-
-    .top,
-    .main-navigation
-      height: auto
-      width: 100%
-      display: block
-      a
-        height: auto
-        display: block
-      > div > ul > li
-        height: auto
-      ul .sub-menu
-        height: auto
-        left: auto
-        position: relative
-        background: $white
-        padding-left: 10px
-        z-index: 0
-        &, a
-          color: $black
-        a
-          margin: 0
-      #menu-search
-        position: absolute
-        top: 0
-        right: 50px
-        font-size: 26px
-        i
-          padding: 7px
-      .current_page_item > a,
-      .current-menu-item > a,
-      .current_page_ancestor > a,
-      .current-menu-ancestor > a
-        background: black
-        color: $white !important
-
   .archive .page-header h1,
   .single .entry-content h1.entry-title,
   .slider figure figcaption h1,
   .page .wrap .entry-header h1
     font-size: 1.2rem
-  .slider figure figcaption
-    pointer-events: none
-    padding: 0px 10px
-  .grid > article
-    flex: 0 0 100%
-    max-width: none
-  .search-form
-    text-align: right
-  .slider figure figcaption h2
-    display: none
-
-  .badge
-    padding: 0
-    margin: 0
-    position: relative !important
-    left: 0
-    margin: 0 auto
-    div:before
-      position: relative
-      margin: 0 auto

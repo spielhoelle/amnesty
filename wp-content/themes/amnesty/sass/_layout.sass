@@ -100,6 +100,8 @@ figure .more-link
   margin-bottom: 0
 
 .search-form
+  @media(max-width: $breakpoint3)
+    text-align: right
   input[type="search"]
     border-color: $grey
   input[type="submit"]
@@ -172,6 +174,10 @@ body
       display: block
       .column
         width: 100%
+    &.columns-4
+      display: block
+      .column
+        width: 50%
 
 .single .wrap aside,
 .grey
@@ -331,6 +337,9 @@ body
     padding: $gap
     @media (max-width: $breakpoint1)
       flex: 0 0 33.33333%
+      max-width: none
+    @media (max-width: $breakpoint3)
+      flex: 0 0 100%
       max-width: none
     img
       width: 100%

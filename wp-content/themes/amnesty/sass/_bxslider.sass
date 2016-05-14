@@ -66,6 +66,10 @@ section[rel="Startseite"]
     flex-flow: column
     align-items: flex-start
     max-width: 100%
+    @media (max-width: $breakpoint3)
+      pointer-events: none
+      padding: 0px 10px
+
     > *
       flex: 0 0 auto
       line-height: 1
@@ -104,6 +108,8 @@ section[rel="Startseite"]
       max-width: 100%
       @media (max-width: $breakpoint1)
         font-size: 1.2em
+      @media (max-width: $breakpoint2)
+        font-size: 1em
       *
         margin: 0
         padding: 0

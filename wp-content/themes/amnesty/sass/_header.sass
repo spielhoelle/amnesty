@@ -29,16 +29,21 @@
   transform: translate(-50%, 0)
   a
     text-transform: uppercase
-
   .top
     position: relative
     display: flex
     height: $headerheight
+    @media (max-width: $breakpoint1)
+      height: $headerheight / 2
     .site-branding
       height: 100%
       position: absolute
       left: 0
       overflow: hidden
+      @media (max-width: $breakpoint3)
+        &, .site-title
+          &, a
+            height: 40px
       .site-title
         margin: 0
         height: 100%
@@ -50,9 +55,18 @@
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain
           @media (max-width: $breakpoint1)
             width: 99px
-  @media (max-width: $breakpoint1)
-    .top, .main-navigation a
-      height: $headerheight / 2
+  .top, .main-navigation
+    @media (max-width: $breakpoint1)
+      a
+        height: $headerheight / 2
+        @media (max-width: $breakpoint3)
+          display: block
+    @media (max-width: $breakpoint3)
+      height: auto
+      width: 100%
+      display: block
+      > div > ul > li
+        height: auto
 #site-description
   transition: color .3s ease
   padding-left: calc(200px + 2%)
@@ -74,6 +88,19 @@
   display: flex
   width: 100%
   flex-flow: column
+  @media (max-width: $breakpoint3)
+    z-index: 1
+    #menu-search
+      position: absolute
+      top: 0
+      right: 50px
+      font-size: 26px
+      i
+        padding: 7px
+    a
+      padding: 5px 15px
+      &:hover
+        background-color: rgba(0, 0, 0, 0.1) !important
   > div
     flex: 1 0 auto
     display: flex
@@ -110,9 +137,21 @@
       a
         padding: 0 30px
         @media (max-width: $breakpoint1)
-          padding: 0 10px
+          padding: 5px 10px
       @media (max-width: $breakpoint2)
         padding: 0 5px
+
+      @media (max-width: $breakpoint3)
+        height: auto
+        left: auto
+        position: relative
+        background: $white
+        padding-left: 10px
+        z-index: 0
+        a
+          color: $black
+        a
+          margin: 0
       background: $black
       height: $headerheight
       position: absolute
@@ -140,6 +179,9 @@
         z-index: 0
       a
         color: $white
+        @media (max-width: $breakpoint3)
+          color: black
+
         margin-top: 0px
         transition: margin .3s ease
         &:hover
@@ -181,7 +223,10 @@
     background-color: rgba(0, 0, 0, 0.3)
     .sub-menu &
       background-color: #444
-
+  > a
+    @media (max-width: $breakpoint3)
+      background: black
+      color: $white !important
 .comment-navigation,
 .posts-navigation,
 .post-navigation
