@@ -4,7 +4,7 @@
  * Handles toggling the navigation menu for small screens and enables tab
  * support for dropdown menus.
  */
-( function() {
+(function($) {
 	var container, button, menu, links, subMenus;
 
 	container = document.getElementById( 'site-navigation' );
@@ -31,12 +31,12 @@
 	}
 
 	button.onclick = function() {
-		if ( -1 !== container.className.indexOf( 'toggled' ) ) {
-			container.className = container.className.replace( ' toggled', '' );
+		if ( !$('body').hasClass( 'toggled' ) ) {
+			$('body').addClass( 'toggled' )
 			button.setAttribute( 'aria-expanded', 'false' );
 			menu.setAttribute( 'aria-expanded', 'false' );
 		} else {
-			container.className += ' toggled';
+			$('body').removeClass( 'toggled' )
 			button.setAttribute( 'aria-expanded', 'true' );
 			menu.setAttribute( 'aria-expanded', 'true' );
 		}
@@ -79,4 +79,4 @@
 		}
 	}
 
-} )();
+}(jQuery));

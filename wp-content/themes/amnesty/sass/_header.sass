@@ -1,12 +1,35 @@
+.menu-toggle
+  background: transparent
+  border: 0 none
+  color: transparent
+  width: 40px
+  height: 40px
+  right: 0
+  top: 0
+  position: absolute
+  display: none
+  &:before
+    position: absolute
+    right: 0
+    color: $black
+    content: "\f228"
+    display: inline-block
+    margin-right: 7px
+    font: 400 40px/1 dashicons
+    -webkit-font-smoothing: antialiased
+    -moz-osx-font-smoothing: grayscale
+  @media screen and (max-width: $breakpoint3)
+    display: block
+
 #masthead
   position: fixed
   z-index: 52
   background: white
   left: 50%
   transform: translate(-50%, 0)
-  border-bottom: 1px solid $grey
   a
     text-transform: uppercase
+
   .top
     position: relative
     display: flex
@@ -25,7 +48,11 @@
           color: transparent
           height: 100%
           background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain
-
+          @media (max-width: $breakpoint1)
+            width: 99px
+  @media (max-width: $breakpoint1)
+    .top, .main-navigation a
+      height: $headerheight / 2
 #site-description
   transition: color .3s ease
   padding-left: calc(200px + 2%)
@@ -55,6 +82,10 @@
     flex-flow: column
     > ul
       height: 100%
+      @media screen and (min-width: $breakpoint3)
+        display: flex !important
+        justify-content: space-around
+        align-items: center
       > .sub-menu
         top: $headerheight
         display: flex
@@ -74,8 +105,12 @@
     margin: 0
     padding-left: 0
     .sub-menu
+      @media (max-width: $breakpoint1)
+        height: $headerheight / 2
       a
         padding: 0 30px
+        @media (max-width: $breakpoint1)
+          padding: 0 10px
       @media (max-width: $breakpoint2)
         padding: 0 5px
       background: $black

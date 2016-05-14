@@ -21,14 +21,20 @@ article, section
 #content
   margin-top: 80px
   min-height: 90vh
+  @media (max-width: $breakpoint1)
+    margin-top: $headerheight / 2
 
 section
   .entry-footer
     text-align: center
 
 figure.header
-  height: 600px
-  position: relative
+  height: calc(50vh - 81px)
+  @media (max-width: $breakpoint1)
+    height: calc(50vh - 41px)
+  @media (max-width: $breakpoint3)
+    height: calc(100vh - 41px) !important
+
 figure.noheader
   margin-bottom: -40px
 
@@ -80,7 +86,7 @@ input[type="submit"]
 
 
 input[type="submit"]
-  font-size: 1.5em
+  font-size: 1.5rem
 
 .more-link
   display: inline-block
@@ -97,13 +103,14 @@ figure .more-link
   input[type="search"]
     border-color: $grey
   input[type="submit"]
-    margin-top: 20px
     border-radius: 0
     background: $yellow
     border: 0
     box-shadow: none
     text-shadow: none
-
+    margin-top: 20px
+    #masthead &
+      margin-top: 0
 input[type="submit"],
 .content-button,
 .more-link
@@ -160,6 +167,11 @@ body
       padding-left: 0
     &:last-child
       padding-right: 0
+  @media (max-width: $breakpoint3)
+    &.columns-3
+      display: block
+      .column
+        width: 100%
 
 .single .wrap aside,
 .grey
@@ -177,6 +189,8 @@ body
     aside
       background: $grey
       flex: 0 0 33%
+      @media (max-width: $breakpoint1)
+        flex: 0 0 auto
       h3
         .entry-title
           display: inline-block
@@ -186,6 +200,8 @@ body
           overflow: hidden
     .content-wrapper
       flex: 0 0 50%
+      @media (max-width: $breakpoint1)
+        flex: 0 0 100%
 
   .entry-content
     a

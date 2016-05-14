@@ -88,6 +88,10 @@ section[rel="Startseite"]
 
     h1
       transition: opacity .5s ease 0s, transform .5s ease 0s
+      @media (max-width: $breakpoint1)
+        font-size: 2em
+        &:before
+          font-size: 1.5rem
     h2
       font-family: $font__main
       font-weight: 100
@@ -98,6 +102,8 @@ section[rel="Startseite"]
       text-overflow: ellipsis
       overflow: hidden
       max-width: 100%
+      @media (max-width: $breakpoint1)
+        font-size: 1.2em
       *
         margin: 0
         padding: 0

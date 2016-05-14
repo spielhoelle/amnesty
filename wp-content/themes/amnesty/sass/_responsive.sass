@@ -1,57 +1,20 @@
-.menu-toggle,
-.main-navigation.toggled ul
-  display: block
-
-.main-navigation.toggled .sub-menu
-  left: 50% !important
-
-@media screen and (min-width: $breakpoint3)
-  //above 800
-  .menu-toggle
-    display: none
-  .main-navigation > div > ul
-    display: flex !important
-    justify-content: space-around
-    align-items: center
+body.toggled
+  overflow: hidden
+  .main-navigation
+    overflow: hidden
+    ul
+      overflow: scroll
+      display: block
+    .sub-menu
+      left: 50% !important
 
 @media (max-width: $breakpoint1)
-  //1200
-  #masthead
-    #site-description
-    .top, .main-navigation a
-      height: $headerheight / 2
-    .top
-      .site-branding .site-title a
-        width: 99px
-    .main-navigation
-      ul .sub-menu
-        height: $headerheight / 2
-  figure.header
-    height: 33vh !important
-  .single .wrap
-    .content-wrapper
-      flex: 0 0 100%
-    aside
-      flex: 0 0 auto
-  .slider figure figcaption
-    h1
-      font-size: 2em
-      &:before
-        font-size: 1.5rem
-    h2
-      font-size: 1.2em
-  #content
-    margin-top: $headerheight / 2
   .columns.columns-4
     display: block
     .column
       width: 50%
 
 @media (max-width: $breakpoint3)
-  .columns.columns-3
-    display: block
-    .column
-      width: 100%
   #masthead
     .top .site-branding
       &, .site-title
@@ -112,8 +75,6 @@
     max-width: none
   .search-form
     text-align: right
-    input[type="submit"]
-      margin-top: 10px
   .slider figure figcaption h2
     display: none
 
