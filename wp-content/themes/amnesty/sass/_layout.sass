@@ -114,6 +114,10 @@ figure .more-link
     margin-top: 20px
     #masthead &
       margin-top: 0
+  #colophon &
+    display: block
+    text-align: left
+
 input[type="submit"],
 .content-button,
 .more-link
@@ -171,6 +175,8 @@ body
     &:last-child
       padding-right: 0
   @media (max-width: $breakpoint3)
+    .column
+      padding: 0 !important
     &.columns-3
       display: block
       .column

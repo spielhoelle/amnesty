@@ -602,6 +602,10 @@ figure .more-link {
   #masthead .search-form input[type="submit"] {
     margin-top: 0; }
 
+#colophon .search-form {
+  display: block;
+  text-align: left; }
+
 input[type="submit"]:hover,
 .content-button:hover,
 .more-link:hover {
@@ -674,6 +678,8 @@ body .category_structure {
     .columns .column:last-child {
       padding-right: 0; }
   @media (max-width: 800px) {
+    .columns .column {
+      padding: 0 !important; }
     .columns.columns-3 {
       display: block; }
       .columns.columns-3 .column {
@@ -1221,7 +1227,7 @@ body.toggled {
           left: auto;
           position: relative;
           background: transparent;
-          padding-left: 10px;
+          padding-left: 20%;
           z-index: 0; }
           .main-navigation div ul .sub-menu a {
             color: black; }
@@ -1813,12 +1819,9 @@ section.not-found {
     #nlpopup .badge::before {
       background-image: url("img/2000px-TK_email_icon.svg.png"); }
 
-body.nl-open {
-  overflow: hidden;
-  margin-right: 20px; }
-  body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
-    -webkit-filter: blur(4px);
-            filter: blur(4px); }
+body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
+  -webkit-filter: blur(4px);
+          filter: blur(4px); }
 
 #nlpopup {
   pointer-events: none;
