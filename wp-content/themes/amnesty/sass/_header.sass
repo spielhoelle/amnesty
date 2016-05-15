@@ -20,6 +20,7 @@
     -moz-osx-font-smoothing: grayscale
   @media screen and (max-width: $breakpoint3)
     display: block
+    pointer-events: all
 
 #masthead
   position: fixed
@@ -27,6 +28,9 @@
   background: white
   left: 50%
   transform: translate(-50%, 0)
+  @media (max-width: $breakpoint3)
+    background: transparent
+    top: 0
   a
     text-transform: uppercase
   .top
@@ -35,12 +39,15 @@
     height: $headerheight
     @media (max-width: $breakpoint1)
       height: $headerheight / 2
+    @media (max-width: $breakpoint3)
+      pointer-events: none
     .site-branding
       height: 100%
       position: absolute
       left: 0
       overflow: hidden
       @media (max-width: $breakpoint3)
+        pointer-events: all
         &, .site-title
           &, a
             height: 40px
@@ -62,7 +69,7 @@
         @media (max-width: $breakpoint3)
           display: block
     @media (max-width: $breakpoint3)
-      height: auto
+      height: 100%
       width: 100%
       display: block
       > div > ul > li
@@ -81,8 +88,32 @@
     line-height: 1.2
 
   @media (max-width: $breakpoint3)
-    padding-right: 30px
-    max-width: 330px
+    padding-right: 80px
+    margin: 0
+    display: flex
+    align-items: center
+    &:after
+      position: absolute
+      content: ""
+      background: white
+      left: 0
+      top: 0
+      right: 0
+      height: 40px
+      z-index: -1
+body.toggled
+  overflow: hidden
+  #masthead
+    overflow: hidden
+    bottom: 0
+  .top
+    pointer-events: all !important
+  .main-navigation
+    ul
+      overflow: auto !important
+      pointer-events: all !important
+      opacity: 1
+
 .main-navigation
   height: 100%
   display: flex
@@ -90,11 +121,17 @@
   flex-flow: column
   @media (max-width: $breakpoint3)
     z-index: 1
+    transition: background-color 1s ease
+    position: absolute
+    top: 0
+    padding-top: 40px
     #menu-search
       position: absolute
       top: 0
       right: 50px
       font-size: 26px
+      input[type="search"]
+        margin-bottom: 20px
       i
         padding: 7px
     a
@@ -107,12 +144,17 @@
     height: 100%
     justify-content: center
     flex-flow: column
+    @media screen and (max-width: $breakpoint3)
+      justify-content: flex-start
     > ul
       height: 100%
-      @media screen and (min-width: $breakpoint3)
-        display: flex !important
-        justify-content: space-around
-        align-items: center
+      display: flex
+      justify-content: space-around
+      align-items: center
+      transition: opacity .3s ease, background-color .3s ease
+      @media screen and (max-width: $breakpoint3)
+        opacity: 0
+        height: auto
       > .sub-menu
         top: $headerheight
         display: flex
@@ -126,11 +168,17 @@
         height: 100%
         flex: 1 0 auto
 
-  ul
-    display: none
+  div ul
     list-style: none
     margin: 0
     padding-left: 0
+    transition: opacity .3s ease, background-color .3s ease
+    @media screen and (max-width: $breakpoint3)
+      background-color: rgba(255, 255, 255, 0.95)
+      justify-content: flex-start
+      flex-flow: column
+      align-items: flex-start
+      opacity: 0
     .sub-menu
       @media (max-width: $breakpoint1)
         height: $headerheight / 2
@@ -142,10 +190,12 @@
         padding: 0 5px
 
       @media (max-width: $breakpoint3)
+        flex-flow: column
+        left: 50% !important
         height: auto
         left: auto
         position: relative
-        background: $white
+        background: transparent
         padding-left: 10px
         z-index: 0
         a

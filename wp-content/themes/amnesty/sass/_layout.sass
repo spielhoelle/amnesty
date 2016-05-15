@@ -30,10 +30,11 @@ section
 
 figure.header
   height: calc(50vh - 81px)
-  @media (max-width: $breakpoint1)
-    height: calc(50vh - 41px)
-  @media (max-width: $breakpoint3)
-    height: calc(100vh - 41px) !important
+  .slider &
+    @media (max-width: $breakpoint1)
+      height: calc(50vh - 41px)
+    @media (max-width: $breakpoint3)
+      height: calc(100vh - 41px) !important
 
 figure.noheader
   margin-bottom: -40px
@@ -338,6 +339,8 @@ body
     @media (max-width: $breakpoint1)
       flex: 0 0 33.33333%
       max-width: none
+    @media (max-width: $breakpoint2)
+      min-width: 400px
     @media (max-width: $breakpoint3)
       flex: 0 0 100%
       max-width: none

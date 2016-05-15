@@ -360,6 +360,9 @@ figcaption {
   padding: 0 30px; }
   figcaption h1.entry-title, figcaption h1.page-title {
     font-size: 3rem; }
+    @media (max-width: 800px) {
+      figcaption h1.entry-title, figcaption h1.page-title {
+        font-size: 1.2rem; } }
 
 figure {
   margin: 0;
@@ -508,10 +511,10 @@ section .entry-footer {
 figure.header {
   height: calc(50vh - 81px); }
   @media (max-width: 1200px) {
-    figure.header {
+    .slider figure.header {
       height: calc(50vh - 41px); } }
   @media (max-width: 800px) {
-    figure.header {
+    .slider figure.header {
       height: calc(100vh - 41px) !important; } }
 
 figure.noheader {
@@ -888,6 +891,9 @@ body .category_structure {
             -ms-flex: 0 0 33.33333%;
                 flex: 0 0 33.33333%;
         max-width: none; } }
+    @media (max-width: 1000px) {
+      .grid > article, .infinite-wrap > article {
+        min-width: 400px; } }
     @media (max-width: 800px) {
       .grid > article, .infinite-wrap > article {
         -webkit-flex: 0 0 100%;
@@ -965,7 +971,8 @@ nav.pagination {
     -moz-osx-font-smoothing: grayscale; }
   @media screen and (max-width: 800px) {
     .menu-toggle {
-      display: block; } }
+      display: block;
+      pointer-events: all; } }
 
 #masthead {
   position: fixed;
@@ -975,6 +982,10 @@ nav.pagination {
   -webkit-transform: translate(-50%, 0);
       -ms-transform: translate(-50%, 0);
           transform: translate(-50%, 0); }
+  @media (max-width: 800px) {
+    #masthead {
+      background: transparent;
+      top: 0; } }
   #masthead a {
     text-transform: uppercase; }
   #masthead .top {
@@ -986,14 +997,19 @@ nav.pagination {
     @media (max-width: 1200px) {
       #masthead .top {
         height: 40px; } }
+    @media (max-width: 800px) {
+      #masthead .top {
+        pointer-events: none; } }
     #masthead .top .site-branding {
       height: 100%;
       position: absolute;
       left: 0;
       overflow: hidden; }
       @media (max-width: 800px) {
-        #masthead .top .site-branding, #masthead .top .site-branding a, #masthead .top .site-branding .site-title, #masthead .top .site-branding .site-title a {
-          height: 40px; } }
+        #masthead .top .site-branding {
+          pointer-events: all; }
+          #masthead .top .site-branding, #masthead .top .site-branding a, #masthead .top .site-branding .site-title, #masthead .top .site-branding .site-title a {
+            height: 40px; } }
       #masthead .top .site-branding .site-title {
         margin: 0;
         height: 100%; }
@@ -1014,7 +1030,7 @@ nav.pagination {
       display: block; } }
   @media (max-width: 800px) {
     #masthead .top, #masthead .main-navigation {
-      height: auto;
+      height: 100%;
       width: 100%;
       display: block; }
       #masthead .top > div > ul > li, #masthead .main-navigation > div > ul > li {
@@ -1035,8 +1051,35 @@ nav.pagination {
       line-height: 1.2; } }
   @media (max-width: 800px) {
     #site-description {
-      padding-right: 30px;
-      max-width: 330px; } }
+      padding-right: 80px;
+      margin: 0;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center; }
+      #site-description:after {
+        position: absolute;
+        content: "";
+        background: white;
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 40px;
+        z-index: -1; } }
+
+body.toggled {
+  overflow: hidden; }
+  body.toggled #masthead {
+    overflow: hidden;
+    bottom: 0; }
+  body.toggled .top {
+    pointer-events: all !important; }
+  body.toggled .main-navigation ul {
+    overflow: auto !important;
+    pointer-events: all !important;
+    opacity: 1; }
 
 .main-navigation {
   height: 100%;
@@ -1049,12 +1092,18 @@ nav.pagination {
           flex-flow: column; }
   @media (max-width: 800px) {
     .main-navigation {
-      z-index: 1; }
+      z-index: 1;
+      transition: background-color 1s ease;
+      position: absolute;
+      top: 0;
+      padding-top: 40px; }
       .main-navigation #menu-search {
         position: absolute;
         top: 0;
         right: 50px;
         font-size: 26px; }
+        .main-navigation #menu-search input[type="search"] {
+          margin-bottom: 20px; }
         .main-navigation #menu-search i {
           padding: 7px; }
       .main-navigation a {
@@ -1075,19 +1124,27 @@ nav.pagination {
     -webkit-flex-flow: column;
         -ms-flex-flow: column;
             flex-flow: column; }
+    @media screen and (max-width: 800px) {
+      .main-navigation > div {
+        -webkit-justify-content: flex-start;
+            -ms-flex-pack: start;
+                justify-content: flex-start; } }
     .main-navigation > div > ul {
-      height: 100%; }
-      @media screen and (min-width: 800px) {
+      height: 100%;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-justify-content: space-around;
+          -ms-flex-pack: distribute;
+              justify-content: space-around;
+      -webkit-align-items: center;
+          -ms-flex-align: center;
+              align-items: center;
+      transition: opacity .3s ease, background-color .3s ease; }
+      @media screen and (max-width: 800px) {
         .main-navigation > div > ul {
-          display: -webkit-flex !important;
-          display: -ms-flexbox !important;
-          display: flex !important;
-          -webkit-justify-content: space-around;
-              -ms-flex-pack: distribute;
-                  justify-content: space-around;
-          -webkit-align-items: center;
-              -ms-flex-align: center;
-                  align-items: center; } }
+          opacity: 0;
+          height: auto; } }
       .main-navigation > div > ul > .sub-menu {
         top: 80px;
         display: -webkit-flex;
@@ -1106,12 +1163,26 @@ nav.pagination {
         -webkit-flex: 1 0 auto;
             -ms-flex: 1 0 auto;
                 flex: 1 0 auto; }
-  .main-navigation ul {
-    display: none;
+  .main-navigation div ul {
     list-style: none;
     margin: 0;
-    padding-left: 0; }
-    .main-navigation ul .sub-menu {
+    padding-left: 0;
+    transition: opacity .3s ease, background-color .3s ease; }
+    @media screen and (max-width: 800px) {
+      .main-navigation div ul {
+        background-color: rgba(255, 255, 255, 0.95);
+        -webkit-justify-content: flex-start;
+            -ms-flex-pack: start;
+                justify-content: flex-start;
+        -webkit-flex-flow: column;
+            -ms-flex-flow: column;
+                flex-flow: column;
+        -webkit-align-items: flex-start;
+            -ms-flex-align: start;
+                    -ms-grid-row-align: flex-start;
+                align-items: flex-start;
+        opacity: 0; } }
+    .main-navigation div ul .sub-menu {
       background: black;
       height: 80px;
       position: absolute;
@@ -1130,31 +1201,35 @@ nav.pagination {
           -ms-transform: translateX(-50%);
               transform: translateX(-50%); }
       @media (max-width: 1200px) {
-        .main-navigation ul .sub-menu {
+        .main-navigation div ul .sub-menu {
           height: 40px; } }
-      .main-navigation ul .sub-menu a {
+      .main-navigation div ul .sub-menu a {
         padding: 0 30px; }
         @media (max-width: 1200px) {
-          .main-navigation ul .sub-menu a {
+          .main-navigation div ul .sub-menu a {
             padding: 5px 10px; } }
       @media (max-width: 1000px) {
-        .main-navigation ul .sub-menu {
+        .main-navigation div ul .sub-menu {
           padding: 0 5px; } }
       @media (max-width: 800px) {
-        .main-navigation ul .sub-menu {
+        .main-navigation div ul .sub-menu {
+          -webkit-flex-flow: column;
+              -ms-flex-flow: column;
+                  flex-flow: column;
+          left: 50% !important;
           height: auto;
           left: auto;
           position: relative;
-          background: white;
+          background: transparent;
           padding-left: 10px;
           z-index: 0; }
-          .main-navigation ul .sub-menu a {
+          .main-navigation div ul .sub-menu a {
             color: black; }
-          .main-navigation ul .sub-menu a {
+          .main-navigation div ul .sub-menu a {
             margin: 0; } }
-      .main-navigation ul .sub-menu li {
+      .main-navigation div ul .sub-menu li {
         height: 100%; }
-      .main-navigation ul .sub-menu::after {
+      .main-navigation div ul .sub-menu::after {
         height: 100%;
         position: absolute;
         z-index: -1;
@@ -1165,18 +1240,18 @@ nav.pagination {
         width: 300%;
         left: -100%; }
         @media (max-width: 800px) {
-          .main-navigation ul .sub-menu::after {
+          .main-navigation div ul .sub-menu::after {
             display: none; } }
-      .main-navigation ul .sub-menu .sub-menu {
+      .main-navigation div ul .sub-menu .sub-menu {
         z-index: 0; }
-      .main-navigation ul .sub-menu a {
+      .main-navigation div ul .sub-menu a {
         color: white;
         margin-top: 0px;
         transition: margin .3s ease; }
         @media (max-width: 800px) {
-          .main-navigation ul .sub-menu a {
+          .main-navigation div ul .sub-menu a {
             color: black; } }
-        .main-navigation ul .sub-menu a:hover {
+        .main-navigation div ul .sub-menu a:hover {
           background-color: #333; }
   .main-navigation div > ul li.menu-item-has-children:hover > .sub-menu {
     left: auto; }
@@ -1815,6 +1890,9 @@ h1.entry-title, h1.page-title {
   background-color: black;
   padding: 10px;
   color: white; }
+  @media (max-width: 800px) {
+    h1.entry-title, h1.page-title {
+      display: table; } }
 
 .slider figure figcaption h1 {
   margin-bottom: 10px;
@@ -2309,16 +2387,6 @@ ter {
     -webkit-order: 99;
         -ms-flex-order: 99;
             order: 99; }
-
-body.toggled {
-  overflow: hidden; }
-  body.toggled .main-navigation {
-    overflow: hidden; }
-    body.toggled .main-navigation ul {
-      overflow: scroll;
-      display: block; }
-    body.toggled .main-navigation .sub-menu {
-      left: 50% !important; }
 
 @media (max-width: 800px) {
   .archive .page-header h1,
