@@ -42,17 +42,6 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
          endwhile; ?>
 
       </div>
-      <div class='custom-pager'>
-        <?php $i = 0;
-        while ($the_query->have_posts()) : $the_query->the_post();
-        if (get_post_status(get_the_ID()) !== "private") { ?>
-          <a data-slide-index="<?php echo $i ?>" href="<?php the_permalink() ?>" class="entry-title">
-            <?php icons(false); ?>
-          </a>
-          <?php $i++;
-        }
-      endwhile;
-      ?>
     </div>
   </div>
     <!-- <div class="subslider">

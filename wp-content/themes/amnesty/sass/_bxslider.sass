@@ -32,27 +32,6 @@
 section[rel="Startseite"]
   position: relative
 
-.custom-pager
-  position: absolute
-  bottom: 0
-  right: 0
-  z-index: 51
-  display: flex
-  border: 1px solid black
-  max-height: 2.4em
-  overflow: hidden
-  a
-    display: block
-    background: $white
-    &:not(:last-child)
-      border-right: 1px solid $black
-    &.active, &:hover
-      background-color: $black
-      color: $white
-  .post-format-icon:before
-    padding: 0.5rem
-    margin: 0
-
 .slider figure
   position: relative
   &.active-slide img

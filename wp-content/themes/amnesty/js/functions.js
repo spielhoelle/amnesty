@@ -9,7 +9,6 @@
             nextText: '<i class="fa fa-angle-right"></i>',
             prevText: '<i class="fa fa-angle-left"></i>',
             auto: true,
-            pagerCustom: '.custom-pager',
 
             onSlideAfter: function(currentSlideNumber, totalSlideQty, currentSlideHtmlObject) {
                 $('.active-slide').removeClass('active-slide');

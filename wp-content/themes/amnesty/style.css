@@ -1651,29 +1651,6 @@ object {
 section[rel="Startseite"] {
   position: relative; }
 
-.custom-pager {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 51;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  border: 1px solid black;
-  max-height: 2.4em;
-  overflow: hidden; }
-  .custom-pager a {
-    display: block;
-    background: white; }
-    .custom-pager a:not(:last-child) {
-      border-right: 1px solid black; }
-    .custom-pager a.active, .custom-pager a:hover {
-      background-color: black;
-      color: white; }
-  .custom-pager .post-format-icon:before {
-    padding: 0.5rem;
-    margin: 0; }
-
 .slider figure {
   position: relative; }
   .slider figure.active-slide img {
@@ -1907,22 +1884,6 @@ h1.entry-title, h1.page-title {
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.9);
   color: black; }
-
-section[rel="Startseite"] .custom-pager i.fa, section[rel="Startseite"] .custom-pager svg {
-  text-align: center;
-  width: 3rem;
-  display: block;
-  padding: 2px;
-  margin: 0; }
-  section[rel="Startseite"] .custom-pager i.fa, section[rel="Startseite"] .custom-pager i.fa:before, section[rel="Startseite"] .custom-pager svg, section[rel="Startseite"] .custom-pager svg:before {
-    font-size: 2.1rem;
-    color: black; }
-  section[rel="Startseite"] .custom-pager i.fa:hover:before, section[rel="Startseite"] .custom-pager i.fa:hover path, section[rel="Startseite"] .custom-pager svg:hover:before, section[rel="Startseite"] .custom-pager svg:hover path {
-    color: white;
-    fill: white; }
-
-section[rel="Startseite"] .custom-pager svg {
-  height: 2rem; }
 
 section[rel="Startseite"] .fa:before {
   color: black; }
