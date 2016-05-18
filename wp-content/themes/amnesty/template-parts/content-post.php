@@ -106,7 +106,7 @@ $content_parts = get_extended($content);
 
       $args = array(
           'post__not_in' => array($post->ID),
-          'showposts' => 5,
+          'showposts' => 8,
           'caller_get_posts' => 1,
           'orderby' => 'rand'
       );

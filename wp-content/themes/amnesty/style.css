@@ -697,6 +697,9 @@ body .category_structure {
   .grey ul {
     margin: 20px 0px; }
 
+.single figure:not(.header) {
+  margin-bottom: -70px; }
+
 .single .wrap {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1422,7 +1425,8 @@ footer.site-footer {
     text-decoration: none;
     color: yellow; }
   footer.site-footer input {
-    font-size: 1rem !important; }
+    font-size: 1rem !important;
+    max-width: 200px; }
   footer.site-footer li {
     margin: 15px 0; }
   footer.site-footer .footer-below, footer.site-footer .tommy {
@@ -1819,9 +1823,11 @@ section.not-found {
     #nlpopup .badge::before {
       background-image: url("img/2000px-TK_email_icon.svg.png"); }
 
-body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
-  -webkit-filter: blur(4px);
-          filter: blur(4px); }
+body.nl-open {
+  overflow-y: hidden; }
+  body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
+    -webkit-filter: blur(4px);
+            filter: blur(4px); }
 
 #nlpopup {
   pointer-events: none;
@@ -1868,7 +1874,6 @@ body.nl-open #masthead, body.nl-open #content, body.nl-open .footer-wrap {
     font-size: 2em; }
 
 .wpcf7-form-control-wrap input {
-  margin-bottom: 1em;
   border-radius: 0; }
 
 .expired {

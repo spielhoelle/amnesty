@@ -21,10 +21,6 @@
         });
 
 
-        /**
-         * make nice page load effect
-         */
-        $('#page').removeClass('page-hidden');
 
 
         /**
@@ -33,17 +29,15 @@
         if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
             setTimeout(function() {
                 openPopup()
-            }, 20000);
+            }, 15000);
             localStorage.setItem('popState', 'shown')
         }
 
-        //close functions
         $('#nlpopup .close').click(function(e) {
             closePopup();
         });
 
         $(document).keydown(function(e) {
-            // ESCAPE key pressed
             if (e.keyCode == 27) {
                 closePopup()
             }
@@ -95,6 +89,11 @@
         $('.wpcf7 input[type="submit"]').on('click', function(){
             $('.wpcf7 .fa-spinner').css({'visibility': 'visible'})
         })
+
+        /**
+         * make nice page load effect
+         */
+        $('#page').removeClass('page-hidden');
     });
 
     $(document).on('mailsent.wpcf7', function() {
