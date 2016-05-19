@@ -9,14 +9,20 @@
 
         <div class="grid">
             <?php // switch WP to page for posts
-            $blog = new WP_Query('posts_per_page=8, page_id=' . get_option('page_for_posts'));
+            $args = array(
+                'post_status' => 'publish',
+                'showposts' => 8,
+                'caller_get_posts' => 1
+            );
 
+            // $blog = new WP_Query('orderby=rand', 'showposts=5, page_id=' . get_option('page_for_posts'));
+            $blog = new WP_Query($args);
             // loop through posts
             while ($blog->have_posts()) : $blog->the_post();
-              if (get_post_status(get_the_ID()) !== "private") {
-                get_template_part('template-parts/content', '');
-              }
-            endwhile; ?>
+              get_template_part('template-parts/content', '');
+            endwhile;
+            wp_reset_query();
+             ?>
         </div>
 
         <?php wp_reset_postdata(); ?>

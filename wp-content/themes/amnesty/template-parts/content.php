@@ -12,11 +12,13 @@ $img = get_thumbnail('grid');
 
 $content = get_post_field('post_content', get_the_ID());
 $content_parts = get_extended($content);
+
 ?>
 <article data-url="<?php the_permalink(); ?>" rel="<?php echo get_the_title() ?>"
          id="post-<?php the_ID(); ?>" <?php post_class((has_post_thumbnail()) ? 'has_post_thumbnail' : ''); ?>>
 
-    <figure>
+     <figure class="gridfigure">
+
         <a href="<?php the_permalink() ?>">
             <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         </a>

@@ -74,15 +74,15 @@ $content_parts = get_extended($content);
 
                 <?php
                 $args = array(
-                    'post__not_in' => array($post->ID),
-                    'showposts' => 8,
-                    'caller_get_posts' => 1
+                  'post_status' => 'publish',
+                  'post__not_in' => array($post->ID),
+                  'showposts' => 5,
+                  'caller_get_posts' => 1
                 );
 
                 $recent_posts = new WP_Query($args);
 
-                while ($recent_posts->have_posts()) : $recent_posts->the_post();
-                  if (get_post_status(get_the_ID()) !== "private") { ?>
+                while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
                     <h3 class="entry-title">
                       <?php icons(); ?>
                       <a href="<?php the_permalink() ?>" class="entry-title ">
@@ -91,7 +91,7 @@ $content_parts = get_extended($content);
                       ?>
                       </a>
                     </h3>
-                  <?php }
+                  <?php
                 endwhile;
                 wp_reset_query(); ?>
             </aside>
@@ -105,6 +105,7 @@ $content_parts = get_extended($content);
       <?php // switch WP to page for posts
 
       $args = array(
+          'post_status' => 'publish',
           'post__not_in' => array($post->ID),
           'showposts' => 8,
           'caller_get_posts' => 1,
@@ -115,9 +116,7 @@ $content_parts = get_extended($content);
       $blog = new WP_Query($args);
       // loop through posts
       while ($blog->have_posts()) : $blog->the_post();
-        if (get_post_status(get_the_ID()) !== "private") {
-          get_template_part('template-parts/content', '');
-        }
+        get_template_part('template-parts/content', '');
       endwhile;
       wp_reset_query();
       ?>

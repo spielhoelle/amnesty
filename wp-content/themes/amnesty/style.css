@@ -697,8 +697,8 @@ body .category_structure {
   .grey ul {
     margin: 20px 0px; }
 
-.single figure:not(.header) {
-  margin-bottom: -70px; }
+.single figure:not(.header):not(.gridfigure) {
+  margin-bottom: -50px; }
 
 .single .wrap {
   display: -webkit-flex;
