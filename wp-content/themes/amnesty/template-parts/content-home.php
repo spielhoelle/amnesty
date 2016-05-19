@@ -18,11 +18,11 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                   <a href="<?php the_permalink() ?>">
                       <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
                   </a>
-
+                  <span class="icons"><?php icons(); ?></span>
                   <figcaption>
                       <h1 class="entry-title">
-                          <?php icons();
-                          echo get_the_title() ?>
+
+                        <?php echo get_the_title() ?>
                       </h1>
                       <h2><?php
                       // if( strpos( $post->post_content, '<!--more-->' ) ) {

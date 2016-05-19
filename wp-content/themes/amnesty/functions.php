@@ -89,7 +89,7 @@ add_filter('admin_title', 'my_admin_title', 10, 2);
 function my_admin_title($admin_title, $title) {
     $currentScreen = get_current_screen();
     if ($currentScreen->id === 'page' || $currentScreen->id === 'post' || $currentScreen->id === 'project' || $currentScreen->id === 'product') {
-        return 'e-' . get_the_title();
+        return '*' . get_the_title();
     } else {
         return $admin_title;
     }

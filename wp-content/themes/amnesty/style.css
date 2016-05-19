@@ -857,19 +857,6 @@ body .category_structure {
     .grid figure span.icons i, .grid figure figcaption h1, .infinite-wrap figure span.icons i, .infinite-wrap figure figcaption h1 {
       font-size: 1.5em;
       color: white; }
-    .grid figure span.icons, .infinite-wrap figure span.icons {
-      -webkit-align-items: center;
-          -ms-flex-align: center;
-              align-items: center;
-      position: absolute;
-      right: 0.5em;
-      top: 0.5em;
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      text-shadow: 1px 2px 7px #000; }
-      .grid figure span.icons i, .infinite-wrap figure span.icons i {
-        margin: 0 .1em; }
     .grid figure figcaption > div, .infinite-wrap figure figcaption > div {
       background: black;
       padding: 0.5em;
@@ -913,6 +900,23 @@ body .category_structure {
       width: 100%;
       height: 100%; }
 
+span.icons {
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  right: 0.5em;
+  top: 0.5em;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  text-shadow: 1px 2px 7px #000; }
+  span.icons i {
+    margin: 0 .1em;
+    font-size: 3em; }
+    span.icons i:before {
+      color: white; }
+
 .tommy i, .tommy svg {
   -webkit-animation-name: heart;
           animation-name: heart;
@@ -931,7 +935,7 @@ body .category_structure {
   transition: color .3s ease, transform .3s ease;
   transition: color .3s ease, transform .3s ease, -webkit-transform .3s ease; }
 
-.entry-title:hover i, .entry-title:hover svg, .page-title:hover i, .page-title:hover svg, span.icons:hover i, span.icons:hover svg {
+.entry-title i:hover, .entry-title svg:hover, .page-title i:hover, .page-title svg:hover, span.icons i:hover, span.icons svg:hover {
   -webkit-transform: scale(1.15);
       -ms-transform: scale(1.15);
           transform: scale(1.15); }
@@ -1883,9 +1887,6 @@ h1.entry-title, h1.page-title {
   margin-bottom: 10px;
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.9);
-  color: black; }
-
-section[rel="Startseite"] .fa:before {
   color: black; }
 
 section[rel="Startseite"] a.active .fa:before, section[rel="Startseite"] a.active svg path {

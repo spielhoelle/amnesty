@@ -22,12 +22,12 @@ $content_parts = get_extended($content);
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
     <figure class="<?php echo implode(' ', $classes) ?>">
+        <span class="icons"><?php icons(); ?></span>
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <figcaption>
 
             <h1 class="entry-title ">
                 <?php
-                icons();
                 echo get_the_title() ?>
             </h1>
         </figcaption>
