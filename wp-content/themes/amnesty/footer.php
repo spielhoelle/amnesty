@@ -44,14 +44,6 @@
         </div>
     </div>
 
-    <div id="nlpopup">
-        <div class="badge">
-
-            <?php echo do_shortcode('[contact-form-7 id="2202" title="Newsletter Formular"]') ?>
-
-            <span class="close closex fa fa-times fa-2"></span>
-        </div>
-    </div>
 
 </footer><!-- #colophon -->
 </div><!-- #page -->

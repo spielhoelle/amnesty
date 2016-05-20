@@ -15,7 +15,6 @@
                 'caller_get_posts' => 1
             );
 
-            // $blog = new WP_Query('orderby=rand', 'showposts=5, page_id=' . get_option('page_for_posts'));
             $blog = new WP_Query($args);
             // loop through posts
             while ($blog->have_posts()) : $blog->the_post();

@@ -25,12 +25,12 @@
         /**
          * show newsletter popup after X seconds and just once overall
          */
-        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
+        // if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
             setTimeout(function() {
                 openPopup()
-            }, 15000);
+            }, 1000);
             localStorage.setItem('popState', 'shown')
-        }
+        // }
 
         $('#nlpopup .close').click(function(e) {
             closePopup();
@@ -52,11 +52,11 @@
         });
 
         closePopup = function() {
-          $(".site-footer > #nlpopup").fadeOut().removeClass("active");
+          $(".site-footer .textwidget #nlpopup").fadeOut().removeClass("active");
           $(body).removeClass('nl-open')
         }
         openPopup = function() {
-          $(".site-footer > #nlpopup").addClass('active')
+          $(".site-footer .textwidget #nlpopup").addClass('active')
           $(body).addClass('nl-open')
         }
 
