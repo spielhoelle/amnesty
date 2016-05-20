@@ -47,7 +47,7 @@
         });
 
 
-        $("#nlpopup .wpcf7").click(function(e) {
+        $("#nlpopup .mc4wp-form, #nlpopup .epm-sign-up-form").click(function(e) {
             e.stopPropagation();
         });
 
@@ -84,9 +84,9 @@
         });
 
         //contactform spinner
-        $('.wpcf7 input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
-        $('.wpcf7 input[type="submit"]').on('click', function(){
-            $('.wpcf7 .fa-spinner').css({'visibility': 'visible'})
+        $('.mc4wp-form input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
+        $('.mc4wp-form input[type="submit"]').on('click', function(){
+            $('.mc4wp-form .fa-spinner').css({'visibility': 'visible'})
         })
 
         /**

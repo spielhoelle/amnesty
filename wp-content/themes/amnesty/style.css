@@ -1896,10 +1896,10 @@ section[rel="Startseite"] a.active:hover .fa:before, section[rel="Startseite"] a
 section[rel="Monitoring"] input:not([type="submit"]), section[rel="Monitoring"] textarea {
   width: 100%; }
 
-.wpcf7 .ajax-loader {
+.wpcf7 .ajax-loader, .mc4wp-form .ajax-loader {
   display: none !important; }
 
-.wpcf7 .fa-spinner {
+.wpcf7 .fa-spinner, .mc4wp-form .fa-spinner {
   margin-left: 20px;
   visibility: hidden; }
 
