@@ -2,7 +2,7 @@
     var body = document.getElementsByTagName('body')[0];
     $(document).ready(function(jQuery) {
         $('.slider').bxSlider({
-            controls: false,
+            controls: true,
             mode: 'fade',
             speed: 500,
             pause: 10000,

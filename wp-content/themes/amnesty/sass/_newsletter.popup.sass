@@ -63,7 +63,8 @@ body.nl-open
   transition: opacity .3s ease
   color: $darkgrey
   z-index: 999999999999999
-
+  @media (max-width: $breakpoint3)
+    display: none
   &:before
     content: ""
     background-color: rgba(0, 0, 0, 0.5)

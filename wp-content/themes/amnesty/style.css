@@ -362,7 +362,7 @@ figcaption {
     font-size: 3rem; }
     @media (max-width: 800px) {
       figcaption h1.entry-title, figcaption h1.page-title {
-        font-size: 1.2rem; } }
+        font-size: 1.5rem; } }
 
 figure {
   margin: 0;
@@ -513,9 +513,6 @@ figure.header {
   @media (max-width: 1200px) {
     .slider figure.header {
       height: calc(50vh - 41px); } }
-  @media (max-width: 800px) {
-    .slider figure.header {
-      height: calc(100vh - 41px) !important; } }
 
 figure.noheader {
   margin-bottom: -40px; }
@@ -1814,6 +1811,9 @@ body.nl-open {
   transition: opacity .3s ease;
   color: #404040;
   z-index: 999999999999999; }
+  @media (max-width: 800px) {
+    #nlpopup {
+      display: none; } }
   #nlpopup:before {
     content: "";
     background-color: rgba(0, 0, 0, 0.5);
