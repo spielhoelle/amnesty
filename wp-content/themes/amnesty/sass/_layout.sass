@@ -30,6 +30,9 @@ section
 
 figure.header
   height: calc(50vh - 81px)
+
+  @media (max-width: $breakpoint3)    
+    height: auto
   .slider &
     @media (max-width: $breakpoint1)
       height: calc(50vh - 41px)
@@ -190,6 +193,7 @@ body
   padding: 0 20px
   ul
     margin: 20px 0px
+    
 
 .single
   figure:not(.header):not(.gridfigure)
@@ -216,6 +220,7 @@ body
       flex: 0 0 50%
       @media (max-width: $breakpoint1)
         flex: 0 0 100%
+        max-width: 100%
 
   .entry-content
     a
@@ -238,6 +243,7 @@ body
       display: block
     ul
       display: inline-flex
+      flex-flow: row wrap
     a
       display: block
       margin: 0
