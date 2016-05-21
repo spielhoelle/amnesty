@@ -892,7 +892,7 @@ body .category_structure {
         -webkit-flex: 0 0 100%;
             -ms-flex: 0 0 100%;
                 flex: 0 0 100%;
-        max-width: none; } }
+        min-width: auto; } }
     .grid > article img, .infinite-wrap > article img {
       width: 100%;
       height: 100%; }
@@ -1056,7 +1056,7 @@ nav.pagination {
     #site-description {
       padding-left: 110px;
       margin: 0 20px 0 0;
-      font-size: 1em;
+      font-size: .8em;
       height: 40px;
       line-height: 1.2; } }
   @media (max-width: 800px) {
