@@ -1226,7 +1226,9 @@ body.toggled {
           -webkit-flex-flow: column;
               -ms-flex-flow: column;
                   flex-flow: column;
-          left: 50% !important;
+          -webkit-transform: translateX(0%);
+              -ms-transform: translateX(0%);
+                  transform: translateX(0%);
           height: auto;
           left: auto;
           position: relative;
