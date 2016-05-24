@@ -48,7 +48,7 @@ class CFDBViewImportCsv extends CFDBView
                 <tbody>
                 <tr>
                     <td><label for="file"><?php echo htmlspecialchars(__('File', 'contact-form-7-to-database-extension')); ?></label></td>
-                    <td><input type="file" name="file" id="file" size="50"></td>
+                    <td><input type="file" name="file" id="file" size="50" class="file"></td>
                 </tr>
                 <tr>
                     <td><input type="radio" name="into" id="new" value="new" checked> <?php echo htmlspecialchars(__('New Form', 'contact-form-7-to-database-extension')); ?></td>
@@ -69,7 +69,7 @@ class CFDBViewImportCsv extends CFDBView
                 </tr>
                 </tbody>
             </table>
-            <input type="submit" name="<?php echo htmlspecialchars(__('Import', 'contact-form-7-to-database-extension')); ?>" id="importsubmit" value="import">
+            <input type="submit" class="button" name="<?php echo htmlspecialchars(__('Import', 'contact-form-7-to-database-extension')); ?>" id="importsubmit" value="import">
         </form>
 
         <script type="text/javascript">
@@ -92,7 +92,7 @@ class CFDBViewImportCsv extends CFDBView
                 ?>
             </select>
             <td><input type="text" name="newformname" id="renameformname" size="10"/></td>
-            <input type="submit" name="rename" id="renamesubmit" value="<?php echo htmlspecialchars(__('Rename', 'contact-form-7-to-database-extension')); ?>">
+            <input type="submit" name="rename" id="renamesubmit" class="button" value="<?php echo htmlspecialchars(__('Rename', 'contact-form-7-to-database-extension')); ?>">
         </form>
 
         <h2><?php echo htmlspecialchars(__('Backup Form to CSV File', 'contact-form-7-to-database-extension')); ?></h2>
@@ -112,12 +112,12 @@ class CFDBViewImportCsv extends CFDBView
                 }
                 ?>
             </select>
-            <input type="submit" name="<?php echo htmlspecialchars(__('Export', 'contact-form-7-to-database-extension')); ?>" value="export">
+            <input type="submit" class="button" name="<?php echo htmlspecialchars(__('Export', 'contact-form-7-to-database-extension')); ?>" value="export">
         </form>
         <h2><?php echo htmlspecialchars(__('Data Cleanup', 'contact-form-7-to-database-extension')); ?></h2>
         <?php echo htmlspecialchars(__('Clean up data that can cause incorrect behavior', 'contact-form-7-to-database-extension')); ?>
         <form name="cleanup" action="<?php echo $clenaupUrl; ?>" method="post">
-            <input type="submit" name="cleanup" id="cleanupsubmit" value="<?php echo htmlspecialchars(__('Clean up data', 'contact-form-7-to-database-extension')); ?>">
+            <input type="submit" class="button" name="cleanup" id="cleanupsubmit" value="<?php echo htmlspecialchars(__('Clean up data', 'contact-form-7-to-database-extension')); ?>">
         </form>
 
     <?php
