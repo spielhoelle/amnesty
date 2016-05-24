@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-05-20 10:31+0200\n"
+"PO-Revision-Date: 2016-05-24 21:51+0200\n"
 "Language-Team: \n"
 "X-Generator: Poedit 1.8.6\n"
 "Last-Translator: \n"
@@ -171,8 +171,13 @@ msgstr ""
 
 # @ _s
 #: template-parts/content-none.php:24
-msgid "Nothing is worse than no donuts, cold coffee or empty search results.  Please try again with some different keywords."
-msgstr "Es gibt nichts schlimmeres als keine Donuts, kalten Kaffee oder leere Suchergebnisse. Versuche es doch mit etwas Anderem."
+msgid "Nothing is worse than no donuts, cold coffee or empty search results."
+msgstr "Es gibt nichts schlimmeres als keine Donuts, kalten Kaffee oder leere Suchergebnisse."
+
+# @ _s
+#: template-parts/content-none.php:24
+msgid "Please try again with some different keywords"
+msgstr "Versuche es doch mit etwas Anderem."
 
 # @ _s
 #: template-parts/content-none.php:29

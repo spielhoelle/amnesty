@@ -1893,7 +1893,6 @@ body.nl-open {
 .badge {
   transition: opacity .3s ease;
   box-sizing: content-box;
-  background-size: 40px;
   text-align: left;
   padding: 30px 60px 30px 250px;
   position: relative; }
@@ -1911,8 +1910,7 @@ body.nl-open {
     background-image: url("img/donut.svg"); }
     @media (max-width: 800px) {
       .badge:before {
-        position: relative;
-        margin: 0 auto; } }
+        position: relative; } }
 
 section .column i.fa {
   font-size: 10rem; }
