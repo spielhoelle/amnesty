@@ -31,7 +31,7 @@ section
 figure.header
   height: calc(50vh - 81px)
 
-  @media (max-width: $breakpoint3)    
+  @media (max-width: $breakpoint3)
     height: auto
   .slider &
     @media (max-width: $breakpoint1)
@@ -72,6 +72,7 @@ input[type="submit"]
   color: $black
   font-size: 1.5rem
   padding: 1em 2em
+
 .content-button
   font-family: $font__title
   font-weight: 100
@@ -80,16 +81,18 @@ input[type="submit"]
   font-size: 1rem
 
 
-.more-link, input, textarea
+.more-link, input
   font-family: $font__title
   line-height: 3
   font-size: 1rem
   padding: 0 2rem
 
-
+textarea
+  padding: 1rem 2rem
+  font-family: $font__title
+  
 input[type="submit"]
-  font-size: 1.5rem
-
+  font-size: 1rem
 .more-link
   display: inline-block
   text-decoration: none
@@ -193,7 +196,7 @@ body
   padding: 0 20px
   ul
     margin: 20px 0px
-    
+
 
 .single
   figure:not(.header):not(.gridfigure)

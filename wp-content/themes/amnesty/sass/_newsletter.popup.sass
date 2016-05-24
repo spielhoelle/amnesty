@@ -32,6 +32,11 @@
 
 section.not-found
   position: absolute
+  padding: 0 60px 60px 230px
+  width: 400px
+  @media (max-width: $breakpoint3)
+    padding: 0
+    width: calc(100% - 10px)
   &.badge
     >div
       &::before
