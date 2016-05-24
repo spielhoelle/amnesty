@@ -1778,63 +1778,30 @@ section[rel="Startseite"] {
     display: block;
     margin: 10px; }
 
-.badge {
-  transition: opacity .3s ease;
-  box-sizing: content-box;
-  background-size: 40px;
-  text-align: left;
-  width: 700px;
-  top: 50%;
-  left: 50%;
-  margin-left: -350px;
-  margin-top: -203px; }
-  @media (max-width: 800px) {
-    .badge {
-      padding: 0;
-      margin: 0;
-      position: relative !important;
-      left: 0;
-      margin: 0 auto; } }
-  .badge > div {
+@media (max-width: 800px) {
+  .badge {
     padding: 0;
-    margin: 0; }
-    .badge > div:before {
-      display: block;
-      content: "";
-      width: 270px;
-      height: 270px;
-      position: absolute;
-      left: -50px;
-      top: -50px;
-      background-size: contain; }
-      @media (max-width: 800px) {
-        .badge > div:before {
-          position: relative;
-          margin: 0 auto; } }
-
-section.not-found {
-  position: absolute;
-  padding: 0 60px 60px 230px;
-  width: 400px; }
-  @media (max-width: 800px) {
-    section.not-found {
-      padding: 0;
-      width: calc(100% - 10px); } }
-  section.not-found.badge > div::before {
-    top: 0;
+    margin: 0;
+    position: relative !important;
     left: 0;
-    width: 200px;
-    height: 200px;
-    background-image: url("img/donut.svg"); }
+    margin: 0 auto; } }
 
-#nlpopup {
-  position: fixed; }
-  #nlpopup > div:before {
-    background-image: url("img/donut.svg");
-    left: -100px; }
-  #nlpopup > div {
-    padding: 30px 60px 30px 200px;
-    background: #fff no-repeat 30px 380px; }
+.badge .textcontainer {
+  position: relative;
+  padding: 0;
+  margin: 0; }
+
+@media (max-width: 800px) {
+  section.not-found {
+    padding: 0;
+    width: calc(100% - 10px); } }
+
+section.not-found.badge > div::before {
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  background-image: url("img/donut.svg"); }
 
 body.nl-open {
   overflow-y: hidden; }
@@ -1843,12 +1810,30 @@ body.nl-open {
             filter: blur(4px); }
 
 #nlpopup {
+  position: fixed;
   opacity: 0;
   position: fixed;
   pointer-events: none;
   transition: opacity .3s ease;
   color: #404040;
-  z-index: 999999999999999; }
+  z-index: 999999999999999;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0; }
+  #nlpopup .badge:before {
+    top: -50px;
+    left: -50px;
+    width: 270px;
+    height: 270px; }
+  #nlpopup .textcontainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+    background: #fff no-repeat 30px 380px; }
   @media (max-width: 800px) {
     #nlpopup {
       display: none; } }
@@ -1864,7 +1849,7 @@ body.nl-open {
   #nlpopup.active {
     opacity: 1;
     pointer-events: all; }
-    #nlpopup.active > div {
+    #nlpopup.active .textcontainer {
       opacity: 1;
       background-color: white; }
 
@@ -1905,6 +1890,30 @@ body.nl-open {
   width: 299px;
   margin-left: 60px; }
 
+.badge {
+  transition: opacity .3s ease;
+  box-sizing: content-box;
+  background-size: 40px;
+  text-align: left;
+  padding: 30px 60px 30px 250px;
+  position: relative; }
+  .error404 .badge, .search-no-results .badge {
+    margin-top: 50px; }
+  .badge:before {
+    display: block;
+    content: "";
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: contain;
+    background-image: url("img/donut.svg"); }
+    @media (max-width: 800px) {
+      .badge:before {
+        position: relative;
+        margin: 0 auto; } }
+
 section .column i.fa {
   font-size: 10rem; }
 
@@ -1938,6 +1947,7 @@ section[rel="Monitoring"] input:not([type="submit"]), section[rel="Monitoring"] 
   display: none !important; }
 
 .wpcf7 .fa-spinner, .mc4wp-form .fa-spinner {
+  font-size: 2em !important;
   margin-left: 20px;
   visibility: hidden; }
 
