@@ -21,16 +21,15 @@
 
 
 
-
         /**
          * show newsletter popup after X seconds and just once overall
          */
-        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
+        // if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
             setTimeout(function() {
                 openPopup()
-            }, 15000);
+            }, 1000);
             localStorage.setItem('popState', 'shown')
-        }
+        // }
 
         $('#nlpopup .close').click(function(e) {
             closePopup();
@@ -47,7 +46,7 @@
         });
 
 
-        $("#nlpopup .mc4wp-form, #nlpopup .epm-sign-up-form").click(function(e) {
+        $("#nlpopup .wpcf7, #nlpopup .epm-sign-up-form").click(function(e) {
             e.stopPropagation();
         });
 
@@ -84,9 +83,9 @@
         });
 
         //contactform spinner
-        $('.mc4wp-form input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
-        $('.mc4wp-form input[type="submit"]').on('click', function(){
-            $('.mc4wp-form .fa-spinner').css({'visibility': 'visible'})
+        $('.wpcf7 input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
+        $('.wpcf7 input[type="submit"]').on('click', function(){
+            $('.wpcf7 .fa-spinner').css({'visibility': 'visible'})
         })
 
         /**
