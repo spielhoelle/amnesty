@@ -1486,7 +1486,8 @@ footer.site-footer {
       color: white; }
       .footer-top section input[type="submit"]:hover, .footer-top section button:hover, .footer-top section .content-button:hover {
         background: white;
-        color: black; }
+        color: black;
+        box-shadow: inset 0px 0px 0px 1px black; }
 
 .footer-below {
   font-family: "Trade Gothic"; }
