@@ -6,12 +6,13 @@
  *
  * @package amnesty
  */
-$img = '';
-$classes = [];
-if (has_post_thumbnail()) {
-    $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'full')[0];
-    $classes[] = 'header';
-}
+ $classes = [];
+ $img =  wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0];
+ if($img) {
+   $classes[] = 'header';
+ } else {
+   $classes[] = 'noheader';
+ }
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
@@ -23,10 +24,7 @@ if (has_post_thumbnail()) {
         </figcaption>
     </figure>
     <div class="wrap">
-        <header class="entry-header">
-        </header><!-- .entry-header -->
-
-        <div class="entry-content">
+        <div class="content-wrapper">
             <?php
             the_content();
 
@@ -35,6 +33,7 @@ if (has_post_thumbnail()) {
                 'after'  => '</div>',
             ));
             ?>
-        </div><!-- .entry-content --></div>
+        </div><!-- .content-wrapper -->
+    </div>
 
 </article><!--content-page.php-->

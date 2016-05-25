@@ -1231,7 +1231,7 @@ body.toggled {
         .main-navigation div ul .sub-menu {
           height: 40px; } }
       .main-navigation div ul .sub-menu a {
-        padding: 0 30px; }
+        padding: 0 15px; }
         @media (max-width: 1200px) {
           .main-navigation div ul .sub-menu a {
             padding: 5px 10px; } }
