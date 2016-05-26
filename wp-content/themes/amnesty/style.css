@@ -1700,9 +1700,6 @@ object {
   .bx-wrapper:hover .bx-controls a.bx-prev, .bx-wrapper:hover .bx-controls a.bx-next {
     opacity: 1; }
 
-section[rel="Startseite"] {
-  position: relative; }
-
 .slider figure {
   position: relative; }
   .slider figure.active-slide img {
@@ -1997,14 +1994,6 @@ h1.entry-title, h1.page-title {
   display: inline-block;
   background-color: rgba(255, 255, 255, 0.9);
   color: black; }
-
-section[rel="Startseite"] a.active .fa:before, section[rel="Startseite"] a.active svg path {
-  color: white;
-  fill: white; }
-
-section[rel="Startseite"] a.active:hover .fa:before, section[rel="Startseite"] a.active:hover svg path {
-  color: white;
-  fill: white; }
 
 section[rel="Monitoring"] input:not([type="submit"]), section[rel="Monitoring"] textarea {
   width: 100%; }
