@@ -1,4 +1,5 @@
-<section id="section-<?php the_ID(); ?>" data-url="<?php the_permalink(); ?>"
+
+<section class="<?php echo get_post_meta(get_the_ID(), '_page_color', true) ?>" id="section-<?php the_ID(); ?>" data-url="<?php the_permalink(); ?>"
          tabindex="<?php echo $post->menu_order; ?>" rel="<?php echo $post->post_title; ?>">
 
 	<?php // special content template for front page

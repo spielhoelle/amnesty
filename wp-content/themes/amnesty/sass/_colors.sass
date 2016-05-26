@@ -1,0 +1,19 @@
+@import "base"
+
+section.color1
+  background-color: white
+
+section.color2
+  &:after
+    background-color: black
+    position: absolute
+    left: 0
+    right: 0
+    content: ""
+  &, a
+    color: white
+  a:hover
+    color: black
+  h1.entry-title, h1.page-title
+    background-color: white
+    color: black

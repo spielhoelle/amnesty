@@ -84,6 +84,7 @@ require get_template_directory() . '/inc/jetpack.php';
 require get_template_directory() . '/inc/tinymce.php';
 require get_template_directory() . '/inc/remove.comments.php';
 require get_template_directory() . '/inc/breadcrumbs.php';
+require get_template_directory() . '/inc/page.color.php';
 
 add_filter('admin_title', 'my_admin_title', 10, 2);
 function my_admin_title($admin_title, $title) {
