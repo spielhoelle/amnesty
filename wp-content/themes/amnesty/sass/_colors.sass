@@ -1,12 +1,8 @@
 @import "base"
 
-section.color1
-  background-color: transparent
-
-section.color2
+section[class^='color']
   position: relative
   &:after
-    background-color: black
     position: absolute
     left: 0
     right: 0
@@ -14,6 +10,13 @@ section.color2
     bottom: 0
     content: ""
     z-index: -1
+section.color1
+  &:after
+    background-color: transparent
+
+section.color2
+  &:after
+    background-color: black
   &, a
     color: white
   a:hover
@@ -30,7 +33,6 @@ section.color2
       background: white
       color: black
 
-section.color3
-  background-color: $yellow
 section.color4
-  background-color: #ddd
+  &:after
+    background-color: #ddd

@@ -1,4 +1,4 @@
-<section data-url="<?php the_permalink(); ?>"
+<section class="<?php echo get_post_meta(get_the_ID(), '_page_color', true) ?>" data-url="<?php the_permalink(); ?>"
          tabindex="<?php echo $post->menu_order; ?>" rel="<?php echo $post->post_title; ?>">
     <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
         <figure>

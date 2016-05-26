@@ -20,8 +20,7 @@ function color_meta_box( $post ) {
 	$colors = array(
 		'color1' => 'transparent',
 		'color2' => 'schwarz',
-		'color3' => 'gelb',
-		'color4' => 'hellgrau'
+		'color3' => 'hellgrau'
 	);?>
 	<label for="page-color">Farbe</label>
 
@@ -105,8 +104,7 @@ function my_show_color($name) {
 			$colors = array(
 				'color1' => 'transp.',
 				'color2' => 'schwarz',
-				'color3' => 'gelb',
-				'color4' => 'hellgrau'
+				'color3' => 'hellgrau'
 			);
 
 			echo $colors[$color];

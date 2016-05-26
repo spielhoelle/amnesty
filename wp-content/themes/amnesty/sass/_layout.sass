@@ -98,6 +98,9 @@ input[type="submit"]
   text-decoration: none
   font-family: $font__title
   margin-bottom: $gap
+  a:hover
+    background-color: transparent
+    color: white
 
 figure .more-link
   background: $yellow
@@ -129,7 +132,9 @@ input[type="submit"],
     background: $black
     color: $white
     box-shadow: none
-
+    a
+      background-color: transparent
+      color: $white
 
 
 body
@@ -351,6 +356,8 @@ body
     @media (max-width: $breakpoint3)
       flex: 0 0 100%
       min-width: auto
+      hyphens: auto
+
     img
       width: 100%
       height: 100%
