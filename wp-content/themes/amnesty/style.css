@@ -504,7 +504,7 @@ article:focus, section:focus {
   #page.page-hidden {
     opacity: 0; }
 
-#masthead .top, #content, .footer-wrap {
+#masthead .top, .subslider, section > article, .footer-wrap {
   max-width: 1600px;
   margin: 0 auto; }
 
@@ -1735,9 +1735,9 @@ section[rel="Startseite"] {
     .slider figure figcaption h1, .slider figure figcaption h2, .slider figure figcaption .more-link {
       margin: 0 0 10px 0;
       opacity: 0;
-      -webkit-transform: translate(-50px, 0);
-          -ms-transform: translate(-50px, 0);
-              transform: translate(-50px, 0); }
+      -webkit-transform: translate(-200px, 0);
+          -ms-transform: translate(-200px, 0);
+              transform: translate(-200px, 0); }
     .slider figure figcaption h1 {
       transition: opacity .5s ease 0s, -webkit-transform .5s ease 0s;
       transition: opacity .5s ease 0s, transform .5s ease 0s;
@@ -1752,9 +1752,9 @@ section[rel="Startseite"] {
       font-weight: 100;
       background: rgba(0, 0, 0, 0.9);
       color: white;
-      transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
-      transition: opacity .5s ease .5s, transform .5s ease .5s;
-      transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s;
+      transition: opacity .5s ease .2s, -webkit-transform .5s ease .2s;
+      transition: opacity .5s ease .2s, transform .5s ease .2s;
+      transition: opacity .5s ease .2s, transform .5s ease .2s, -webkit-transform .5s ease .2s;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -1769,9 +1769,9 @@ section[rel="Startseite"] {
         margin: 0;
         padding: 0; }
     .slider figure figcaption .more-link {
-      transition: opacity .5s ease .8s, -webkit-transform .5s ease .8s;
-      transition: opacity .5s ease .8s, transform .5s ease .8s;
-      transition: opacity .5s ease .8s, transform .5s ease .8s, -webkit-transform .5s ease .8s; }
+      transition: opacity .5s ease .5s, -webkit-transform .5s ease .5s;
+      transition: opacity .5s ease .5s, transform .5s ease .5s;
+      transition: opacity .5s ease .5s, transform .5s ease .5s, -webkit-transform .5s ease .5s; }
   .slider figure.active-slide h1, .slider figure.active-slide h2, .slider figure.active-slide .more-link {
     opacity: 1;
     -webkit-transform: translate(0, 0);
@@ -1931,26 +1931,41 @@ body.nl-open {
 /**
  ** Variables */
 section.color1 {
-  background-color: white; }
+  background-color: transparent; }
 
-section.color2:after {
-  background-color: black;
-  position: absolute;
-  left: 0;
-  right: 0;
-  content: ""; }
+section.color2 {
+  position: relative; }
+  section.color2:after {
+    background-color: black;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    content: "";
+    z-index: -1; }
+  section.color2, section.color2 a {
+    color: white; }
+  section.color2 a:hover {
+    color: black; }
+  section.color2 h1.entry-title, section.color2 h1.page-title {
+    background-color: white;
+    color: black; }
+  section.color2 .wpcf7 input, section.color2 .wpcf7 textarea, section.color2 .wpcf7 button {
+    background: black;
+    color: #dadada;
+    box-shadow: inset 0px 0px 0px 1px #dadada; }
+  section.color2 .wpcf7 input[type="submit"]:hover {
+    background: white;
+    color: black; }
 
-section.color2, section.color2 a {
-  color: white; }
+section.color3 {
+  background-color: yellow; }
 
-section.color2 a:hover {
-  color: black; }
+section.color4 {
+  background-color: #ddd; }
 
-section.color2 h1.entry-title, section.color2 h1.page-title {
-  background-color: white;
-  color: black; }
-
-section .column i.fa {
+.column i.fa {
   font-size: 10rem; }
 
 h1.entry-title, h1.page-title {

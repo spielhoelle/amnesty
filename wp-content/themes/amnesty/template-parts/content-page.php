@@ -16,13 +16,15 @@
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    <figure class="<?php echo implode(' ', $classes) ?>">
-        <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
-        <figcaption>
-            <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
+    <?php if(get_the_title() !== '') { ?>
+      <figure class="<?php echo implode(' ', $classes) ?>">
+          <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+          <figcaption>
+              <?php the_title('<h1 class="entry-title">', '</h1>'); ?>
 
-        </figcaption>
-    </figure>
+          </figcaption>
+      </figure>
+    <?php } ?>
     <div class="wrap">
         <div class="content-wrapper">
             <?php

@@ -1,15 +1,19 @@
 @import "base"
 
 section.color1
-  background-color: white
+  background-color: transparent
 
 section.color2
+  position: relative
   &:after
     background-color: black
     position: absolute
     left: 0
     right: 0
+    top: 0
+    bottom: 0
     content: ""
+    z-index: -1
   &, a
     color: white
   a:hover
@@ -17,3 +21,16 @@ section.color2
   h1.entry-title, h1.page-title
     background-color: white
     color: black
+  .wpcf7
+    input, textarea, button
+      background: black
+      color: #dadada
+      box-shadow: inset 0px 0px 0px 1px #dadada
+    input[type="submit"]:hover
+      background: white
+      color: black
+
+section.color3
+  background-color: $yellow
+section.color4
+  background-color: #ddd

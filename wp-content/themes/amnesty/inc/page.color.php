@@ -5,8 +5,10 @@
  */
 add_action( 'add_meta_boxes', 'page_color_add_meta_box' );
 function page_color_add_meta_box() {
-	add_meta_box( 'myplugin_sectionid', 'Hintergrundfarbe', 'color_meta_box', null, 'side' );
+	add_meta_box( 'myplugin_sectionid', 'Hintergrundfarbe für Startseiten-Block', 'color_meta_box', null, 'side' );
 }
+
+
 
 /**
  * Box markup.
@@ -15,12 +17,12 @@ function color_meta_box( $post ) {
 	wp_nonce_field( '_page_color_save_meta_box', 'color_meta_box_nonce' );
 
 	$value = get_post_meta( $post->ID, '_page_color', true );
-
 	$colors = array(
-		'color1'  => 'weiß',
-		'color2' => 'schwarz'
-	); ?>
-
+		'color1' => 'transparent',
+		'color2' => 'schwarz',
+		'color3' => 'gelb',
+		'color4' => 'hellgrau'
+	);?>
 	<label for="page-color">Farbe</label>
 
 	<select name="page_color" id="page-color" class="<?php echo $value ?>"
@@ -74,4 +76,39 @@ function _page_color_save_meta_box( $post_id ) {
 	$color = sanitize_text_field( $_POST['page_color'] );
 
 	update_post_meta( $post_id, '_page_color', $color );
+}
+
+
+add_filter('manage_pages_columns', 'my_columns');
+function my_columns($columns) {
+	$columns['order'] 			= 'Reihenfolge';
+	$columns['page_color'] 	= 'Farbe';
+	return $columns;
+}
+
+add_action('manage_pages_custom_column',  'my_show_columns');
+function my_show_columns($name) {
+	global $post;
+	switch ($name) {
+		case 'order':
+			$views = $post->menu_order;
+			echo $views;
+		}
+}
+add_action('manage_pages_custom_column',  'my_show_color');
+function my_show_color($name) {
+	global $post;
+	switch ($name) {
+		case 'page_color':
+			$color = get_post_meta($post->ID, '_page_color', true);
+
+			$colors = array(
+				'color1' => 'transp.',
+				'color2' => 'schwarz',
+				'color3' => 'gelb',
+				'color4' => 'hellgrau'
+			);
+
+			echo $colors[$color];
+	}
 }

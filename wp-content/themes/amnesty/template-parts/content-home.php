@@ -1,7 +1,7 @@
 <?php // get the last 6 posts
 $the_query = new WP_Query('posts_per_page=6'); ?>
 
-    <div class="slider-wrap">
+    <article class="slider-wrap">
       <div class="slider" data-navigation="hidden">
 
           <?php
@@ -41,13 +41,6 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
           }
          endwhile; ?>
 
-      </div>
-    </div>
-  </div>
-    <!-- <div class="subslider">
-      <h1>We campaign for a world where human rights are enjoyed by all</h1>
-      <p>Amnesty International is a global movement of more than 7 million people in over 150 countries and territories who campaign to end abuses of human rights.</p>
-    </div> -->
-
+      </article>
     <!--content-home.php-->
 <?php wp_reset_postdata();

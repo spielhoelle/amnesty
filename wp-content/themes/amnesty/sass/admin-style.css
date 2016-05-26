@@ -28,10 +28,28 @@ select#page-color option {
   background-color: #fff; }
   select#page-color.color1,
   select#page-color option.color1 {
-    background-color: white; }
+    background-color: transparent; }
   select#page-color.color2,
   select#page-color option.color2 {
     background-color: black;
     color: white; }
+  select#page-color.color3,
+  select#page-color option.color3 {
+    background-color: yellow; }
+  select#page-color.color4,
+  select#page-color option.color4 {
+    background-color: #ddd; }
+
+.column-order {
+  width: 8em; }
+
+.column-page_color {
+  width: 5em;
+  -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto; }
+
+th.manage-column {
+  white-space: wrap; }
 
 /*# sourceMappingURL=admin-style.css.map */
