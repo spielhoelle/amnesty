@@ -11,9 +11,15 @@ article, section
   &.page-hidden
     opacity: 0
 
-#masthead .top, .subslider, section > article, .footer-wrap
+#masthead .top, .subslider,
+section > article, .footer-wrap,
   max-width: $viewport
   margin: 0 auto
+
+body.single #main > article,
+body.page #main > article
+  max-width: $viewport
+  width: 100%
 
 #masthead, #content
   width: 100%
@@ -141,9 +147,12 @@ body
   &.blog, &.archive, &.search
     .entry-header
       margin: 0 30px
+      padding: 0 30px
       display: flex
       justify-content: space-between
       align-items: center
+      width: 100%
+      max-width: $viewport
       @media(max-width: $breakpoint3)
         flex-flow: column
         align-items: stretch
@@ -309,6 +318,8 @@ body
   flex-flow: row wrap
   justify-content: center
   padding: 0
+  width: 100%
+  max-width: $viewport
   .more-link
     font-size: 1em
     display: inline
