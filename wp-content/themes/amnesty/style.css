@@ -531,6 +531,12 @@ section .entry-footer {
 
 figure.header {
   height: calc(50vh - 81px); }
+  figure.header small {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: 1px 1px 4px black; }
   @media (max-width: 800px) {
     figure.header {
       height: auto; } }

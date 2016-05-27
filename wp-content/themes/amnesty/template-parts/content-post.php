@@ -10,6 +10,7 @@ $classes = [];
 $img =  wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0];
 if($img) {
   $classes[] = 'header';
+  $data = wp_prepare_attachment_for_js( get_post_thumbnail_id( $post->ID ) );
 } else {
   $classes[] = 'noheader';
 }
@@ -31,6 +32,7 @@ $content_parts = get_extended($content);
                 echo get_the_title() ?>
             </h1>
         </figcaption>
+        <small><?php if($img) echo $data['caption'];?></small>
     </figure>
 
     <div class="wrap">
