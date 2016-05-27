@@ -237,12 +237,11 @@ h2 {
 
 p {
   margin-bottom: 1.5em; }
-
-a {
-  text-decoration: underline; }
-  a:hover {
-    background: yellow;
-    color: black; }
+  p a {
+    text-decoration: underline; }
+    p a:hover {
+      background: yellow;
+      color: black; }
 
 dfn, cite, em, i {
   font-style: italic; }
@@ -508,6 +507,9 @@ article:focus, section:focus {
 section > article, .footer-wrap {
   max-width: 1600px;
   margin: 0 auto; }
+
+#main > section {
+  width: 100%; }
 
 body.single #main > article,
 body.page #main > article {
