@@ -2017,10 +2017,10 @@ h1.entry-title, h1.page-title {
 section[rel="Monitoring"] input:not([type="submit"]), section[rel="Monitoring"] textarea {
   width: 100%; }
 
-.wpcf7 .ajax-loader, .mc4wp-form .ajax-loader {
+#mc_embed_signup .ajax-loader {
   display: none !important; }
 
-.wpcf7 .fa-spinner, .mc4wp-form .fa-spinner {
+#mc_embed_signup .fa-spinner {
   font-size: 2em !important;
   margin-left: 20px;
   visibility: hidden; }

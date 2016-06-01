@@ -177,7 +177,10 @@ function get_thumbnail($size = '') {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
         } else if (function_exists('z_taxonomy_image_url')) {
             $parents = get_parent_cats();
-            $img = z_taxonomy_image_url($parents->term_id);
+            // echo '<pre>';
+            // var_dump($parents);
+            // echo '</pre>';
+            $img = z_taxonomy_image_url($parents[1]->term_id);
         }
         if ($img == '') {
             $rand = rand(1, 4);
@@ -215,7 +218,7 @@ function infinite_scroll_init() {
         'container'      => 'infinite-scroll',
         'type'           => 'scroll',
         'footer_widgets' => false,
-        'render'         => gridloop,
+        'render'         => gridloop(),
         'posts_per_page' => 12,
         'wrapper'        => false
     ) );

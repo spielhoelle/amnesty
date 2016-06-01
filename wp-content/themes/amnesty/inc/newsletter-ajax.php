@@ -1,25 +1,19 @@
 <?php
-add_shortcode('newsletter-form', 'newsletter');
-
-function newsletter() {
-  $form = form();
-  return $form;
-}
-
-
+add_shortcode('newsletter-form', 'form');
 
 function form() {
-    // just need to change these 2 variables if using a different account or list id in mailchimp
-  $u = '8ac0f4fea764ddd861b79c60b3228da8-us13';
-  $list_id = '124865';
 
-  $concat_1 = "http://floatapp.us1.list-manage.com/subscribe/post-json?u=" . $u . "&amp;id=" . $list_id;
-  $concat_2 = "b_" . $u . "_" . $list_id;
+$html = '
+  <h2>Sei dabei!</h2>
+  <p>Seit 50 Jahren leisten gewöhnliche Menschen Außergewöhnliches. <br/>Auch du kannst Großes bewegen. <br/>Mit deiner E-Mail</p>
 
-  $html .= '<form action='. $concat_1 .' method="post" id="mc-embedded-subscribe-form-small" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>';
-  $html .= '  <input type="email" value="" name="EMAIL" class="email_input" id="mce-EMAIL" placeholder="Email address" required>';
-  $html .= '  <span style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name='. $concat_2 .' tabindex="-1" value=""></span>';
-  $html .= '  <span class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="submit_button"></span>';
-  $html .= '</form>';
+  <form id="mc_embed_signup" class="sign-up">
+  	<label for="mce-EMAIL" class="screen-reader-text">Email Adresse</label>
+  	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="E-Mail">
+  	<input type="hidden" value="Yes" name="5PURRRFECT">
+  	<input type="submit" value="Trag mich ein!">
+    <i class="fa fa-spinner fa-2x fa-spin"></i>
+  </form>';
+
   return $html;
 }
