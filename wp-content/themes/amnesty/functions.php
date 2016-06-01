@@ -69,6 +69,7 @@ function amnesty_scripts() {
     wp_enqueue_script('amnesty-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true);
 
     wp_enqueue_script('amnesty-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true);
+    wp_enqueue_script('newsletter-ajax', get_template_directory_uri() . '/js/newsletter-ajax.js', array(), '', true);
 
     if (is_singular() && comments_open() && get_option('thread_comments')) {
         wp_enqueue_script('comment-reply');
@@ -85,6 +86,7 @@ require get_template_directory() . '/inc/tinymce.php';
 require get_template_directory() . '/inc/remove.comments.php';
 require get_template_directory() . '/inc/breadcrumbs.php';
 require get_template_directory() . '/inc/page.color.php';
+require get_template_directory() . '/inc/newsletter-ajax.php';
 
 add_filter('admin_title', 'my_admin_title', 10, 2);
 function my_admin_title($admin_title, $title) {
@@ -174,7 +176,10 @@ function get_thumbnail($size = '') {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
         } else if (function_exists('z_taxonomy_image_url')) {
             $parents = get_parent_cats();
-            $img = z_taxonomy_image_url($parents->term_id);
+            // echo '<pre>';
+            // var_dump($parents);
+            // echo '</pre>';
+            $img = z_taxonomy_image_url($parents[1]->term_id);
         }
         if ($img == '') {
             $rand = rand(1, 4);
@@ -209,7 +214,7 @@ function infinite_scroll_init() {
         'container'      => 'infinite-scroll',
         'type'           => 'scroll',
         'footer_widgets' => false,
-        'render'         => gridloop,
+        'render'         => gridloop(),
         'posts_per_page' => 12,
         'wrapper'        => false
     ) );
@@ -223,3 +228,4 @@ function gridloop() {
        get_template_part('template-parts/content', '');
    endwhile;
 }
+add_filter( 'widget_text', 'do_shortcode' );
