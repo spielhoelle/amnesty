@@ -19,7 +19,7 @@ get_header(); ?>
 
 					<div class="page-content">
 
-							<p><?php esc_html_e( 'Nothing is worse than no donuts, cold coffee or empty search results.', 'amnesty' ); ?></p>
+							<h2><?php esc_html_e( 'Nothing is worse than no donuts, cold coffee or empty search results.', 'amnesty' ); ?></h2>
 							<p><?php esc_html_e( 'Please try again with some different keywords', 'amnesty' ); ?></p>
 
 							<?php	get_search_form(); ?>
