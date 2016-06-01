@@ -153,7 +153,6 @@ function get_parent_cats() {
 }
 
 add_image_size('grid', 500, 500, true); // Hard Crop Mode
-add_image_size('header', 1600, 700, true); // Hard Crop Mode
 
 
 
@@ -179,9 +178,6 @@ function get_thumbnail($size = '') {
         }
         if ($img == '') {
             $rand = rand(1, 4);
-            if ($size === 'header') {
-                $size = 'full';
-            }
             $img = get_template_directory_uri() . '/img/fallback/'.$size.'/thumbnail-'.$size.'-' . $rand . '.jpg';
         }
     }
