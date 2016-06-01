@@ -97,6 +97,9 @@ $content_parts = get_extended($content);
                 endwhile;
                 wp_reset_query(); ?>
             </aside>
+            <aside>
+              <?php the_widget( 'WP_Widget_Tag_Cloud' ); ?>
+            </aside>
 
         <?php } ?>
     </div>

@@ -1927,7 +1927,6 @@ body.nl-open {
 
 .badge {
   transition: opacity .3s ease;
-  box-sizing: content-box;
   text-align: left;
   padding: 30px 60px 30px 250px;
   position: relative; }
