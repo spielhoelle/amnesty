@@ -71,36 +71,37 @@ $content_parts = get_extended($content);
 
 
         <?php if (is_single()) { ?>
-            <aside>
-                <h2>Letzte Beiträge</h2>
+            <section class="sidebar">
+              <aside>
+                  <h2>Letzte Beiträge</h2>
 
-                <?php
-                $args = array(
-                  'post_status' => 'publish',
-                  'post__not_in' => array($post->ID),
-                  'showposts' => 5,
-                  'caller_get_posts' => 1
-                );
-
-                $recent_posts = new WP_Query($args);
-
-                while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
-                    <h3 class="entry-title">
-                      <?php icons(); ?>
-                      <a href="<?php the_permalink() ?>" class="entry-title ">
-                        <?php
-                        echo get_the_title();
-                      ?>
-                      </a>
-                    </h3>
                   <?php
-                endwhile;
-                wp_reset_query(); ?>
-            </aside>
-            <aside>
-              <?php the_widget( 'WP_Widget_Tag_Cloud' ); ?>
-            </aside>
+                  $args = array(
+                    'post_status' => 'publish',
+                    'post__not_in' => array($post->ID),
+                    'showposts' => 5,
+                    'caller_get_posts' => 1
+                  );
 
+                  $recent_posts = new WP_Query($args);
+
+                  while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
+                      <h3 class="entry-title">
+                        <?php icons(); ?>
+                        <a href="<?php the_permalink() ?>" class="entry-title ">
+                          <?php
+                          echo get_the_title();
+                        ?>
+                        </a>
+                      </h3>
+                    <?php
+                  endwhile;
+                  wp_reset_query(); ?>
+              </aside>
+              <aside>
+                <?php the_widget( 'WP_Widget_Tag_Cloud' ); ?>
+              </aside>
+            </section>
         <?php } ?>
     </div>
     <div class="grid">

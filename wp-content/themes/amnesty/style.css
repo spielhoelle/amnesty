@@ -305,11 +305,13 @@ body {
 
 a {
   color: #404040;
-  text-decoration: none; }
+  text-decoration: none;
+  transition: .2s ease background-color; }
   a:visited {
     color: #404040; }
   a:hover, a:focus, a:active {
-    color: #404040; }
+    color: #404040;
+    background-color: yellow; }
   a:focus {
     outline: 0; }
   a:hover, a:active {
@@ -731,13 +733,19 @@ body .category_structure {
       .columns.columns-4 .column {
         width: 50%; } }
 
-.single .wrap aside,
+.single .wrap .sidebar,
 .grey {
   margin: 20px 0;
   padding: 0 20px; }
-  .single .wrap aside ul,
+  .single .wrap .sidebar ul,
   .grey ul {
     margin: 20px 0px; }
+
+.tagcloud {
+  text-align: center; }
+
+aside {
+  width: 100%; }
 
 .single figure:not(.header):not(.gridfigure) {
   margin-bottom: -50px; }
@@ -755,17 +763,20 @@ body .category_structure {
   -webkit-flex-flow: row wrap;
       -ms-flex-flow: row wrap;
           flex-flow: row wrap; }
-  .single .wrap aside {
+  .single .wrap .sidebar {
     background: #dadada;
     -webkit-flex: 0 0 33%;
         -ms-flex: 0 0 33%;
-            flex: 0 0 33%; }
+            flex: 0 0 33%;
+    width: 100%; }
+    .single .wrap .sidebar a {
+      font-family: "Trade Gothic"; }
     @media (max-width: 1200px) {
-      .single .wrap aside {
+      .single .wrap .sidebar {
         -webkit-flex: 0 0 auto;
             -ms-flex: 0 0 auto;
                 flex: 0 0 auto; } }
-    .single .wrap aside h3 .entry-title {
+    .single .wrap .sidebar h3 .entry-title {
       display: inline-block;
       text-overflow: ellipsis;
       max-width: 200px;

@@ -212,13 +212,18 @@ body
       .column
         width: 50%
 
-.single .wrap aside,
+.single .wrap .sidebar,
 .grey
   margin: 20px 0
   padding: 0 20px
   ul
     margin: 20px 0px
 
+.tagcloud
+  text-align: center
+
+aside
+  width: 100%
 
 .single
   figure:not(.header):not(.gridfigure)
@@ -229,9 +234,13 @@ body
     justify-content: space-between
     align-items: flex-start
     flex-flow: row wrap
-    aside
+    .sidebar
       background: $grey
       flex: 0 0 33%
+      width: 100%
+      a
+        font-family: $font__title
+        
       @media (max-width: $breakpoint1)
         flex: 0 0 auto
       h3
