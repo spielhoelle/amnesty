@@ -1,6 +1,6 @@
 jQuery(function($) {
   $('#mc_embed_signup').on('submit',function(e) {
-    $('#mc_embed_signup .fa-spinner').css({'visibility': 'visible'})
+    $('#mc_embed_signup .fa-circle-o-notch').css({'visibility': 'visible'})
     // Highjack the submit button, we will do it ourselves
 		e.preventDefault();
 		// uncomment next line & check console to see if button works
@@ -15,11 +15,13 @@ jQuery(function($) {
 			// If it worked...
 			if(data.status === 'subscribed') {
 				// Let us know!
-				alert('Thanks!');
+        $('#mc_embed_signup .fa-circle-o-notch').css({'visibility': 'hidden'})
+        $('#mc_embed_signup').append('<div class="mc4wp-success">Willkommen auf der Liste!<br/> Du wirst bald von uns hören.</div>')
 			} else {
 				// Otherwise tell us why it didn't
-				alert("oops error: " + data.detail);
-        console.log(data);
+        $('#mc_embed_signup .fa-circle-o-notch').css({'visibility': 'hidden'})
+        $('#mc_embed_signup').append('<div class="wpcf7-mail-sent-ng">Oops, da gab es wohl ein Problem. Versuch es bitte später noch einmal.</div>')
+        console.log("Error:", data);
 			}
 		});
 	});

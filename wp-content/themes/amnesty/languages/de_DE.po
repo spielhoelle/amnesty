@@ -8,7 +8,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2016-06-01 22:44+0200\n"
+"PO-Revision-Date: 2016-06-02 11:51+0200\n"
 "Language-Team: \n"
 "X-Generator: Poedit 1.8.6\n"
 "Last-Translator: \n"
@@ -121,7 +121,7 @@ msgstr "von %s"
 #. translators: used between list items, there is a space after the comma
 #: inc/template-tags.php:50 inc/template-tags.php:56
 msgid ", "
-msgstr ""
+msgstr ","
 
 # @ _s
 #: inc/template-tags.php:52
@@ -138,18 +138,18 @@ msgstr "Getagged"
 # @ _s
 #: inc/template-tags.php:64
 msgid "Leave a comment"
-msgstr ""
+msgstr "Hinterlasse einen Kommentar"
 
 # @ _s
 #: inc/template-tags.php:64
 msgid "1 Comment"
-msgstr ""
+msgstr "1 Kommentar"
 
 # @ _s
 #: inc/template-tags.php:64
 #, php-format
 msgid "% Comments"
-msgstr ""
+msgstr "% Kommentare"
 
 # @ _s
 #. translators: %s: Name of current post

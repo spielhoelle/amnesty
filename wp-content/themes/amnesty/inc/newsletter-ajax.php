@@ -11,8 +11,10 @@ $html = '
   	<label for="mce-EMAIL" class="screen-reader-text">Email Adresse</label>
   	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="E-Mail">
   	<input type="hidden" value="Yes" name="5PURRRFECT">
-  	<input type="submit" value="Trag mich ein!">
-    <i class="fa fa-spinner fa-2x fa-spin"></i>
+  	<p>
+      <input type="submit" value="Trag mich ein!">
+      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+    </p>
   </form>';
 
   return $html;

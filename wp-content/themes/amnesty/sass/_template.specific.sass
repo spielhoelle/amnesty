@@ -26,10 +26,11 @@ section[rel="Monitoring"]
   input:not([type="submit"]), textarea
     width: 100%
 
-#mc_embed_signup
+#mc_embed_signup, .wpcf7
+  position: relative
   .ajax-loader
     display: none !important
-  .fa-spinner
+  .fa-circle-o-notch
     font-size: 2em !important
     margin-left: 20px
     visibility: hidden
@@ -39,21 +40,27 @@ div.wpcf7-mail-sent-ok, .mc4wp-success
   border: none
   border-left: 3px solid #398f14
   margin: 0
+  padding: 0 10px
+
 
 div.wpcf7-mail-sent-ng
   border: none
   border-left: 3px solid #ff0000
   margin: 0
+  padding: 0 10px
+
 
 div.wpcf7-spam-blocked
   border: none
   border-left: 3px solid #ffa500
   margin: 0
+  padding: 0 10px
 
 div.wpcf7-validation-errors
   border: none
   border-left: 3px solid #f7e700
   margin: 0
+  padding: 0 10px
 
 section[rel="News"]
   .more-link

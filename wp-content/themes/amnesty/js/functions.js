@@ -84,9 +84,9 @@
         });
 
         //contactform spinner
-        $('.wpcf7 input[type="submit"]').parent().append('<i class="fa fa-spinner fa-2x fa-spin"></i>')
+        $('.wpcf7 input[type="submit"]').parent().append('<i class="fa fa-circle-o-notch fa-2x fa-spin"></i>')
         $('.wpcf7 input[type="submit"]').on('click', function(){
-            $('.wpcf7 .fa-spinner').css({'visibility': 'visible'})
+            $('.wpcf7 .fa-circle-o-notch').css({'visibility': 'visible'})
         })
 
         /**
@@ -96,7 +96,7 @@
     });
 
     $(document).on('mailsent.wpcf7', function() {
-      $('.wpcf7 .fa-spinner').removeAttr('style')
+      $('.wpcf7 .fa-circle-o-notch').removeAttr('style')
       setTimeout(function() {
           closePopup()
       }, 2000);

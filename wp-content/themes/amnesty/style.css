@@ -310,8 +310,7 @@ a {
   a:visited {
     color: #404040; }
   a:hover, a:focus, a:active {
-    color: #404040;
-    background-color: yellow; }
+    color: #404040; }
   a:focus {
     outline: 0; }
   a:hover, a:active {
@@ -733,16 +732,22 @@ body .category_structure {
       .columns.columns-4 .column {
         width: 50%; } }
 
-.single .wrap .sidebar,
+.single .wrap .sidebar aside,
 .grey {
   margin: 20px 0;
-  padding: 0 20px; }
-  .single .wrap .sidebar ul,
+  background: #dadada;
+  padding: 20px; }
+  .single .wrap .sidebar aside h2,
+  .grey h2 {
+    margin-top: 0; }
+  .single .wrap .sidebar aside ul,
   .grey ul {
     margin: 20px 0px; }
 
 .tagcloud {
   text-align: center; }
+  .tagcloud a:hover {
+    background-color: yellow; }
 
 aside {
   width: 100%; }
@@ -764,7 +769,6 @@ aside {
       -ms-flex-flow: row wrap;
           flex-flow: row wrap; }
   .single .wrap .sidebar {
-    background: #dadada;
     -webkit-flex: 0 0 33%;
         -ms-flex: 0 0 33%;
             flex: 0 0 33%;
@@ -1491,6 +1495,7 @@ footer.site-footer {
     color: #dadada; }
   footer.site-footer a:hover, footer.site-footer a:hover i {
     text-decoration: none;
+    background-color: transparent;
     color: yellow; }
   footer.site-footer input {
     font-size: 1rem !important;
@@ -2027,33 +2032,38 @@ h1.entry-title, h1.page-title {
 section[rel="Monitoring"] input:not([type="submit"]), section[rel="Monitoring"] textarea {
   width: 100%; }
 
-#mc_embed_signup .ajax-loader {
-  display: none !important; }
-
-#mc_embed_signup .fa-spinner {
-  font-size: 2em !important;
-  margin-left: 20px;
-  visibility: hidden; }
+#mc_embed_signup, .wpcf7 {
+  position: relative; }
+  #mc_embed_signup .ajax-loader, .wpcf7 .ajax-loader {
+    display: none !important; }
+  #mc_embed_signup .fa-circle-o-notch, .wpcf7 .fa-circle-o-notch {
+    font-size: 2em !important;
+    margin-left: 20px;
+    visibility: hidden; }
 
 div.wpcf7-mail-sent-ok, .mc4wp-success {
   border: none;
   border-left: 3px solid #398f14;
-  margin: 0; }
+  margin: 0;
+  padding: 0 10px; }
 
 div.wpcf7-mail-sent-ng {
   border: none;
   border-left: 3px solid #ff0000;
-  margin: 0; }
+  margin: 0;
+  padding: 0 10px; }
 
 div.wpcf7-spam-blocked {
   border: none;
   border-left: 3px solid #ffa500;
-  margin: 0; }
+  margin: 0;
+  padding: 0 10px; }
 
 div.wpcf7-validation-errors {
   border: none;
   border-left: 3px solid #f7e700;
-  margin: 0; }
+  margin: 0;
+  padding: 0 10px; }
 
 section[rel="News"] .more-link {
   margin: 0; }

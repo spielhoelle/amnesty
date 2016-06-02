@@ -212,16 +212,20 @@ body
       .column
         width: 50%
 
-.single .wrap .sidebar,
+.single .wrap .sidebar aside,
 .grey
   margin: 20px 0
-  padding: 0 20px
+  background: $grey
+  padding: 20px
+  h2
+    margin-top: 0
   ul
     margin: 20px 0px
 
 .tagcloud
   text-align: center
-
+  a:hover
+    background-color: $yellow
 aside
   width: 100%
 
@@ -235,12 +239,11 @@ aside
     align-items: flex-start
     flex-flow: row wrap
     .sidebar
-      background: $grey
       flex: 0 0 33%
       width: 100%
       a
         font-family: $font__title
-        
+
       @media (max-width: $breakpoint1)
         flex: 0 0 auto
       h3
