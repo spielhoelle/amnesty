@@ -1343,6 +1343,8 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 <option value="===">===</option>
                 <option value="!==">!==</option>
                 <option value="~~">~~</option>
+                <option value="[in]">[in]</option>
+                <option value="[!in]">[!in]</option>
             </select>
             <input name="filter_val" id="filter_val" type="text" size="20" placeholder="<?php echo htmlspecialchars(__('value', 'contact-form-7-to-database-extension')) ?>"/>
             <button id="btn_filter" class="button">&raquo;</button>
@@ -1676,6 +1678,8 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 <option value="===">===</option>
                 <option value="!==">!==</option>
                 <option value="~~">~~</option>
+                <option value="[in]">[in]</option>
+                <option value="[!in]">[!in]</option>
             </select>
             <input name="tfilter_val" id="tfilter_val" type="text" size="20" placeholder="<?php echo htmlspecialchars(__('value', 'contact-form-7-to-database-extension')) ?>"/>
             <button id="btn_tfilter" class="button">&raquo;</button>

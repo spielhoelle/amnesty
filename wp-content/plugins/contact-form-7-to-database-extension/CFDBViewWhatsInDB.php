@@ -166,6 +166,13 @@ class CFDBViewWhatsInDB extends CFDBView {
                     }
                     function exportData(encSelect) {
                         var enc = encSelect.options[encSelect.selectedIndex].value;
+
+                        var checkedValues = [];
+                        jQuery('input[id^="delete_"]:checked').each(function() {
+                            checkedValues.push(this.name);
+                        });
+                        checkedValues = checkedValues.join(',');
+
                         var url;
                         if (enc == 'GSS') {
                             if (typeof jQuery == 'function') {
@@ -185,6 +192,9 @@ class CFDBViewWhatsInDB extends CFDBView {
                         else if (enc == 'GLD') {
                             alert("<?php echo htmlspecialchars(__('You will now be navigated to the builder page where it will generate a function to place in your Google Spreadsheet', 'contact-form-7-to-database-extension')); ?>");
                             url = '<?php echo $plugin->getAdminUrlPrefix('admin.php') ?>page=CF7DBPluginShortCodeBuilder&form=<?php echo urlencode($currSelection) ?>&enc=' + enc;
+                            if (checkedValues) {
+                                url += "&filter=submit_time[in]" + checkedValues;
+                            }
                             location.href = url;
                         }
                         else {
@@ -198,6 +208,9 @@ class CFDBViewWhatsInDB extends CFDBView {
                             var searchVal = getSearchFieldValue();
                             if (searchVal) {
                                 url += '&search=' + encodeURIComponent(searchVal);
+                            }
+                            if (checkedValues) {
+                                url += "&filter=submit_time[in]" + checkedValues;
                             }
                             //alert(url);
                             location.href = url;
@@ -214,6 +227,9 @@ class CFDBViewWhatsInDB extends CFDBView {
                         var searchVal = getSearchFieldValue();
                         if (searchVal != null && searchVal != "") {
                             url += '&search=' + encodeURI(searchVal);
+                        }
+                        if (checkedValues) {
+                            url += "&filter=submit_time[in]" + checkedValues;
                         }
                         form.setAttribute("action", url);
                         var params = {guser: encodeURI(guser), gpwd: encodeURI(gpwd)};
@@ -523,7 +539,7 @@ class CFDBViewWhatsInDB extends CFDBView {
 
 
         if (!$page || $page < 1) $page = 1; //default to 1.
-        $startRow = $rowsPerPage * ($page - 1) + 1;
+        $startRow = ($totalRows == 0) ? 0 : $rowsPerPage * ($page - 1) + 1;
 
 
         $endRow = min($startRow + $rowsPerPage - 1, $totalRows);
