@@ -32,7 +32,7 @@ $content_parts = get_extended($content);
                 echo get_the_title() ?>
             </h1>
         </figcaption>
-        <small><?php if($img) echo $data['caption'];?></small>
+        <small>Quelle: <?php if($img) echo $data['caption'];?></small>
     </figure>
 
     <div class="wrap">

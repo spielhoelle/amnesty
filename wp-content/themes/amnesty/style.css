@@ -533,6 +533,7 @@ section .entry-footer {
 figure.header {
   height: calc(50vh - 81px); }
   figure.header small {
+    text-align: right;
     position: absolute;
     padding: 2px 5px;
     right: 0;
@@ -1728,8 +1729,6 @@ object {
       text-decoration: none;
       opacity: 0;
       transition: opacity .3s ease; }
-      .bx-wrapper .bx-controls a.bx-prev:hover, .bx-wrapper .bx-controls a.bx-next:hover {
-        background: rgba(0, 0, 0, 0.1); }
       .bx-wrapper .bx-controls a.bx-prev.bx-next, .bx-wrapper .bx-controls a.bx-next.bx-next {
         right: 0; }
   .bx-wrapper:hover .bx-controls a.bx-prev, .bx-wrapper:hover .bx-controls a.bx-next {
@@ -2069,10 +2068,6 @@ section[rel="News"] .more-link {
   margin: 0; }
 
 section[rel="News"] .entry-footer {
-  padding: 30px 0;
-  margin-bottom: 30px; }
-
-ter {
   padding: 30px 0; }
 
 /**
