@@ -458,9 +458,7 @@ input[type="color"],
 textarea {
   background: #f8fafa;
   color: #dadada;
-  border: 1px solid #dadada;
-  box-shadow: inset 0px 0px 0px 1px #dadada;
-  border: 0 none; }
+  border: 1px solid black; }
   input[type="text"]:focus,
   input[type="email"]:focus,
   input[type="url"]:focus,
@@ -576,8 +574,12 @@ span.author {
 .content-button,
 .more-link,
 .wpcf7-form input,
-input[type="submit"] {
+input[type="submit"],
+.sow-more-text a {
   transition: color .3s ease, background .3s ease; }
+
+.wpcf7-form input:not([type="submit"]) {
+  width: 100%; }
 
 .content-button,
 .more-link {
@@ -593,6 +595,20 @@ input[type="submit"] {
   display: inline-block;
   cursor: pointer;
   font-size: 1rem; }
+
+.sow-more-text {
+  margin-top: 3em; }
+  .sow-more-text a {
+    display: inline-block;
+    background: white;
+    border: 1px solid black;
+    color: black;
+    padding: 1em 2em;
+    font-family: "Trade Gothic"; }
+    .sow-more-text a:hover {
+      background: black;
+      color: white !important;
+      text-decoration: none !important; }
 
 .more-link, input {
   font-family: "Trade Gothic";
@@ -653,62 +669,6 @@ input[type="submit"]:hover,
   .more-link:hover a {
     background-color: transparent;
     color: white; }
-
-body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
-  margin: 0 30px;
-  padding: 0 30px;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-align-items: center;
-      -ms-flex-align: center;
-          align-items: center;
-  width: 100%;
-  max-width: 1600px; }
-  @media (max-width: 800px) {
-    body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
-      -webkit-flex-flow: column;
-          -ms-flex-flow: column;
-              flex-flow: column;
-      -webkit-align-items: stretch;
-          -ms-flex-align: stretch;
-                  -ms-grid-row-align: stretch;
-              align-items: stretch; } }
-  body.blog .entry-header .overview, body.archive .entry-header .overview, body.search .entry-header .overview {
-    -webkit-flex: 1 1 auto;
-        -ms-flex: 1 1 auto;
-            flex: 1 1 auto; }
-
-body .breadcrumb {
-  margin-bottom: 0.3em; }
-  body .breadcrumb .current-page, body .breadcrumb a {
-    color: white; }
-
-body .category_structure {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-flow: row wrap;
-      -ms-flex-flow: row wrap;
-          flex-flow: row wrap;
-  font-size: 1.3em; }
-  body .category_structure > li:not(:last-child) {
-    margin-right: 10px; }
-  body .category_structure .current-cat a {
-    background-color: black;
-    color: white; }
-  body .category_structure a {
-    font-family: "Trade Gothic";
-    padding: 0.3em;
-    background: #f2f2f2;
-    display: inline-block;
-    margin-bottom: 0.3em; }
-    body .category_structure a:hover {
-      background-color: black;
-      color: white; }
 
 .wrap {
   padding: 30px; }
@@ -1533,15 +1493,14 @@ footer.site-footer {
     .footer-top section h2 {
       border-bottom: 1px solid white; }
     .footer-top section input[type="submit"], .footer-top section button, .footer-top section .content-button {
-      box-shadow: inset 0px 0px 0px 1px white;
-      border: 0 none;
+      border: 1px solid white;
       background: black;
       margin-top: 20px;
       color: white; }
       .footer-top section input[type="submit"]:hover, .footer-top section button:hover, .footer-top section .content-button:hover {
         background: white;
         color: black;
-        box-shadow: inset 0px 0px 0px 1px black; }
+        border: 1px solid black; }
 
 .footer-below {
   font-family: "Trade Gothic"; }
@@ -1961,6 +1920,71 @@ body.nl-open {
       .badge:before {
         position: relative; } }
 
+body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
+  margin: 0 30px;
+  padding: 0 30px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-align-items: flex-end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  width: 100%;
+  max-width: 1600px; }
+  body.blog .entry-header form.search-form, body.archive .entry-header form.search-form, body.search .entry-header form.search-form {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-flow: row nowrap;
+        -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap; }
+    body.blog .entry-header form.search-form input[type="submit"], body.archive .entry-header form.search-form input[type="submit"], body.search .entry-header form.search-form input[type="submit"] {
+      margin-top: 0; }
+  @media (max-width: 800px) {
+    body.blog .entry-header, body.archive .entry-header, body.search .entry-header {
+      -webkit-flex-flow: column;
+          -ms-flex-flow: column;
+              flex-flow: column;
+      -webkit-align-items: stretch;
+          -ms-flex-align: stretch;
+                  -ms-grid-row-align: stretch;
+              align-items: stretch; } }
+  body.blog .entry-header .overview, body.archive .entry-header .overview, body.search .entry-header .overview {
+    -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto; }
+
+body .breadcrumb {
+  margin-bottom: 0.3em; }
+  body .breadcrumb .current-page, body .breadcrumb a {
+    color: white; }
+
+body .category_structure {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+      -ms-flex-flow: row wrap;
+          flex-flow: row wrap;
+  font-size: 1.3em; }
+  body .category_structure > li:not(:last-child) {
+    margin-right: 10px; }
+  body .category_structure .current-cat a {
+    background-color: black;
+    color: white; }
+  body .category_structure a {
+    font-family: "Trade Gothic";
+    padding: 0.3em;
+    background: #f2f2f2;
+    display: inline-block;
+    margin-bottom: 0.3em; }
+    body .category_structure a:hover {
+      background-color: black;
+      color: white; }
+
 /** Generated by FG * */
 @font-face {
   font-family: 'Trade Gothic';
@@ -2001,7 +2025,7 @@ section.color2 h1.entry-title, section.color2 h1.page-title {
 section.color2 .wpcf7 input, section.color2 .wpcf7 textarea, section.color2 .wpcf7 button {
   background: black;
   color: #dadada;
-  box-shadow: inset 0px 0px 0px 1px #dadada; }
+  border: 1px solid white; }
 
 section.color2 .wpcf7 input[type="submit"]:hover {
   background: white;
@@ -2009,6 +2033,28 @@ section.color2 .wpcf7 input[type="submit"]:hover {
 
 section.color4:after {
   background-color: #ddd; }
+
+.ow-button-hover {
+  background: transparent !important;
+  border: 0 none !important;
+  font-size: 9em !important;
+  padding: 0 !important; }
+
+.sow-icon-container {
+  padding-top: 100% !important;
+  width: 100% !important; }
+
+.sow-icon-fontawesome {
+  color: black !important;
+  font-size: 120px !important;
+  text-shadow: none !important;
+  box-shadow: 0 none !important; }
+
+.sow-features-feature h5 {
+  font-size: 1.5em !important; }
+
+.so-widget-sow-editor h3.widget-title {
+  font-size: 1.5em !important; }
 
 .column i.fa {
   font-size: 10rem; }
