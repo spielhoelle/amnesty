@@ -12,7 +12,7 @@ gulp.task('sass', function() {
     gulp.src(sassFiles, {base: 'wp-content/themes/amnesty'})
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
-        .pipe(cleanCSS())
+        .pipe(cleanCSS({processImport: false}))
         .pipe(autoprefixer({
             browsers: ['last 3 versions']
         }))
