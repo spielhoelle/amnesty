@@ -402,9 +402,11 @@ span.icons
     color: white
   i
     margin: 0 0 0 0.5em
-  .grid &
+  .grid &, .slider &
     transform: translateX(calc(100% + 20px))
-
+.slider:hover
+  span.icons
+    transform: translateX(0)
 .tommy
   i, svg
     animation-name: heart

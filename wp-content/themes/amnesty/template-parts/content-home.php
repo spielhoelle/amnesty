@@ -19,7 +19,7 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                   <a href="<?php the_permalink() ?>">
                       <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
                   </a>
-                  <span class="icons"><?php icons(); ?></span>
+                  <span class="icons"><?php icons(true, true); ?></span>
                   <figcaption>
                       <h1 class="entry-title">
                         <?php echo get_the_title() ?>
@@ -29,8 +29,8 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
                         $bla = get_the_excerpt();
                         echo wp_strip_all_tags($bla);?>
                       </h2>
-                      
-                      <a class="more-link" href="<?php the_permalink() ?>"> Mehr... </a>
+
+
                   </figcaption>
                   <?php
                   if ($data['caption'] !== '' && $data['caption']) { ?>
