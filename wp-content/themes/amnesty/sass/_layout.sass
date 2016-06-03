@@ -77,14 +77,17 @@ span.author
 .content-button,
 .more-link,
 .wpcf7-form input,
-input[type="submit"]
+input[type="submit"],
+.sow-more-text a
   transition: color .3s ease, background .3s ease
+.wpcf7-form input:not([type="submit"])
+  width: 100%
 
 .content-button,
 .more-link
   background: $white
   border: 1px solid black
-  color: $black
+  color: black
   font-size: 1.5rem
   padding: 1em 2em
 
@@ -95,6 +98,19 @@ input[type="submit"]
   cursor: pointer
   font-size: 1rem
 
+.sow-more-text
+  margin-top: 3em
+  a
+    display: inline-block
+    background: $white
+    border: 1px solid black
+    color: black
+    padding: 1em 2em
+    font-family: $font__title
+    &:hover
+      background: black
+      color: white !important
+      text-decoration: none !important
 
 .more-link, input
   font-family: $font__title
@@ -144,7 +160,7 @@ input[type="submit"],
 .content-button,
 .more-link
   &:hover
-    background: $black
+    background: black
     color: $white
     box-shadow: none
     a
@@ -152,45 +168,7 @@ input[type="submit"],
       color: $white
 
 
-body
-  &.blog, &.archive, &.search
-    .entry-header
-      margin: 0 30px
-      padding: 0 30px
-      display: flex
-      justify-content: space-between
-      align-items: center
-      width: 100%
-      max-width: $viewport
-      @media(max-width: $breakpoint3)
-        flex-flow: column
-        align-items: stretch
-      .overview
-        flex: 1 1 auto
 
-  .breadcrumb
-    margin-bottom: 0.3em
-    .current-page, a
-      color: white
-
-  .category_structure
-    display: flex
-    flex-flow: row wrap
-    font-size: 1.3em
-    >li:not(:last-child)
-      margin-right: 10px
-    .current-cat a
-      background-color: black
-      color: white
-    a
-      font-family: $font__title
-      padding: 0.3em
-      background: darken(white, 5)
-      display: inline-block
-      margin-bottom: 0.3em
-      &:hover
-        background-color: black
-        color: white
 .wrap
   padding: $gap
 .columns
@@ -437,16 +415,16 @@ span.icons
       line-height: 2em
       vertical-align: text-bottom
       &:before
-        color: $black
+        color: black
 
 
 nav.pagination
   margin: 35px auto
   a, span
     display: inline-block
-    border: 1px solid $black
+    border: 1px solid black
     padding: 5px 10px
     text-decoration: none
     &.current, &:hover
-      background: $black
+      background: black
       color: $white

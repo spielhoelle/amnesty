@@ -1,0 +1,44 @@
+body
+  &.blog, &.archive, &.search
+    .entry-header
+      margin: 0 30px
+      padding: 0 30px
+      display: flex
+      justify-content: space-between
+      align-items: flex-end
+      width: 100%
+      max-width: $viewport
+      form.search-form
+        display: flex
+        flex-flow: row nowrap
+        input[type="submit"]
+          margin-top: 0
+      @media(max-width: $breakpoint3)
+        flex-flow: column
+        align-items: stretch
+      .overview
+        flex: 1 1 auto
+
+  .breadcrumb
+    margin-bottom: 0.3em
+    .current-page, a
+      color: white
+
+  .category_structure
+    display: flex
+    flex-flow: row wrap
+    font-size: 1.3em
+    >li:not(:last-child)
+      margin-right: 10px
+    .current-cat a
+      background-color: black
+      color: white
+    a
+      font-family: $font__title
+      padding: 0.3em
+      background: darken(white, 5)
+      display: inline-block
+      margin-bottom: 0.3em
+      &:hover
+        background-color: black
+        color: white
