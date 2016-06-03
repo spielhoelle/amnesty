@@ -111,14 +111,16 @@ function my_theme_add_editor_styles()
 
 add_action('admin_init', 'my_theme_add_editor_styles');
 
-function icons($link = true) {
+function icons($link = true, $title = false) {
   global $post;
   $categories = get_parent_cats();
 
   //all categorys
   foreach($categories as $category){
     if ($category->category_description !== '' && $category->category_description) {
-      echo ($link) ? '<a href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
+      echo ($link) ? '<a title="'. $category->name .'" href="' . get_category_link(get_cat_ID($category->name)) . '">' : '';
+      echo ($title) ? $category->name :  '';
+
       echo '<i title="' . $category->name . '" class="fa ' . $category->category_description . '"></i>';
       echo ($link) ? '</a>' : '';
     } else {

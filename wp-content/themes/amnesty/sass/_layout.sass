@@ -219,13 +219,25 @@ aside
     flex-flow: row wrap
     .sidebar
       flex: 0 0 33%
-      width: 100%
+      width: 100
+      overflow: hidden
+      i
+        margin: 0
       a
         font-family: $font__title
+        text-indent: -3em
+        transition: text-indent .3s ease
+        &.entry-title
+          text-indent: 0
+          margin-left: .4em
 
       @media (max-width: $breakpoint1)
         flex: 0 0 auto
       h3
+        &:hover
+          a:not(.entry-title)
+            text-indent: 0
+            margin-left: .3em
         .entry-title
           display: inline-block
           text-overflow: ellipsis
@@ -286,16 +298,16 @@ aside
   width: 100%
   display: block
   height: auto
-  margin-bottom: 30px
+  margin-bottom: 60px
   .spinner
     position: relative !important
     margin: 0 auto
-    width: 40px !important
-    height: 40px
+    width: 60px !important
+    height: 60px
     text-indent: 0
     background: url("img/donut.svg");
-    background-size: 40px 40px;
-    animation: spin .5s linear infinite
+    background-size: 60px 60px;
+    animation: spin 2s linear infinite
     *
       display: none
 
@@ -303,14 +315,10 @@ aside
   display: none
 
 @keyframes spin
-  50%
-    opacity: 0.3
-    -webkit-filter: grayscale(1); /* Old WebKit */
-    filter: grayscale(1);
+  0%
+    transform: rotate(0deg)
   100%
-    opacity: 1
-    -webkit-filter: grayscale(0); /* Old WebKit */
-    filter: grayscale(0);
+    transform: rotate(360deg)
 
 .grid, .infinite-wrap
   display: flex
@@ -319,19 +327,22 @@ aside
   padding: 0
   width: 100%
   max-width: $viewport
-  .more-link
-    font-size: 1em
-    display: inline
+  // .fallback
+  //   img
+  //     background: none !important
+  //     border: 1px solid black
   figure
     overflow: hidden
     background-color: $white
     img
       transition: transform .3s ease, opacity .3s ease
     &:hover
+      span.icons
+        transform: translateX(0)
       img
         transform: scale(1.1)
 
-    span.icons i, figcaption h1
+    figcaption h1
       font-size: 1.5em
       color: white
 
@@ -374,17 +385,25 @@ aside
 
 
 span.icons
-  align-items: center
+  align-items: flex-end
   position: absolute
   right: 0.5em
   top: 0.5em
   display: flex
-  text-shadow: 1px 2px 7px #000
+  flex-flow: column
+  transition: transform .3s ease
+  a
+    background: black
+    padding: .2em .5em
+    font-family: $font__title
+    &:not(:last-child)
+      margin-bottom: .2em
+  a, i:before
+    color: white
   i
-    margin: 0 .1em
-    font-size: 3em
-    &:before
-      color: white
+    margin: 0 0 0 0.5em
+  .grid &
+    transform: translateX(calc(100% + 20px))
 
 .tommy
   i, svg
@@ -400,8 +419,8 @@ span.icons
     transition: color .3s ease, transform .3s ease
 
 .entry-title, .page-title, span.icons
-  i,svg
-    &:hover
+  &:hover
+    i,svg
       // animation-play-state: running
       transform: scale(1.15)
 

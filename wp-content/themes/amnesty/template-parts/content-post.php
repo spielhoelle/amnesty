@@ -23,7 +23,7 @@ $content_parts = get_extended($content);
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
     <figure class="<?php echo implode(' ', $classes) ?>">
-        <span class="icons"><?php icons(); ?></span>
+        <span class="icons"><?php icons(true, true); ?></span>
         <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <figcaption>
 
@@ -86,9 +86,9 @@ $content_parts = get_extended($content);
                   $recent_posts = new WP_Query($args);
 
                   while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
-                      <h3 class="entry-title">
+                      <h3>
                         <?php icons(); ?>
-                        <a href="<?php the_permalink() ?>" class="entry-title ">
+                        <a title="<?php the_title() ?>" href="<?php the_permalink() ?>" class="entry-title">
                           <?php
                           echo get_the_title();
                         ?>

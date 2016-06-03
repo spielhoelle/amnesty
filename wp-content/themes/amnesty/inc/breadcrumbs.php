@@ -21,7 +21,7 @@ function nav_breadcrumb() {
    $thisCat = get_category($thisCat);
    $parentCat = get_category($thisCat->parent);
    if ($thisCat->parent != 0) echo(get_category_parents($parentCat, TRUE, ' ' . $delimiter . ' '));
-   echo $before . single_cat_title('', false) . $after;
+   echo $before . ($thisCat->category_description !== '' && $thisCat->category_description) ? $thisCat->category_description : '' . single_cat_title('', false) . $after;
 
  } elseif ( is_day() ) {
    echo '<a href="' . get_year_link(get_the_time('Y')) . '">' . get_the_time('Y') . '</a> ' . $delimiter . ' ';
