@@ -39,16 +39,8 @@ $content_parts = get_extended($content);
         <div class="content-wrapper">
 
             <div class="entry-content">
-                <?php
-                if ('post' === get_post_type()) : ?>
-                    <div class="entry-meta">
-                        <?php amnesty_posted_on(); ?>
-                    </div><!-- .entry-meta -->
-                    <?php
-                endif; ?>
 
                 <?php
-
                 the_content(sprintf(
                     wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
                     the_title('<span class="screen-reader-text">"', '"</span>', false)
@@ -61,7 +53,13 @@ $content_parts = get_extended($content);
                     'after' => '</div>',
                 ));
                 ?>
-
+                <?php
+                if ('post' === get_post_type()) : ?>
+                    <div class="entry-meta">
+                        <?php amnesty_posted_on(); ?>
+                    </div><!-- .entry-meta -->
+                    <?php
+                endif; ?>
             </div><!-- .entry-content -->
             <footer class="entry-footer">
                 <?php amnesty_entry_footer(); ?>
@@ -87,7 +85,6 @@ $content_parts = get_extended($content);
 
                   while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
                       <h3>
-                        <?php icons(); ?>
                         <a title="<?php the_title() ?>" href="<?php the_permalink() ?>" class="entry-title">
                           <?php
                           echo get_the_title();

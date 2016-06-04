@@ -29,7 +29,6 @@ body.page #main > article
 
 #content
   margin-top: 80px
-  min-height: 90vh
   @media (max-width: $breakpoint1)
     margin-top: $headerheight / 2
 
@@ -203,8 +202,11 @@ input[type="submit"],
 
 .tagcloud
   text-align: center
+
+.tagcloud, aside
   a:hover
-    background-color: $yellow
+    background-color: #000
+    color: #FFF
 aside
   width: 100%
 
@@ -221,27 +223,15 @@ aside
       flex: 0 0 33%
       width: 100
       overflow: hidden
-      i
-        margin: 0
-      a
-        font-family: $font__title
-        text-indent: -3em
-        transition: text-indent .3s ease
-        &.entry-title
-          text-indent: 0
-          margin-left: .4em
+
 
       @media (max-width: $breakpoint1)
-        flex: 0 0 auto
+        flex: 0 0 100%
       h3
-        &:hover
-          a:not(.entry-title)
-            text-indent: 0
-            margin-left: .3em
         .entry-title
           display: inline-block
           text-overflow: ellipsis
-          max-width: 200px
+          max-width: 100%
           white-space: nowrap
           overflow: hidden
     .content-wrapper
@@ -327,6 +317,7 @@ aside
   padding: 0
   width: 100%
   max-width: $viewport
+  padding: $grid-gap
   // .fallback
   //   img
   //     background: none !important
@@ -336,11 +327,7 @@ aside
     background-color: $white
     img
       transition: transform .3s ease, opacity .3s ease
-    &:hover
-      span.icons
-        transform: translateX(0)
-      img
-        transform: scale(1.1)
+
 
     figcaption h1
       font-size: 1.5em
@@ -368,7 +355,7 @@ aside
         display: none
   > article
     flex: 0 0 25%
-    padding: $gap
+    padding: $grid-gap
     @media (max-width: $breakpoint1)
       flex: 0 0 33.33333%
       max-width: none
@@ -384,29 +371,7 @@ aside
       height: 100%
 
 
-span.icons
-  align-items: flex-end
-  position: absolute
-  right: 0.5em
-  top: 0.5em
-  display: flex
-  flex-flow: column
-  transition: transform .3s ease
-  a
-    background: black
-    padding: .2em .5em
-    font-family: $font__title
-    &:not(:last-child)
-      margin-bottom: .2em
-  a, i:before
-    color: white
-  i
-    margin: 0 0 0 0.5em
-  .grid &, .slider &
-    transform: translateX(calc(100% + 20px))
-.slider:hover
-  span.icons
-    transform: translateX(0)
+
 .tommy
   i, svg
     animation-name: heart
