@@ -142,13 +142,13 @@ figure .more-link
     text-align: right
   input[type="search"]
     border-color: $grey
+    width: calc(100% - 4em)
   input[type="submit"]
     border-radius: 0
     background: $yellow
     border: 0
     box-shadow: none
     text-shadow: none
-    margin-top: 20px
     #masthead &
       margin-top: 0
   #colophon &
@@ -263,26 +263,7 @@ aside
       display: inline-flex
       flex-flow: row wrap
     a
-      display: block
-      margin: 0
-      font-weight: 400
-      text-transform: uppercase
-      -webkit-font-feature-settings: 'kern'
-      font-feature-settings: 'kern'
-      -webkit-font-kerning: normal
-      font-kerning: normal
-      line-height: 1.1
-      white-space: nowrap
-      margin-right: 1.71429rem
-      margin-bottom: .85714rem
-      background-color: $lightgrey
-      letter-spacing: 0
-      padding: .71429rem
-      text-decoration: none
-      -webkit-transition: background-color .25s
-      transition: background-color .25s
-      &:hover
-        background-color: $grey
+
 
 .infinite-loader
   width: 100%
@@ -318,6 +299,8 @@ aside
   width: 100%
   max-width: $viewport
   padding: $grid-gap
+  @media (max-width: $breakpoint3)
+    padding: $grid-gap / 2
   // .fallback
   //   img
   //     background: none !important
