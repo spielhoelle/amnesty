@@ -197,6 +197,9 @@ input[type="submit"],
   padding: 20px
   h2
     margin-top: 0
+  h3
+    position: relative
+
   ul
     margin: 20px 0px
 
@@ -225,18 +228,18 @@ aside
       overflow: hidden
 
 
-      @media (max-width: $breakpoint1)
+      @media (max-width: $breakpoint2)
         flex: 0 0 100%
-      h3
-        .entry-title
-          display: inline-block
-          text-overflow: ellipsis
-          max-width: 100%
-          white-space: nowrap
-          overflow: hidden
+      .entry-title
+        display: inline-block
+        text-overflow: ellipsis
+        max-width: 100%
+        white-space: nowrap
+        overflow: hidden
     .content-wrapper
       flex: 0 0 50%
-      @media (max-width: $breakpoint1)
+      max-width: 600px
+      @media (max-width: $breakpoint2)
         flex: 0 0 100%
         max-width: 100%
 
@@ -245,7 +248,6 @@ aside
       text-decoration: underline
       &:hover
         background: $yellow
-    border-bottom: 1px solid $grey
   .entry-meta
     font-family: $font__title
     border-bottom: 1px solid $grey
@@ -257,12 +259,13 @@ aside
         font-weight: bold
   .entry-footer
     font-family: TradeGothicLT-BoldCondTwenty, HelveticaNeue-CondensedBold, 'Franklin Gothic Medium', sans-serif
+    border-bottom: 1px solid $grey
+    padding-bottom: $gap
     span
       display: block
     ul
       display: inline-flex
       flex-flow: row wrap
-    a
 
 
 .infinite-loader

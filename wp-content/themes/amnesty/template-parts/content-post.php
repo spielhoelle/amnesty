@@ -84,13 +84,11 @@ $content_parts = get_extended($content);
                   $recent_posts = new WP_Query($args);
 
                   while ($recent_posts->have_posts()) : $recent_posts->the_post(); ?>
-                      <h3>
                         <a title="<?php the_title() ?>" href="<?php the_permalink() ?>" class="entry-title">
                           <?php
                           echo get_the_title();
                         ?>
                         </a>
-                      </h3>
                     <?php
                   endwhile;
                   wp_reset_query(); ?>
@@ -101,8 +99,8 @@ $content_parts = get_extended($content);
             </section>
         <?php } ?>
     </div>
-    <div class="grid">
-      <h1> Mehr? </h1>
+    <div class="wrap">
+      <h1 class="entry-title"> Mehr? </h1>
     </div>
     <div class="grid">
       <?php // switch WP to page for posts
