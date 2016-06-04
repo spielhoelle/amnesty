@@ -6,7 +6,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 3.2.1
 Tested up to: 4.5
-Stable tag: 2.10.13
+Stable tag: 2.10.14
 
 Saves submitted form data to the database. Export the data to a file or use short codes to display it.
 
@@ -86,6 +86,10 @@ You can always deactivate the plugin without loosing data.
 1. Admin Panel view of submitted form data
 
 == Changelog ==
+
+= 2.10.15 =
+* Bug Fix: When adding [submit_time] in Contact Form 7 mails, the value might not match what is in the DB depending on your locale setting.
+* Bug Fix: In the CFDB admin page, the WP Footer would appear on top of the CFDB table when it had a lot of entries. The "wpfooter" is not hidden on that page.
 
 = 2.10.14 =
 * New: [in] and [!in] operators for filters, for example filter="name[in]Mike,John,Tom"

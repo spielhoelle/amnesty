@@ -752,7 +752,12 @@ class CF7DBPlugin extends CF7DBPluginLifeCycle implements CFDBDateFormatter {
      */
     public function saveFormData($cf7) {
         try {
-            if (!empty($cf7->posted_data['submit_time']) && is_numeric($cf7->posted_data['submit_time'])) {
+            if (
+                    !empty($cf7->posted_data['submit_time']) &&
+                    (is_numeric($cf7->posted_data['submit_time']) ||
+                            // Looks like is_numeric may fail on decimal '.' when ',' is the localization
+                            preg_match('/^\d+\.?\d*$/', $cf7->posted_data['submit_time']))
+            ) {
                 $time = $cf7->posted_data['submit_time'];
                 unset($cf7->posted_data['submit_time']);
                 unset($cf7->posted_data['submit_url']);

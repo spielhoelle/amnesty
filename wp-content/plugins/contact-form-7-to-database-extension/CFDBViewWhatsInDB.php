@@ -29,6 +29,7 @@ class CFDBViewWhatsInDB extends CFDBView {
         if ($plugin == null) {
             $plugin = new CF7DBPlugin;
         }
+        echo '<div id="cfdb-admin">';
         $canEdit = $plugin->canUserDoRoleOption('CanChangeSubmitData');
         $this->pageHeader($plugin);
 
@@ -111,7 +112,7 @@ class CFDBViewWhatsInDB extends CFDBView {
         $pluginDirUrl = $plugin->getPluginDirUrl();
 
         ?>
-    <table width="100%" cellspacing="20">
+    <table id="cfdb-controls" width="100%" cellspacing="20">
         <tr>
             <td align="left" valign="top">
                 <form method="get" action="<?php echo $_SERVER['REQUEST_URI']?>" name="displayform" id="displayform">
@@ -425,7 +426,7 @@ class CFDBViewWhatsInDB extends CFDBView {
                         })
             })(jQuery);
         </script>
-        <div style="margin-top:1em"> <?php // Footer ?>
+        <div id="cfdb-footer" style="margin-top:1em"> <?php // Footer ?>
         <table style="width:100%;">
             <tbody>
             <tr>
@@ -515,6 +516,7 @@ class CFDBViewWhatsInDB extends CFDBView {
         <?php
             do_action_ref_array('cfdb_edit_setup', array($plugin));
         }
+        echo '</div>'; // cfdb-admin
     }
 
     /**
@@ -636,6 +638,15 @@ class CFDBViewWhatsInDB extends CFDBView {
             echo  "</div>\n";
         }
 
+        // Next scrip it to hide the WP "Thank You" footer which can overlap the CFDB table.
+        ?>
+        <script type="text/javascript" language="Javascript">
+            jQuery(document).ready(function () {
+                jQuery('#wpfooter').hide();
+            });
+        </script>
+
+        <?php
         echo '</div>';
         return $startRow;
     }
