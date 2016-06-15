@@ -18,13 +18,13 @@ function my_mce_before_init_insert_formats( $init_array ) {
         // Each array child is a format with it's own settings
         array(
             'title' => 'Button',
-            'block' => 'span',
+            'block' => 'a',
             'classes' => 'content-button',
             'wrapper' => true,
         ),
         array(
             'title' => 'More link',
-            'block' => 'span',
+            'block' => 'a',
             'classes' => 'more-link',
             'wrapper' => true,
         ),
