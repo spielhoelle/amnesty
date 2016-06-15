@@ -8,20 +8,24 @@ html
   &:focus
     outline: 0
 
-\::selection
+::selection
   background: black
   color: $white
-  figcaption &
+  figcaption &, .color2 &
     background: white
     color: black
 
-\::-moz-selection
+::-moz-selection
   background: black
   color: $white
-  figcaption &
+  figcaption &, .color2 &
     background: white
     color: black
 
+.color2
+  ::-moz-selection, ::selection
+    background: black
+    color: $white
 body
   background: $white
 
