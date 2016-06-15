@@ -9,12 +9,18 @@ html
     outline: 0
 
 \::selection
-  background: #000
+  background: black
   color: $white
+  figcaption &
+    background: white
+    color: black
 
 \::-moz-selection
-  background: #000
+  background: black
   color: $white
+  figcaption &
+    background: white
+    color: black
 
 body
   background: $white
@@ -38,7 +44,7 @@ a
 blockquote, q
   margin: 50px 0
   quotes: '"' '"'
-  border-left: 15px solid #000
+  border-left: 15px solid black
   padding-left: 3rem
   font-size: 1.5rem
   font-family: $font__title
