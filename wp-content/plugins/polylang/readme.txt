@@ -4,7 +4,7 @@ Donate link: https://polylang.pro
 Tags: multilingual, bilingual, translate, translation, language, multilanguage, international, localization
 Requires at least: 4.0
 Tested up to: 4.5
-Stable tag: 1.9.1
+Stable tag: 1.9.3
 License: GPLv2 or later
 
 Making WordPress multilingual
@@ -60,6 +60,10 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 * If you still have a problem, open a new thread in the [community support forum](http://wordpress.org/support/plugin/polylang).
 * [Polylang Pro](https://polylang.pro) users have access to our helpdesk.
 
+= Is Polylang compatible with WooCommerce? =
+
+* You need a separate addon to make Polylang and WooCommerce work together. Our Premium addon is currently in beta stage and is available for tests to Polyang Pro users who request it.
+
 = Do you need translation services? =
 
 * If you want to use professional or automatic translation services, install and activate the [Lingotek Translation](https://wordpress.org/plugins/lingotek-translation/) plugin.
@@ -72,6 +76,21 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 4. The Edit Post screen with the Languages metabox
 
 == Changelog ==
+
+= 1.9.3 (2016-06-28) =
+
+* Pro: Allow to add slashes in url slugs translations
+* Pro: Fix archive links not using translated slugs
+* Pro: Fix visitor being redirected to 404 if his browser preference is set to an inactive language
+* Fix strings translations table always back to page 1 when submitting the form (#14)
+* Fix get_pages( array( 'lang' => '' ) ) not querying all the languages
+* Fix switching the admin language filter can override the static front page settings (#16)
+
+= 1.9.2 (2016-06-06) =
+
+* Pro: fix unreachable hierarchical custom post type posts when they are sharing slugs across languages
+* Fix missing argument 3 in icl_t
+* Fix conflict with WooCommerce product variations
 
 = 1.9.1 (2016-05-23) =
 

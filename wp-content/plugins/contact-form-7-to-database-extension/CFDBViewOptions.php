@@ -30,8 +30,9 @@ class CFDBViewOptions extends CFDBView {
      */
     function display(&$plugin) {
         $this->pageHeader($plugin);
-        $this->outputHeader();
-        $this->outputOptions($plugin);
+        if ($this->outputHeader()) {
+            $this->outputOptions($plugin);
+        }
     }
 
     public function enqueueSettingsPageScripts() {
@@ -56,25 +57,26 @@ class CFDBViewOptions extends CFDBView {
             <div id="cfdb_options_tabs">
                 <ul>
                     <li>
-                        <a href="#cfdb_config-1"><?php _e('Integrations', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#integrations"><?php _e('Integrations', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                     <li>
-                        <a href="#cfdb_config-2"><?php _e('Security', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#security"><?php _e('Security', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                     <li>
-                        <a href="#cfdb_config-3"><?php _e('Saving', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#saving"><?php _e('Saving', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                     <li>
-                        <a href="#cfdb_config-4"><?php _e('Export', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#export"><?php _e('Export', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                     <li>
-                        <a href="#cfdb_config-5"><?php _e('Admin View', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#adminview"><?php _e('Admin View', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                     <li>
-                        <a href="#cfdb_config-10"><?php _e('System', 'contact-form-7-to-database-extension'); ?></a>
+                        <a href="#system"><?php _e('System', 'contact-form-7-to-database-extension'); ?></a>
                     </li>
                 </ul>
-                <div id="cfdb_config-1">
+                <div id="integrations">
+                    <h3><?php _e('Capture form submissions from these plugins', 'contact-form-7-to-database-extension') ?></h3>
                     <?php
                     $filter = function ($name) {
                         return strpos($name, 'IntegrateWith') === 0 || $name == 'GenerateSubmitTimeInCF7Email';
@@ -82,7 +84,7 @@ class CFDBViewOptions extends CFDBView {
                     $this->outputSettings($filter, $plugin);
                     ?>
                 </div>
-                <div id="cfdb_config-2">
+                <div id="security">
                     <?php
                     $filter = function ($name) {
                         return in_array($name, array(
@@ -91,8 +93,11 @@ class CFDBViewOptions extends CFDBView {
                     };
                     $this->outputSettings($filter, $plugin);
                     ?>
+                    <p>
+                        <a target="_blank" href="http://cfdbplugin.com/?page_id=625" style="font-weight: bold">Notes on security settings</a>
+                    </p>
                 </div>
-                <div id="cfdb_config-3">
+                <div id="saving">
                     <?php
                     $filter = function ($name) {
                         return in_array($name, array(
@@ -102,7 +107,7 @@ class CFDBViewOptions extends CFDBView {
                     $this->outputSettings($filter, $plugin);
                     ?>
                 </div>
-                <div id="cfdb_config-4">
+                <div id="export">
                     <?php
                     $filter = function ($name) {
                         return in_array($name, array(
@@ -111,7 +116,7 @@ class CFDBViewOptions extends CFDBView {
                     $this->outputSettings($filter, $plugin);
                     ?>
                 </div>
-                <div id="cfdb_config-5">
+                <div id="adminview">
                     <?php
                     $filter = function ($name) {
                         return in_array($name, array(
@@ -121,7 +126,7 @@ class CFDBViewOptions extends CFDBView {
                     $this->outputSettings($filter, $plugin);
                     ?>
                 </div>
-                <div id="cfdb_config-10">
+                <div id="system">
                     <?php $this->outputSystemSettings($plugin);
                     $filter = function ($name) {
                         return in_array($name, array(
@@ -137,8 +142,24 @@ class CFDBViewOptions extends CFDBView {
         $this->outputFooter();
     }
 
+    /**
+     * @return bool false means don't display additional contents because PHP version is too old
+     */
     public function outputHeader() {
-        ?>
+        if (version_compare(phpversion(), '5.3') < 0) {
+            printf('<h1>%s</h1>',
+                    __('PHP Upgrade Needed', 'contact-form-7-to-database-extension'));
+            _e('This page requires PHP 5.3 or later on your server.', 'contact-form-7-to-database-extension');
+            echo '<br/>';
+            _e('Your server\'s PHP version: ', 'contact-form-7-to-database-extension');
+            echo phpversion();
+            echo '<br/>';
+            printf('<a href="https://wordpress.org/about/requirements/">%s</a>',
+                    __('See WordPress Recommended PHP Version', 'contact-form-7-to-database-extension'));
+            return false;
+        }
+
+    ?>
         <style type="text/css">
             table.cfdb-options-table {
                 width: 100%
@@ -169,13 +190,15 @@ class CFDBViewOptions extends CFDBView {
                            value="<?php echo htmlspecialchars(__('Save Changes', 'contact-form-7-to-database-extension')); ?>"/>
                 </p>
 
-                <?php
-                $settingsGroup = get_class($this) . '-settings-group';
-                settings_fields($settingsGroup);
-                }
+            <?php
+            $settingsGroup = get_class($this) . '-settings-group';
+            settings_fields($settingsGroup);
+            return true;
 
-                public function outputFooter() {
-                ?>
+        }
+
+    public function outputFooter() {
+        ?>
             </form>
         </div>
         <?php
