@@ -8,7 +8,7 @@ jQuery(function($) {
 	var formData = $(this).serialize();
 	// Let's make the call!
 	// Replace the path to your own endpoint!
-    $.getJSON('wp-content/themes/amnesty/inc/mc-endpoint.php', formData ,function(data) {
+    $.getJSON('/wp-content/themes/amnesty/inc/newsletter/mc-endpoint.php', formData ,function(data) {
 			// uncomment next line to see your data output in console
 			console.log(data);
 
