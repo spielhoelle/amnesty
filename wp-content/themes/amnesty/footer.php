@@ -26,7 +26,7 @@
                     <a title="Datenschutz" href="<?php echo get_permalink( get_page_by_path( 'datenschutz' ) )?>">Datenschutz</a> |
                     © 2016 AMNESTY INTERNATIONAL
                 </div>
-                <ul>
+                <ul class="socialicons">
                     <li><a title="Amnesty International Deutschland" href="https://www.amnesty.de"><i class="fa fa-globe"></i></a></li>
                     <li><a title="Facebook" href="https://www.facebook.com/AmnestyDeutschland"><i class="fa fa-facebook"></i></a></li>
                     <li><a title="Twitter" href="https://twitter.com/amnesty_de"><i class="fa fa-twitter"></i></a></li>

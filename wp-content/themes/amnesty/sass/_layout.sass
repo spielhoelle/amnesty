@@ -96,6 +96,7 @@ input[type="submit"],
   display: inline-block
   cursor: pointer
   font-size: 1rem
+  text-decoration: none
 
 .sow-more-text
   margin-top: 3em
@@ -244,10 +245,12 @@ aside
         max-width: 100%
 
   .entry-content
-    a
+    a:not(.content-button)
       text-decoration: underline
       &:hover
         background: $yellow
+
+
   .entry-meta
     font-family: $font__title
     border-bottom: 1px solid $grey
