@@ -19,4 +19,4 @@ bower_components
 
 .idea
 node_modules
-/newsletter/mc-endpoint.php
+/wp-content/themes/amnesty/inc/newsletter/mc-endpoint.php
