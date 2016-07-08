@@ -25,7 +25,7 @@
         /**
          * show newsletter popup after X seconds and just once overall
          */
-        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 1200) {
+        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 800) {
             setTimeout(function() {
                 openPopup()
             }, 15000);
@@ -47,7 +47,7 @@
         });
 
 
-        $("#nlpopup .wpcf7, #nlpopup .epm-sign-up-form").click(function(e) {
+        $("#nlpopup .wpcf7, #nlpopup .textcontainer").click(function(e) {
             e.stopPropagation();
         });
 
