@@ -270,34 +270,7 @@ aside
       display: inline-flex
       flex-flow: row wrap
 
-
-.infinite-loader
-  width: 100%
-  display: block
-  height: auto
-  margin-bottom: 60px
-  .spinner
-    position: relative !important
-    margin: 0 auto
-    width: 60px !important
-    height: 60px
-    text-indent: 0
-    background: url("img/donut.svg");
-    background-size: 60px 60px;
-    animation: spin 2s linear infinite
-    *
-      display: none
-
-#infinite-footer
-  display: none
-
-@keyframes spin
-  0%
-    transform: rotate(0deg)
-  100%
-    transform: rotate(360deg)
-
-.grid, .infinite-wrap
+.grid
   display: flex
   flex-flow: row wrap
   justify-content: center
@@ -307,10 +280,6 @@ aside
   padding: $grid-gap
   @media (max-width: $breakpoint3)
     padding: $grid-gap / 2
-  // .fallback
-  //   img
-  //     background: none !important
-  //     border: 1px solid black
   figure
     overflow: hidden
     background-color: $white

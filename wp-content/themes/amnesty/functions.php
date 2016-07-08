@@ -81,7 +81,6 @@ require get_template_directory() . '/inc/custom-header.php';
 require get_template_directory() . '/inc/template-tags.php';
 require get_template_directory() . '/inc/extras.php';
 require get_template_directory() . '/inc/customizer.php';
-require get_template_directory() . '/inc/jetpack.php';
 require get_template_directory() . '/inc/tinymce.php';
 require get_template_directory() . '/inc/remove.comments.php';
 require get_template_directory() . '/inc/breadcrumbs.php';
@@ -202,37 +201,6 @@ function add_loginout_link( $items, $args ) {
     }
     return $items;
 }
-
-
-
-/**
- * Add theme support for infinite scroll.
- *
- * @uses add_theme_support
- * @return void
- */
-function infinite_scroll_init() {
-    add_theme_support( 'infinite-scroll', array (
-        'container'      => 'infinite-scroll',
-        'type'           => 'scroll',
-        'footer_widgets' => false,
-        'render'         => gridloop(),
-        'posts_per_page' => 12,
-        'wrapper'        => false
-    ) );
-}
-add_action( 'after_setup_theme', 'infinite_scroll_init' );
-
-
-
-function gridloop() {
-  while (have_posts()) : the_post();
-       get_template_part('template-parts/content', '');
-   endwhile;
-}
-add_filter( 'widget_text', 'do_shortcode' );
-
-
 
 
 /**

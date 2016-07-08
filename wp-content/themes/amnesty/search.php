@@ -27,7 +27,7 @@ get_header(); ?>
               <?php get_search_form(); ?>
             </header>
 
-            <div id="infinite-scroll" class="grid">
+            <div class="grid">
                 <?php while (have_posts()) : the_post(); ?>
                     <?php get_template_part('template-parts/content', ''); ?>
                 <?php endwhile; ?>
@@ -38,8 +38,20 @@ get_header(); ?>
             <?php get_template_part('template-parts/content', 'none'); ?>
 
         <?php endif; ?>
+        <nav class="pagination">
+                <?php
+                global $wp_query;
 
+                $big = 999999999; // need an unlikely integer
 
+                echo paginate_links(array(
+                    'base'    => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
+                    'format'  => '?paged=%#%',
+                    'current' => max(1, get_query_var('paged')),
+                    'total'   => $wp_query->max_num_pages
+                ));?>
+
+            </nav>
     </main>
     <!-- #main -->
 </div><!-- #primary -->
