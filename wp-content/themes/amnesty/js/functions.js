@@ -25,12 +25,12 @@
         /**
          * show newsletter popup after X seconds and just once overall
          */
-        if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 800) {
+        // if (localStorage.getItem('popState') != 'shown' && jQuery(window).width() > 800) {
             setTimeout(function() {
                 openPopup()
-            }, 15000);
+            }, 1000);
             localStorage.setItem('popState', 'shown')
-        }
+        // }
 
         $('#nlpopup .close').click(function(e) {
             closePopup();

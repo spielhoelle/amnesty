@@ -4,12 +4,12 @@ add_shortcode('newsletter-form', 'form');
 function form() {
 
 $html = '
-  <h2>Sei dabei!</h2>
+  <h2>Newsletter</h2>
   <p>Seit 50 Jahren leisten gewöhnliche Menschen Außergewöhnliches.<br/>
   Auch du kannst Großes bewegen.<br/><br/>
-  Bleib informiert mit dem Newsletter.</p>
+  Mit deiner Email!</p>
 
-  <form id="mc_embed_signup" class="sign-up">
+  <form class="mc_embed_signup sign-up">
   	<label for="mce-EMAIL" class="screen-reader-text">Email Adresse</label>
   	<input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="E-Mail">
   	<input type="hidden" value="Yes" name="5PURRRFECT">
