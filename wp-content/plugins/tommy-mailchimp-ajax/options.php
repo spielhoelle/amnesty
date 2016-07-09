@@ -2,12 +2,15 @@
 /*
 Plugin Name: Mailchimp ajax register plugin
 Plugin URI: #
-Description: Blabla
+Description: My very own Mailchimp ajax plugin
 Version: 0.1
 Author: Thomas Kuhnert
 Author URI:
 */
 
+
+require 'shortcode.php';
+require 'mc-config.php';
 
 
 add_action('admin_menu', 'test_plugin_setup_menu');

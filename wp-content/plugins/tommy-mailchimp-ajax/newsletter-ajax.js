@@ -1,9 +1,10 @@
 jQuery(function($) {
-  $('.mc_embed_signup').on('submit',function(e) {
+	console.log("LOADED!");
+	$('.mc_embed_signup').on('submit',function(e) {
 
 	// Highjack the submit button, we will do it ourselves
 	e.preventDefault();
-    $('.mc_embed_signup .fa-circle-o-notch').css({'visibility': 'visible'})
+	$('.mc_embed_signup .fa-circle-o-notch').css({'visibility': 'visible'})
 
 	// uncomment next line & check console to see if button works
 	// console.log('submit button worked!');
@@ -13,7 +14,8 @@ jQuery(function($) {
 
 	// Let's make the call!
 	// Replace the path to your own endpoint!
-    $.getJSON('/wp-content/themes/amnesty/inc/newsletter/mc-endpoint.php', formData ,function(data) {
+	console.log(formData);
+	$.getJSON(tommy_plugin_path['template_url'] + 'mc-endpoint.php', formData ,function(data) {
 			// uncomment next line to see your data output in console
 			console.log(data);
 
