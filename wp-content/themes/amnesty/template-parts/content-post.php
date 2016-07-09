@@ -85,7 +85,7 @@ $content_parts = get_extended($content);
                     'post_status' => 'publish',
                     'post__not_in' => array($post->ID),
                     'showposts' => 5,
-                    'caller_get_posts' => 1
+                    'ignore_sticky_posts' => 1
                   );
 
                   $recent_posts = new WP_Query($args);
@@ -116,7 +116,7 @@ $content_parts = get_extended($content);
           'post_status' => 'publish',
           'post__not_in' => array($post->ID),
           'showposts' => 8,
-          'caller_get_posts' => 1,
+          'ignore_sticky_posts' => 1,
           'orderby' => 'rand'
       );
 

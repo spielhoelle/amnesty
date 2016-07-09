@@ -12,7 +12,7 @@
             $args = array(
                 'post_status' => 'publish',
                 'showposts' => 8,
-                'caller_get_posts' => 1
+                'ignore_sticky_posts' => 1
             );
 
             $blog = new WP_Query($args);

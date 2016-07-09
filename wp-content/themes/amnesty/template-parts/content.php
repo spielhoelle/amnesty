@@ -9,7 +9,7 @@
 
 
 $img = get_thumbnail('grid');
-
+$classes= array();
 if(strpos($img, 'fallback')) {
   $classes[] = 'fallback';
 }
@@ -35,5 +35,5 @@ $content_parts = get_extended($content);
         </figcaption>
     </figure>
 
+    <!-- content.php grid-->
 </article>
-<!-- content.php grid-->
