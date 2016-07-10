@@ -8,8 +8,6 @@ function add_mc_scripts() {
     wp_localize_script( 'newsletter-ajax', 'tommy_plugin_path', $tommy_plugin_path );
 }
 
-
-
 add_action('wp_enqueue_scripts', 'add_mc_scripts');
 
 
