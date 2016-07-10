@@ -64,6 +64,7 @@ function amnesty_scripts() {
 
     wp_enqueue_script('bxslider', get_template_directory_uri() . '/js/jquery.bxslider.min.js', array(), '', true);
 
+    wp_enqueue_script('newsletter_popup', get_template_directory_uri() . '/js/newsletter_popup.js', array(), '', true);
     wp_enqueue_script('functions', get_template_directory_uri() . '/js/functions.js', array(), '', true);
 
     wp_enqueue_script('amnesty-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true);
