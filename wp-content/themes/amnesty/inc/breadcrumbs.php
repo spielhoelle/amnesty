@@ -14,13 +14,21 @@ function nav_breadcrumb() {
  $homeLink = get_bloginfo('url');
  // echo '<a href="' . $homeLink . '">' . $home . '</a> ' . $delimiter . ' ';
 
+
  if ( is_category()) {
    global $wp_query;
    $cat_obj = $wp_query->get_queried_object();
    $thisCat = $cat_obj->term_id;
    $thisCat = get_category($thisCat);
    $parentCat = get_category($thisCat->parent);
-   if ($thisCat->parent != 0) echo(get_category_parents($parentCat, TRUE, ' ' . $delimiter . ' '));
+
+   if ($thisCat->parent != 0) {
+      echo '<i title="' . $parentCat->name . '" class="fa ' . $parentCat->category_description . '"></i>';
+      echo(get_category_parents($parentCat, TRUE, ' ' . $delimiter . ' '));
+   } elseif ($thisCat->parent == 0){
+      echo '<i title="' . $thisCat->name . '" class="fa ' . $thisCat->category_description . '"></i>';
+   }
+
    echo $before . single_cat_title('', false) . $after;
 
  } elseif ( is_day() ) {
@@ -75,10 +83,10 @@ function nav_breadcrumb() {
    echo $before . get_the_title() . $after;
 
  } elseif ( is_search() ) {
-   echo $before . 'Ergebnisse für Ihre Suche nach "' . get_search_query() . '"' . $after;
+   echo $before . 'Suche nach "' . get_search_query() . '":' . $after;
 
  } elseif ( is_tag() ) {
-   echo $before . 'Beiträge mit dem Schlagwort "' . single_tag_title('', false) . '"' . $after;
+   echo $before . 'Schlagwort "' . single_tag_title('', false) . '":' . $after;
 
  } elseif ( is_tag() ) {
    echo $before . 'Beiträge mit dem Schlagwort "' . single_tag_title('', false) . '"' . $after;

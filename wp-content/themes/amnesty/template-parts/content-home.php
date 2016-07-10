@@ -16,8 +16,8 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
               ?>
 
               <figure class="header">
-                  <a href="<?php the_permalink() ?>">
-                      <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+                  <a class="sliderlink" href="<?php the_permalink() ?>">
+                      <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)" title="<?php the_title() ?>">
                   </a>
                   <span class="icons"><?php icons(true, true); ?></span>
                   <figcaption>

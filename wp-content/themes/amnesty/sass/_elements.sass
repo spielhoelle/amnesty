@@ -22,6 +22,12 @@ html
     background: white
     color: black
 
+.widget-title
+  ::selection, ::-moz-selection
+    background-color: pink
+
+
+
 body
   background: $white
 
@@ -93,19 +99,20 @@ table
   width: 100%
 
 figcaption
-  padding: 0 $gap
+  padding: 0
   h1.entry-title, h1.page-title
     font-size: 3rem
     @media (max-width: $breakpoint3)
       font-size: 1.5rem
 
+figure.header
+  .entry-title 
+    margin: 0
+
 figure
   margin: 0
   position: relative
-  figcaption
-    pointer-events: none
-    h1, h2, a
-      pointer-events: all
+  
   img
     background: transparent none no-repeat scroll center center / cover
     display: block
@@ -118,10 +125,10 @@ figure
   .grid &
     figcaption
       position: absolute
-      bottom: $gap
+      bottom: 0
       color: black
       h1, h2, .more-link
-        padding: 0.5em 20px
+        padding: .5rem .8rem
       h2
         margin-top: 20px
         background: rgba(0, 0, 0, 0.9)

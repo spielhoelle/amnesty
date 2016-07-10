@@ -221,3 +221,53 @@ add_shortcode( 'email', 'wpcodex_hide_email_shortcode' );
 add_filter('widget_text', 'do_shortcode');
 
 
+function archiveHeader(){
+
+  $img = '';
+  $classes = [];
+
+  $parents = get_parent_cats();
+
+  if (function_exists('z_taxonomy_image_url') && is_archive() && !is_tag()) {
+    $img = z_taxonomy_image_url(array_values($parents)[0]->term_id);
+      if($img) {
+       $classes[] = 'header'; 
+       }       
+     }  
+
+  ?>
+  <figure class="archiveheader <?php echo implode(' ', $classes) ?>">
+      <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+      <figcaption>
+      <div class="overview">
+
+          <?php if (function_exists('nav_breadcrumb')) nav_breadcrumb(); ?>
+          <ul class="category_structure">
+            <?php
+            $args = array(
+            'child_of'           => (get_query_var('cat')) ? get_query_var('cat') : 1,
+            'title_li'           => '',
+            'show_option_none'  => ''
+               );
+
+               wp_list_categories( $args );
+               ?>
+          </ul>
+          
+      </div>
+     
+       
+        <?php get_search_form(); ?>
+
+      </figcaption>
+        <?php
+        if ($img && !empty($data['caption'])) {
+          echo '<small>';
+            echo __('Copyright: ', 'amnesty');
+            echo $data['caption'] . '</small>';
+          echo '</small>';
+        } ?>
+      </small>
+  </figure>
+  <?php
+}

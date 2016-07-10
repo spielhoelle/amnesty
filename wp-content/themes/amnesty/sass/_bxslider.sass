@@ -27,26 +27,53 @@
       a.bx-prev, a.bx-next
         opacity: 1
 
-.slider figure
-  position: relative
-  &.active-slide img
-    transform: scale(1.2)
-  a
-    height: 100%
+.slider
+  height: 100%
+  figure.header
+    min-height: 100%
+    display: flex
+    align-items: flex-end
+
+
+
+.sliderlink
+  height: 100%
+  width: 100%
+  @media (max-width: $breakpoint3)
+    position: absolute
+    width: 100%
+
   img
     transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
+
+.slider figure
+  @media (max-width: $breakpoint3)
+    // height: 100%
+
+  &.active-slide img
+    transform: scale(1.2)
+  
+   
+  img
+    
+    
   figcaption
+
+    left: 0
     display: flex
     flex-flow: column
     align-items: flex-start
     max-width: 100%
     @media (max-width: $breakpoint3)
       pointer-events: none
-      padding: 0px 10px
+      padding: 0px
+      position: relative
+      bottom: 0
 
+    pointer-events: none
     > *
       line-height: 1
-
+      pointer-events: all
     a:not(.more-link)
       color: white
       text-decoration: underline
@@ -57,37 +84,39 @@
       i.fa
         font-size: 0.8em
         margin-left: 0
-    h1, h2, .more-link
-      margin:  0 0 10px 0
+
+    h1, h2
+      margin: 0
       opacity: 0
       transform: translate(-200px, 0)
 
-
     h1
+      background-color: transparentize(white, 0.1)
+      color: black
       transition: opacity .5s ease 0s, transform .5s ease 0s
       @media (max-width: $breakpoint1)
-        font-size: 2em
+        font-size: 2rem
         &:before
           font-size: 1.5rem
     h2
       font-family: $font__main
       font-weight: 100
-      background: rgba(0, 0, 0, 0.9)
+      background: transparentize(black, 0.1)
       color: white
       transition: opacity .5s ease .2s, transform .5s ease .2s
-      white-space: nowrap
+      max-height: 5.5rem
+      line-height: 2.5rem
       text-overflow: ellipsis
       overflow: hidden
       max-width: 100%
       @media (max-width: $breakpoint1)
-        font-size: 1.2em
+        font-size: 1.2rem
+        max-height: 4.5rem
+        line-height: 2rem
       @media (max-width: $breakpoint2)
-        font-size: 1em
-      *
-        margin: 0
-        padding: 0
-    .more-link
-      transition: opacity .5s ease .5s, transform .5s ease .5s
+        max-height: 4.5rem
+  
+
   &.active-slide
     h1, h2, .more-link
       opacity: 1

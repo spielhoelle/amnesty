@@ -12,20 +12,10 @@ get_header(); ?>
     <main id="main" class="site-main" role="main">
 
         <?php // news page is page
-        if (have_posts()) : ?>
+            if (have_posts()) :
 
-            <header class="entry-header">
-              <?php
-                global $wp_query;
-                $total_results = $wp_query->found_posts;
-              ?>
-
-              <h1 class="page-title"><?php echo $total_results ?>
-                <?php esc_html_e( 'search Hits for', 'amnesty' ); ?>
-                <span>"<?php the_search_query(); ?>"</span>
-              </h1>
-              <?php get_search_form(); ?>
-            </header>
+                    archiveHeader();
+                    ?>
 
             <div class="grid">
                 <?php while (have_posts()) : the_post(); ?>

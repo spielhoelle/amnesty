@@ -1,31 +1,22 @@
 body
   &.blog, &.archive, &.search
-    .entry-header
-      margin: 0px 30px 40px
-      padding: 0 30px
-      display: flex
-      justify-content: space-between
-      align-items: flex-end
-      width: 100%
+    figure.archiveheader
       max-width: $viewport
-      label
-        flex: 1 0 auto
-
-      form.search-form
+      width: 100%
+      figcaption
         display: flex
-        flex-flow: row nowrap
-        margin-top: 20px
-        label
-          margin-right: 2px
-        input[type="submit"]
-          margin-top: 0
-      @media(max-width: $breakpoint3)
-        flex-flow: column
-        align-items: stretch
-      .overview
-        flex: 1 1 auto
+        justify-content: space-between
+        align-items: flex-end
+        width: 100%
+        max-width: $viewport
+          
+        @media(max-width: $breakpoint3)
+          flex-flow: column
+          align-items: stretch
     #main
       margin-bottom: 0
+
+  .overview
 
   .breadcrumb
     margin-bottom: 0.3em
@@ -38,13 +29,18 @@ body
       padding: 0
   .category_structure
     display: flex
-    flex-flow: row wrap
+    flex-flow: column
     font-size: 1.3em
     
+    .cat-item
+      display: flex
+    .children a
+      background-color: darken($lightgrey, 10)
+      .children a
+        background-color: darken($lightgrey, 20)
     .current-cat a
       background-color: black
       color: white
-    a
 .post-categories, .category_structure, .tags-links
   a
     font-family: $font__title

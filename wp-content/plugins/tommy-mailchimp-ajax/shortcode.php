@@ -4,9 +4,9 @@ function form() {
     
       $html = '
         <h2>Newsletter</h2>
-        <p>Seit 50 Jahren leisten gewöhnliche Menschen Außergewöhnliches.<br/>
-        Auch du kannst Großes bewegen.<br/><br/>
-        Mit deiner Email!</p>
+        <p>Seit 50 Jahren leisten gewöhnliche Menschen Außergewöhnliches.<br/><br>
+        Auch du kannst Großes bewegen - <br>
+        mit deiner Email!</p>
 
         <form class="tmcajax sign-up">
         	<label for="mce-EMAIL" class="screen-reader-text">Email Adresse</label>

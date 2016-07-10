@@ -109,26 +109,42 @@ $content_parts = get_extended($content);
     <div class="wrap">
       <h1 class="entry-title"> Mehr? </h1>
     </div>
-    <div class="grid">
-      <?php // switch WP to page for posts
-
-      $args = array(
-          'post_status' => 'publish',
-          'post__not_in' => array($post->ID),
-          'showposts' => 8,
-          'ignore_sticky_posts' => 1,
-          'orderby' => 'rand'
-      );
-
-      // $blog = new WP_Query('orderby=rand', 'showposts=5, page_id=' . get_option('page_for_posts'));
-      $blog = new WP_Query($args);
-      // loop through posts
-      while ($blog->have_posts()) : $blog->the_post();
-        get_template_part('template-parts/content', '');
-      endwhile;
-      wp_reset_query();
-      ?>
-  </div>
 
 
-</article><!-- content-post.php -->
+
+</article>
+
+  <div class="grid">
+    <?php // switch WP to page for posts
+    // Get categories
+       $categories = wp_get_post_terms( get_the_ID(), 'category');
+
+       // Check if there are any categories
+       if( ! empty( $categories ) ) :
+
+           // Get all posts within current category, but exclude current post
+           $category_posts = new WP_Query( array(
+               'cat'          => $categories[0]->term_id,
+               'post__not_in' => array( get_the_ID() ),
+           ) );
+
+           // Check if there are any posts
+           if( $category_posts->have_posts() ) :
+               // Loop trough them
+               while( $category_posts->have_posts() ) : $category_posts->the_post();
+                   // Display posts
+                   get_template_part('template-parts/content', '');
+
+               endwhile;
+           endif;
+       endif;
+
+
+       
+    // loop through posts
+    wp_reset_query();
+    ?>
+</div>
+
+
+<!-- content-post.php -->
