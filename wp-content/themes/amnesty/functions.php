@@ -176,10 +176,7 @@ function get_thumbnail($size = '') {
             $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size)[0];
         } else if (function_exists('z_taxonomy_image_url')) {
             $parents = get_parent_cats();
-            // echo '<pre>';
-            // var_dump($parents);
-            // echo '</pre>';
-            $img = z_taxonomy_image_url($parents[1]->term_id);
+            $img = z_taxonomy_image_url(array_values($parents)[0]->term_id);
         }
         if ($img == '') {
             $rand = rand(1, 4);
