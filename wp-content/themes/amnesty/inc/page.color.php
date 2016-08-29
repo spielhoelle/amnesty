@@ -106,7 +106,6 @@ function my_show_color($name) {
 				'color2' => 'schwarz',
 				'color3' => 'hellgrau'
 			);
-
-			echo $colors[$color];
+			echo ($color !== '') ? $colors[$color] : 'transp.';
 	}
 }
