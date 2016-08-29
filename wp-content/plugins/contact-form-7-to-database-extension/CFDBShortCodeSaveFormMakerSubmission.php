@@ -42,7 +42,7 @@ class CFDBShortCodeSaveFormMakerSubmission extends ShortCodeLoader {
 
         $converter = new CFDBPostDataConverter();
         $converter->addExcludeField(self::FORM_TITLE_FIELD);
-        $title = isset($_POST[self::FORM_TITLE_FIELD]) ? $_POST[self::FORM_TITLE_FIELD] : 'Untitled';
+        $title = isset($_POST[self::FORM_TITLE_FIELD]) ? $_POST[self::FORM_TITLE_FIELD] : self::DEFAULT_FORM_TITLE;
         $data = $converter->convert($title);
         if ($data) {
             // Call hook to submit data

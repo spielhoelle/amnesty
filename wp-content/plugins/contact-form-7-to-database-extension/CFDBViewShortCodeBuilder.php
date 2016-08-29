@@ -1172,6 +1172,14 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 return text ? text.substr(0, text.length - 1) : text;
             }
 
+            function escapeHTML(string) {
+                var pre = document.createElement('pre');
+                var text = document.createTextNode(string);
+                pre.appendChild(text);
+                return pre.innerHTML;
+            }
+
+
             function createShortCodeAndExportLink() {
                 var scElements = [];
                 var scUrlElements = [];
@@ -1565,13 +1573,13 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                         }
                         break;
                     case '[cfdb-export-link]':
-                        enc = jQuery('#enc_cntl').val();
+                        var enc = jQuery('#enc_cntl').val();
                         scElements.push(getValue('enc', enc, scValidationErrors));
                         scUrlElements.push(getValueUrl('enc', enc));
 
                         if (['CSVUTF8BOM', 'CSVUTF8', 'CSVSJIS'].indexOf(enc) > -1) {
-                            delim = jQuery('#export_link_csv_delim').val();
-                            if (delim != ',') {
+                            var delim = jQuery('#export_link_csv_delim').val();
+                            if (delim) {
                                 scElements.push(getValue('delimiter', delim, scValidationErrors));
                                 scUrlElements.push(getValueUrl('delimiter', delim));
                             }
@@ -1600,7 +1608,7 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 if (shortcode) {
                     // Output short code text
                     var scUrl = urlBase + join(scUrlElements, '&');
-                    jQuery('#shortcode_result_text').html('<a target="_cfdb_sc_results" href="' + scUrl + '">' + scText + '</a>');
+                    jQuery('#shortcode_result_text').html('<a target="_cfdb_sc_results" href="' + scUrl + '">' + escapeHTML(scText) + '</a>');
 
                     // Output short code errors
                     jQuery('#shortcode_validations_text').html(scValidationErrors.join('<br/>'));
@@ -1822,7 +1830,7 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 jQuery('#unbuffered_cntl').attr("checked", false);
                 jQuery('#orderby_cntl').val(<?php echo json_encode($this->requestParams['postedOrderby']) ?>);
                 jQuery('#torderby_cntl').val(<?php echo json_encode($this->requestParams['postedTOrderby']) ?>);
-                jQuery('#header_cntl').prop("checked", <?php echo $this->requestParams['$postedHeader'] == 'false' ? 'false' : 'true' ?>); // default = true
+                jQuery('#header_cntl').prop("checked", <?php echo $this->requestParams['postedHeader'] == 'false' ? 'false' : 'true' ?>); // default = true
                 jQuery('#headers_cntl').val(<?php echo json_encode($this->requestParams['postedHeaders']) ?>);
                 jQuery('#id_cntl').val(<?php echo json_encode($this->requestParams['postedId']) ?>);
                 jQuery('#class_cntl').val(<?php echo json_encode($this->requestParams['postedClass']) ?>);

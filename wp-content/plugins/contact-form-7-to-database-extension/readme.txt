@@ -6,7 +6,7 @@ License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 3.2.1
 Tested up to: 4.5
-Stable tag: 2.10.18
+Stable tag: 2.10.20
 
 Saves submitted form data to the database. Export the data to a file or use shortcodes to display it.
 
@@ -88,6 +88,13 @@ You can always deactivate the plugin without loosing data.
 1. Admin Panel view of submitted form data
 
 == Changelog ==
+
+= 2.10.21 =
+* Bug Fix: causing short code builder page to fail to generate shortcodes on some sites.
+
+= 2.10.20 =
+* Bug Fix: Form Maker submissions were being saved under "Untitled" instead of "Form Maker" form name when no form_name field specified
+* Bug Fix: Shortcode builder page: sometimes text after < character in filter not showing in shortcode
 
 = 2.10.19 =
 * New: Now saves contact form submissions from Forms Management System. Requires Forms Management 2.7 or later.

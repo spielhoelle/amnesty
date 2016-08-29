@@ -27,8 +27,8 @@ class Polylang {
 	 * @since 0.1
 	 */
 	public function __construct() {
-		// FIXME maybe not available on every installations but widely used by WP plugins
-		spl_autoload_register( array( &$this, 'autoload' ) ); // autoload classes
+		require_once( PLL_INC . '/functions-wpcom-vip.php' ); // VIP functions
+		spl_autoload_register( array( $this, 'autoload' ) ); // autoload classes
 
 		$install = new PLL_Install( POLYLANG_BASENAME );
 
@@ -39,7 +39,7 @@ class Polylang {
 
 		// plugin initialization
 		// take no action before all plugins are loaded
-		add_action( 'plugins_loaded', array( &$this, 'init' ), 1 );
+		add_action( 'plugins_loaded', array( $this, 'init' ), 1 );
 
 		// override load text domain waiting for the language to be defined
 		// here for plugins which load text domain as soon as loaded :(
@@ -68,8 +68,8 @@ class Polylang {
 		}
 
 		$class = str_replace( '_', '-', strtolower( substr( $class, 4 ) ) );
-		$to_remove = array( 'post-', 'term-', 'settings-', 'admin-', 'frontend-', '-config', '-compat', '-model', 'advanced-' );
-		$dir = str_replace( $to_remove, array(), $class );
+		$to_find = array( 'media', 'share', 'slug', 'slugs', 'sync', 'translate', 'wpml', 'xdata' );
+		$dir = implode( '-', array_intersect( explode( '-', $class ), $to_find ) );
 
 		$dirs = array(
 			PLL_FRONT_INC,
@@ -187,6 +187,15 @@ class Polylang {
 		}
 
 		if ( ! empty( $polylang ) ) {
+			/**
+			 * Fires after the $polylang object is created and before the API is loaded
+			 *
+			 * @since 2.0
+			 *
+			 * @param object $polylang
+			 */
+			do_action_ref_array( 'pll_pre_init', array( &$polylang ) );
+
 			require_once( PLL_INC.'/api.php' ); // loads the API
 
 			if ( ! defined( 'PLL_WPML_COMPAT' ) || PLL_WPML_COMPAT ) {

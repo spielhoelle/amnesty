@@ -26,31 +26,31 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		// rewrites author and date links to filter them by language
 		foreach ( array( 'feed_link', 'author_link', 'search_link', 'year_link', 'month_link', 'day_link' ) as $filter ) {
-			add_filter( $filter, array( &$this, 'archive_link' ), 20 );
+			add_filter( $filter, array( $this, 'archive_link' ), 20 );
 		}
 
 		// rewrites post types archives links to filter them by language
-		add_filter( 'post_type_archive_link', array( &$this, 'post_type_archive_link' ), 20, 2 );
+		add_filter( 'post_type_archive_link', array( $this, 'post_type_archive_link' ), 20, 2 );
 
 		// meta in the html head section
-		add_action( 'wp_head', array( &$this, 'wp_head' ) );
+		add_action( 'wp_head', array( $this, 'wp_head' ) );
 
 		// modifies the home url
 		if ( ! defined( 'PLL_FILTER_HOME_URL' ) || PLL_FILTER_HOME_URL ) {
-			add_filter( 'home_url', array( &$this, 'home_url' ), 10, 2 );
+			add_filter( 'home_url', array( $this, 'home_url' ), 10, 2 );
 		}
 
 		if ( $this->options['force_lang'] > 1 ) {
 			// rewrites next and previous post links when not automatically done by WordPress
-			add_filter( 'get_pagenum_link', array( &$this, 'archive_link' ), 20 );
+			add_filter( 'get_pagenum_link', array( $this, 'archive_link' ), 20 );
 
 			// rewrites ajax url
-			add_filter( 'admin_url', array( &$this, 'admin_url' ), 10, 2 );
+			add_filter( 'admin_url', array( $this, 'admin_url' ), 10, 2 );
 		}
 
 		// redirects to canonical url before WordPress redirect_canonical
 		// but after Nextgen Gallery which hacks $_SERVER['REQUEST_URI'] !!! and restores it in 'template_redirect' with priority 1
-		add_action( 'template_redirect', array( &$this, 'check_canonical_url' ), 4 );
+		add_action( 'template_redirect', array( $this, 'check_canonical_url' ), 4 );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	 * @return string modified link
 	 */
 	public function post_type_archive_link( $link, $post_type ) {
-		return $this->model->is_translated_post_type( $post_type ) ? $this->links_model->add_language_to_link( $link, $this->curlang ) : $link;
+		return $this->model->is_translated_post_type( $post_type ) && 'post' !== $post_type ? $this->links_model->add_language_to_link( $link, $this->curlang ) : $link;
 	}
 
 	/**
@@ -258,6 +258,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 				array( 'file' => $theme_root ),
 				array( 'function' => 'wp_nav_menu' ),
 				array( 'function' => 'login_footer' ),
+				array( 'function' => 'get_custom_logo' ),
 			) );
 		}
 
@@ -281,7 +282,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 
 		$traces = version_compare( PHP_VERSION, '5.2.5', '>=' ) ? debug_backtrace( false ) : debug_backtrace();
-		unset( $traces[0], $traces[1], $traces[2] ); // we don't need the last 3 calls (this function + apply_filters)
+		unset( $traces[0], $traces[1] ); // We don't need the last 2 calls: this function + call_user_func_array (or apply_filters on PHP7+)
 
 		foreach ( $traces as $trace ) {
 			// black list first
@@ -366,7 +367,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			$language = $this->model->post->get_language( (int) $obj->ID );
 		}
 
-		elseif ( is_404() && $id = get_query_var('p') ) {
+		elseif ( is_404() && ! empty( $wp_query->query['page_id'] ) && $id = get_query_var( 'page_id' ) ) {
 			// special case for page shortlinks when using subdomains or multiple domains
 			// needed because redirect_canonical doesn't accept to change the domain name
 			$language = $this->model->post->get_language( (int) $id );

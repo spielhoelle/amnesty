@@ -34,13 +34,13 @@ class PLL_Settings extends PLL_Admin_Base {
 		PLL_Admin_Strings::init();
 
 		// FIXME put this as late as possible
-		add_action( 'admin_init', array( &$this, 'register_settings_modules' ) );
+		add_action( 'admin_init', array( $this, 'register_settings_modules' ) );
 
 		// adds screen options and the about box in the languages admin panel
-		add_action( 'load-settings_page_mlang',  array( &$this, 'load_page' ) );
+		add_action( 'load-settings_page_mlang',  array( $this, 'load_page' ) );
 
 		// saves per-page value in screen option
-		add_filter( 'set-screen-option', array( &$this, 'set_screen_option' ), 10, 3 );
+		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 	}
 
 	/**
@@ -49,6 +49,24 @@ class PLL_Settings extends PLL_Admin_Base {
 	 * @since 1.8
 	 */
 	public function register_settings_modules() {
+		$modules = array(
+			'PLL_Settings_Tools',
+			'PLL_Settings_Licenses',
+		);
+
+		if ( $this->model->get_languages_list() ) {
+			$modules = array_merge( array(
+				'PLL_Settings_Url',
+				'PLL_Settings_Browser',
+				'PLL_Settings_Media',
+				'PLL_Settings_CPT',
+				'PLL_Settings_Sync',
+				'PLL_Settings_WPML',
+				'PLL_Settings_Share_Slug',
+				'PLL_Settings_Translate_Slugs',
+			), $modules );
+		}
+
 		/**
 		 * Filter the list of setting modules
 		 *
@@ -56,18 +74,7 @@ class PLL_Settings extends PLL_Admin_Base {
 		 *
 		 * @param array $modules the list of module classes
 		 */
-		$modules = apply_filters( 'pll_settings_modules', array(
-			'PLL_Settings_Url',
-			'PLL_Settings_Browser',
-			'PLL_Settings_Media',
-			'PLL_Settings_CPT',
-			'PLL_Settings_Sync',
-			'PLL_Settings_WPML',
-			'PLL_Settings_Share_Slug',
-			'PLL_Settings_Translate_Slugs',
-			'PLL_Settings_Tools',
-			'PLL_Settings_Licenses',
-		) );
+		$modules = apply_filters( 'pll_settings_modules', $modules );
 
 		foreach ( $modules as $key => $class ) {
 			$key = is_numeric( $key ) ? strtolower( str_replace( 'PLL_Settings_', '', $class ) ) : $key;
@@ -106,7 +113,7 @@ class PLL_Settings extends PLL_Admin_Base {
 					add_meta_box(
 						'pll-about-box',
 						__( 'About Polylang', 'polylang' ),
-						array( &$this, 'metabox_about' ),
+						array( $this, 'metabox_about' ),
 						'settings_page_mlang',
 						'normal'
 					);
@@ -118,7 +125,7 @@ class PLL_Settings extends PLL_Admin_Base {
 					'option'  => 'pll_lang_per_page',
 				) );
 
-				add_action( 'admin_notices', array( &$this, 'notice_objects_with_no_lang' ) );
+				add_action( 'admin_notices', array( $this, 'notice_objects_with_no_lang' ) );
 			break;
 
 			case 'strings':
@@ -143,7 +150,7 @@ class PLL_Settings extends PLL_Admin_Base {
 	 * @return string New value if this is our option, otherwise nothing
 	 */
 	public function set_screen_option( $status, $option, $value ) {
-		return 'pll_strings_per_page' === $option ? $value : $status;
+		return 'pll_lang_per_page' === $option || 'pll_strings_per_page' === $option ? $value : $status;
 	}
 
 	/**
@@ -249,8 +256,9 @@ class PLL_Settings extends PLL_Admin_Base {
 		// only if at least one language has been created
 		if ( $listlanguages = $this->model->get_languages_list() ) {
 			$tabs['strings'] = __( 'Strings translations', 'polylang' );
-			$tabs['settings'] = __( 'Settings', 'polylang' );
 		}
+
+		$tabs['settings'] = __( 'Settings', 'polylang' );
 
 		/**
 		 * Filter the list of tabs in Polylang settings
@@ -309,9 +317,9 @@ class PLL_Settings extends PLL_Admin_Base {
 		if ( ! empty( $this->options['default_lang'] ) && $this->model->get_objects_with_no_lang() ) {
 			printf(
 				'<div class="error"><p>%s <a href="%s">%s</a></p></div>',
-				__( 'There are posts, pages, categories or tags without language.', 'polylang' ),
+				esc_html__( 'There are posts, pages, categories or tags without language.', 'polylang' ),
 				wp_nonce_url( '?page=mlang&amp;pll_action=content-default-lang&amp;noheader=true', 'content-default-lang' ),
-				__( 'You can set them all to the default language.', 'polylang' )
+				esc_html__( 'You can set them all to the default language.', 'polylang' )
 			);
 		}
 	}

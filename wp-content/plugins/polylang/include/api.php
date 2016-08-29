@@ -23,12 +23,11 @@
  * @return null|string|array null if displaying, array if raw is requested, string otherwise
  */
 function pll_the_languages( $args = '' ) {
-	if ( PLL_ADMIN ) {
-		return '';
+	if ( PLL() instanceof PLL_Frontend ) {
+		$switcher = new PLL_Switcher;
+		return $switcher->the_languages( PLL()->links, $args );
 	}
-
-	$switcher = new PLL_Switcher;
-	return $switcher->the_languages( PLL()->links, $args );
+	return '';
 }
 
 /**
@@ -63,7 +62,7 @@ function pll_default_language( $field = 'slug' ) {
  *
  * @param int    $post_id post id
  * @param string $slug    optional language code, defaults to current language
- * @return int|null post id of the translation if exists, null otherwise
+ * @return int|false|null post id of the translation if exists, false otherwise, null if the current language is not defined yet
  */
 function pll_get_post( $post_id, $slug = '' ) {
 	return ( $slug = $slug ? $slug : pll_current_language() ) ? PLL()->model->post->get( $post_id, $slug ) : null;
@@ -76,7 +75,7 @@ function pll_get_post( $post_id, $slug = '' ) {
  *
  * @param int    $term_id term id
  * @param string $slug    optional language code, defaults to current language
- * @return int|null term id of the translation if exists, null otherwise
+ * @return int|false|null term id of the translation if exists, false otherwise, null if the current language is not defined yet
  */
 function pll_get_term( $term_id, $slug = '' ) {
 	return ( $slug = $slug ? $slug : pll_current_language() ) ? PLL()->model->term->get( $term_id, $slug ) : null;
@@ -109,7 +108,7 @@ function pll_home_url( $lang = '' ) {
  * @param bool   $multiline optional wether the string table should display a multiline textarea or a single line input, defaults to single line
  */
 function pll_register_string( $name, $string, $context = 'polylang', $multiline = false ) {
-	if ( PLL_ADMIN ) {
+	if ( PLL() instanceof PLL_Admin_Base ) {
 		PLL_Admin_Strings::register_string( $name, $string, $context, $multiline );
 	}
 }
@@ -125,7 +124,7 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
 function pll__( $string ) {
 	static $cache; // Cache object to avoid translating the same string several times
 
-	if ( ! did_action( 'pll_language_defined' ) ) { // No need for translation
+	if ( ! did_action( 'pll_language_defined' ) || ! is_scalar( $string ) ) { // No need for translation
 		return $string;
 	}
 
@@ -164,6 +163,10 @@ function pll_e( $string ) {
 function pll_translate_string( $string, $lang ) {
 	if ( pll_current_language() == $lang ) {
 		return pll__( $string );
+	}
+
+	if ( ! is_scalar( $string ) ) {
+		return $string;
 	}
 
 	static $cache; // Cache object to avoid loading the same translations object several times

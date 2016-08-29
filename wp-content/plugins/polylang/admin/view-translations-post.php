@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // don't access directly
 };
 ?>
-<p><strong><?php _e( 'Translations', 'polylang' ); ?></strong></p>
+<p><strong><?php esc_html_e( 'Translations', 'polylang' ); ?></strong></p>
 <table><?php
 	foreach ( $this->model->get_languages_list() as $language ) {
 		if ( $language->term_id == $lang->term_id ) {
@@ -41,7 +41,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<input type="hidden" name="post_tr_lang[%1$s]" id="htr_lang_%1$s" value="%3$s" />
 					<input type="text" class="tr_lang" id="tr_lang_%1$s" value="%4$s"%5$s />',
 					esc_attr( $language->slug ),
-					__( 'Translation', 'polylang' ),
+					/* translators: accessibility text */
+					esc_html__( 'Translation', 'polylang' ),
 					empty( $value ) ? 0 : esc_attr( $selected->ID ),
 					empty( $value ) ? '' : esc_attr( $selected->post_title ),
 					empty( $link ) ? ' disabled="disabled"' : ''

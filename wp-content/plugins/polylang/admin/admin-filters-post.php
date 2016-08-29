@@ -20,28 +20,28 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		$this->options = &$polylang->options;
 		$this->curlang = &$polylang->curlang;
 
-		add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		// filters posts, pages and media by language
-		add_action( 'parse_query', array( &$this, 'parse_query' ) );
+		add_action( 'parse_query', array( $this, 'parse_query' ) );
 
 		// adds the Languages box in the 'Edit Post' and 'Edit Page' panels
-		add_action( 'add_meta_boxes', array( &$this, 'add_meta_boxes' ) );
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 
 		// ajax response for changing the language in the post metabox
-		add_action( 'wp_ajax_post_lang_choice', array( &$this, 'post_lang_choice' ) );
-		add_action( 'wp_ajax_pll_posts_not_translated', array( &$this, 'ajax_posts_not_translated' ) );
+		add_action( 'wp_ajax_post_lang_choice', array( $this, 'post_lang_choice' ) );
+		add_action( 'wp_ajax_pll_posts_not_translated', array( $this, 'ajax_posts_not_translated' ) );
 
 		// adds actions and filters related to languages when creating, saving or deleting posts and pages
-		add_action( 'save_post', array( &$this, 'save_post' ), 21, 3 ); // priority 21 to come after advanced custom fields ( 20 ) and before the event calendar which breaks everything after 25
-		add_filter( 'wp_insert_post_parent', array( &$this, 'wp_insert_post_parent' ), 10, 4 );
-		add_action( 'before_delete_post', array( &$this, 'delete_post' ) );
+		add_action( 'save_post', array( $this, 'save_post' ), 21, 3 ); // priority 21 to come after advanced custom fields ( 20 ) and before the event calendar which breaks everything after 25
+		add_filter( 'wp_insert_post_parent', array( $this, 'wp_insert_post_parent' ), 10, 4 );
+		add_action( 'before_delete_post', array( $this, 'delete_post' ) );
 		if ( $this->options['media_support'] ) {
-			add_action( 'delete_attachment', array( &$this, 'delete_post' ) ); // action shared with media
+			add_action( 'delete_attachment', array( $this, 'delete_post' ) ); // action shared with media
 		}
 
 		// filters the pages by language in the parent dropdown list in the page attributes metabox
-		add_filter( 'page_attributes_dropdown_pages_args', array( &$this, 'page_attributes_dropdown_pages_args' ), 10, 2 );
+		add_filter( 'page_attributes_dropdown_pages_args', array( $this, 'page_attributes_dropdown_pages_args' ), 10, 2 );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		if ( 'edit' == $screen->base && $taxonomies = get_object_taxonomies( $screen->post_type, 'object' ) ) {
 			// get translated hierarchical taxonomies
 			foreach ( $taxonomies as $taxonomy ) {
-				if ( $taxonomy->hierarchical && $this->model->is_translated_taxonomy( $taxonomy->name ) ) {
+				if ( $taxonomy->hierarchical && $taxonomy->show_in_quick_edit && $this->model->is_translated_taxonomy( $taxonomy->name ) ) {
 					$hierarchical_taxonomies[] = $taxonomy->name;
 				}
 			}
@@ -113,14 +113,40 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 			return;
 		}
 
-		if ( isset( $qvars['post_type'] ) && ! isset( $qvars['lang'] ) ) {
-			// filters the list of media ( or wp-links ) by language when uploading from post
-			if ( isset( $_REQUEST['pll_post_id'] ) && $lang = $this->model->post->get_language( (int) $_REQUEST['pll_post_id'] ) ) {
-				$query->set( 'lang', $lang->slug );
-			} elseif ( ! empty( $this->curlang ) ) {
+		// Do not filter the query if the language is already specified in another way
+		if ( ! isset( $qvars['lang'] ) ) {
+			$excludes = array(
+				'p', 'post_parent', 'attachment', 'attachment_id', 'name', 'pagename', 'page_id',
+				'category_name', 'tag', 'cat', 'tag_id', 'category__in', 'category__not_in', 'category__and',
+				'post__in', 'post__not_in', 'post_name__in', 'tag__in', 'tag__not_in', 'tag__and',
+				'tag_slug__in', 'tag_slug__and', 'post_parent__in', 'post_parent__not_in',
+			);
+
+			foreach ( $excludes as $k ) {
+				if ( ! empty( $qvars[ $k ] ) ) {
+					return;
+				}
+			}
+
+			$taxonomies = array_intersect( $this->model->get_translated_taxonomies(), get_taxonomies( array( '_builtin' => false ) ) );
+
+			foreach ( $taxonomies as $tax ) {
+				$tax = get_taxonomy( $tax );
+				if ( ! empty( $qv[ $tax->query_var ] ) ) {
+					return;
+				}
+			}
+
+			if ( ! empty( $qvars['tax_query'] ) && is_array( $qvars['tax_query'] ) && $this->model->have_translated_taxonomy( $qvars['tax_query'] ) ) {
+				return;
+			}
+
+			// Filter queries according to the current language
+			if ( isset( $qvars['post_type'] ) && ! empty( $this->curlang ) ) {
 				$qvars['lang'] = $this->curlang->slug;
 			}
 		}
+
 
 		if ( isset( $qvars['lang'] ) && 'all' === $qvars['lang'] ) {
 			unset( $qvars['lang'] );
@@ -128,15 +154,21 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	}
 
 	/**
-	 * adds the Language box in the 'Edit Post' and 'Edit Page' panels ( as well as in custom post types panels )
+	 * Adds the Language box in the 'Edit Post' and 'Edit Page' panels ( as well as in custom post types panels )
+	 * Removes the editor for translations of the pages for posts
 	 *
 	 * @since 0.1
 	 *
 	 * @param string $post_type
 	 */
-	public function add_meta_boxes( $post_type ) {
+	public function add_meta_boxes( $post_type, $post ) {
 		if ( $this->model->is_translated_post_type( $post_type ) ) {
-			add_meta_box( 'ml_box', __( 'Languages','polylang' ), array( &$this, 'post_language' ), $post_type, 'side', 'high' );
+			add_meta_box( 'ml_box', __( 'Languages','polylang' ), array( $this, 'post_language' ), $post_type, 'side', 'high' );
+		}
+
+		if ( ( $page_for_posts = get_option( 'page_for_posts' ) ) && ( $translations = $this->model->post->get_translations( $page_for_posts ) ) && in_array( $post->ID, $translations ) &&  empty( $post->post_content ) ) {
+			add_action( 'edit_form_after_title', '_wp_posts_page_notice' );
+			remove_post_type_support( $post_type, 'editor' );
 		}
 	}
 
@@ -163,7 +195,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 			<p><strong>%1$s</strong></p>
 			<label class="screen-reader-text" for="%2$s">%1$s</label>
 			<div id="select-%3$s-language">%4$s</div>',
-			__( 'Language', 'polylang' ),
+			esc_html__( 'Language', 'polylang' ),
 			$id = ( 'attachment' === $post_type ) ? sprintf( 'attachments[%d][language]', $post_ID ) : 'post_lang_choice',
 			'attachment' === $post_type ? 'media' : 'post',
 			$dropdown->walk( $this->model->get_languages_list(), array(
@@ -269,6 +301,9 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 
 		// flag
 		$x->Add( array( 'what' => 'flag', 'data' => empty( $lang->flag ) ? esc_html( $lang->slug ) : $lang->flag ) );
+
+		// Sample permalink
+		$x->Add( array( 'what' => 'permalink', 'data' => get_sample_permalink_html( $post_ID ) ) );
 
 		$x->send();
 	}

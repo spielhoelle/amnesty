@@ -3,8 +3,8 @@ Contributors: Chouby
 Donate link: https://polylang.pro
 Tags: multilingual, bilingual, translate, translation, language, multilanguage, international, localization
 Requires at least: 4.0
-Tested up to: 4.5
-Stable tag: 1.9.3
+Tested up to: 4.6
+Stable tag: 2.0.3
 License: GPLv2 or later
 
 Making WordPress multilingual
@@ -62,7 +62,7 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 
 = Is Polylang compatible with WooCommerce? =
 
-* You need a separate addon to make Polylang and WooCommerce work together. Our Premium addon is currently in beta stage and is available for tests to Polyang Pro users who request it.
+* You need a separate addon to make Polylang and WooCommerce work together. [A Premium addon](https://polylang.pro/downloads/polylang-for-woocommerce/), currently in beta stage, is available.
 
 = Do you need translation services? =
 
@@ -76,6 +76,55 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 4. The Edit Post screen with the Languages metabox
 
 == Changelog ==
+
+= 2.0.3 (2016-08-16) =
+
+* Pro: Fix PHP notice when hiding the language code in url and the language is set from subdomains
+* Pro: Fix one more media being created when the duplicate media in all languages is activated (introduced in 2.0)
+* Pro: Fix shared term slugs not working on PHP 7
+* Pro: Fix Polylang storing integers in some ACF Pro fields where ACF Pro stores strings
+* Pro: Fix ACF Pro custom fields synchronized even when the custom fields synchronization option is deactivated (#40)
+* Fix PHP notice: Undefined variable: original_value in /modules/wpml/wpml-api.php on line 168
+* Fix translations loaded too soon by plugins not correctly reloaded since WP 4.6 (#39)
+* Fix: Remove the delete link for translations of the default category on PHP 7
+* Fix unescaped i18n strings in Lingotek presentation
+
+= 2.0.2 (2016-08-03) =
+
+* Avoid fatal error when a 3rd party theme or plugin has a malformed wpml-config.xml file: the malformed wpml-config.xml file is simply ignored
+
+= 2.0.1 (2016-08-02) =
+
+* Fix fatal error on PHP < 5.4 (introduced in 2.0)
+* Fix custom flags not being loaded (introduced in 2.0)
+
+= 2.0 (2016-08-02) =
+
+* Pro: Improve integration with ACF Pro
+* Pro: Add support for single sign on across multiple domains or subdomains
+* Pro: Add support for browser language detection when using multiple domains
+* Pro: Add support for translation of the static portion of the post permalink structure
+* Pro: Fix deactivated languages appearing in Yoast SEO sitemaps
+* Pro: Fix impossibility to visit a deactivated language when using subdomains or multiple domains (#10)
+* Pro: Fix when sharing slug on the page for posts, only one of them is accessible (#33)
+* Add the possibility to use the language switcher as dropdown in menu
+* Add support for custom logo introduced in WP 4.5 (#6)
+* The backend current language ( PLL()->curlang ) is now equal to the language of current post or term being edited (#19)
+* The sample permalink is now updated when changing the language in the Languages metabox
+* Revamp the wpml-config.xml reader to use simplexml instead of our custom xml parser
+* Improve support for the WPML API (including Hook API introduced in WPML 3.2)
+* Add support for translation of meta titles and descriptions of custom post types and custom taxonomies in Yoast SEO
+* Replace uncached functions by WPCOM VIP functions when available
+* Improve compatibility with WP 4.6
+* Fix parent category wrongly assigned to post when synchronizing children categories (#21)
+* Fix custom fonts not loaded when using multiple domains or subdomains
+* Fix remove_accents() not working for German and Danish (#24)
+* Fix incorrect static front pages urls on backend
+* Fix impossible to directly enter the page number in strings translation table (introduced in 1.9.3)
+* Fix conflict with WP Sweep (needs WP Sweep 1.0.8+)
+* Fix potential performance issue by querying only taxonomies to show in quick edit to filter the category checklist
+* Fix conflict (database error) with ReOrder-posts-within-categories plugin
+* Fix languages per page option not saved
 
 = 1.9.3 (2016-06-28) =
 
@@ -116,4 +165,4 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 * Fix get_adjacent_post() and wp_get_archives() for untranslated post types ( needs WP 4.4+ )
 * Fix language homepage urls not present in Yoast SEO sitemap (when the homepages display posts)
 
-See changelog.txt for older changelog
+See [changelog.txt](https://plugins.svn.wordpress.org/polylang/trunk/changelog.txt) for older changelog

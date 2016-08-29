@@ -39,11 +39,11 @@ class PLL_Upgrade {
 	 */
 	public function upgrade() {
 		if ( ! $this->can_upgrade() ) {
-			add_action( 'all_admin_notices', array( &$this, 'admin_notices' ) );
+			add_action( 'all_admin_notices', array( $this, 'admin_notices' ) );
 			return false;
 		}
 
-		add_action( 'admin_init', array( &$this, '_upgrade' ) );
+		add_action( 'admin_init', array( $this, '_upgrade' ) );
 		return true;
 	}
 
@@ -71,10 +71,10 @@ class PLL_Upgrade {
 		load_plugin_textdomain( 'polylang', false, basename( POLYLANG_DIR ) . '/languages' );
 		printf(
 			'<div class="error"><p>%s</p><p>%s</p></div>',
-			__( 'Polylang has been deactivated because you upgraded from a too old version.', 'polylang' ),
+			esc_html__( 'Polylang has been deactivated because you upgraded from a too old version.', 'polylang' ),
 			sprintf(
 				/* translators: %s are Polylang version numbers */
-				__( 'Please upgrade first to %s before ugrading to %s.', 'polylang' ),
+				esc_html__( 'Please upgrade first to %s before ugrading to %s.', 'polylang' ),
 				'<strong>0.9.8</strong>',
 				POLYLANG_VERSION
 			)
@@ -89,7 +89,7 @@ class PLL_Upgrade {
 	public function _upgrade() {
 		foreach ( array( '0.9', '1.0', '1.1', '1.2', '1.2.1', '1.2.3', '1.3', '1.4', '1.4.1', '1.4.4', '1.5', '1.6', '1.7.4', '1.8' ) as $version ) {
 			if ( version_compare( $this->options['version'], $version, '<' ) ) {
-				call_user_func( array( &$this, 'upgrade_' . str_replace( '.', '_', $version ) ) );
+				call_user_func( array( $this, 'upgrade_' . str_replace( '.', '_', $version ) ) );
 			}
 		}
 
