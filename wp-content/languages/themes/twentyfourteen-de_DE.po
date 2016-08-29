@@ -173,7 +173,7 @@ msgstr "Mit <a href=\"%s\">Beitragsbildern</a> kannst du die Gestaltung deiner W
 msgid "The home page features your choice of up to 6 posts prominently displayed in a grid or slider, controlled by a <a href=\"%1$s\">tag</a>; you can change the tag and layout in <a href=\"%2$s\">Appearance &rarr; Customize</a>. If no posts match the tag, <a href=\"%3$s\">sticky posts</a> will be displayed instead."
 msgstr "Die Startseite stellt deine Auswahl von bis zu 6 Beiträgen anhand eines <a href=\"%1$s\">Schlagworts</a> prominent in einem Raster oder Slider dar; Schlagwort und Layout kannst du unter <a href=\"%2$s\">Design &rarr; Anpassen</a> ändern. Wenn dem Schlagwort noch kein Beitrag zugeordnet ist, werden stattdessen <a href=\"%3$s\">oben gehaltene Beiträge</a> dargestellt."
 
-#. #-#-#-#-#  twentyfourteen.pot (Twenty Fourteen 1.7)  #-#-#-#-#
+#. #-#-#-#-#  twentyfourteen.pot (Twenty Fourteen 1.8)  #-#-#-#-#
 #. Theme Name of the plugin/theme
 #: inc/customizer.php:142
 msgid "Twenty Fourteen"
@@ -431,7 +431,7 @@ msgstr "Wie es aussieht, wurde an dieser Stelle nichts gefunden. Möglicherweise
 msgid "Not Found"
 msgstr "Nichts gefunden"
 
-#. #-#-#-#-#  twentyfourteen.pot (Twenty Fourteen 1.7)  #-#-#-#-#
+#. #-#-#-#-#  twentyfourteen.pot (Twenty Fourteen 1.8)  #-#-#-#-#
 #. Author URI of the plugin/theme
 #: footer.php:21
 msgid "https://wordpress.org/"
