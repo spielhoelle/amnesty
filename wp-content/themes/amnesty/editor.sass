@@ -2,22 +2,31 @@
 
 body#tinymce.wp-editor
   font-family: sans-serif
-  .content-button
-    padding: 0.9em
-    background-color: black
-    color: white
-    font-family: $font__title
-    font-weight: 100
+  .content-button,
   .more-link
-    display: inline-block
-    text-decoration: none
-    padding: 1rem 2rem
-    font-family: $font__title
-    margin-bottom: $gap
     background: $white
     border: 1px solid black
+    color: black
+    padding: 1em 2em
     &:hover
       background: black
       color: $white
-  h1, h2,h3,h4,h5,h6
+
+  h1, h2, h3, h4, h5, h6
     font-family: $font__title
+
+  a
+    color: $darkgrey
+    text-decoration: none
+    transition: .2s ease background-color, .2s ease color
+    &:visited
+      color: $darkgrey
+    &:hover,
+    &:focus,
+    &:active
+      color: $darkgrey
+    &:focus
+      outline: 0
+    &:hover,
+    &:active
+      outline: 0
