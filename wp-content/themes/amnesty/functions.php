@@ -271,3 +271,38 @@ function archiveHeader(){
   </figure>
   <?php
 }
+
+
+
+
+
+
+
+// remove admin menu entrys for roles other than admin
+function remove_menus(){
+  $user = wp_get_current_user();
+  if ( !in_array( 'administrator', (array) $user->roles ) ) {
+      // remove_menu_page( 'index.php' );                  //Dashboard
+      // remove_menu_page( 'upload.php' );                 //Media
+      // remove_menu_page( 'edit.php?post_type=page' );    //Pages
+      // remove_menu_page( 'edit-comments.php' );          //Comments
+      // remove_menu_page( 'themes.php' );                 //Appearance
+      // remove_menu_page( 'plugins.php' );                //Plugins
+      // remove_menu_page( 'users.php' );                  //Users
+      remove_menu_page( 'tools.php' );                  //Tools
+      // remove_menu_page( 'options-general.php' );        //Settings
+      
+    };
+}
+
+add_action( 'admin_menu', 'remove_menus' );
+
+
+/* Remove Contact Form 7 Links from dashboard menu items if not admin */
+if (!(current_user_can('administrator'))) {
+  function remove_wpcf7() {
+      remove_menu_page( 'wpcf7' ); 
+  }
+
+  add_action('admin_menu', 'remove_wpcf7');
+}

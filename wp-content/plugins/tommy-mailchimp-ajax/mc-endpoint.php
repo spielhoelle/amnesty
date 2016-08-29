@@ -37,4 +37,23 @@ $result = $MailChimp->put("lists/$list/members/$id", array(
 								'update_existing'   => true, // YES, update old subscribers!
 						));
 
+
+
+if($result !== "") {
+    $currentData = get_option('tma_subscribers');
+
+    $new_subscriber = array (
+        'email' => $email,
+        'date' => time()
+    );
+
+    if(!is_array($currentData)) {
+        $currentData = array();
+    }
+    array_push($currentData, $new_subscriber);
+
+    update_option( 'tma_subscribers', $currentData );
+
+}
+
 echo json_encode($result);
