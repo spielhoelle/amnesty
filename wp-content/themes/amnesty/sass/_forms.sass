@@ -38,7 +38,7 @@ input[type="datetime-local"],
 input[type="color"],
 textarea
   background: #f8fafa
-  color: $grey
+  color: $darkgrey
   border: 1px solid black
   &:focus
     color: black
@@ -51,3 +51,15 @@ select
 textarea
   padding-left: 3px
   width: 100%
+
+::-webkit-input-placeholder 
+  color: darken($grey, 30)
+
+::-moz-placeholder 
+  color: darken($grey, 30)
+
+:-ms-input-placeholder 
+  color: darken($grey, 30)
+
+:-moz-placeholder 
+  color: darken($grey, 30)

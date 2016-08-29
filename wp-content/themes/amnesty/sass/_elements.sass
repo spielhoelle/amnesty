@@ -11,20 +11,34 @@ html
 ::selection
   background: black
   color: $white
-  figcaption &, .color2 &, .footer-wrap &
-    background: white
-    color: black
+
+figcaption ::selection, 
+.color2 ::selection,
+.footer-wrap ::selection
+  background: white
+  color: black
+
 
 ::-moz-selection
   background: black
   color: $white
-  figcaption &, .color2 &, .footer-wrap &
-    background: white
-    color: black
 
-.widget-title
-  ::selection, ::-moz-selection
-    background-color: pink
+figcaption ::-moz-selection, 
+.color2 ::-moz-selection,
+.footer-wrap ::-moz-selection
+  background: white
+  color: black
+
+
+.search-form, .sign-up, #nlpopup
+  ::selection
+    background-color: black !important
+    color: $white !important
+
+.search-form, .sign-up, #nlpopup
+  ::-moz-selection
+    background-color: black !important
+    color: $white !important
 
 
 
