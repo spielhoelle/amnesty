@@ -1,23 +1,21 @@
 jQuery(function($) {
 	$('.tmcajax').on('submit',function(e) {
 
-	// Highjack the submit button, we will do it ourselves
-	e.preventDefault();
-	$('.tmcajax .fa-circle-o-notch').css({'visibility': 'visible'})
+		// Highjack the submit button, we will do it ourselves
+		e.preventDefault();
+		$('.tmcajax .fa-circle-o-notch').css({'visibility': 'visible'})
 
-	// uncomment next line & check console to see if button works
-	// console.log('submit button worked!');
+		// uncomment next line & check console to see if button works
+		// console.log('submit button worked!');
 
-	// store all the form data in a variable
-	var formData = $(this).serialize();
+		// store all the form data in a variable
+		var formData = $(this).serialize();
 
-	// Let's make the call!
-	// Replace the path to your own endpoint!
-	console.log(formData);
-	$.getJSON(tommy_plugin_path['template_url'] + 'mc-endpoint.php', formData ,function(data) {			
+		// Let's make the call!
+		// Replace the path to your own endpoint!
+		$.post(tommy_plugin_path['template_url'] + 'mc-endpoint.php', formData, function(data) {			
 
 			// opt in mail out
-	        console.log(data.status);
 			if(data.status === 'pending' || data.status === 'subscribed') {
 				//hide tooltip
 				$('.tmcajaxresponse').remove()
@@ -37,8 +35,7 @@ jQuery(function($) {
 				// Otherwise tell us why it didn't
 		        $('.tmcajax .fa-circle-o-notch').css({'visibility': 'hidden'})
 		        $('.tmcajax').append('<div class="tmcajaxresponse error">Ooops, da gab es wohl ein Problem. Versuch es doch bitte später noch einmal.</div>')
-		        console.log("Error:", data);
 			}
-		});
+		}, 'json');
 	});
 });

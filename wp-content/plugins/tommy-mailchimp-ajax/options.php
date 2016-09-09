@@ -1,19 +1,30 @@
 <?php
 /*
-Plugin Name: Mailchimp ajax register plugin
-Plugin URI: #
-Description: My very own Mailchimp ajax plugin
-Version: 0.1
+Plugin Name: Mailchimp Newsletter Ajax
+Plugin URI: www.thomaskuhnert.com
+Description: subscribe to Mailchimp list with api_key and list_id
+Version: 1
 Author: Thomas Kuhnert
-Author URI:
+Author URI: www.thomaskuhnert.com
 */
 
 
 require 'shortcode.php';
 require 'mc-config.php';
 
+add_action('plugins_loaded', 'tma_translation');
+function tma_translation() {
+    load_plugin_textdomain( 'tommy-mailchimp-ajax', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
+}
 
 add_action('admin_menu', 'test_plugin_setup_menu');
+
+function load_plugin_css() {
+    $plugin_url = plugin_dir_url( __FILE__ );
+
+    wp_enqueue_style( 'tommy-mailchimp-ajax', $plugin_url . 'tommy-mailchimp-ajax.css');
+}
+add_action( 'wp_enqueue_scripts', 'load_plugin_css', 15 );
 
  function test_plugin_setup_menu(){
 
@@ -30,7 +41,9 @@ add_action('admin_menu', 'test_plugin_setup_menu');
 function form_for_mailchimp_settings(){
     ?>
 	    <div class="wrap">
-	    <h1>Tommys Mailchimp-Ajax Plugin</h1>
+        <h1><?php _e("Mailchimp settings") ?></h1>
+        <p><?php _e("To display the form on the website somewhere else than in the about us section, put this shortcode somewhere you want to display it. It could be a widget or a simply a page.") ?></p>
+        <code>[newsletter-form]</code>
 	    <form method="post" action="options.php">
             <?php
                 settings_fields("section");
@@ -70,20 +83,21 @@ function display_opt_in_box(){
 
 function display_subscribers()
 {   
-    $subscribers = get_option('tma_subscribers');
-    echo "<table>";
-    foreach ($subscribers as $key => $value) {
-        echo "<tr>";
-            echo "<td>";
-            echo $value['email'];
-            echo "</td>";
+    if($subscribers = get_option('tma_subscribers')){
+        echo "<table>";
+        foreach ($subscribers as $key => $value) {
+            echo "<tr>";
+                echo "<td>";
+                echo $value['email'];
+                echo "</td>";
 
-            echo "<td>";
-            echo date("d.m.Y H:i", $value['date']);
-            echo "</td>";
-        echo "</tr>";
-    }
-    echo "</table>";
+                echo "<td>";
+                echo date("d.m.Y H:i", $value['date']);
+                echo "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        }
 }
 
 function display_theme_panel_fields()
@@ -92,9 +106,10 @@ function display_theme_panel_fields()
 	
 	add_settings_field("api_key", "Mailchimp Api-Key", "display_api_key_input", "theme-options", "section");
     add_settings_field("list_id", "Mailchimp List-ID", "display_list_id", "theme-options", "section");
-    add_settings_field("opt_in", "Wenn sich jemand einträgt, Bestätigungslink oder sofort eintragen?", "display_opt_in_box", "theme-options", "section");
-    add_settings_field("subscribers", "Subscribers", "display_subscribers", "theme-options", "section");
-
+    add_settings_field("opt_in", __("If activated, a confirmation link will be sent. Afterwards the subscriber will be added to the list."), "display_opt_in_box", "theme-options", "section");
+    if(get_option('tma_subscribers')) {
+        add_settings_field("subscribers", __('Subscriptions:'), "display_subscribers", "theme-options", "section");
+    }
     register_setting("section", "api_key");
     register_setting("section", "list_id");
     register_setting("section", "opt_in");
@@ -116,10 +131,7 @@ function myplugin_plugin_action_links($links, $file) {
     }
 
     if ($file == $this_plugin) {
-        // The "page" query string value must be equal to the slug
-        // of the Settings admin page we defined earlier, which in
-        // this case equals "myplugin-settings".
-        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=tommy-mailchimp-ajax">Settings</a>';
+        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-general.php?page=tommy-mailchimp-ajax/options.php">Settings</a>';
         array_unshift($links, $settings_link);
     }
 

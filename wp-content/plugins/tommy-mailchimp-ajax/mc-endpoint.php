@@ -13,8 +13,7 @@ use \DrewM\MailChimp\MailChimp;
 $MailChimp  = new MailChimp(get_option('api_key')); // put your API key here
 $list       = get_option('list_id');                // put your list ID here
 
-
-$email = $_GET['EMAIL']; // Get email address from form
+$email = $_POST['EMAIL']; // Get email address from form
 $id = md5(strtolower($email)); // Encrypt the email address
 
 if(get_option('opt_in') == 1){
