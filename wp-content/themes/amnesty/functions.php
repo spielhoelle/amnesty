@@ -96,10 +96,10 @@ function my_admin_title($admin_title, $title) {
     }
 }
 
-add_action('admin_enqueue_scripts', 'load_admin_style');
-function load_admin_style() {
+add_action('admin_enqueue_scripts', 'custom_load_admin_style');
+function custom_load_admin_style() {
     //@TODO checken
-    wp_enqueue_style('admin_css', get_template_directory_uri() . '/sass/admin-style.css', false, '1.0.0');
+    wp_enqueue_style('custom_admin_css', get_stylesheet_directory_uri() . '/sass/custom-admin-style.css', true);
 }
 
 function my_theme_add_editor_styles()

@@ -11,23 +11,26 @@ Author URI: www.thomaskuhnert.com
 
 require 'shortcode.php';
 require 'mc-config.php';
-
+$delete = $_POST;
+if($delete){
+    var_dump("killed");
+    update_option( 'tma_subscribers', array() );
+}
 add_action('plugins_loaded', 'tma_translation');
 function tma_translation() {
     load_plugin_textdomain( 'tommy-mailchimp-ajax', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
 }
 
-add_action('admin_menu', 'test_plugin_setup_menu');
 
+add_action( 'wp_enqueue_scripts', 'load_plugin_css', 15 );
 function load_plugin_css() {
-    $plugin_url = plugin_dir_url( __FILE__ );
+    $plugin_url = dirname( plugin_basename(__FILE__) );
 
     wp_enqueue_style( 'tommy-mailchimp-ajax', $plugin_url . 'tommy-mailchimp-ajax.css');
 }
-add_action( 'wp_enqueue_scripts', 'load_plugin_css', 15 );
 
- function test_plugin_setup_menu(){
-
+add_action('admin_menu', 'test_plugin_setup_menu');
+function test_plugin_setup_menu(){
     add_options_page( 
             'Mailchimp-Ajax',
             'Mailchimp-Ajax',
@@ -37,12 +40,11 @@ add_action( 'wp_enqueue_scripts', 'load_plugin_css', 15 );
         );
 }
  
-
 function form_for_mailchimp_settings(){
     ?>
 	    <div class="wrap">
-        <h1><?php _e("Mailchimp settings") ?></h1>
-        <p><?php _e("To display the form on the website somewhere else than in the about us section, put this shortcode somewhere you want to display it. It could be a widget or a simply a page.") ?></p>
+        <h1><?php _e("Mailchimp settings", 'tommy-mailchimp-ajax') ?></h1>
+        <p><?php _e("To display the form on the website somewhere else than in the about us section, put this shortcode somewhere you want to display it. It could be a widget or a simply a page.", 'tommy-mailchimp-ajax') ?></p>
         <code>[newsletter-form]</code>
 	    <form method="post" action="options.php">
             <?php
@@ -55,7 +57,7 @@ function form_for_mailchimp_settings(){
 
         <form action="<?php echo $_SERVER['REQUEST_URI']?>" method="post">
             <p class="submit">
-            <input type="submit" name="subscribers" id="subscribers" class="button-primary" value="Liste löschen" onclick="return confirm('<?php echo htmlspecialchars("Sicher? Dies löscht die Liste in der Wordpress Datenbank. Hoffentlich sind alle diese Adressen bei Mailchimp importiert."); ?>')"/>
+            <button type="submit" name="subscribers" id="subscribers" class="button" value="delete" onclick="return confirm('<?php echo htmlspecialchars("Sicher? Dies löscht die Liste in der Wordpress Datenbank. Hoffentlich sind alle diese Adressen bei Mailchimp importiert."); ?>')"/>Liste löschen</button>
             </p>
         </form>
 
@@ -106,9 +108,9 @@ function display_theme_panel_fields()
 	
 	add_settings_field("api_key", "Mailchimp Api-Key", "display_api_key_input", "theme-options", "section");
     add_settings_field("list_id", "Mailchimp List-ID", "display_list_id", "theme-options", "section");
-    add_settings_field("opt_in", __("If activated, a confirmation link will be sent. Afterwards the subscriber will be added to the list."), "display_opt_in_box", "theme-options", "section");
+    add_settings_field("opt_in", __("If activated, a confirmation link will be sent. Afterwards the subscriber will be added to the list.", 'tommy-mailchimp-ajax'), "display_opt_in_box", "theme-options", "section");
     if(get_option('tma_subscribers')) {
-        add_settings_field("subscribers", __('Subscriptions:'), "display_subscribers", "theme-options", "section");
+        add_settings_field("subscribers", __('Subscriptions:', 'tommy-mailchimp-ajax'), "display_subscribers", "theme-options", "section");
     }
     register_setting("section", "api_key");
     register_setting("section", "list_id");
