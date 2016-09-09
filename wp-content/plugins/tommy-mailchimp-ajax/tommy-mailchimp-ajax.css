@@ -10,13 +10,6 @@
   word-wrap: normal !important; /* many screen reader and browser combinations announce broken words as they would appear visually */    
 }
 
-#mce-EMAIL{
-  display: inline-block;
-  line-height: 63px;
-  height: 63px;
-  cursor: text;
-}
-
 .tmcajax .fa {
   line-height: 1.5;
   position: absolute;
