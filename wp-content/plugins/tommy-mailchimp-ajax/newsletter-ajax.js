@@ -12,8 +12,6 @@ jQuery(function($) {
 		var formData = $(this).serialize();
 
 		$.post(tommy_plugin_path['template_url'] + 'mc-endpoint.php', formData, function(data) {			
-			console.log(formData);
-			console.log(data);
 			if(data.status === 'pending' || data.status === 'subscribed') {
 				$('.tmcajaxresponse').remove()
 
