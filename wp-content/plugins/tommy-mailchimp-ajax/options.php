@@ -11,11 +11,12 @@ Author URI: www.thomaskuhnert.com
 
 require 'shortcode.php';
 require 'mc-config.php';
-$delete = $_POST;
-if($delete){
-    var_dump("killed");
+
+if(isset($_POST["subscribers"]) && $_POST["subscribers"] == 'delete'){
     update_option( 'tma_subscribers', array() );
 }
+
+
 add_action('plugins_loaded', 'tma_translation');
 function tma_translation() {
     load_plugin_textdomain( 'tommy-mailchimp-ajax', false, dirname( plugin_basename(__FILE__) ) . '/lang/' );
@@ -26,7 +27,7 @@ add_action( 'wp_enqueue_scripts', 'load_plugin_css', 15 );
 function load_plugin_css() {
     $plugin_url = dirname( plugin_basename(__FILE__) );
 
-    wp_enqueue_style( 'tommy-mailchimp-ajax', $plugin_url . 'tommy-mailchimp-ajax.css');
+    wp_enqueue_style( 'tommy-mailchimp-ajax', plugin_dir_url(__FILE__) . '/tommy-mailchimp-ajax.css');
 }
 
 add_action('admin_menu', 'test_plugin_setup_menu');
@@ -54,6 +55,9 @@ function form_for_mailchimp_settings(){
                 ?>
 
         </form>
+
+  
+        <?php display_subscribers() ?>
 
         <form action="<?php echo $_SERVER['REQUEST_URI']?>" method="post">
             <p class="submit">
@@ -85,21 +89,39 @@ function display_opt_in_box(){
 
 function display_subscribers()
 {   
-    if($subscribers = get_option('tma_subscribers')){
-        echo "<table>";
-        foreach ($subscribers as $key => $value) {
-            echo "<tr>";
-                echo "<td>";
-                echo $value['email'];
-                echo "</td>";
 
-                echo "<td>";
-                echo date("d.m.Y H:i", $value['date']);
-                echo "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        }
+    if($subscribers = get_option('tma_subscribers')){
+
+        $html = '
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                <th>Kürzliche Registrierungen
+                </th>
+                <th>Zeitpunkt
+                </th>
+                </tr>
+            </thead>
+
+            <tbody>
+            ';
+            foreach ($subscribers as $key => $value) {
+                $html .= 
+                '<tr>
+                    <td>'.$value['email'].'</td>
+
+                    <td>' . get_date_from_gmt( date( 'Y-m-d H:i:s', $value['date'] ), ' j M Y - H:i:s' ).'</td>
+                </tr>';
+            }
+            
+            $html .= '
+            <tr class="list-details list-014f2b7f68-details">
+            </tr>
+            </tbody>
+        </table>
+        ';
+        echo $html;
+    }
 }
 
 function display_theme_panel_fields()
@@ -108,10 +130,9 @@ function display_theme_panel_fields()
 	
 	add_settings_field("api_key", "Mailchimp Api-Key", "display_api_key_input", "theme-options", "section");
     add_settings_field("list_id", "Mailchimp List-ID", "display_list_id", "theme-options", "section");
-    add_settings_field("opt_in", __("If activated, a confirmation link will be sent. Afterwards the subscriber will be added to the list.", 'tommy-mailchimp-ajax'), "display_opt_in_box", "theme-options", "section");
-    if(get_option('tma_subscribers')) {
-        add_settings_field("subscribers", __('Subscriptions:', 'tommy-mailchimp-ajax'), "display_subscribers", "theme-options", "section");
-    }
+
+    add_settings_field("opt_in", "Wenn sich jemand einträgt, Bestätigungslink oder sofort eintragen?", "display_opt_in_box", "theme-options", "section");
+
     register_setting("section", "api_key");
     register_setting("section", "list_id");
     register_setting("section", "opt_in");

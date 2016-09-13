@@ -14,8 +14,8 @@ function form() {
 
         <form class="tmcajax sign-up">
             <label for="mce-EMAIL" class="screen-reader-text">Email</label>
-            <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="E-Mail">
-            <input type="submit" value="'.__('subscribe me!').'" class="header-button-two">
+            <input required="required" type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" placeholder="E-Mail">
+            <input type="submit" value="'.__('Subscribe me!', 'tommy-mailchimp-ajax').'" class="header-button-two">
             <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" style="visibility: hidden"></i>
         </form>
         ';
