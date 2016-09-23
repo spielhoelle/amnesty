@@ -42,7 +42,6 @@ add_filter('mce_buttons_2', 'remove_tinymce_at_line1');
 
 function remove_tinymce_at_line2($buttons)
 {
-    var_dump($buttons);
     # Remove the text color selector
     $remove = array('strikethrough'); //Add other button names to this array
     # Find the array key and then unset

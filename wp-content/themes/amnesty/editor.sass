@@ -30,3 +30,23 @@ body#tinymce.wp-editor
     &:hover,
     &:active
       outline: 0
+
+
+
+  blockquote, q
+    margin: 50px 0
+    quotes: '"' '"'
+    border-left: 10px solid black
+    padding-left: 1.5rem
+    font-size: 1.3rem
+    font-family: $font__title
+    position: relative
+    color: lighten(black, 50)
+    &:before,
+    &:after
+      content: '"'
+      position: absolute
+      font-size: 2em
+      left: 6px
+      top: -0.3em
+      font-family: sans-serif
