@@ -375,8 +375,9 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 foreach ($rows as $aRow) {
                     $formName = $aRow->form_name;
                     $selected = in_array($formName, $formNameList) ? 'selected' : '';
+                    $formNameEscaped = htmlspecialchars($formName, ENT_QUOTES, 'UTF-8');
                     ?>
-                    <option value="<?php echo str_replace('"', '&quot;', $formName) ?>" <?php echo $selected ?>><?php echo $formName ?></option>
+                    <option value="<?php echo $formNameEscaped ?>" <?php echo $selected ?>><?php echo $formNameEscaped ?></option>
                     <?php
                 }
                 $selected = in_array('*', $formNameList) ? 'selected' : '';
@@ -384,7 +385,6 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 <option value="*" <?php echo $selected ?>><?php echo htmlspecialchars(__('* All Forms *', 'contact-form-7-to-database-extension')) ?></option>
             </select>
 
-            <div id="form_validations_text" class="validation"></div>
         </div>
         <?php
     }
@@ -1206,12 +1206,12 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                 var formName = jQuery('#form_name_cntl').val();
                 var errMsg;
                 if (!formName || Array.isArray(formName) && !formName.length) {
-                    errMsg = '<?php echo htmlspecialchars(__('Error: no form is chosen', 'contact-form-7-to-database-extension')) ?>';
-                    jQuery('#form_validations_text').html(errMsg);
+                    errMsg = '<?php echo $this->sanitizeJavascriptString(__('Error: no form is chosen', 'contact-form-7-to-database-extension')) ?>';
+                    jQuery('#shortcode_validations_text').html(errMsg);
                     pushErrorMessagesToAll(errMsg);
                 }
                 else {
-                    jQuery('#form_validations_text').html('');
+                    jQuery('#shortcode_validations_text').html('');
                     scElements.push('form="' + formName + '"');
                     scUrlElements.push('form=' + encodeURIComponent(formName));
                     exportUrlElements.push('form=' + encodeURIComponent(formName));
@@ -1253,7 +1253,7 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                     if (filter) {
                         pushValueToAll(filterName, filter);
                         if (search) {
-                            var errMsg = '<?php echo htmlspecialchars(__('Warning: "search" field ignored because FIELD is used (use one but not both)', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', filterName);
+                            var errMsg = '<?php echo $this->sanitizeJavascriptString(__('Warning: "search" field ignored because FIELD is used (use one but not both)', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', filterName);
                             pushErrorMessagesToAll(errMsg);
                         }
                     }
@@ -1274,12 +1274,12 @@ class CFDBViewShortCodeBuilder extends CFDBView {
 
                     var handleLimit = function (limitName, limitRows, limitStart) {
                         if (limitStart && !limitRows) {
-                            errMsg = '<?php echo htmlspecialchars(__('Error: "FIELD": if you provide a value for "Start Row" then you must also provide a value for "Num Rows"', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
+                            errMsg = '<?php echo $this->sanitizeJavascriptString(__('Error: "FIELD": if you provide a value for "Start Row" then you must also provide a value for "Num Rows"', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
                             pushErrorMessagesToAll(errMsg);
                         }
                         if (limitRows) {
                             if (!/^\d+$/.test(limitRows)) {
-                                errMsg = '<?php echo htmlspecialchars(__('Error: "FIELD": "Num Rows" must be a positive integer', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
+                                errMsg = '<?php echo $this->sanitizeJavascriptString(__('Error: "FIELD": "Num Rows" must be a positive integer', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
                                 pushErrorMessagesToAll(errMsg);
                             }
                             else {
@@ -1287,7 +1287,7 @@ class CFDBViewShortCodeBuilder extends CFDBView {
                                 var limitOptionUrl = limitName + '=';
                                 if (limitStart) {
                                     if (!/^\d+$/.test(limitStart)) {
-                                        errMsg = '<?php echo htmlspecialchars(__('Error: "FIELD": "Start Row" must be a positive integer', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
+                                        errMsg = '<?php echo $this->sanitizeJavascriptString(__('Error: "FIELD": "Start Row" must be a positive integer', 'contact-form-7-to-database-extension')); ?>'.replace('FIELD', limitName);
                                         pushErrorMessagesToAll(errMsg);
                                     }
                                     else {
@@ -1991,4 +1991,9 @@ class CFDBViewShortCodeBuilder extends CFDBView {
 
         <?php
     }
+
+    public function sanitizeJavascriptString($str) {
+        return  str_replace("'",  '&apos;', htmlspecialchars($str));
+    }
+
 }

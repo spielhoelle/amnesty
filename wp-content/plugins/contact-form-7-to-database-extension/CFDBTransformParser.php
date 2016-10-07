@@ -34,6 +34,8 @@ require_once('SummationRow.php');
 
 require_once('CountField.php');
 require_once('CountInField.php');
+require_once('DefaultField.php');
+require_once('SplitField.php');
 require_once('SumField.php');
 require_once('MinField.php');
 require_once('MaxField.php');

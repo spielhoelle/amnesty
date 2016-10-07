@@ -229,6 +229,11 @@ class CFDBViewWhatsInDB extends CFDBView {
                         if (searchVal != null && searchVal != "") {
                             url += '&search=' + encodeURI(searchVal);
                         }
+                        var checkedValues = [];
+                        jQuery('input[id^="delete_"]:checked').each(function() {
+                            checkedValues.push(this.name);
+                        });
+                        checkedValues = checkedValues.join(',');
                         if (checkedValues) {
                             url += "&filter=submit_time[in]" + checkedValues;
                         }

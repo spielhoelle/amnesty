@@ -5,8 +5,8 @@ Tags: contact form,database,contact form database,save contact form,form databas
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires at least: 3.2.1
-Tested up to: 4.5
-Stable tag: 2.10.20
+Tested up to: 4.6
+Stable tag: 2.10.24
 
 Saves submitted form data to the database. Export the data to a file or use shortcodes to display it.
 
@@ -88,6 +88,27 @@ You can always deactivate the plugin without loosing data.
 1. Admin Panel view of submitted form data
 
 == Changelog ==
+
+= 2.10.24 =
+* Change: the new SplitField transform is changed: can be used to split a single field into multiple fields based on a delimiter in field values.
+If you have field "Choice" with values like "AAA|BBB|CCC" you change that to Choice-1,Choice-2,Choice-3 fields using [cfdb-table form="form" trans="SplitField(Choice,|)"]
+If you don't indicate a delimiter it is assumed to be a comma:
+If you have field "Choice" with values like "AAA,BBB,CCC" you change that to Choice-1,Choice-2,Choice-3 fields using [cfdb-table form="form" trans="SplitField(Choice)"]
+Use "headers" to rename those columns:
+[cfdb-table form="Gravity Form 1" trans="SplitField(List,|)&&SplitField(Option,|)" headers="Option-1=TextOption,Option-2=NumericOption"]
+
+= 2.10.23 =
+* Bug Fix: Admin page Javascript bug exporting file to Google Docs
+* Bug Fix: Shortcode builder page Javascript syntax error in Dutch translation due to quoting
+* Improvement: Identifying IP address of poster - looking at more HTTP Headers
+* New: SplitField transform can be used to split a single field into multiple fields based on a delimiter in field values. If you have field "Choice" with values like "AAA|BBB|CCC" you change that to Choice-1,Choice-2,Choice-3 fields using [cfdb-table form="form" trans="SplitField(|,Choice)"] (use "headers" to rename those columns)
+[cfdb-table form="Gravity Form 1" trans="SplitField(|,List)&&SplitField(|,Option)" headers="Option-1=TextOption,Option-2=NumericOption"]
+* New: DefaultField transform can be used to set the value in a field if it is not defined. [cfdb-table form="form" trans="DefaultField(score1,0,score2,0)"] would set "score1" and "score2" fields to be 0 where they have no value in the DB
+* New: "unknownfields" in [cfdb-html unknownfields="true"] will replace any unknown ${NAME} in the shortcode template with a blank.
+
+= 2.10.22 =
+* Bug Fix: Changed to Caldera Forms 1.4.2 was causing an error when saving submissions
+* Bug Fix: on Shortcode builder page, certain form names with special characters not displaying correctly
 
 = 2.10.21 =
 * Bug Fix: causing short code builder page to fail to generate shortcodes on some sites.
