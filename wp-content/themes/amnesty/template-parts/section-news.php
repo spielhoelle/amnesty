@@ -7,11 +7,8 @@
             </figcaption>
         </figure>
 
-        
 
-        <footer class="entry-footer">
-            <a class="more-link" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr News ...</a>
-        </footer>
+
     </article>
     <div class="grid">
         <?php // switch WP to page for posts
@@ -30,6 +27,9 @@
          ?>
     </div>
 
+    <footer class="entry-footer">
+        <a class="more-link" href="<?php echo get_permalink(get_page_by_path('alle-news')) ?>">Mehr News ...</a>
+    </footer>
     <?php wp_reset_postdata(); ?>
 </section>
 <!-- #section-news.php-## -->
