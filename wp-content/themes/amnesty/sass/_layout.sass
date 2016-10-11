@@ -38,7 +38,9 @@ section
 
 figure.header
   width: 100%
-  height: calc(50vh - 81px)
+  height: 33vw
+  @media (max-width: $breakpoint3)
+    height: 100%
   small
     text-align: right
     position: absolute
@@ -48,7 +50,7 @@ figure.header
     color: rgba(255,255,255, 0.5)
   @media (max-width: $breakpoint3)
     height: auto
-  
+
 figure.noheader
   margin-bottom: -40px
 
@@ -141,7 +143,7 @@ figure .more-link
     padding: 20px
     input[type="submit"]
       width: 100%
-      text-align: center      
+      text-align: center
   @media(max-width: $breakpoint3)
     text-align: right
   input[type="search"]
@@ -267,8 +269,6 @@ aside
   width: 100%
   margin: 0 auto
   max-width: $viewport + $gap
-  @media (min-width: $breakpoint3)
-    margin-bottom: $gap * 2
   @media (max-width: $breakpoint3)
     padding: $grid-gap / 2
   figure
