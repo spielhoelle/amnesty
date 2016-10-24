@@ -1,0 +1,83 @@
+# Translation of Stable (latest release) in English (UK)
+# This file is distributed under the same license as the Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2016-05-20 06:10:10+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/2.1.0-alpha\n"
+"Project-Id-Version: Stable (latest release)\n"
+
+#: honeypot.php:63
+msgid "%s must be installed and activated for the CF7 Honeypot plugin to work"
+msgstr "%s must be installed and activated for the CF7 Honeypot plugin to work"
+
+#: honeypot.php:103
+msgid "Please leave this field empty."
+msgstr "Please leave this field empty."
+
+#: honeypot.php:157 honeypot.php:159
+msgid "Honeypot"
+msgstr "Honeypot"
+
+#: honeypot.php:166
+msgid "Generate a form-tag for a spam-stopping honeypot field. For more details, see %s."
+msgstr "Generate a form-tag for a spam-stopping honeypot field. For more details, see %s."
+
+#: honeypot.php:167
+msgid "CF7 Honeypot"
+msgstr "CF7 Honeypot"
+
+#: honeypot.php:176 honeypot.php:231
+msgid "Name"
+msgstr "Name"
+
+#: honeypot.php:180 honeypot.php:233
+msgid "For better security, change \"honeypot\" to something less bot-recognizable."
+msgstr "For better security, change \"honeypot\" to something less bot-recognisable."
+
+#: honeypot.php:186 honeypot.php:244
+msgid "ID (optional)"
+msgstr "ID (optional)"
+
+#: honeypot.php:195 honeypot.php:248
+msgid "Class (optional)"
+msgstr "Class (optional)"
+
+#: honeypot.php:204 honeypot.php:254
+msgid "Don't Use Accessibility Message (optional)"
+msgstr "Don't Use Accessibility Message (optional)"
+
+#: honeypot.php:208 honeypot.php:255
+msgid "If checked, the accessibility message will not be generated. <strong>This is not recommended</strong>. If you're unsure, leave this unchecked."
+msgstr "If checked, the accessibility message will not be generated. <strong>This is not recommended</strong>. If you're unsure, leave this unchecked."
+
+#: honeypot.php:220
+msgid "Insert Tag"
+msgstr "Insert Tag"
+
+#: honeypot.php:264
+msgid "Copy this code and paste it into the form left."
+msgstr "Copy this code and paste it into the form left."
+
+#. Plugin Name of the plugin/theme
+msgid "Contact Form 7 Honeypot"
+msgstr "Contact Form 7 Honeypot"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.nocean.ca/plugins/honeypot-module-for-contact-form-7-wordpress-plugin/"
+msgstr "http://www.nocean.ca/plugins/honeypot-module-for-contact-form-7-wordpress-plugin/"
+
+#. Description of the plugin/theme
+msgid "Add honeypot anti-spam functionality to the popular Contact Form 7 plugin."
+msgstr "Add honeypot anti-spam functionality to the popular Contact Form 7 plugin."
+
+#. Author of the plugin/theme
+msgid "Nocean"
+msgstr "Nocean"
+
+#. Author URI of the plugin/theme
+msgid "http://www.nocean.ca"
+msgstr "http://www.nocean.ca"
