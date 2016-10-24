@@ -14,10 +14,9 @@ wp-content/wp-cache-config.php
 wp-content/plugins/hello.php
 bower_components
 
-wp-content/plugins
-
 /readme.html
 /license.txt
 
 .idea
 node_modules
+/wp-content/themes/amnesty/inc/newsletter/mc-endpoint.php
