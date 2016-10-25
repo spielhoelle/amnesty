@@ -89,6 +89,9 @@ You can always deactivate the plugin without loosing data.
 
 == Changelog ==
 
+= 2.10.25 =
+* Bug Fix: Update to match latest version of wp-jalali plugin for generating Jalali-formatted dates
+
 = 2.10.24 =
 * Change: the new SplitField transform is changed: can be used to split a single field into multiple fields based on a delimiter in field values.
 If you have field "Choice" with values like "AAA|BBB|CCC" you change that to Choice-1,Choice-2,Choice-3 fields using [cfdb-table form="form" trans="SplitField(Choice,|)"]

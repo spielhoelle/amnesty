@@ -20,14 +20,14 @@ class PLL_WPML_API {
 		add_filter( 'wpml_active_languages', array( $this, 'wpml_active_languages' ), 10, 2 );
 		// wpml_display_language_names        => not implemented
 		// wpml_translated_language_name      => not applicable
-		add_filter( 'wpml_current_language', 'pll_current_language' );
-		add_filter( 'wpml_default_language', 'pll_default_language' );
+		add_filter( 'wpml_current_language', 'pll_current_language', 10, 0 );
+		add_filter( 'wpml_default_language', 'pll_default_language', 10, 0 );
 		// wpml_add_language_selector         => not implemented
 		// wpml_footer_language_selector      => not applicable
 		add_action( 'wpml_add_language_form_field', array( $this, 'wpml_add_language_form_field' ) );
 		add_filter( 'wpml_language_is_active', array( $this, 'wpml_language_is_active' ), 10, 2 );
 		add_filter( 'wpml_is_rtl' , array( $this, 'wpml_is_rtl' ) );
-		// wpml_language_form_input_field     => not implemented
+		// wpml_language_form_input_field     => See wpml_add_language_form_field
 		// wpml_language_has_switched         => not implemented
 
 		// Retrieving Language Information for Content
@@ -39,7 +39,7 @@ class PLL_WPML_API {
 
 		// Retrieving Localized Content
 
-		add_filter( 'wpml_home_url', 'pll_home_url' );
+		add_filter( 'wpml_home_url', 'pll_home_url', 10, 0 );
 		add_filter( 'wpml_element_link', 'icl_link_to_element' , 10, 7 );
 		add_filter( 'wpml_object_id', 'icl_object_id', 10, 4 );
 		add_filter( 'wpml_translate_single_string', array( $this, 'wpml_translate_single_string' ), 10, 4 );
@@ -104,7 +104,10 @@ class PLL_WPML_API {
 	 * @since 2.0
 	 */
 	public function wpml_add_language_form_field() {
-		printf( '<input type="hidden" name="lang" value="%s" />', esc_attr( pll_current_language() ) );
+		$lang = pll_current_language();
+		$field = sprintf( '<input type="hidden" name="lang" value="%s" />', esc_attr( $lang ) );
+		$field = apply_filters( 'wpml_language_form_input_field', $field, $lang );
+		echo $field;
 	}
 
 	/**

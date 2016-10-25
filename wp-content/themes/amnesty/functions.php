@@ -231,9 +231,9 @@ function archiveHeader(){
   if (function_exists('z_taxonomy_image_url') && is_archive() && !is_tag()) {
     $img = z_taxonomy_image_url(array_values($parents)[0]->term_id);
       if($img) {
-       $classes[] = 'header'; 
-       }       
-     }  
+       $classes[] = 'header';
+       }
+     }
 
   ?>
   <figure class="archiveheader <?php echo implode(' ', $classes) ?>">
@@ -253,10 +253,10 @@ function archiveHeader(){
                wp_list_categories( $args );
                ?>
           </ul>
-          
+
       </div>
-     
-       
+
+
         <?php get_search_form(); ?>
 
       </figcaption>
@@ -291,17 +291,17 @@ function remove_menus(){
       // remove_menu_page( 'users.php' );                  //Users
       remove_menu_page( 'tools.php' );                  //Tools
       // remove_menu_page( 'options-general.php' );        //Settings
-      
+
     };
 }
 
-add_action( 'admin_menu', 'remove_menus' );
+// add_action( 'admin_menu', 'remove_menus' );
 
 
 /* Remove Contact Form 7 Links from dashboard menu items if not admin */
 if (!(current_user_can('administrator'))) {
   function remove_wpcf7() {
-      remove_menu_page( 'wpcf7' ); 
+      remove_menu_page( 'wpcf7' );
   }
 
   add_action('admin_menu', 'remove_wpcf7');

@@ -3,7 +3,7 @@
 Plugin Name: Page Builder by SiteOrigin
 Plugin URI: https://siteorigin.com/page-builder/
 Description: A drag and drop, responsive page builder that simplifies building your website.
-Version: 2.4.16
+Version: 2.4.17
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 License: GPL3
@@ -11,7 +11,7 @@ License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: http://siteorigin.com/page-builder/#donate
 */
 
-define('SITEORIGIN_PANELS_VERSION', '2.4.16');
+define('SITEORIGIN_PANELS_VERSION', '2.4.17');
 if ( ! defined('SITEORIGIN_PANELS_JS_SUFFIX' ) ) {
 	define('SITEORIGIN_PANELS_JS_SUFFIX', '.min');
 }
@@ -1610,11 +1610,22 @@ function siteorigin_panels_process_panels_data( $panels_data ){
 }
 add_filter( 'siteorigin_panels_data', 'siteorigin_panels_process_panels_data', 5 );
 
-function siteorigin_premium_display_teaser(){
+function siteorigin_panels_display_premium_teaser(){
 	return
 		siteorigin_panels_setting( 'display-teaser' ) &&
 		apply_filters( 'siteorigin_premium_upgrade_teaser', true ) &&
 		! defined( 'SITEORIGIN_PREMIUM_VERSION' );
+}
+
+function siteorigin_panels_premium_url() {
+	$ref = apply_filters( 'siteorigin_premium_affiliate_id', '' );
+	$url = 'https://siteorigin.com/downloads/premium/?featured_plugin=siteorigin-panels';
+
+	if( $ref ) {
+		$url = add_query_arg( 'ref', urlencode( $ref ), $url );
+	}
+
+	return $url;
 }
 
 // Include the live editor file if we're in live editor mode.
