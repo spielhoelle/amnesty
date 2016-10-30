@@ -27,108 +27,116 @@
       a.bx-prev, a.bx-next
         opacity: 1
 
+
 .slider
-  height: 100%
-  figure.header
+  height: 100% !important
+  // @media (max-width: $breakpoint3)
+  //   min-height: 81vh
+
+
+.slider
+  .slide
+  .captionwrap
+    height: 100%
+    flex-flow: column
+    justify-content: space-between
     display: flex
     align-items: flex-end
-    height: 33vw
+
     @media (max-width: $breakpoint3)
       height: 100%
-      min-height: 90vh
-
+      justify-content: space-between
+      flex-flow: column
 
 .sliderlink
   height: 100%
   width: 100%
+  position: absolute
   @media (max-width: $breakpoint3)
-    position: absolute
     width: 100%
 
   img
     transition: 15s cubic-bezier(0.32, 0.31, 0.43, 0.84)
 
-.slider figure
-  @media (max-width: $breakpoint3)
-    // height: 100%
+figure.slide.header
+  height: auto
 
-  &.active-slide img
-    transform: scale(1.2)
-
-
-  img
-
-
-  figcaption
-
-    left: 0
-    display: flex
-    flex-flow: column
-    align-items: flex-start
-    max-width: 100%
+.slider
+  figure
     @media (max-width: $breakpoint3)
-      pointer-events: none
-      padding: 0px
-      position: relative
-      bottom: 0
+      // height: 100%
 
-    pointer-events: none
-    > *
-      line-height: 1
-      pointer-events: all
-    a:not(.more-link)
-      color: white
-      text-decoration: underline
-    h1, h2
-      text-align: left !important
-      &:empty
-        display: none
-      i.fa
-        font-size: 0.8em
-        margin-left: 0
+    &.active-slide img
+      transform: scale(1.2)
 
-    h1, h2
-      margin: 0
-      opacity: 0
-      transform: translate(-200px, 0)
 
-    h1
-      background-color: transparentize(white, 0.1)
-      color: black
-      transition: opacity .5s ease 0s, transform .5s ease 0s
-      @media (max-width: $breakpoint1)
-        font-size: 2rem
-        &:before
-          font-size: 1.5rem
-    h2
-      font-family: $font__main
-      font-weight: 100
-      background: transparentize(black, 0.1)
-      color: white
-      transition: opacity .5s ease .2s, transform .5s ease .2s
-      max-height: 5.5rem
-      line-height: 2.5rem
-      text-overflow: ellipsis
-      overflow: hidden
+    figcaption
+      width: 100%
+      left: 0
+      display: flex
+      flex-flow: column
+      align-items: flex-start
       max-width: 100%
-      @media (max-width: $breakpoint1)
-        font-size: 1.2rem
-        max-height: 4.5rem
-        line-height: 2rem
-      @media (max-width: $breakpoint2)
-        max-height: 4.5rem
+      position: relative
+      @media (max-width: $breakpoint3)
+        padding: 0px
+        bottom: auto
+        width: 100%
+      > *
+        line-height: 1
+      a:not(.more-link)
+        color: white
+        text-decoration: underline
+      h1, h2
+        text-align: left !important
+        &:empty
+          display: none
+        i.fa
+          font-size: 0.8em
+          margin-left: 0
+
+      h1, h2
+        margin: 0
+        opacity: 0
+        transform: translate(-200px, 0)
+
+      h1
+        background-color: transparentize(white, 0.1)
+        color: black
+        transition: opacity .5s ease 0s, transform .5s ease 0s
+        @media (max-width: $breakpoint1)
+          font-size: 2rem
+          &:before
+            font-size: 1.5rem
+      h2
+        font-family: $font__main
+        font-weight: 100
+        background: transparentize(black, 0.1)
+        color: white
+        transition: opacity .5s ease .2s, transform .5s ease .2s
+        max-height: 5.5rem
+        line-height: 2.5rem
+        text-overflow: ellipsis
+        overflow: hidden
+        max-width: 100%
+        @media (max-width: $breakpoint1)
+          font-size: 1.2rem
+          max-height: 4.5rem
+          line-height: 2rem
+        @media (max-width: $breakpoint2)
+          max-height: 4.5rem
 
 
-  &.active-slide
-    h1, h2, .more-link
-      opacity: 1
-      transform: translate(0, 0)
-.subslider
-  background-color: #eee
-  text-align: center
-  padding: 10px
-  *
-    display: block
-    margin: 10px
-ock
-    margin: 10px
+    &.active-slide
+      h1, h2, .more-link
+        opacity: 1
+        transform: translate(0, 0)
+  .subslider
+    background-color: #eee
+    text-align: center
+    padding: 10px
+    *
+      display: block
+      margin: 10px
+  ock
+      margin: 10px

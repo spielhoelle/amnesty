@@ -15,23 +15,25 @@ $the_query = new WP_Query('posts_per_page=6'); ?>
               $content_parts = get_extended($content);
               ?>
 
-              <figure class="header">
+              <figure class="header slide">
                   <a class="sliderlink" href="<?php the_permalink() ?>">
                       <img src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)" title="<?php the_title() ?>">
                   </a>
-                  <span class="icons"><?php icons(true, true); ?></span>
-                  <figcaption>
-                      <h1 class="entry-title">
-                        <?php echo get_the_title() ?>
-                      </h1>
+                  <div class="captionwrap">
+                    <span class="icons"><?php icons(true, true); ?></span>
+                    <figcaption>
+                        <h1 class="entry-title">
+                          <?php echo get_the_title() ?>
+                        </h1>
 
-                      <h2><?php
-                        $bla = get_the_excerpt();
-                        echo wp_strip_all_tags($bla);?>
-                      </h2>
+                        <h2><?php
+                          $bla = get_the_excerpt();
+                          echo wp_strip_all_tags($bla);?>
+                        </h2>
 
 
-                  </figcaption>
+                    </figcaption>
+                  </div>
                   <?php
                   if ($data['caption'] !== '' && $data['caption']) { ?>
                     <small>Quelle: <?php echo $data['caption'];?></small>

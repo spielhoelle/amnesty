@@ -65,7 +65,7 @@
   .top, .main-navigation
     @media (max-width: $breakpoint1)
       a
-        height: $headerheight / 2
+        padding: 15px
         @media (max-width: $breakpoint3)
           display: block
     @media (max-width: $breakpoint3)
@@ -177,7 +177,8 @@ body.toggled
       background-color: rgba(255, 255, 255, 0.95)
       justify-content: flex-start
       flex-flow: column
-      align-items: flex-start
+      align-items: stretch
+      text-align: center
       opacity: 0
     .sub-menu
       @media (max-width: $breakpoint1)
@@ -190,18 +191,7 @@ body.toggled
         padding: 0 5px
 
       @media (max-width: $breakpoint3)
-        flex-flow: column
-        transform: translateX(0%)
-        height: auto
-        left: auto
-        position: relative
-        background: transparent
-        padding-left: 20%
-        z-index: 0
-        a
-          color: black
-        a
-          margin: 0
+        display: none
       background: black
       height: $headerheight
       position: absolute

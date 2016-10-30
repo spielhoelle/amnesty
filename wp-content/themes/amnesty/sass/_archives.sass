@@ -4,12 +4,13 @@ body
       max-width: $viewport
       width: 100%
       figcaption
+        pointer-events: all
         display: flex
         justify-content: space-between
         align-items: flex-end
         width: 100%
         max-width: $viewport
-          
+
         @media(max-width: $breakpoint3)
           flex-flow: column
           align-items: stretch
@@ -31,7 +32,7 @@ body
     display: flex
     flex-flow: column
     font-size: 1.3em
-    
+
     .cat-item
       display: flex
     .children a

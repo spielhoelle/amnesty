@@ -1,13 +1,19 @@
 span.icons
   align-items: flex-end
-  position: absolute
-  right: 0.5em
-  top: 0.5em
   display: flex
   flex-flow: column
   transition: transform .3s ease
   z-index: 1
+  padding-bottom: 100px
 
+  .grid &
+    padding-bottom: 0
+    position: absolute
+    right: 0.5em
+    top: 0.5em
+
+  .slider &
+    position: relative
   a
     background: black
     padding: .2em .5em
@@ -18,11 +24,12 @@ span.icons
     color: white
   i
     margin: 0 0 0 0.5em
-  .grid &, .slider &
-    transform: translateX(calc(100% + 20px))
+  @media (min-width: $breakpoint3)
+    .grid &,
+    .slider &
+      transform: translateX(calc(100% + 20px))
 
 .slider:hover
-
   span.icons
     transform: translateX(0)
 
