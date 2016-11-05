@@ -18,6 +18,9 @@ section > article, .footer-wrap,
 
 #main > section
   width: 100%
+  .home &
+    article.page
+      padding: 100px 0
 
 body.single #main > article,
 body.page #main > article
@@ -312,14 +315,16 @@ aside
     padding: 0 5px
     animation-play-state: paused
 
-.entry-title, .page-title, .tommy, span.icons
+.entry-title,
+.page-title,
+.tommy,
+span.icons a
   i, svg
     transition: color .3s ease, transform .3s ease
 
-.entry-title, .page-title, span.icons
+.entry-title, .page-title, span.icons a
   &:hover
     i,svg
-      // animation-play-state: running
       transform: scale(1.15)
 
 .entry-title, .page-title

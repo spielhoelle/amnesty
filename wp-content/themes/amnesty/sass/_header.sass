@@ -43,9 +43,7 @@
       pointer-events: none
     .site-branding
       height: 100%
-      position: absolute
-      left: 0
-      overflow: hidden
+      margin-right: 10px
       @media (max-width: $breakpoint3)
         pointer-events: all
         &, .site-title
@@ -55,43 +53,41 @@
         margin: 0
         height: 100%
         a
-          width: 200px
+          width: 180px
           display: inline-block
           color: transparent
           height: 100%
-          background: transparent url("img/amnesty_logo.gif") no-repeat scroll left top / contain
+          background: $yellow url("img/logo.svg") no-repeat scroll center center / contain
           @media (max-width: $breakpoint1)
             width: 99px
+
+
   .top, .main-navigation
+    display: flex
+
     @media (max-width: $breakpoint1)
       a
-        padding: 15px
         @media (max-width: $breakpoint3)
           display: block
     @media (max-width: $breakpoint3)
       height: 100%
       width: 100%
-      display: block
       > div > ul > li
         height: auto
+
+
 #site-description
+  display: flex
+  flex-flow: column
+  justify-content: center
   transition: color .3s ease
-  padding-left: calc(200px + 2%)
-  margin: 13px 40px 0 0
-  font-size: 1.2em
+  font-size: 1em
   color: black
   @media (max-width: $breakpoint1)
-    padding-left: 110px
-    margin: 0 20px 0 0
     font-size: .8em
-    height: $headerheight/2
-    line-height: 1.2
-
   @media (max-width: $breakpoint3)
     padding-right: 80px
     margin: 0
-    display: flex
-    align-items: center
     &:after
       position: absolute
       content: ""
@@ -101,6 +97,7 @@
       right: 0
       height: 40px
       z-index: -1
+
 body.toggled
   overflow: hidden
   #masthead
@@ -108,6 +105,8 @@ body.toggled
     bottom: 0
   .top
     pointer-events: all !important
+    #site-description
+      height: 40px
   .main-navigation
     ul
       overflow: auto !important
@@ -219,11 +218,11 @@ body.toggled
         z-index: 0
       a
         color: $white
-        @media (max-width: $breakpoint3)
-          color: black
 
         margin-top: 0px
         transition: margin .3s ease
+        @media (max-width: $breakpoint3)
+          color: black
         &:hover
           background-color: #333
   div > ul li.menu-item-has-children:hover
@@ -234,6 +233,7 @@ body.toggled
     justify-content: center
 
   a, i
+    cursor: pointer
     height: 100%
     text-decoration: none
     display: flex

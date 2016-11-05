@@ -188,8 +188,8 @@ function get_thumbnail($size = '') {
 
 
 //add search button at the end of navi
-add_filter( 'wp_nav_menu_items', 'add_loginout_link', 10, 2 );
-function add_loginout_link( $items, $args ) {
+add_filter( 'wp_nav_menu_items', 'append_search_field_to_nav', 10, 2 );
+function append_search_field_to_nav( $items, $args ) {
     if ($args->theme_location == 'primary' ) {
       $items .= '<li id="menu-search"><i class="fa fa-search"></i>';
       $items .=  get_search_form(false);

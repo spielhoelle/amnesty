@@ -39,7 +39,7 @@
       	};
       };
 
-      var myEfficientFn = debounce(function() {
+      var reDrawSlider = debounce(function() {
 
         var maxHeight = 0;
         $(".bx-viewport .slide").each(function(){
@@ -53,7 +53,13 @@
 
       }, 500);
 
-      $(window).on('resize', myEfficientFn)
+
+      var responsiveMenuToggle = debounce(function() {
+        
+      }, 1000);
+
+      $(window).on('resize', reDrawSlider)
+      $(window).on('resize', responsiveMenuToggle)
 
 
 
