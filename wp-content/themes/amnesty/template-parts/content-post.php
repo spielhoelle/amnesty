@@ -7,7 +7,7 @@
  * @package amnesty
  */
 $classes = [];
-$img =  wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0];
+$img =  get_thumbnail();
 if($img) {
   $classes[] = 'header';
   $data = wp_prepare_attachment_for_js( get_post_thumbnail_id( $post->ID ) );
@@ -139,7 +139,7 @@ $content_parts = get_extended($content);
        endif;
 
 
-       
+
     // loop through posts
     wp_reset_query();
     ?>

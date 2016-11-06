@@ -164,6 +164,7 @@ add_image_size('grid', 500, 500, true); // Hard Crop Mode
 
 //@todo for fallback images choose right sizes
 function get_thumbnail($size = '') {
+
     $directory = 'wp-content/themes/amnesty/img/';
     $files = array_slice(scandir('wp-content/themes/amnesty/img/fallback/full'), 2);
 
@@ -179,8 +180,18 @@ function get_thumbnail($size = '') {
             $img = z_taxonomy_image_url(array_values($parents)[0]->term_id);
         }
         if ($img == '') {
-            $rand = rand(1, 4);
-            $img = get_template_directory_uri() . '/img/fallback/'.$size.'/thumbnail-'.$size.'-' . $rand . '.jpg';
+            $fallbacks = explode(", ", get_option('fallback_img'));
+            $amount_of_fallbacks = count($fallbacks);
+            $last_digit_of_id = substr(get_the_ID(), -1);
+            $closest = null;
+            foreach ($fallbacks as $fallback) {
+              $last_digit_of_fallback = substr($fallback, -1);
+              if ($closest === null || abs($last_digit_of_id - $closest) > abs($last_digit_of_fallback - $last_digit_of_id)) {
+                 $closest = $last_digit_of_fallback;
+                 $choosen = $fallback;
+              }
+            }
+            $img = wp_get_attachment_image_src($choosen, 'full' )[0];
         }
     }
     return $img;
@@ -305,4 +316,35 @@ if (!(current_user_can('administrator'))) {
   }
 
   add_action('admin_menu', 'remove_wpcf7');
+}
+add_action('admin_init', 'my_general_section');
+function my_general_section() {
+    add_settings_section(
+        'my_settings_section', // Section ID
+        'Fallback Bilder', // Section Title
+        'my_section_options_callback', // Callback
+        'media' // What Page?  This makes the section show up on the General Settings Page
+    );
+
+    add_settings_field( // Option 1
+        'fallback_img', // Option ID
+        'IDs', // Label
+        'my_textbox_callback', // !important - This is where the args go!
+        'media', // Page it will be displayed (General Settings)
+        'my_settings_section', // Name of our section
+        array( // The $args
+            'fallback_img' // Should match Option ID
+        )
+    );
+
+    register_setting('media','fallback_img', 'esc_attr');
+}
+
+function my_section_options_callback() { // Section Callback
+    echo '<p>Kommagetrennte IDs der Fallback Bilder eintragen</p>';
+}
+
+function my_textbox_callback($args) {  // Textbox Callback
+    $option = get_option($args[0]);
+    echo '<input type="text" id="'. $args[0] .'" name="'. $args[0] .'" value="' . $option . '" />';
 }

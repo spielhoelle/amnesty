@@ -10,10 +10,10 @@
 
 $img = get_thumbnail('grid');
 $classes= array();
-if(strpos($img, 'fallback')) {
-  $classes[] = 'fallback';
-}
-    
+// if(strpos($img, 'fallback')) {
+//   $classes[] = 'fallback';
+// }
+
 $content = get_post_field('post_content', get_the_ID());
 $content_parts = get_extended($content);
 
