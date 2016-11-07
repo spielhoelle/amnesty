@@ -1,6 +1,9 @@
 article, section
   &:focus
     outline: none !important
+.home
+  article.page
+    padding: 100px 0
 
 #page
   display: flex
@@ -18,9 +21,6 @@ section > article, .footer-wrap,
 
 #main > section
   width: 100%
-  .home &
-    article.page
-      padding: 100px 0
 
 body.single #main > article,
 body.page #main > article
@@ -248,6 +248,18 @@ aside
       display: inline-flex
       flex-flow: row wrap
 
+
+
+.ratiocontainer
+  @media (max-width: $breakpoint3)
+    height: 0
+    padding-bottom: 60%
+    .ratio
+      position: absolute
+      width: 100%
+      height: 100%
+
+
 .grid
   display: flex
   flex-flow: row wrap
@@ -260,6 +272,7 @@ aside
   figure
     overflow: hidden
     background-color: $white
+
     img
       transition: transform .3s ease, opacity .3s ease
 
@@ -269,6 +282,8 @@ aside
       color: white
 
     figcaption
+      max-width: 100%
+
       >div
         background: black
         padding: 0.5em
@@ -282,7 +297,11 @@ aside
         overflow: hidden
         hyphens: auto
         display: block
-
+        @media (max-width: $breakpoint3)
+          max-height: 4.5em
+          white-space: nowrap
+          text-overflow: ellipsis
+          width: 100%
       h2, h3, h4, h5
         display: none
       a:empty
