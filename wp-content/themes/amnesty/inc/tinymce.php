@@ -18,7 +18,7 @@ function my_mce_before_init_insert_formats( $init_array ) {
             'classes' => 'content-button'
         ),
         array(
-            'title' => 'Super Headline',
+            'title' => 'Super Überschrift 1',
             'selector' => 'h1',
             'classes' => 'entry-title content'
         )
