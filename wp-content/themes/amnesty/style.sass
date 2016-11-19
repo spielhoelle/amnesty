@@ -33,10 +33,6 @@
 @import sass/icons
 @import sass/template.specific
 
-@media screen and (min-width: 782px)
-  html[lang]
-    margin-top: 0 !important
-
 
 #main
   display: flex
@@ -45,3 +41,7 @@
   @for $i from 1 through 99
     section[tabindex="#{$i}"]
       order: #{$i}
+
+#newsletter
+  .pagination
+    text-align: center
