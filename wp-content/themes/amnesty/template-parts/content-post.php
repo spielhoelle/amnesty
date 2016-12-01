@@ -104,45 +104,62 @@ $content_parts = get_extended($content);
               </aside>
             </section>
         <?php } ?>
-    </div>
-    <div class="wrap">
-      <h1 class="entry-title"> Mehr? </h1>
+
+
     </div>
 
 
 
 </article>
 
-  <div class="grid">
-    <?php // switch WP to page for posts
-    // Get categories
-       $categories = wp_get_post_terms( get_the_ID(), 'category');
 
-       // Check if there are any categories
-       if( ! empty( $categories ) ) :
 
-           // Get all posts within current category, but exclude current post
-           $category_posts = new WP_Query( array(
-               'cat'          => $categories[0]->term_id,
-               'post__not_in' => array( get_the_ID() ),
-           ) );
-
-           // Check if there are any posts
-           if( $category_posts->have_posts() ) :
-               // Loop trough them
-               while( $category_posts->have_posts() ) : $category_posts->the_post();
-                   // Display posts
-                   get_template_part('template-parts/content', '');
-
-               endwhile;
-           endif;
-       endif;
+<section class="color2">
+  <div class="viewport margin--auto">
+    <?php comments_template() ?>
+  </div>
+</section>
 
 
 
-    // loop through posts
-    wp_reset_query();
-    ?>
+
+<div class="wrap">
+  <h1 class="entry-title"> Mehr? </h1>
+</div>
+
+
+
+
+<div class="grid">
+  <?php // switch WP to page for posts
+  // Get categories
+     $categories = wp_get_post_terms( get_the_ID(), 'category');
+
+     // Check if there are any categories
+     if( ! empty( $categories ) ) :
+
+         // Get all posts within current category, but exclude current post
+         $category_posts = new WP_Query( array(
+             'cat'          => $categories[0]->term_id,
+             'post__not_in' => array( get_the_ID() ),
+         ) );
+
+         // Check if there are any posts
+         if( $category_posts->have_posts() ) :
+             // Loop trough them
+             while( $category_posts->have_posts() ) : $category_posts->the_post();
+                 // Display posts
+                 get_template_part('template-parts/content', '');
+
+             endwhile;
+         endif;
+     endif;
+
+
+
+  // loop through posts
+  wp_reset_query();
+  ?>
 </div>
 
 
