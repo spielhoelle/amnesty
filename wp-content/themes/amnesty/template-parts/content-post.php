@@ -21,7 +21,7 @@ if($img) {
 
     <figure class="<?php echo implode(' ', $classes) ?>">
         <span class="icons"><?php icons(true, true); ?></span>
-        <?php if($img !== ""){ ?>
+        <?php if($img){ ?>
           <img alt="<?php echo get_post(get_post_thumbnail_id($post->ID))->post_title ?>" src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <?php } ?>
         <figcaption>

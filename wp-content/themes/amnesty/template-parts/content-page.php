@@ -18,7 +18,7 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
     <?php if(get_the_title() !== '') { ?>
       <figure class="<?php echo implode(' ', $classes) ?>">
-        <?php if($img !== ""){ ?>
+        <?php if($img){ ?>
           <img alt="<?php echo get_post(get_post_thumbnail_id($post->ID))->post_title ?>" src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
         <?php } ?>
 
