@@ -7,7 +7,7 @@
  * @package amnesty
  */
 $classes = [];
-$img =  get_thumbnail();
+$img =  wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' )[0];
 if($img) {
   $classes[] = 'header';
   $data = wp_prepare_attachment_for_js( get_post_thumbnail_id( $post->ID ) );
@@ -15,16 +15,15 @@ if($img) {
   $classes[] = 'noheader';
 }
 
-$content = get_post_field('post_content', get_the_ID());
-$content_parts = get_extended($content);
-
 ?>
 
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 
     <figure class="<?php echo implode(' ', $classes) ?>">
         <span class="icons"><?php icons(true, true); ?></span>
-        <img alt="<?php echo get_post(get_post_thumbnail_id($post->ID))->post_title ?>" src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+        <?php if($img !== ""){ ?>
+          <img alt="<?php echo get_post(get_post_thumbnail_id($post->ID))->post_title ?>" src="/wp-includes/images/blank.gif" style="background-image:url(<?php echo $img ?>)">
+        <?php } ?>
         <figcaption>
 
             <h1 class="entry-title ">
@@ -45,27 +44,27 @@ $content_parts = get_extended($content);
         <div class="content-wrapper">
 
             <div class="entry-content">
+              <?php
+              if ('post' === get_post_type()) : ?>
+                  <div class="entry-meta">
+                      <?php amnesty_posted_on(); ?>
+                  </div><!-- .entry-meta -->
+                  <?php
+              endif; ?>
 
-                <?php
-                the_content(sprintf(
-                    wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
-                    the_title('<span class="screen-reader-text">"', '"</span>', false)
-                ));
 
-                // echo $content_parts['extended'];
+              <?php
+              the_content(sprintf(
+                  wp_kses(__('Continue reading %s <span class="meta-nav">&rarr;</span>', 'amnesty'), array('span' => array('class' => array()))),
+                  the_title('<span class="screen-reader-text">"', '"</span>', false)
+              ));
 
-                wp_link_pages(array(
-                    'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
-                    'after' => '</div>',
-                ));
-                ?>
-                <?php
-                if ('post' === get_post_type()) : ?>
-                    <div class="entry-meta">
-                        <?php amnesty_posted_on(); ?>
-                    </div><!-- .entry-meta -->
-                    <?php
-                endif; ?>
+              wp_link_pages(array(
+                  'before' => '<div class="page-links">' . esc_html__('Pages:', 'amnesty'),
+                  'after' => '</div>',
+              ));
+              ?>
+
             </div><!-- .entry-content -->
             <footer class="entry-footer">
                 <?php amnesty_entry_footer(); ?>
@@ -113,21 +112,18 @@ $content_parts = get_extended($content);
 </article>
 
 
-
-<section class="color2">
-  <div class="viewport margin--auto">
-    <?php comments_template() ?>
-  </div>
-</section>
-
-
+<?php if ( comments_open() ) { ?>
+  <section class="color2">
+    <div class="viewport margin--auto">
+      <?php comments_template() ?>
+    </div>
+  </section>
+<?php } ?>
 
 
 <div class="wrap">
   <h1 class="entry-title"> Mehr? </h1>
 </div>
-
-
 
 
 <div class="grid">
