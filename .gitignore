@@ -21,3 +21,9 @@ bower_components
 node_modules
 /wp-content/themes/amnesty/inc/newsletter/mc-endpoint.php
 *.map
+
+# w3 totalcache stuff
+nginx.conf
+wp-content/db.php
+wp-content/w3tc-config/master.json
+wp-content/object-cache.php
