@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 4.7.x package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2016-12-06 22:06:38+0000\n"
+"PO-Revision-Date: 2017-01-13 14:09:46+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2916,7 +2916,7 @@ msgstr "Datenbank konnte nicht ausgewählt werden"
 #. translators: 1: database user, 2: database name
 #: wp-includes/wp-db.php:1113
 msgid "Does the user %1$s have permission to use the %2$s database?"
-msgstr "Hat der Benutzer %1$s die Berechtigung die Datenbank %2$s zu verwenden?"
+msgstr "Hat der Benutzer %1$s die Berechtigung, die Datenbank %2$s zu verwenden?"
 
 #: wp-includes/widgets/class-wp-widget-tag-cloud.php:135
 msgid "The tag cloud will not be displayed since there are no taxonomies that support the tag cloud widget."
