@@ -122,22 +122,35 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
  * @return string the string translation in the current language
  */
 function pll__( $string ) {
-	static $cache; // Cache object to avoid translating the same string several times
-
 	if ( ! did_action( 'pll_language_defined' ) || ! is_scalar( $string ) ) { // No need for translation
 		return $string;
 	}
 
-	if ( empty( $cache ) ) {
-		$cache = new PLL_Cache();
-	}
+	return __( $string, 'pll_string' );
+}
 
-	if ( false === $str = $cache->get( $string ) ) {
-		$str = __( $string, 'pll_string' );
-		$cache->set( $string, $str );
-	}
+/**
+ * Translates a string ( previously registered with pll_register_string ) and escapes it for safe use in HTML output.
+ *
+ * @since 2.1
+ *
+ * @param string $string the string to translate
+ * @return string translation in the current language
+ */
+function pll_esc_html__( $string ) {
+	return esc_html( pll__( $string ) );
+}
 
-	return $str;
+/**
+ * Translates a string ( previously registered with pll_register_string ) and escapes it for safe use in HTML attributes.
+ *
+ * @since 2.1
+ *
+ * @param $string
+ * @return string
+ */
+function pll_esc_attr__( $string ) {
+	return esc_attr( pll__( $string ) );
 }
 
 /**
@@ -149,6 +162,28 @@ function pll__( $string ) {
  */
 function pll_e( $string ) {
 	echo pll__( $string );
+}
+
+/**
+ * Echoes a translated string ( previously registered with pll_register_string ) and escapes it for safe use in HTML output.
+ *
+ * @since 2.1
+ *
+ * @param string $string the string to translate
+ */
+function pll_esc_html_e( $string ) {
+	echo pll_esc_html__( $string );
+}
+
+/**
+ * Echoes a translated a string ( previously registered with pll_register_string ) and escapes it for safe use in HTML attributes.
+ *
+ * @since 2.1
+ *
+ * @param $string
+ */
+function pll_esc_attr_e( $string ) {
+	echo pll_esc_attr__( $string );
 }
 
 /**
