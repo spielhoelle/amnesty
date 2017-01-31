@@ -54,18 +54,6 @@ function remove_tinymce_at_line2($buttons)
 }
 add_filter('mce_buttons', 'remove_tinymce_at_line2');
 
-
-
-# Remove media buttons
-function emersonthis_remove_add_media(){
-    # do this conditionally if you want to be more selective
-    remove_action( 'media_buttons', 'media_buttons' );
-}
-add_action('admin_head', 'emersonthis_remove_add_media');
-
-
-
-
 # Adds instruction text after the post title input
 function emersonthis_edit_form_after_title() {
     $tip = '<code>Eingabetaste ↵: harter Zeilenumbruch. SHIFT + Eingabetaste ↵ : weicher Zeilenumbruch.</code>';

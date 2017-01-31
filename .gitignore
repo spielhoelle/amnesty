@@ -3,7 +3,6 @@
 sitemap.xml
 sitemap.xml.gz
 wp-config.php
-wp-content/advanced-cache.php
 wp-content/backup-db/
 wp-content/backups/
 wp-content/blogs.dir/
@@ -18,8 +17,6 @@ wp-content/plugins/hello.php
 # w3 totalcache stuff
 nginx.conf
 wp-content/db.php
-wp-content/w3tc-config/master.json
-wp-content/object-cache.php
 
 /wp-admin
 /wp-includes
@@ -136,3 +133,7 @@ wp-content/mysql.sql
 *.asf
 *.wmv
 *.avi
+
+wp-content/cache/
+wp-content/plugins/w3-total-cache/
+wp-content/w3tc-config/
