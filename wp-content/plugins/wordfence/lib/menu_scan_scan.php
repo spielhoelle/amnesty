@@ -40,9 +40,7 @@
 			<p>As new threats emerge, the Threat Defense Feed is updated to detect these new hacks. The Premium
 				version of the Threat Defense Feed is updated in real-time protecting you immediately. As a free
 				user <strong>you are receiving the community version</strong> of the feed which is updated 30 days later.</p>
-			<p class="center"><a class="wf-btn wf-btn-primary wf-btn-callout"
-								 href="https://www.wordfence.com/gnl1scanUpgrade/wordfence-signup/" target="_blank">
-					Get Premium</a></p>
+			<p class="center"><a class="wf-btn wf-btn-primary wf-btn-callout" href="https://www.wordfence.com/gnl1scanUpgrade/wordfence-signup/" target="_blank">Get Premium</a></p>
 		</div>
 	
 	<?php } ?>
@@ -55,7 +53,7 @@
 	
 	<div class="consoleHead" style="margin-top: 20px;">
 		<h3 class="consoleHeadText">Scan Detailed Activity</h3>
-		<a href="#" class="wfALogMailLink" onclick="WFAD.emailActivityLog(); return false;">Email activity log</a>
+		<a href="#" class="wfALogMailLink" onclick="WFAD.emailActivityLog(); return false;">Email<span class="wf-hidden-xs"> activity log</span></a>
 	</div>
 	<div class="bevelDiv1 consoleOuter"><div class="bevelDiv2"><div class="bevelDiv3 consoleInner" id="consoleActivity">
 				<?php

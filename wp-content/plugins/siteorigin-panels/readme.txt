@@ -2,8 +2,8 @@
 Tags: page builder, responsive, widget, widgets, builder, page, admin, gallery, content, cms, pages, post, css, layout, grid
 Requires at least: 4.0
 Tested up to: 4.7.2
-Stable tag: 2.4.23
-Build time: 2017-01-31T18:02:58+02:00
+Stable tag: 2.4.25
+Build time: 2017-02-21T09:54:44+02:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/contribution/
@@ -96,10 +96,17 @@ We've tried to ensure that Page Builder is compatible with most plugin widgets. 
 
 == Changelog ==
 
-= 2.4.23 - 31 January 2016 =
+= 2.4.25 - 21 February 2017 =
+* Fixed how widget wrapper IDs are generated.
+
+= 2.4.24 - 3 February 2017 =
+* Add row ID to style wrapper instead of actual row.
+* Use more specific selectors for padding CSS.
+
+= 2.4.23 - 31 January 2017 =
 * Fixed padding issue introduced by new mobile padding setting.
 
-= 2.4.22 - 31 January 2016 =
+= 2.4.22 - 31 January 2017 =
 * Add WP Color Picker as a dependency for admin script.
 * Include and check post ID in Live Editor. Fixes some issues with widgets using the_excerpt in Live Editor.
 * Added mobile padding settings.

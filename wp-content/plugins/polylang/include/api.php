@@ -6,16 +6,17 @@
  * List of parameters accepted in $args:
  *
  * dropdown               => displays a dropdown if set to 1, defaults to 0
- * echo                   => echoes the the switcher if set to 1 ( default )
+ * echo                   => echoes the switcher if set to 1 ( default )
  * hide_if_empty          => hides languages with no posts ( or pages ) if set to 1 ( default )
  * show_flags             => shows flags if set to 1, defaults to 0
  * show_names             => shows languages names if set to 1 ( default )
- * display_names_as       => whether to display the language name or code. valid options are 'slug' and 'name'
+ * display_names_as       => whether to display the language name or its slug, valid options are 'slug' and 'name', defaults to name
  * force_home             => forces linking to the home page is set to 1, defaults to 0
  * hide_if_no_translation => hides the link if there is no translation if set to 1, defaults to 0
  * hide_current           => hides the current language if set to 1, defaults to 0
  * post_id                => if not null, link to translations of post defined by post_id, defaults to null
  * raw                    => set this to true to build your own custom language switcher, defaults to 0
+ * item_spacing           => whether to preserve or discard whitespace between list items, valid options are 'preserve' and 'discard', defaults to preserve
  *
  * @since 0.5
  *
@@ -122,11 +123,7 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
  * @return string the string translation in the current language
  */
 function pll__( $string ) {
-	if ( ! did_action( 'pll_language_defined' ) || ! is_scalar( $string ) ) { // No need for translation
-		return $string;
-	}
-
-	return __( $string, 'pll_string' );
+	return is_scalar( $string ) ? __( $string, 'pll_string' ) : $string;
 }
 
 /**
