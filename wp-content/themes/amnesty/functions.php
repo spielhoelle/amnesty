@@ -347,3 +347,5 @@ function my_textbox_callback($args) {  // Textbox Callback
     $option = get_option($args[0]);
     echo '<input type="text" id="'. $args[0] .'" name="'. $args[0] .'" value="' . $option . '" />';
 }
+add_filter( 'xmlrpc_enabled', '__return_false' );
+
