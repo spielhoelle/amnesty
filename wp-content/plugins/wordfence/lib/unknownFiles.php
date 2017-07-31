@@ -139,7 +139,7 @@ if($fileList){
 </tr>
 <?php
 	for($i = 0; $i < sizeof($files); $i++){
-		echo '<tr><td>' . wfUtils::formatBytes($files[$i][2]) . '</td><td>' . wfUtils::makeTimeAgo(time() - $files[$i][3]) . ' ago.</td><td>' . $files[$i][5] . '</td><td>' . $files[$i][6] . '</td><td>' . $files[$i][7] . '</td><td><a href="' . $files[$i][4] . '" target="_blank">' . $files[$i][1] . '</a></td></tr>';
+		echo '<tr><td>' . wfUtils::formatBytes($files[$i][2]) . '</td><td>' . wfUtils::makeTimeAgo(time() - $files[$i][3]) . ' ago.</td><td>' . $files[$i][5] . '</td><td>' . $files[$i][6] . '</td><td>' . $files[$i][7] . '</td><td><a href="' . $files[$i][4] . '" target="_blank" rel="noopener noreferrer">' . $files[$i][1] . '</a></td></tr>';
 	}
 	echo "</table>";
 } else {
@@ -152,6 +152,6 @@ if($fileList){
 
 ?>
 
-<div class="diffFooter">&copy;&nbsp;2011 to 2015 Wordfence &mdash; Visit <a href="http://wordfence.com/">Wordfence.com</a> for help, security updates and more.</div>
+<div class="diffFooter">&copy;&nbsp;2011 to <?php echo date('Y'); ?> Wordfence &mdash; Visit <a href="http://wordfence.com/">Wordfence.com</a> for help, security updates and more.</div>
 </body>
 </html>

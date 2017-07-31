@@ -3,9 +3,24 @@
 class wfWAFStorageFile implements wfWAFStorageInterface {
 
 	const LOG_FILE_HEADER = "<?php exit('Access denied'); __halt_compiler(); ?>\n";
+	const LOG_INFO_HEADER = "******************************************************************\nThis file is used by the Wordfence Web Application Firewall. Read \nmore at https://docs.wordfence.com/en/Web_Application_Firewall_FAQ\n******************************************************************\n";
 	const IP_BLOCK_RECORD_SIZE = 24;
+	
+	public static function allowFileWriting() {
+		if (defined('WFWAF_ALWAYS_ALLOW_FILE_WRITING') && WFWAF_ALWAYS_ALLOW_FILE_WRITING) {
+			return true;
+		}
+		
+		$sapi = @php_sapi_name();
+		if ($sapi == "cli") {
+			return false;
+		}
+		return true;
+	}
 
 	public static function atomicFilePutContents($file, $content, $prefix = 'config') {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$tmpFile = @tempnam(dirname($file), $prefix . '.tmp.');
 		if (!$tmpFile) {
 			$tmpFile = @tempnam(sys_get_temp_dir(), $prefix . '.tmp.');
@@ -227,6 +242,7 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * @throws wfWAFStorageFileException
 	 */
 	public function truncateAttackData() {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
 		$this->open();
 		$this->getAttackDataEngine()->truncate();
 		return $this->getAttackDataEngine()->getRowCount() === 0;
@@ -250,6 +266,8 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * @return mixed
 	 */
 	public function logAttack($failedRules, $failedParamKey, $failedParamValue, $request, $_ = null) {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$this->open();
 		$row = array(
 			$request->getTimestamp(),
@@ -293,6 +311,8 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * @throws wfWAFStorageFileException
 	 */
 	public function blockIP($timestamp, $ip, $type = wfWAFStorageInterface::IP_BLOCKS_SINGLE) {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$this->open();
 		if (!$this->isIPBlocked($ip)) {
 			self::lock($this->ipCacheFileHandle, LOCK_EX);
@@ -314,6 +334,7 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 		self::lock($this->ipCacheFileHandle, LOCK_SH);
 		while (!feof($this->ipCacheFileHandle)) {
 			$ipStr = fread($this->ipCacheFileHandle, self::IP_BLOCK_RECORD_SIZE);
+			if (wfWAFUtils::strlen($ipStr) < self::IP_BLOCK_RECORD_SIZE) { break; }
 			$ip2 = wfWAFUtils::substr($ipStr, 0, 16);
 			$unpacked = @unpack('V', wfWAFUtils::substr($ipStr, 16, 4));
 			if (is_array($unpacked)) {
@@ -348,7 +369,7 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 
 		$files = array(
 			array($this->getIPCacheFile(), 'ipCacheFileHandle', self::LOG_FILE_HEADER),
-			array($this->getConfigFile(), 'configFileHandle', self::LOG_FILE_HEADER . serialize($this->getDefaultConfiguration())),
+			array($this->getConfigFile(), 'configFileHandle', self::LOG_FILE_HEADER . self::LOG_INFO_HEADER . serialize($this->getDefaultConfiguration())),
 		);
 		foreach ($files as $file) {
 			list($filePath, $fileHandle, $defaultContents) = $file;
@@ -384,6 +405,8 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * Clean up old expired IP blocks.
 	 */
 	public function vacuum() {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$this->open();
 		$readPointer = wfWAFUtils::strlen(self::LOG_FILE_HEADER);
 		$writePointer = wfWAFUtils::strlen(self::LOG_FILE_HEADER);
@@ -413,6 +436,8 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * Remove all existing IP blocks.
 	 */
 	public function purgeIPBlocks($types = wfWAFStorageInterface::IP_BLOCKS_ALL) {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$this->open();
 		$readPointer = wfWAFUtils::strlen(self::LOG_FILE_HEADER);
 		$writePointer = wfWAFUtils::strlen(self::LOG_FILE_HEADER);
@@ -505,6 +530,9 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 		while (!feof($this->configFileHandle)) {
 			$serializedData .= fread($this->configFileHandle, 1024);
 		}
+		if (wfWAFUtils::substr($serializedData, 0, 1) == '*') {
+			$serializedData = wfWAFUtils::substr($serializedData, wfWAFUtils::strlen(self::LOG_INFO_HEADER));
+		}
 		$this->data = @unserialize($serializedData);
 
 		if ($this->data === false) {
@@ -518,6 +546,8 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 	 * @throws wfWAFStorageFileException
 	 */
 	public function saveConfig() {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		if (WFWAF_DEBUG) {
 			error_log('Saving WAF config for change in key ' . $this->dataChanged[0] . ', value: ' .
 				((is_object($this->data[$this->dataChanged[0]]) || $this->dataChanged[0] === 'cron') ?
@@ -532,9 +562,9 @@ class wfWAFStorageFile implements wfWAFStorageInterface {
 		if (WFWAF_IS_WINDOWS) {
 			self::lock($this->configFileHandle, LOCK_UN);
 			fclose($this->configFileHandle);
-			file_put_contents($this->getConfigFile(), self::LOG_FILE_HEADER . serialize($this->data), LOCK_EX);
+			file_put_contents($this->getConfigFile(), self::LOG_FILE_HEADER . self::LOG_INFO_HEADER . serialize($this->data), LOCK_EX);
 		} else {
-			wfWAFStorageFile::atomicFilePutContents($this->getConfigFile(), self::LOG_FILE_HEADER . serialize($this->data));
+			wfWAFStorageFile::atomicFilePutContents($this->getConfigFile(), self::LOG_FILE_HEADER . self::LOG_INFO_HEADER . serialize($this->data));
 		}
 
 		if (WFWAF_IS_WINDOWS) {
@@ -741,7 +771,7 @@ class wfWAFAttackDataStorageFileEngine {
 			throw new InvalidArgumentException(__METHOD__ . ' $binary expected to be string with length of 8, received '
 				. gettype($binary) . (is_string($binary) ? ' of length ' . wfWAFUtils::strlen($binary) : ''));
 		}
-		list(, $attackLogSeconds, $attackLogMicroseconds) = unpack('V*', $binary);
+		list(, $attackLogSeconds, $attackLogMicroseconds) = @unpack('V*', $binary);
 		return sprintf('%d.%s', $attackLogSeconds, str_pad($attackLogMicroseconds, 6, '0', STR_PAD_LEFT));
 	}
 
@@ -946,7 +976,7 @@ class wfWAFAttackDataStorageFileEngine {
 		}
 		$this->header['oldestTimestamp'] = self::unpackMicrotime($this->read(8));
 		$this->header['newestTimestamp'] = self::unpackMicrotime($this->read(8));
-		list(, $this->header['rowCount']) = unpack('V', $this->read(4));
+		list(, $this->header['rowCount']) = @unpack('V', $this->read(4));
 		$this->header['offsetTable'] = $this->unpackOffsetTable();
 		$this->unlock();
 		return $this->header;
@@ -962,7 +992,7 @@ class wfWAFAttackDataStorageFileEngine {
 		$rowCount = min($this->header['rowCount'], self::MAX_ROWS);
 		$this->seek(wfWAFUtils::strlen(wfWAFStorageFile::LOG_FILE_HEADER) + wfWAFUtils::strlen(self::FILE_SIGNATURE) + 8 + 8 + 4);
 		$offsetTableBinary = $this->read(($rowCount + 1) * 4);
-		$this->offsetTable = array_values(unpack('V*', $offsetTableBinary));
+		$this->offsetTable = array_values(@unpack('V*', $offsetTableBinary));
 		return $this->offsetTable;
 	}
 
@@ -1052,11 +1082,13 @@ class wfWAFAttackDataStorageFileEngine {
 	 * @throws wfWAFStorageFileException
 	 */
 	public function addRow($row) {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$this->open();
 
 		$this->seek(wfWAFUtils::strlen(wfWAFStorageFile::LOG_FILE_HEADER) + wfWAFUtils::strlen(self::FILE_SIGNATURE) + 8 + 8);
 		$this->lockRead();
-		list(, $rowCount) = unpack('V', $this->read(4));
+		list(, $rowCount) = @unpack('V', $this->read(4));
 		$this->unlock();
 		if ($rowCount >= self::MAX_ROWS) {
 			return false;
@@ -1066,14 +1098,14 @@ class wfWAFAttackDataStorageFileEngine {
 		
 		//Re-read the row count in case it changed between releasing the shared lock and getting the exclusive
 		$this->seek(wfWAFUtils::strlen(wfWAFStorageFile::LOG_FILE_HEADER) + wfWAFUtils::strlen(self::FILE_SIGNATURE) + 8 + 8);
-		list(, $rowCount) = unpack('V', $this->read(4));
+		list(, $rowCount) = @unpack('V', $this->read(4));
 
 		//Start the write
 		$this->header = array();
 		$this->offsetTable = array();
 
 		$this->seek(wfWAFUtils::strlen(wfWAFStorageFile::LOG_FILE_HEADER) + wfWAFUtils::strlen(self::FILE_SIGNATURE) + 8 + 8 + 4 + ($rowCount * 4));
-		list(, $nextRowOffset) = unpack('V', $this->read(4));
+		list(, $nextRowOffset) = @unpack('V', $this->read(4));
 
 		$rowString = $row->pack();
 
@@ -1112,6 +1144,8 @@ class wfWAFAttackDataStorageFileEngine {
 	 *
 	 */
 	public function truncate() {
+		if (!wfWAFStorageFile::allowFileWriting()) { return false; }
+		
 		$defaultHeader = $this->getDefaultHeader();
 		$this->close();
 		if (WFWAF_IS_WINDOWS) {
@@ -1211,7 +1245,7 @@ class wfWAFAttackDataStorageFileEngineScanRowAttackDataNewer implements wfWAFAtt
 	 */
 	public function scanRow($handle, $offset, $length) {
 		$attackLogTimeBin = fread($handle, 8);
-		list(, $attackLogSeconds, $attackLogMicroseconds) = unpack('VV', $attackLogTimeBin);
+		list(, $attackLogSeconds, $attackLogMicroseconds) = @unpack('VV', $attackLogTimeBin);
 		$attackLogTime = $attackLogSeconds . '.' . $attackLogMicroseconds;
 		return $this->newerThan < $attackLogTime;
 	}
@@ -1240,7 +1274,7 @@ class wfWAFAttackDataStorageFileEngineScanRowAttackDataOlder implements wfWAFAtt
 	 */
 	public function scanRow($handle, $offset, $length) {
 		$attackLogTimeBin = fread($handle, 8);
-		list(, $attackLogSeconds, $attackLogMicroseconds) = unpack('VV', $attackLogTimeBin);
+		list(, $attackLogSeconds, $attackLogMicroseconds) = @unpack('VV', $attackLogTimeBin);
 		$attackLogTime = $attackLogSeconds . '.' . $attackLogMicroseconds;
 		return $this->olderThan > $attackLogTime;
 	}

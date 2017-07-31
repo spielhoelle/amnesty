@@ -15,22 +15,54 @@ class wfUtils {
 		if($secs < 1){
 			return "a moment";
 		}
-		$months = floor($secs / (86400 * 30));
-		$days = floor($secs / 86400);
-		$hours = floor($secs / 3600);
-		$minutes = floor($secs / 60);
-		if($months) {
-			$days -= $months * 30;
+		
+		if (function_exists('date_diff')) {
+			$now = new DateTime();
+			$utc = new DateTimeZone('UTC');
+			$dtStr = gmdate("c", (int) ($now->getTimestamp() + $secs)); //Have to do it this way because of PHP 5.2
+			$then = new DateTime($dtStr, $utc);
+			
+			$diff = $then->diff($now);
+			$years = $diff->y;
+			$months = $diff->m;
+			$days = $diff->d;
+			$hours = $diff->h;
+			$minutes = $diff->i;
+		}
+		else {
+			$years = 0;
+			$months = floor($secs / (86400 * 30));
+			$days = floor($secs / 86400);
+			$hours = floor($secs / 3600);
+			$minutes = floor($secs / 60);
+			
+			if ($months) {
+				$days -= $months * 30;
+			}
+			else if ($days) {
+				$hours -= $days * 24;
+			}
+			else if ($hours) {
+				$minutes -= $hours * 60;
+			}
+		}
+		
+		if ($years) {
+			return self::pluralize($years, 'year', $months, 'month');
+		}
+		else if ($months) {
 			return self::pluralize($months, 'month', $days, 'day');
-		} else if($days) {
-			$hours -= $days * 24;
+		}
+		else if ($days) {
 			return self::pluralize($days, 'day', $hours, 'hour');
-		} else if($hours) {
-			$minutes -= $hours * 60;
+		}
+		else if ($hours) {
 			return self::pluralize($hours, 'hour', $minutes, 'min');
-		} else if($minutes) {
+		}
+		else if ($minutes) {
 			return self::pluralize($minutes, 'min');
-		} else {
+		}
+		else {
 			if($noSeconds){
 				return "less than a minute";
 			} else {
@@ -69,6 +101,10 @@ class wfUtils {
 		}
 		if ($secs) {
 			$components[] = self::pluralize($secs, 'second');
+		}
+		
+		if (empty($components)) {
+			$components[] = 'less than 1 second';
 		}
 		
 		return implode(' ', $components);
@@ -135,8 +171,8 @@ class wfUtils {
 			}
 		}
 		
-		$bin_network = substr(self::inet_pton($network), 0, ceil($prefix / 8));
-		$bin_ip = substr(self::inet_pton($ip), 0, ceil($prefix / 8));
+		$bin_network = wfUtils::substr(self::inet_pton($network), 0, ceil($prefix / 8));
+		$bin_ip = wfUtils::substr(self::inet_pton($ip), 0, ceil($prefix / 8));
 		if ($prefix % 8 != 0) { //Adjust the last relevant character to fit the mask length since the character's bits are split over it
 			$pos = intval($prefix / 8);
 			$adjustment = chr(((0xff << (8 - ($prefix % 8))) & 0xff));
@@ -543,7 +579,7 @@ class wfUtils {
 	 * @param array $arr
 	 * @return bool|mixed
 	 */
-	private static function getCleanIPAndServerVar($arr){
+	private static function getCleanIPAndServerVar($arr, $trustedProxies = null) {
 		$privates = array(); //Store private addrs until end as last resort.
 		for($i = 0; $i < count($arr); $i++){
 			list($item, $var) = $arr[$i];
@@ -568,11 +604,14 @@ class wfUtils {
 				continue; //This was an array so we can skip to the next item
 			}
 			$skipToNext = false;
+			if ($trustedProxies === null) {
+				$trustedProxies = explode("\n", wfConfig::get('howGetIPs_trusted_proxies', ''));
+			}
 			foreach(array(',', ' ', "\t") as $char){
 				if(strpos($item, $char) !== false){
 					$sp = explode($char, $item);
 					$sp = array_reverse($sp);
-					foreach($sp as $j){
+					foreach($sp as $index => $j){
 						$j = trim($j);
 						if (!self::isValidIP($j)) {
 							$j = preg_replace('/:\d+$/', '', $j); //Strip off port
@@ -580,6 +619,14 @@ class wfUtils {
 						if(self::isValidIP($j)){
 							if (self::isIPv6MappedIPv4($j)) {
 								$j = self::inet_ntop(self::inet_pton($j));
+							}
+							
+							foreach ($trustedProxies as $proxy) {
+								if (!empty($proxy)) {
+									if (self::subnetContainsIP($proxy, $j) && $index < count($sp) - 1) {
+										continue 2;
+									}
+								}
 							}
 
 							if(self::isPrivateAddress($j)){
@@ -632,9 +679,9 @@ class wfUtils {
 			return false;
 		}
 	}
-	public static function getIP(){
+	public static function getIP($refreshCache = false) {
 		static $theIP = null;
-		if (isset($theIP)) {
+		if (isset($theIP) && !$refreshCache) {
 			return $theIP;
 		}
 		//For debugging. 
@@ -642,7 +689,7 @@ class wfUtils {
 		//return self::makeRandomIP();
 
 		// if no REMOTE_ADDR, it's probably running from the command line
-		$ip = self::getIPAndServerVarible();
+		$ip = self::getIPAndServerVariable();
 		if (is_array($ip)) {
 			list($IP, $variable) = $ip;
 			$theIP = $IP;
@@ -650,20 +697,32 @@ class wfUtils {
 		}
 		return false;
 	}
+	
+	public static function getIPForField($field, $trustedProxies = null) {
+		$ip = self::getIPAndServerVariable($field, $trustedProxies);
+		if (is_array($ip)) {
+			list($IP, $variable) = $ip;
+			return $IP;
+		}
+		return false;
+	}
 
-	public static function getIPAndServerVarible() {
+	public static function getIPAndServerVariable($howGet = null, $trustedProxies = null) {
 		$connectionIP = array_key_exists('REMOTE_ADDR', $_SERVER) ? array($_SERVER['REMOTE_ADDR'], 'REMOTE_ADDR') : array('127.0.0.1', 'REMOTE_ADDR');
 
-		$howGet = wfConfig::get('howGetIPs', false);
+		if ($howGet === null) {
+			$howGet = wfConfig::get('howGetIPs', false);
+		}
+		
 		if($howGet){
 			if($howGet == 'REMOTE_ADDR'){
-				return self::getCleanIPAndServerVar(array($connectionIP));
+				return self::getCleanIPAndServerVar(array($connectionIP), $trustedProxies);
 			} else {
 				$ipsToCheck = array(
 					array((isset($_SERVER[$howGet]) ? $_SERVER[$howGet] : ''), $howGet),
 					$connectionIP,
 				);
-				return self::getCleanIPAndServerVar($ipsToCheck);
+				return self::getCleanIPAndServerVar($ipsToCheck, $trustedProxies);
 			}
 		} else {
 			$ipsToCheck = array();
@@ -681,12 +740,52 @@ class wfUtils {
 			if (isset($_SERVER['HTTP_X_REAL_IP'])) {
 				$ipsToCheck[] = array($_SERVER['HTTP_X_REAL_IP'], 'HTTP_X_REAL_IP');
 			}
-			return self::getCleanIPAndServerVar($ipsToCheck);
+			return self::getCleanIPAndServerVar($ipsToCheck, $trustedProxies);
 		}
 		return false; //Returns an array with a valid IP and the server variable, or false.
 	}
+	public static function getIPPreview($howGet = null, $trustedProxies = null) {
+		$ip = self::getIPAndServerVariable($howGet, $trustedProxies);
+		if (is_array($ip)) {
+			list($IP, $variable) = $ip;
+			if (isset($_SERVER[$variable]) && strpos($_SERVER[$variable], ',') !== false) {
+				$items = preg_replace('/[\s,]/', '', explode(',', $_SERVER[$variable]));
+				$output = '';
+				foreach ($items as $i) {
+					if ($IP == $i) {
+						$output .= ', <strong>' . esc_html($i) . '</strong>';
+					}
+					else {
+						$output .= ', ' . esc_html($i); 
+					}
+				}
+				
+				return substr($output, 2);
+			}
+			return '<strong>' . esc_html($IP) . '</strong>';
+		}
+		return false;
+	}
 	public static function isValidIP($IP){
 		return filter_var($IP, FILTER_VALIDATE_IP) !== false;
+	}
+	public static function isValidCIDRRange($range) {
+		$components = explode('/', $range);
+		if (count($components) != 2) { return false; }
+		
+		list($ip, $prefix) = $components;
+		if (!self::isValidIP($ip)) { return false; }
+		
+		if (!preg_match('/^\d+$/', $prefix)) { return false; }
+		
+		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+			if ($prefix < 0 || $prefix > 32) { return false; }
+		}
+		else {
+			if ($prefix < 1 || $prefix > 128) { return false; }
+		}
+		
+		return true;
 	}
 	public static function getRequestedURL() {
 		if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
@@ -698,7 +797,7 @@ class wfUtils {
 			return null;
 		}
 		$prefix = 'http';
-		if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
+		if (is_ssl()) {
 			$prefix = 'https';
 		}
 		return $prefix . '://' . $host . $_SERVER['REQUEST_URI'];
@@ -746,7 +845,12 @@ class wfUtils {
 		$c2 = array_shift($trace);
 		error_log("Caller for " . $caller['file'] . " line " . $caller['line'] . " is " . $c2['file'] . ' line ' . $c2['line']);
 	}
-	public static function getWPVersion(){
+	public static function getWPVersion($forceRecheck = false){
+		if ($forceRecheck) {
+			require(ABSPATH . 'wp-includes/version.php'); //defines $wp_version
+			return $wp_version;
+		}
+		
 		if(wordfence::$wordfence_wp_version){
 			return wordfence::$wordfence_wp_version;
 		} else {
@@ -894,6 +998,7 @@ class wfUtils {
 		$wfdb->truncate($wpdb->base_prefix . 'wfHoover');
 
 		wfConfig::set('wf_scanRunning', '');
+		wfIssues::updateScanStillRunning(false);
 	}
 	public static function isScanRunning(){
 		$scanRunning = wfConfig::get('wf_scanRunning');
@@ -1098,6 +1203,28 @@ class wfUtils {
 		}
 		geoip_close($gi);
 		return $country ? $country : '';
+	}
+	public static function geoIPVersion() {
+		require_once('wfGeoIP.php');
+		$version = array();
+		
+		$gi = geoip_open(dirname(__FILE__) . "/GeoIP.dat", WF_GEOIP_STANDARD);
+		$v = @geoip_database_info($gi);
+		if ($v !== null) {
+			$version[] = $v;
+		}
+		geoip_close($gi);
+		
+		if (self::hasIPv6Support()) {
+			$gi = geoip_open(dirname(__FILE__) . "/GeoIPv6.dat", WF_GEOIP_STANDARD);
+			$v = @geoip_database_info($gi);
+			if ($v !== null) {
+				$version[] = $v;
+			}
+			geoip_close($gi);
+		}
+		
+		return $version;
 	}
 	public static function siteURLRelative(){
 		if(is_multisite()){
@@ -1379,7 +1506,7 @@ class wfUtils {
 	 * @param bool $inline
 	 * @return string
 	 */
-	public static function potentialBinaryStringToHTML($string, $inline = false) {
+	public static function potentialBinaryStringToHTML($string, $inline = false, $allowmb4 = false) {
 		$output = '';
 		
 		if (!defined('ENT_SUBSTITUTE')) {
@@ -1391,14 +1518,14 @@ class wfUtils {
 			$span = '<span style="color:#587ECB">';
 		}
 		
-		for ($i = 0; $i < strlen($string); $i++) {
+		for ($i = 0; $i < wfUtils::strlen($string); $i++) {
 			$c = $string[$i];
 			$b = ord($c);
 			if ($b < 0x20) {
 				$output .= $span . '\x' . str_pad(dechex($b), 2, '0', STR_PAD_LEFT) . '</span>';
 			}
 			else if ($b < 0x80) {
-				$output .= htmlspecialchars($c, ENT_QUOTES, 'UTF-8');
+				$output .= htmlspecialchars($c, ENT_QUOTES, 'ISO-8859-1');
 			}
 			else { //Assume multi-byte UTF-8
 				$bytes = 0;
@@ -1409,7 +1536,7 @@ class wfUtils {
 					$test = (($test << 1) & 0xff);
 				}
 				
-				$brokenUTF8 = ($i + $bytes > strlen($string) || $bytes == 1);
+				$brokenUTF8 = ($i + $bytes > wfUtils::strlen($string) || $bytes == 1);
 				if (!$brokenUTF8) { //Make sure we have all the bytes
 					for ($n = 1; $n < $bytes; $n++) {
 						$c2 = $string[$i + $n];
@@ -1419,6 +1546,37 @@ class wfUtils {
 							$bytes = $n;
 							break;
 						}
+					}
+				}
+				
+				if (!$brokenUTF8) { //Ensure the byte sequences are within the accepted ranges: https://tools.ietf.org/html/rfc3629
+					/*
+					 * UTF8-octets = *( UTF8-char )
+   					 * UTF8-char   = UTF8-1 / UTF8-2 / UTF8-3 / UTF8-4
+   					 * UTF8-1      = %x00-7F
+   					 * UTF8-2      = %xC2-DF UTF8-tail
+   					 * UTF8-3      = %xE0 %xA0-BF UTF8-tail / %xE1-EC 2( UTF8-tail ) /
+   					 *               %xED %x80-9F UTF8-tail / %xEE-EF 2( UTF8-tail )
+   					 * UTF8-4      = %xF0 %x90-BF 2( UTF8-tail ) / %xF1-F3 3( UTF8-tail ) /
+   					 *               %xF4 %x80-8F 2( UTF8-tail )
+   					 * UTF8-tail   = %x80-BF
+					 */
+					
+					$testString = wfUtils::substr($string, $i, $bytes);
+					$regex = '/^(?:' .
+						'[\xc2-\xdf][\x80-\xbf]' . //UTF8-2
+						'|' . '\xe0[\xa0-\xbf][\x80-\xbf]' . //UTF8-3
+						'|' . '[\xe1-\xec][\x80-\xbf]{2}' .
+						'|' . '\xed[\x80-\x9f][\x80-\xbf]' .
+						'|' . '[\xee-\xef][\x80-\xbf]{2}';
+					if ($allowmb4) {
+						$regex .= '|' . '\xf0[\x90-\xbf][\x80-\xbf]{2}' . //UTF8-4
+							'|' . '[\xf1-\xf3][\x80-\xbf]{3}' .
+							'|' . '\xf4[\x80-\x8f][\x80-\xbf]{2}';
+					}
+					$regex  .= ')$/';
+					if (!preg_match($regex, $testString)) {
+						$brokenUTF8 = true;
 					}
 				}
 				
@@ -1432,7 +1590,7 @@ class wfUtils {
 					$i += ($bytes - 1);
 				}
 				else {
-					$output .= htmlspecialchars(substr($string, $i, $bytes), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+					$output .= htmlspecialchars(wfUtils::substr($string, $i, $bytes), ENT_QUOTES | ENT_SUBSTITUTE, 'ISO-8859-1');
 					$i += ($bytes - 1);
 				}
 			}
@@ -1457,7 +1615,7 @@ class wfUtils {
 			if ($waf->getStorageEngine()->getConfig('attackDataKey', false) === false) {
 				$waf->getStorageEngine()->setConfig('attackDataKey', mt_rand(0, 0xfff));
 			}
-			$response = wp_remote_get(sprintf(WFWAF_API_URL_SEC . "proxy-check/%d.txt", $waf->getStorageEngine()->getConfig('attackDataKey')));
+			$response = wp_remote_get(sprintf(WFWAF_API_URL_SEC . "proxy-check/%d.txt", $waf->getStorageEngine()->getConfig('attackDataKey')), array('headers' => array('Referer' => false)));
 			
 			if (!is_wp_error($response)) {
 				$okToSendBody = wp_remote_retrieve_body($response);
@@ -1512,6 +1670,7 @@ class wfUtils {
 				'body'    => json_encode($payload),
 				'headers' => array(
 					'Content-Type' => 'application/json',
+					'Referer' => false,
 				),
 				'timeout' => $timeout,
 				'blocking' => $blocking,
@@ -1689,6 +1848,269 @@ class wfUtils {
 		
 		return 'unknown';
 	}
+	
+	public static function hex2bin($string) { //Polyfill for PHP < 5.4
+		if (!is_string($string)) { return false; }
+		if (strlen($string) % 2 == 1) { return false; }
+		return pack('H*', $string);
+	}
+	
+	/**
+	 * Returns whether or not the site should be treated as if it's full-time SSL.
+	 * 
+	 * @return bool
+	 */
+	public static function isFullSSL() {
+		return is_ssl() && parse_url(self::wpHomeURL(), PHP_URL_SCHEME) === 'https'; //It's possible for only wp-admin to be SSL so we check the home URL too
+	}
+
+	/**
+	 * Identical to the same functions in wfWAFUtils.
+	 * 
+	 * Set the mbstring internal encoding to a binary safe encoding when func_overload
+	 * is enabled.
+	 *
+	 * When mbstring.func_overload is in use for multi-byte encodings, the results from
+	 * strlen() and similar functions respect the utf8 characters, causing binary data
+	 * to return incorrect lengths.
+	 *
+	 * This function overrides the mbstring encoding to a binary-safe encoding, and
+	 * resets it to the users expected encoding afterwards through the
+	 * `reset_mbstring_encoding` function.
+	 *
+	 * It is safe to recursively call this function, however each
+	 * `mbstring_binary_safe_encoding()` call must be followed up with an equal number
+	 * of `reset_mbstring_encoding()` calls.
+	 *
+	 * @see wfWAFUtils::reset_mbstring_encoding
+	 *
+	 * @staticvar array $encodings
+	 * @staticvar bool  $overloaded
+	 *
+	 * @param bool $reset Optional. Whether to reset the encoding back to a previously-set encoding.
+	 *                    Default false.
+	 */
+	public static function mbstring_binary_safe_encoding($reset = false) {
+		static $encodings = array();
+		static $overloaded = null;
+		
+		if (is_null($overloaded))
+			$overloaded = function_exists('mb_internal_encoding') && (ini_get('mbstring.func_overload') & 2);
+		
+		if (false === $overloaded)
+			return;
+		
+		if (!$reset) {
+			$encoding = mb_internal_encoding();
+			array_push($encodings, $encoding);
+			mb_internal_encoding('ISO-8859-1');
+		}
+		
+		if ($reset && $encodings) {
+			$encoding = array_pop($encodings);
+			mb_internal_encoding($encoding);
+		}
+	}
+	
+	/**
+	 * Reset the mbstring internal encoding to a users previously set encoding.
+	 *
+	 * @see wfWAFUtils::mbstring_binary_safe_encoding
+	 */
+	public static function reset_mbstring_encoding() {
+		self::mbstring_binary_safe_encoding(true);
+	}
+	
+	/**
+	 * @param callable $function
+	 * @param array $args
+	 * @return mixed
+	 */
+	protected static function callMBSafeStrFunction($function, $args) {
+		self::mbstring_binary_safe_encoding();
+		$return = call_user_func_array($function, $args);
+		self::reset_mbstring_encoding();
+		return $return;
+	}
+	
+	/**
+	 * Multibyte safe strlen.
+	 *
+	 * @param $binary
+	 * @return int
+	 */
+	public static function strlen($binary) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('strlen', $args);
+	}
+	
+	/**
+	 * @param $haystack
+	 * @param $needle
+	 * @param int $offset
+	 * @return int
+	 */
+	public static function stripos($haystack, $needle, $offset = 0) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('stripos', $args);
+	}
+	
+	/**
+	 * @param $string
+	 * @return mixed
+	 */
+	public static function strtolower($string) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('strtolower', $args);
+	}
+	
+	/**
+	 * @param $string
+	 * @param $start
+	 * @param $length
+	 * @return mixed
+	 */
+	public static function substr($string, $start, $length = null) {
+		if ($length === null) { $length = self::strlen($string); }
+		return self::callMBSafeStrFunction('substr', array(
+			$string, $start, $length
+		));
+	}
+	
+	/**
+	 * @param $haystack
+	 * @param $needle
+	 * @param int $offset
+	 * @return mixed
+	 */
+	public static function strpos($haystack, $needle, $offset = 0) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('strpos', $args);
+	}
+	
+	/**
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param int $offset
+	 * @param int $length
+	 * @return mixed
+	 */
+	public static function substr_count($haystack, $needle, $offset = 0, $length = null) {
+		if ($length === null) { $length = self::strlen($haystack); }
+		return self::callMBSafeStrFunction('substr_count', array(
+			$haystack, $needle, $offset, $length
+		));
+	}
+	
+	/**
+	 * @param $string
+	 * @return mixed
+	 */
+	public static function strtoupper($string) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('strtoupper', $args);
+	}
+	
+	/**
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param int $offset
+	 * @return mixed
+	 */
+	public static function strrpos($haystack, $needle, $offset = 0) {
+		$args = func_get_args();
+		return self::callMBSafeStrFunction('strrpos', $args);
+	}
+	
+	public static function array_first($array) {
+		if (empty($array)) {
+			return null;
+		}
+		
+		$values = array_values($array);
+		return $values[0];
+	}
+	
+	public static function array_last($array) {
+		if (empty($array)) {
+			return null;
+		}
+		
+		$values = array_values($array);
+		return $values[count($values) - 1];
+	}
+	
+	/**
+	 * Returns the current timestamp, adjusted as needed to get close to what we consider a true timestamp. We use this
+	 * because a significant number of servers are using a drastically incorrect time.
+	 *
+	 * @return int
+	 */
+	public static function normalizedTime($base = false) {
+		if ($base === false) {
+			$base = time();
+		}
+		
+		$offset = wfConfig::get('timeoffset_ntp', false);
+		if ($offset === false) {
+			$offset = wfConfig::get('timeoffset_wf', false);
+			if ($offset === false) { $offset = 0; }
+		}
+		return $base + $offset;
+	}
+	
+	/**
+	 * Returns what we consider a true timestamp, adjusted as needed to match the local server's drift. We use this
+	 * because a significant number of servers are using a drastically incorrect time.
+	 *
+	 * @return int
+	 */
+	public static function denormalizedTime($base) {
+		$offset = wfConfig::get('timeoffset_ntp', false);
+		if ($offset === false) {
+			$offset = wfConfig::get('timeoffset_wf', false);
+			if ($offset === false) { $offset = 0; }
+		}
+		return $base - $offset;
+	}
+	
+	/**
+	 * Formats and returns the given timestamp using the time zone set for the WordPress installation.
+	 * 
+	 * @param string $format See the PHP docs on DateTime for the format options. 
+	 * @param int|bool $timestamp Assumed to be in UTC. If false, defaults to the current timestamp.
+	 * @return string
+	 */
+	public static function formatLocalTime($format, $timestamp = false) {
+		if ($timestamp === false) {
+			$timestamp = time();
+		}
+		
+		$utc = new DateTimeZone('UTC');
+		$dtStr = gmdate("c", (int) $timestamp); //Have to do it this way because of PHP 5.2
+		$dt = new DateTime($dtStr, $utc);
+		$tz = get_option('timezone_string');
+		if (!empty($tz)) {
+			$dt->setTimezone(new DateTimeZone($tz));
+		}
+		else {
+			$gmt = get_option('gmt_offset');
+			if (!empty($gmt)) {
+				if (PHP_VERSION_ID < 50510) {
+					$dtStr = gmdate("c", (int) ($timestamp + $gmt * 3600)); //Have to do it this way because of < PHP 5.5.10
+					$dt = new DateTime($dtStr, $utc);
+				}
+				else {
+					$direction = ($gmt > 0 ? '+' : '-');
+					$gmt = abs($gmt);
+					$h = (int) $gmt;
+					$m = ($gmt - $h) * 60;
+					$dt->setTimezone(new DateTimeZone($direction . str_pad($h, 2, '0', STR_PAD_LEFT) . str_pad($m, 2, '0', STR_PAD_LEFT)));
+				}
+			}
+		}
+		return $dt->format($format);
+	}
 }
 
 // GeoIP lib uses these as well
@@ -1720,11 +2142,12 @@ class wfWebServerInfo {
 	 */
 	public static function createFromEnvironment() {
 		$serverInfo = new self;
+		$sapi = php_sapi_name();
 		if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
 			$serverInfo->setSoftware(self::APACHE);
 			$serverInfo->setSoftwareName('apache');
 		}
-		if (stripos($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false) {
+		if (stripos($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false || $sapi == 'litespeed') {
 			$serverInfo->setSoftware(self::LITESPEED);
 			$serverInfo->setSoftwareName('litespeed');
 		}
@@ -1737,7 +2160,7 @@ class wfWebServerInfo {
 			$serverInfo->setSoftwareName('iis');
 		}
 
-		$serverInfo->setHandler(php_sapi_name());
+		$serverInfo->setHandler($sapi);
 
 		return $serverInfo;
 	}

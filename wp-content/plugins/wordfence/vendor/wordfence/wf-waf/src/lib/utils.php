@@ -333,7 +333,7 @@ class wfWAFUtils {
 		if ($bytes === false || wfWAFUtils::strlen($bytes) != 4) {
 			throw new RuntimeException("Unable to get 4 bytes");
 		}
-		$val = unpack("Nint", $bytes);
+		$val = @unpack("Nint", $bytes);
 		$val = $val['int'] & 0x7FFFFFFF;
 		$fp = (float) $val / 2147483647.0; // convert to [0,1]
 		return (int) (round($fp * $diff) + $min);
@@ -477,8 +477,10 @@ class wfWAFUtils {
 	 * @return mixed
 	 */
 	public static function substr($string, $start, $length = null) {
-		$args = func_get_args();
-		return self::callMBSafeStrFunction('substr', $args);
+		if ($length === null) { $length = self::strlen($string); }
+		return self::callMBSafeStrFunction('substr', array(
+			$string, $start, $length
+		));
 	}
 
 	/**
@@ -500,9 +502,9 @@ class wfWAFUtils {
 	 * @return mixed
 	 */
 	public static function substr_count($haystack, $needle, $offset = 0, $length = null) {
-		$haystack = self::substr($haystack, $offset, $length);
+		if ($length === null) { $length = self::strlen($haystack); }
 		return self::callMBSafeStrFunction('substr_count', array(
-			$haystack, $needle,
+			$haystack, $needle, $offset, $length
 		));
 	}
 
@@ -606,9 +608,7 @@ class wfWAFUtils {
 		$is_apache = (strpos($_SERVER['SERVER_SOFTWARE'], 'Apache') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') !== false);
 		$is_IIS = !$is_apache && (strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'ExpressionDevServer') !== false);
 		
-		header("Pragma: no-cache");
-		header("Cache-Control: no-cache, must-revalidate, private");
-		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); //In the past
+		self::doNotCache();
 		
 		if (!$is_IIS && PHP_SAPI != 'cgi-fcgi') {
 			self::statusHeader($status); // This causes problems on IIS and some FastCGI setups
@@ -698,6 +698,16 @@ class wfWAFUtils {
 		@header($header, true, $code);
 	}
 	
+	public static function doNotCache() {
+		header("Pragma: no-cache");
+		header("Cache-Control: no-cache, must-revalidate, private");
+		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); //In the past
+		if (!defined('DONOTCACHEPAGE')) { define('DONOTCACHEPAGE', true); }
+		if (!defined('DONOTCACHEDB')) { define('DONOTCACHEDB', true); }
+		if (!defined('DONOTCDN')) { define('DONOTCDN', true); }
+		if (!defined('DONOTCACHEOBJECT')) { define('DONOTCACHEOBJECT', true); }
+	}
+	
 	/**
 	 * Check if an IP address is in a network block
 	 *
@@ -733,8 +743,8 @@ class wfWAFUtils {
 			}
 		}
 		
-		$bin_network = substr(self::inet_pton($network), 0, ceil($prefix / 8));
-		$bin_ip = substr(self::inet_pton($ip), 0, ceil($prefix / 8));
+		$bin_network = wfWAFUtils::substr(self::inet_pton($network), 0, ceil($prefix / 8));
+		$bin_ip = wfWAFUtils::substr(self::inet_pton($ip), 0, ceil($prefix / 8));
 		if ($prefix % 8 != 0) { //Adjust the last relevant character to fit the mask length since the character's bits are split over it
 			$pos = intval($prefix / 8);
 			$adjustment = chr(((0xff << (8 - ($prefix % 8))) & 0xff));
@@ -743,6 +753,84 @@ class wfWAFUtils {
 		}
 		
 		return ($bin_network === $bin_ip);
+	}
+	
+	/**
+	 * Behaves exactly like PHP's parse_url but uses WP's compatibility fixes for early PHP 5 versions.
+	 * 
+	 * @param string $url
+	 * @param int $component
+	 * @return mixed
+	 */
+	public static function parse_url($url, $component = -1) {
+		$to_unset = array();
+		$url = strval($url);
+		
+		if (substr($url, 0, 2) === '//') {
+			$to_unset[] = 'scheme';
+			$url = 'placeholder:' . $url;
+		}
+		elseif (substr($url, 0, 1) === '/') {
+			$to_unset[] = 'scheme';
+			$to_unset[] = 'host';
+			$url = 'placeholder://placeholder' . $url;
+		}
+		
+		$parts = @parse_url($url);
+		
+		if ($parts === false) { // Parsing failure
+			return $parts;
+		}
+		
+		// Remove the placeholder values
+		foreach ($to_unset as $key) {
+			unset($parts[$key]);
+		}
+		
+		if ($component === -1) {
+			return $parts;
+		}
+		
+		$translation = array(
+			PHP_URL_SCHEME   => 'scheme',
+			PHP_URL_HOST     => 'host',
+			PHP_URL_PORT     => 'port',
+			PHP_URL_USER     => 'user',
+			PHP_URL_PASS     => 'pass',
+			PHP_URL_PATH     => 'path',
+			PHP_URL_QUERY    => 'query',
+			PHP_URL_FRAGMENT => 'fragment',
+		);
+		
+		$key = false;
+		if (isset($translation[$component])) {
+			$key = $translation[$component];
+		}
+		
+		if ($key !== false && is_array($parts) && isset($parts[$key])) {
+			return $parts[$key];
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Validates the URL, supporting both scheme-relative and path-relative formats.
+	 * 
+	 * @param $url
+	 * @return mixed
+	 */
+	public static function validate_url($url) {
+		$url = strval($url);
+		
+		if (substr($url, 0, 2) === '//') {
+			$url = 'placeholder:' . $url;
+		}
+		elseif (substr($url, 0, 1) === '/') {
+			$url = 'placeholder://placeholder' . $url;
+		}
+		
+		return filter_var($url, FILTER_VALIDATE_URL);
 	}
 	
 	public static function rawPOSTBody() {
@@ -758,5 +846,26 @@ class wfWAFUtils {
 			$data =& $HTTP_RAW_POST_DATA;
 		}
 		return $data;
+	}
+	
+	/**
+	 * Returns the current timestamp, adjusted as needed to get close to what we consider a true timestamp. We use this
+	 * because a significant number of servers are using a drastically incorrect time.
+	 * 
+	 * @return int
+	 */
+	public static function normalizedTime() {
+		$offset = 0;
+		try {
+			$offset = wfWAF::getInstance()->getStorageEngine()->getConfig('timeoffset_ntp', false);
+			if ($offset === false) {
+				$offset = wfWAF::getInstance()->getStorageEngine()->getConfig('timeoffset_wf', false);
+				if ($offset === false) { $offset = 0; }
+			}
+		}
+		catch (Exception $e) {
+			//Ignore
+		}
+		return time() + $offset;
 	}
 }

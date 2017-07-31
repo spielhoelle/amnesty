@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Plugins - Imsanity - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2017-01-15 03:02:34+0000\n"
+"PO-Revision-Date: 2017-04-06 20:23:48+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: GlotPress/2.3.0-alpha\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
 "Language: de\n"
 "Project-Id-Version: Plugins - Imsanity - Stable (latest release)\n"
 
@@ -74,19 +74,19 @@ msgstr "Skalierung abgeschlossen"
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: imsanity.php:248
+#: imsanity.php:257
 msgid "Imsanity was unable to process the %s file. If you continue to see this error you may need to disable the conversion option in the Imsanity settings."
 msgstr "Imsanity konnte die Datei %s nicht bearbeiten. Falls du diesen Fehler dauerhaft siehst, musst du vielleicht die Konvertierungs-Option in den Imsanity-Einstellungen deaktivieren."
 
-#: imsanity.php:224
+#: imsanity.php:233
 msgid "Unknown image type specified in imsanity_convert_to_jpg"
 msgstr "Unbekannter Bildtyp angegeben in imsanity_convert_to_jpg"
 
-#: imsanity.php:212
+#: imsanity.php:222
 msgid "Imsanity requires the GD library to convert PNG images to JPG"
 msgstr "Imsanity erfordert die GD-Bibliothek, um PNG-Bilder nach JPG zu konvertieren"
 
-#: imsanity.php:183
+#: imsanity.php:193
 msgid "Imsanity was unable to resize this image for the following reason: %s. If you continue to see this error message, you may need to install missing server components. If you think you have discovered a bug, please report it on the Imsanity support forum: %s"
 msgstr "Imsanity konnte dieses Bild nicht skalieren, aus dem folgenden Grund: %s. Falls du diesen Fehler dauerhaft siehst, musst du vielleicht fehlende Serverkomponenten installieren. Falls du denkst, du hast einen Fehler entdeckt, melde diesen bitte im Imsanity-Supportforum: %s"
 
@@ -244,7 +244,7 @@ msgstr "imagecreatefrombmp: Kann %s nicht öffnen!"
 
 #: ajax.php:175
 msgid "ERROR: Attachment with ID of %s not found"
-msgstr "FEHLER: Anhang mit ID %s nicht gefunden"
+msgstr "Fehler: Anhang mit ID %s wurde nicht gefunden"
 
 #: ajax.php:172
 msgid "SKIPPED: %s (Resize not required)"

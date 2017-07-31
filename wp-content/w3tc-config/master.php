@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "0.9.5.2",
+    "version": "0.9.5.4",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -276,10 +276,12 @@
     "minify.csstidy.options.lowercase_s": false,
     "minify.csstidy.options.optimise_shorthands": 1,
     "minify.csstidy.options.remove_last_;": false,
+    "minify.csstidy.options.remove_space_before_important": false,
     "minify.csstidy.options.case_properties": 1,
     "minify.csstidy.options.sort_properties": false,
     "minify.csstidy.options.sort_selectors": false,
     "minify.csstidy.options.merge_selectors": 2,
+    "minify.csstidy.options.discard_invalid_selectors": false,
     "minify.csstidy.options.discard_invalid_properties": false,
     "minify.csstidy.options.css_level": "CSS2.1",
     "minify.csstidy.options.preserve_css": false,
@@ -450,6 +452,7 @@
     "browsercache.cssjs.etag": false,
     "browsercache.cssjs.w3tc": false,
     "browsercache.cssjs.replace": false,
+    "browsercache.cssjs.querystring": false,
     "browsercache.html.compression": true,
     "browsercache.html.last_modified": true,
     "browsercache.html.expires": false,
@@ -469,6 +472,7 @@
     "browsercache.other.etag": false,
     "browsercache.other.w3tc": false,
     "browsercache.other.replace": false,
+    "browsercache.other.querystring": false,
     "browsercache.replace.exceptions": [],
     "mobile.configuration_overloaded": false,
     "mobile.enabled": false,
@@ -686,7 +690,8 @@
     "extensions.active": {
         "fragmentcache": "w3-total-cache\/Extension_FragmentCache_Plugin.php",
         "newrelic": "w3-total-cache\/Extension_NewRelic_Plugin.php",
-        "wordpress-seo": "w3-total-cache\/Extension_WordPressSeo_Plugin.php"
+        "wordpress-seo": "w3-total-cache\/Extension_WordPressSeo_Plugin.php",
+        "swarmify": "w3-total-cache\/Extension_Swarmify_Plugin.php"
     },
     "extensions.active_frontend": {
         "wordpress-seo": "*"

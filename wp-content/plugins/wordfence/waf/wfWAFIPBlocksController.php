@@ -6,6 +6,18 @@ class wfWAFIPBlocksController
 	const WFWAF_BLOCK_COUNTRY_REDIR = 'blocked access via country blocking and redirected to URL';
 	const WFWAF_BLOCK_COUNTRY_BYPASS_REDIR = 'redirected to bypass URL';
 	const WFWAF_BLOCK_WFSN = 'Blocked by Wordfence Security Network';
+	const WFWAF_BLOCK_BADPOST = 'POST received with blank user-agent and referer';
+	const WFWAF_BLOCK_BANNEDURL = 'Accessed a banned URL.';
+	const WFWAF_BLOCK_FAKEGOOGLE = 'Fake Google crawler automatically blocked';
+	const WFWAF_BLOCK_LOGINSEC = 'Blocked by login security setting.';
+	const WFWAF_BLOCK_LOGINSEC_FORGOTPASSWD = 'Exceeded the maximum number of tries to recover their password'; //substring search
+	const WFWAF_BLOCK_LOGINSEC_FAILURES = 'Exceeded the maximum number of login failures'; //substring search
+	const WFWAF_BLOCK_THROTTLEGLOBAL = 'Exceeded the maximum global requests per minute for crawlers or humans.';
+	const WFWAF_BLOCK_THROTTLESCAN = 'Exceeded the maximum number of 404 requests per minute for a known security vulnerability.';
+	const WFWAF_BLOCK_THROTTLECRAWLER = 'Exceeded the maximum number of requests per minute for crawlers.';
+	const WFWAF_BLOCK_THROTTLECRAWLERNOTFOUND = 'Exceeded the maximum number of page not found errors per minute for a crawler.';
+	const WFWAF_BLOCK_THROTTLEHUMAN = 'Exceeded the maximum number of page requests per minute for humans.';
+	const WFWAF_BLOCK_THROTTLEHUMANNOTFOUND = 'Exceeded the maximum number of page not found errors per minute for humans.';
 	
 	protected static $_currentController = null;
 
@@ -221,14 +233,14 @@ class wfWAFIPBlocksController
 				
 				if ($bareBypassRedirURI && $bareRequestURI == $bareBypassRedirURI) { // Run this before country blocking because even if the user isn't blocked we need to set the bypass cookie so they can bypass future blocks.
 					if ($countryBlocks['bypassRedirDest']) {
-						setcookie('wfCBLBypass', $countryBlocks['cookieVal'], time() + (86400 * 365), '/', null, null, true);
+						setcookie('wfCBLBypass', $countryBlocks['cookieVal'], time() + (86400 * 365), '/', null, $this->isFullSSL(), true);
 						return array('action' => self::WFWAF_BLOCK_COUNTRY_BYPASS_REDIR);
 					}
 				}
 				
 				$bareBypassViewURI = wfWAFUtils::extractBareURI($countryBlocks['bypassViewURL']);
 				if ($bareBypassViewURI && $bareBypassViewURI == $bareRequestURI) {
-					setcookie('wfCBLBypass', $countryBlocks['cookieVal'], time() + (86400 * 365), '/', null, null, true);
+					setcookie('wfCBLBypass', $countryBlocks['cookieVal'], time() + (86400 * 365), '/', null, $this->isFullSSL(), true);
 					$skipCountryBlocking = true;
 				}
 				
@@ -424,5 +436,35 @@ class wfWAFIPBlocksController
 		}
 		geoip_close($gi);
 		return $country ? $country : '';
+	}
+	
+	/**
+	 * Returns whether or not the site should be treated as if it's full-time SSL.
+	 *
+	 * @return bool
+	 */
+	protected function isFullSSL() {
+		try {
+			$is_ssl = false; //This is the same code from WP modified so we can use it here
+			if ( isset( $_SERVER['HTTPS'] ) ) {
+				if ( 'on' == strtolower( $_SERVER['HTTPS'] ) ) {
+					$is_ssl = true;
+				}
+				
+				if ( '1' == $_SERVER['HTTPS'] ) {
+					$is_ssl = true;
+				}
+			} elseif ( isset($_SERVER['SERVER_PORT'] ) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
+				$is_ssl = true;
+			}
+			
+			$homeURL = wfWAF::getInstance()->getStorageEngine()->getConfig('homeURL');
+			return $is_ssl && parse_url($homeURL, PHP_URL_SCHEME) === 'https';
+		}
+		catch (Exception $e) {
+			//Do nothing
+		}
+		
+		return false;
 	}
 }

@@ -81,11 +81,12 @@ class wfWAFWordPressRequest extends wfWAFRequest {
 				continue; //This was an array so we can skip to the next item
 			}
 			$skipToNext = false;
+			$trustedProxies = explode("\n", wfWAF::getInstance()->getStorageEngine()->getConfig('howGetIPs_trusted_proxies', ''));
 			foreach (array(',', ' ', "\t") as $char) {
 				if (strpos($item, $char) !== false) {
 					$sp = explode($char, $item);
 					$sp = array_reverse($sp);
-					foreach ($sp as $j) {
+					foreach ($sp as $index => $j) {
 						$j = trim($j);
 						if (!$this->_isValidIP($j)) {
 							$j = preg_replace('/:\d+$/', '', $j); //Strip off port
@@ -93,6 +94,14 @@ class wfWAFWordPressRequest extends wfWAFRequest {
 						if ($this->_isValidIP($j)) {
 							if ($this->_isIPv6MappedIPv4($j)) {
 								$j = wfWAFUtils::inet_ntop(wfWAFUtils::inet_pton($j));
+							}
+							
+							foreach ($trustedProxies as $proxy) {
+								if (!empty($proxy)) {
+									if (wfWAFUtils::subnetContainsIP($proxy, $j) && $index < count($sp) - 1) {
+										continue 2;
+									}
+								}
 							}
 							
 							if ($this->_isPrivateIP($j)) {
@@ -552,7 +561,7 @@ try {
 		// WFWAF_PATH . 'rules.php',
 	);
 	foreach ($rulesFiles as $rulesFile) {
-		if (!file_exists($rulesFile)) {
+		if (!file_exists($rulesFile) && !wfWAF::getInstance()->isReadOnly()) {
 			@touch($rulesFile);
 		}
 		@chmod($rulesFile, 0664);
@@ -561,24 +570,26 @@ try {
 			break;
 		}
 	}
-
-	if (!file_exists(wfWAF::getInstance()->getCompiledRulesFile()) || !filesize(wfWAF::getInstance()->getCompiledRulesFile())) {
-		try {
-			if (is_writable(wfWAF::getInstance()->getCompiledRulesFile()) &&
-				wfWAF::getInstance()->getStorageEngine()->getConfig('apiKey') !== null &&
-				wfWAF::getInstance()->getStorageEngine()->getConfig('createInitialRulesDelay') < time()
-			) {
-				$event = new wfWAFCronFetchRulesEvent(time() - 60);
-				$event->setWaf(wfWAF::getInstance());
-				$event->fire();
-				wfWAF::getInstance()->getStorageEngine()->setConfig('createInitialRulesDelay', time() + (5 * 60));
+		
+	if (!wfWAF::getInstance()->isReadOnly()) {
+		if (!file_exists(wfWAF::getInstance()->getCompiledRulesFile()) || !filesize(wfWAF::getInstance()->getCompiledRulesFile())) {
+			try {
+				if (is_writable(wfWAF::getInstance()->getCompiledRulesFile()) &&
+					wfWAF::getInstance()->getStorageEngine()->getConfig('apiKey') !== null &&
+					wfWAF::getInstance()->getStorageEngine()->getConfig('createInitialRulesDelay') < time()
+				) {
+					$event = new wfWAFCronFetchRulesEvent(time() - 60);
+					$event->setWaf(wfWAF::getInstance());
+					$event->fire();
+					wfWAF::getInstance()->getStorageEngine()->setConfig('createInitialRulesDelay', time() + (5 * 60));
+				}
+			} catch (wfWAFBuildRulesException $e) {
+				// Log this somewhere
+				error_log($e->getMessage());
+			} catch (Exception $e) {
+				// Suppress this
+				error_log($e->getMessage());
 			}
-		} catch (wfWAFBuildRulesException $e) {
-			// Log this somewhere
-			error_log($e->getMessage());
-		} catch (Exception $e) {
-			// Suppress this
-			error_log($e->getMessage());
 		}
 	}
 

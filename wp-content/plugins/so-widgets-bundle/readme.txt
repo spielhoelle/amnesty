@@ -1,20 +1,22 @@
 === SiteOrigin Widgets Bundle ===
 Tags: bundle, widget, button, slider, image, carousel, price table, google maps, tinymce, social links
-Requires at least: 3.9
-Tested up to: 4.7.2
-Stable tag: 1.8.1
-Build time: 2017-02-03T17:54:58+02:00
+Requires at least: 4.2
+Tested up to: 4.8
+Stable tag: 1.9.5
+Build time: 2017-07-25T10:31:10+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis
 Donate link: https://siteorigin.com/downloads/contribution/
 
+The SiteOrigin widget bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
+
 == Description ==
 
-[vimeo https://vimeo.com/102103379]
-
-Widgets are great. No matter where you’re using them. In a [Page Builder](http://siteorigin.com/page-builder/) page or on your widgetized areas.
-
 The SiteOrigin widget bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
+
+Widgets are great. No matter where you’re using them. In a [Page Builder](http://siteorigin.com/page-builder/) page or on your widgetized areas. It's even compatible with other popular page building plugins.
+
+[vimeo https://vimeo.com/102103379]
 
 The collection is growing, but here’s what we have so far.
 
@@ -51,6 +53,117 @@ The SiteOrigin Widgets Bundle is the perfect platform to build widgets for your 
 3. An example of the button widget.
 
 == Changelog ==
+
+= 1.9.5 - 25 July 2017 =
+* Fixed icon field selection.
+* TinyMCE field is initialized when quicktags is selected.
+* Autocomplete field only initialized once.
+* Posts field sanitization handles multiple post types.
+
+= 1.9.4 - 24 July 2017 =
+* Using new Editor JS API for TinyMCE field.
+* Carousel: apply static position on `.overlay`.
+* Layout Slider: Add ability to set Background image to Title and spaced the code.
+* Add capabilities check to widget activation action.
+* Testimonial: Corrected typo in description and corrected formatting.
+* Enabling translation for "From:" in contact mail.
+
+= 1.9.3 - 3 July 2017 =
+* Editor: Fix settings form label.
+* Don't select the external fallback field as value input.
+* Social media buttons: Don't output calls when missing network name.
+* Use gettext for widget global settings dialog title.
+* Image: Added link attributes to template variables.
+* Image grid: Use `get_template_variables`.
+* Image grid: Template code structure a bit more readable.
+* Simple masonry: Assign link attributes in `get_template_variables`.
+* Slider widget: Output link attributes.
+* Features: Remove redundant paragraph from template.
+* Google Maps: Fix issue when no matches found in maps API error string.
+* Google Maps: Mention required Google Maps APIs in field descriptions.
+* Google Maps: Localized strings used in JS.
+* Elementor 1.5: Ensure widgets' setup scripts are run after editing.
+
+= 1.9.2 - 8 June 2017 =
+* Post Carousel: default image for posts without featured images.
+* Social Media Buttons: allow empty colors.
+* Editor: prevent text processing for cache and post content rendering.
+* Post selector field: Fix additional args encoding.
+* Post selector field: Fix taxonomy search.
+
+= 1.9.1 - 1 June 2017 =
+* Fixed Maps widget JS error.
+
+= 1.9 - 30 May 2017 =
+* Compatibility with Visual Composer.
+* Taxonomy widget text display.
+* Price table widget: option to make feature row heights equal.
+* New posts selector field based on other existing fields.
+* New autocomplete field. Currently supports showing results from posts and taxonomies.
+* New date-range field with option to select specific or relative dates.
+* Editor widget: Global widget setting for default 'autop' state.
+* Some layout fixes for widget forms in Elementor.
+* Google Maps: fallback image when maps API not available or returns error.
+* Contact form: Reduced intensity of disabled button styling.
+* Google Maps: Fix markers not displaying when queries are rate limited.
+* Features: Option to use specified icon size for custom icon images.
+* Updated FontAwesome icon set to 4.7.0
+* Updated IcoMoon icon set.
+* Contact form: Allow duplicate forms on same page.
+* Widget temp backup in browser storage.
+* Google Maps: Custom marker icon for each marker.
+* Option to specify default number of visible rows in icon field.
+* Changed PHP LESS compiler to a better maintained version.
+
+= 1.8.6 - 10 May 2017 =
+* Editor widget supports Jetpack Markdown.
+* Editor widget global setting for enabling/disabling 'autop' by default.
+* Allow setting FitText compressor strength in hero and headline widgets.
+* Fix variable name in `enqueue_registered_styles`.
+* Fix FitText not working previews.
+
+= 1.8.5 - 27 April 2017 =
+* Fixed button hover class.
+
+= 1.8.4 - 27 April 2017 =
+* Fixed button URLs.
+* Removed image `sizes` attribute when Jetpack Photon is enabled.
+* Fixed missing widget handling for misnamed widgets.
+
+= 1.8.3 - 26 April 2017 =
+* Contact Form: Improved type Validation and added empty name check
+* Contact Form: Add Field Design Settings
+* Testimonial: Add responsive image sizes settings
+* Added checks to prevent PHP warnings
+* Improved handling of empty order fields.
+* Small code refactoring in price table widget.
+* Ensure all SiteOrigin widgets are grouped together in Page Builder.
+* Slider: Remove slider sentinel contents to avoid things like duplicated video iframe for embedded videos
+* Fix TinyMCE z-index.
+* Headline: Fixed typo that tied subheadline new window to headline
+* Ensure fittext is done before setting up hero slider.
+* Ensure google font fields work in live editors/previews.
+* Features: Allow specifying position of features widgets icons.
+* Added * next to labels of required fields.
+* Make required field indicator optional and display legend when enabled.
+* Set default color option in wpColorPicker.
+* Small refactor to make more use of `get_template_variables`.
+* Button: Added field for `rel` attribute.
+* Maps: Added setting for global Google API key.
+* Small fix to allow checkboxes to act as 'conditional' state emitters.
+* Features: Change text form field to a tinymce field
+* Properly work with new Page Builder caching system
+* Ensure footer templates only printed when editing with Elementor.
+* Small IE8 fix
+* Contact: Prevent form fields from having 0px height if no height specified.
+* Fixed Google Maps info windows.
+* Image: Don't output empty attributes.
+* Don't attempt to load maps API if already loaded.
+
+= 1.8.2 - 1 April 2017 =
+* Compatibility with upcoming Page Builder 2.5 release.
+* Fixed compatibility with Elementor 1.4+.
+* Fixed incompatibility with Jetpack.
 
 = 1.8.1 - 3 February 2017 =
 * Fixed empty array warning.

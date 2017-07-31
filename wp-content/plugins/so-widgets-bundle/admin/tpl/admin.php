@@ -68,10 +68,13 @@
 						</div>
 
 						<?php
+						/** @var SiteOrigin_Widget $widget_object */
 						$widget_object = !empty( $widget_objects[ $file ] ) ? $widget_objects[ $file ] : false;
 						if( !empty( $widget_object ) && $widget_object->has_form( 'settings' ) ) {
+							$rel_path = str_replace( WP_PLUGIN_DIR, '', $file );
+
 							$form_url = add_query_arg( array(
-									'id' => $file,
+									'id' => $rel_path,
 									'action' => 'so_widgets_setting_form',
 								),
 								admin_url( 'admin-ajax.php' )
@@ -102,7 +105,7 @@
 		<div class="so-overlay"></div>
 
 		<div class="so-title-bar">
-			<h3 class="so-title">Widget Settings</h3>
+			<h3 class="so-title"><?php _e( 'Widget Settings', 'so-widgets-bundle' ) ?></h3>
 			<a class="so-close">
 				<span class="so-dialog-icon"></span>
 			</a>

@@ -3,8 +3,8 @@ Contributors: Chouby
 Donate link: https://polylang.pro
 Tags: multilingual, bilingual, translate, translation, language, multilanguage, international, localization
 Requires at least: 4.4
-Tested up to: 4.7
-Stable tag: 2.1.2
+Tested up to: 4.8
+Stable tag: 2.1.6
 License: GPLv2 or later
 
 Making WordPress multilingual
@@ -75,6 +75,44 @@ Don't hesitate to [give your feedback](http://wordpress.org/support/view/plugin-
 4. The Edit Post screen with the Languages metabox
 
 == Changelog ==
+
+= 2.1.6 (2017-07-17) =
+
+* Pro: fix duplicate post button not working in PHP 7.1
+* Pro: fix CPTUI untranslated labels on admin
+* Adapt related posts filter to use slug instead of name to follow changes made on Jetpack server ( Props Steve Kaeser )
+* Fix PHP notices when translating CPT and custom tax titles in Yoast SEO
+* Fix PHP warning when all plugins are networked activated
+
+= 2.1.5 (2017-05-31) =
+
+* Add compatibility with new media widgets introduced in WP 4.8
+* Removing the language information in URL for the default language is now default
+* Update plugin updater class to 1.6.12
+* Pro: fix PHP notices when duplicating the content
+* Fix: test existence of `twentyseventeen_panel_count` instead of relying only on the active template
+* Fix: set current property to false when removing the current-menu-item class #134 props @mowar
+* Fix PHP notice when editing a term without language
+* Fix possible PHP notice when deleting a category
+* Fix fatal error with Gantry 5
+
+= 2.1.4 (2017-05-16) =
+
+* Pro: fix user not logged in on secondary domain when previewing changes
+* Pro: fix archive links without language code in ACF link field (ACF 5.4.0+)
+* Fix redirection from www subdomain to wrong language domain.
+* Fix: selecting "Front page displays latest posts" in the customizer not cleaning the languages cache
+* Fix accessibility of the admin language switcher
+
+= 2.1.3 (2017-04-11) =
+
+* Pro: Fix translated slug of 'page' if it is translated to an empty string
+* Update plugin updater class to 1.6.11
+* Strings registered with a wpml-config.xml file or WPML functions are now multiline by default
+* Translate the site title in emails sent to the user
+* Fix sanitize_user for specific locales
+* Fix deprecation notice in Yoast SEO integration
+* Fix: Clean term cache after the language has been set in mass #119
 
 = 2.1.2 (2017-03-09) =
 
