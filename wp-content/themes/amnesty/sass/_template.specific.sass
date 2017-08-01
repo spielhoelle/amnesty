@@ -12,17 +12,18 @@ h1.entry-title, h1.page-title
   @media (max-width: $breakpoint3)
     display: table
 
-.menu-item.underlined
-  a
-    position: relative
-    &:after
-      background: black
-      width: 100%
-      content: ""
-      height: 5px
-      position: absolute
-      left: 0
-      bottom: 0px
+@media (min-width: $breakpoint3)
+  .menu-item.underlined
+    a
+      position: relative
+      &:after
+        background: black
+        width: 100%
+        content: ""
+        height: 5px
+        position: absolute
+        left: 0
+        bottom: 0px
 
 .grid
   article.has-post-thumbnail
