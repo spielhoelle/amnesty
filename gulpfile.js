@@ -13,9 +13,7 @@ gulp.task('sass', function() {
         .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(cleanCSS({processImport: false}))
-        .pipe(autoprefixer({
-            browsers: ['last 3 versions']
-        }))
+        .pipe(autoprefixer({ browsers: ['last 2 versions', 'safari 5', 'ie 11', 'opera 12.1', 'ios 6', 'android 4'] }))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('wp-content/themes/amnesty'));
 });
