@@ -3,7 +3,7 @@ Contributors: mmaunder
 Tags: security, secure, security plugin, wordpress security, login security, firewall, malware, antivirus, web application firewall, block hackers, country blocking
 Requires at least: 3.9
 Tested up to: 4.8.1
-Stable tag: 6.3.15
+Stable tag: 6.3.16
 
 Secure your website with the most comprehensive WordPress security plugin. Firewall, malware scan, blocking, live traffic, login security & more.
 
@@ -159,6 +159,16 @@ Secure your website with Wordfence.
 7. The Advanced Options page allows technically-minded users fine-tune their security settings.
 
 == Changelog ==
+
+= 6.3.16 =
+* Improvement: Introduced a new scan stage to check for malicious URLs and content within WordPress core, plugin, and theme options.
+* Improvement: New scan stage includes a new check for TrafficTrade malware.
+* Improvement: Reduced net memory usage during forked scan stages by up to 50%.
+* Improvement: Reduced the number of queries executed for some configuration options.
+* Improvement: Modified the default whitelisting to include the new core AJAX action in WordPress 4.8.1.
+* Fix: Synchronized the scan option names between the main options page and smaller scan options page.
+* Fix: Fixed CSS positioning issue for dashboard metabox with IPv6.
+* Fix: Fixed a compatibility issue with determining the site's home_url when WPML is installed.
 
 = 6.3.15 =
 * Improvement: Reduced memory usage on scan forking and during the known files scan stage.

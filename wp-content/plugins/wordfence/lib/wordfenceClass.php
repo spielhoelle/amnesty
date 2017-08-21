@@ -4887,20 +4887,8 @@ HTML;
 		}
 		
 		if (is_admin()) { //Back end only
-			$homeurl = '';
-			if (function_exists('get_bloginfo') && empty($homeurl)) {
-				if (is_multisite()) {
-					$homeurl = network_home_url();
-					$homeurl = rtrim($homeurl, '/'); //Because previously we used get_bloginfo and it returns http://example.com without a '/' char.
-				}
-				else {
-					$homeurl = home_url();
-				}
-				
-				if (wfConfig::get('wp_home_url') !== $homeurl) {
-					wfConfig::set('wp_home_url', $homeurl);
-				}
-			}
+			wfUtils::refreshCachedHomeURL();
+			wfUtils::refreshCachedSiteURL();
 		}
 
 		if (!WFWAF_AUTO_PREPEND || WFWAF_SUBDIRECTORY_INSTALL) {

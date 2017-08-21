@@ -140,7 +140,7 @@ class wfScanEngine {
 			$jobs[] = 'knownFiles';
 			self::_enqueueJobs(array('knownFiles', 'checkReadableConfig'), $jobs);
 			$jobs[] = 'fileContents';
-			self::_enqueueJobs(array('suspectedFiles', 'posts', 'comments', 'passwds', 'dns', 'diskSpace', 'oldVersions', 'suspiciousAdminUsers'), $jobs);
+			self::_enqueueJobs(array('suspectedFiles', 'posts', 'comments', 'passwds', 'dns', 'diskSpace', 'oldVersions', 'suspiciousAdminUsers', 'suspiciousOptions'), $jobs);
 		}
 		else if ($scanMode == self::SCAN_MODE_QUICK) {
 			self::_enqueueJobs(array('oldVersions'), $jobs);
@@ -1758,6 +1758,110 @@ class wfScanEngine {
 
 		wfIssues::statusEnd($this->statusIDX['suspiciousAdminUsers'], $haveIssues);
 	}
+	
+	public function scan_suspiciousOptions() {
+		$this->statusIDX['suspiciousOptions'] = wfIssues::statusStart("Scanning for suspicious site options");
+		$haveIssues = wfIssues::STATUS_SECURE;
+		
+		$blogsToScan = self::getBlogsToScan('options');
+		$wfdb = new wfDB();
+		
+		$this->hoover = new wordfenceURLHoover($this->apiKey, $this->wp_version);
+		foreach ($blogsToScan as $blog) {
+			$excludedHosts = array();
+			$homeURL = get_home_url($blog['blog_id']);
+			$host = parse_url($homeURL, PHP_URL_HOST);
+			if ($host) {
+				$excludedHosts[$host] = 1;
+			}
+			$siteURL = get_site_url($blog['blog_id']);
+			$host = parse_url($siteURL, PHP_URL_HOST);
+			if ($host) {
+				$excludedHosts[$host] = 1;
+			}
+			$excludedHosts = array_keys($excludedHosts);
+			
+			//Newspaper Theme
+			if (defined('TD_THEME_OPTIONS_NAME')) {
+				$q = $wfdb->querySelect("SELECT option_name, option_value FROM " . $blog['table'] . " WHERE option_name REGEXP '^td_[0-9]+$' OR option_name = '%s'", TD_THEME_OPTIONS_NAME);
+			}
+			else {
+				$q = $wfdb->querySelect("SELECT option_name, option_value FROM " . $blog['table'] . " WHERE option_name REGEXP '^td_[0-9]+$'");
+			}
+			foreach ($q as $row) {
+				$this->hoover->hoover($blog['blog_id'] . '-' . $row['option_name'], $row['option_value'], $excludedHosts);
+			}
+		}
+		
+		
+		$this->status(2, 'info', "Examining URLs found in the options we scanned for dangerous websites");
+		$hooverResults = $this->hoover->getBaddies();
+		$this->status(2, 'info', "Done examining URLs");
+		if ($this->hoover->errorMsg) {
+			wfIssues::statusEndErr();
+			throw new Exception($this->hoover->errorMsg);
+		}
+		$this->hoover->cleanup();
+		foreach ($hooverResults as $idString => $hresults) {
+			$arr = explode('-', $idString);
+			$blogID = $arr[0];
+			$optionKey = $arr[1];
+			$blog = null;
+			foreach ($hresults as $result) {
+				if ($result['badList'] != 'goog-malware-shavar' && $result['badList'] != 'googpub-phish-shavar' && $result['badList'] != 'wordfence-dbl') {
+					continue; //A list type that may be new and the plugin has not been upgraded yet.
+				}
+				
+				if ($blog === null) {
+					$blogs = self::getBlogsToScan('options', $blogID);
+					$blog = array_shift($blogs);
+				}
+				
+				if ($result['badList'] == 'goog-malware-shavar') {
+					$shortMsg = "Option contains a suspected malware URL: " . esc_html($optionKey);
+					$longMsg = "This option contains a suspected malware URL listed on Google's list of malware sites. It may indicate your site is infected with malware. The URL is: " . esc_html($result['URL']);
+				}
+				else if ($result['badList'] == 'googpub-phish-shavar') {
+					$shortMsg = "Option contains a suspected phishing site URL: " . esc_html($optionKey);
+					$longMsg = "This option contains a URL that is a suspected phishing site that is currently listed on Google's list of known phishing sites. It may indicate your site is infected with malware. The URL is: " . esc_html($result['URL']);
+				}
+				else if ($result['badList'] == 'wordfence-dbl') {
+					$shortMsg = "Option contains a suspected malware URL: " . esc_html($optionKey);
+					$longMsg = "This option contains a URL that is currently listed on Wordfence's domain blacklist. It may indicate your site is infected with malware. The URL is: " . esc_html($result['URL']);
+				}
+				else {
+					//A list type that may be new and the plugin has not been upgraded yet.
+					continue;
+				}
+				
+				$longMsg .= ' - <a href="https://docs.wordfence.com/en/Understanding_scan_results#Option_contains_suspected_malware_URL" target="_blank" rel="noopener noreferrer">Get more information.</a>';
+				
+				$this->status(2, 'info', "Adding issue: $shortMsg");
+				
+				if (is_multisite()) {
+					switch_to_blog($blogID);
+				}
+				
+				$ignoreP = $idString;
+				$ignoreC = $idString . md5(serialize(get_option($optionKey, '')));
+				$added = $this->addIssue('optionBadURL', 1, $ignoreP, $ignoreC, $shortMsg, $longMsg, array(
+					'optionKey' => $optionKey,
+					'badURL' => $result['URL'],
+					'isMultisite' => $blog['isMultisite'],
+					'domain' => $blog['domain'],
+					'path' => $blog['path'],
+					'blog_id' => $blogID
+				));
+				if ($added == wfIssues::ISSUE_ADDED || $added == wfIssues::ISSUE_UPDATED) { $haveIssues = wfIssues::STATUS_PROBLEM; }
+				else if ($haveIssues != wfIssues::STATUS_PROBLEM && ($added == wfIssues::ISSUE_IGNOREP || $added == wfIssues::ISSUE_IGNOREC)) { $haveIssues = wfIssues::STATUS_IGNORED; }
+				if (is_multisite()) {
+					restore_current_blog();
+				}
+			}
+		}
+		
+		wfIssues::statusEnd($this->statusIDX['suspiciousOptions'], $haveIssues);
+	}
 
 	public function status($level, $type, $msg){
 		wordfence::status($level, $type, $msg);
@@ -1817,8 +1921,8 @@ class wfScanEngine {
 			$headers = array('Referer' => false/*, 'Cookie' => 'XDEBUG_SESSION=1'*/);
 			wordfence::status(4, 'info', "Starting cron with normal ajax at URL $cronURL");
 			wp_remote_get( $cronURL, array(
-				'timeout' => $timeout, //Must be less than max execution time or more than 2 HTTP children will be occupied by scan
-				'blocking' => true, //Non-blocking seems to block anyway, so we use blocking
+				'timeout' => 0.01,
+				'blocking' => false,
 				'sslverify' => false,
 				'headers' => $headers 
 				) );
@@ -1831,8 +1935,8 @@ class wfScanEngine {
 			wordfence::status(4, 'info', "Starting cron via proxy at URL $cronURL");
 
 			wp_remote_get( $cronURL, array(
-				'timeout' => $timeout, //Must be less than max execution time or more than 2 HTTP children will be occupied by scan
-				'blocking' => true, //Non-blocking seems to block anyway, so we use blocking
+				'timeout' => 0.01,
+				'blocking' => false,
 				'sslverify' => false,
 				'headers' => $headers 
 				) );
