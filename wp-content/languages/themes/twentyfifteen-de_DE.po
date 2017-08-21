@@ -123,13 +123,13 @@ msgstr "Standard"
 msgid "Header and Sidebar Background Color"
 msgstr "Header- und Seitenleisten-Hintergrundfarbe"
 
-#: inc/customizer.php:59
-msgid "Header and Sidebar Text Color"
-msgstr "Header- und Seitenleisten-Textfarbe"
-
 #: inc/customizer.php:60 inc/customizer.php:76 inc/customizer.php:81
 msgid "Applied to the header on small screens and the sidebar on wide screens."
 msgstr "Das Header-Bild wird bei diesem Theme bei kleinen Bildschirmen (Mobil-Geräte) auf den Header angewandt und bei großen Bildschirmen (Desktop) auf die Seitenleiste."
+
+#: inc/customizer.php:59
+msgid "Header and Sidebar Text Color"
+msgstr "Header- und Seitenleisten-Textfarbe"
 
 #: inc/customizer.php:44
 msgid "Base Color Scheme"
@@ -220,7 +220,7 @@ msgstr "Primäres Menü"
 msgid "Proudly powered by %s"
 msgstr "Stolz präsentiert von %s"
 
-#. #-#-#-#-#  twentyfifteen.pot (Twenty Fifteen 1.7)  #-#-#-#-#
+#. #-#-#-#-#  twentyfifteen.pot (Twenty Fifteen 1.8)  #-#-#-#-#
 #. Author URI of the plugin/theme
 #: footer.php:25
 msgid "https://wordpress.org/"
