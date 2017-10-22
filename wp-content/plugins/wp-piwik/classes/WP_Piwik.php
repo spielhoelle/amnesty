@@ -12,7 +12,7 @@ class WP_Piwik {
 	 *
 	 * @var Runtime environment variables
 	 */
-	private static $revisionId = 2017080901, $version = '1.0.17', $blog_id, $pluginBasename = NULL, $logger, $settings, $request, $optionsPageId;
+	private static $revisionId = 2017101501, $version = '1.0.19', $blog_id, $pluginBasename = NULL, $logger, $settings, $request, $optionsPageId;
 
 	/**
 	 * Constructor class to configure and register all WP-Piwik components
@@ -478,6 +478,8 @@ class WP_Piwik {
 				) );
 			if (self::$settings->getGlobalOption ( 'dashboard_chart' ))
 				new WP_Piwik\Widget\Chart ( $this, self::$settings );
+            if (self::$settings->getGlobalOption ( 'dashboard_ecommerce' ))
+                new WP_Piwik\Widget\Ecommerce ( $this, self::$settings );
 			if (self::$settings->getGlobalOption ( 'dashboard_seo' ))
 				new WP_Piwik\Widget\Seo ( $this, self::$settings );
 		}
@@ -1023,7 +1025,6 @@ class WP_Piwik {
 	 *        	attribute list
 	 */
 	public function shortcode($attributes) {
-		load_plugin_textdomain ( 'wp-piwik', false, 'wp-piwik' . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR );
 		shortcode_atts ( array (
 				'title' => '',
 				'module' => 'overview',
@@ -1224,6 +1225,11 @@ class WP_Piwik {
 		new \WP_Piwik\Widget\Chart ( $this, self::$settings, $this->statsPageId );
 		new \WP_Piwik\Widget\Visitors ( $this, self::$settings, $this->statsPageId );
 		new \WP_Piwik\Widget\Overview ( $this, self::$settings, $this->statsPageId );
+        if (self::$settings->getGlobalOption ( 'stats_ecommerce' )) {
+            new \WP_Piwik\Widget\Ecommerce ($this, self::$settings, $this->statsPageId);
+            new \WP_Piwik\Widget\Items ($this, self::$settings, $this->statsPageId);
+            new \WP_Piwik\Widget\ItemsCategory ($this, self::$settings, $this->statsPageId);
+        }
 		if (self::$settings->getGlobalOption ( 'stats_seo' ))
 			new \WP_Piwik\Widget\Seo ( $this, self::$settings, $this->statsPageId );
 		new \WP_Piwik\Widget\Pages ( $this, self::$settings, $this->statsPageId );

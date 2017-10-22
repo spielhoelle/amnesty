@@ -924,7 +924,7 @@ $w = new wfConfig();
 							<label for="maxExecutionTime" class="wf-col-sm-5 wf-control-label">Maximum execution time for each scan stage <a href="http://docs.wordfence.com/en/Wordfence_options#Maximum_execution_time_for_each_scan_stage" target="_blank" rel="noopener noreferrer" class="wfhelp"></a></label>
 							<div class="wf-col-sm-7">
 								<input type="text" class="wf-form-control" name="maxExecutionTime" id="maxExecutionTime" value="<?php $w->f( 'maxExecutionTime' ); ?>">
-								<span class="wf-help-block">Blank for default. Must be greater than 9.</span>
+								<span class="wf-help-block">Blank for default. Must be greater than <?php echo intval(WORDFENCE_SCAN_MIN_EXECUTION_TIME) - 1; ?> and 10-20 or higher is recommended for most servers.</span>
 							</div>
 						</div>
 						<div class="wf-form-group">

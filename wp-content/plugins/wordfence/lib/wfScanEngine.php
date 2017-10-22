@@ -611,7 +611,7 @@ class wfScanEngine {
 		$status = wfIssues::statusStart("Check for publicly accessible configuration files, backup files and logs");
 
 		$backupFileTests = array(
-//			wfCommonBackupFileTest::createFromRootPath('.user.ini'),
+			wfCommonBackupFileTest::createFromRootPath('.user.ini'),
 //			wfCommonBackupFileTest::createFromRootPath('.htaccess'),
 			wfCommonBackupFileTest::createFromRootPath('wp-config.php.bak'),
 			wfCommonBackupFileTest::createFromRootPath('wp-config.php.swo'),
@@ -630,33 +630,33 @@ class wfScanEngine {
 			wfCommonBackupFileTest::createFromRootPath('wp-config.txt'),
 			wfCommonBackupFileTest::createFromRootPath('wp-config.original'),
 			wfCommonBackupFileTest::createFromRootPath('wp-config.orig'),
-			wfCommonBackupFileTest::createFromRootPath('searchreplacedb2.php'),
 			new wfCommonBackupFileTest(content_url('/debug.log'), WP_CONTENT_DIR . '/debug.log', array(
 				'headers' => array(
 					'Range' => 'bytes=0-700',
 				),
 			)),
 		);
-//		$userIniFilename = ini_get('user_ini.filename');
-//		if ($userIniFilename && $userIniFilename !== '.user.ini') {
-//			$backupFileTests[] = wfCommonBackupFileTest::createFromRootPath($userIniFilename);
-//		}
+		$backupFileTests = array_merge($backupFileTests, wfCommonBackupFileTest::createAllForFile('searchreplacedb2.php', wfCommonBackupFileTest::MATCH_REGEX, '/<title>Search and replace DB/i'));
+		
+		$userIniFilename = ini_get('user_ini.filename');
+		if ($userIniFilename && $userIniFilename !== '.user.ini') {
+		  $backupFileTests[] = wfCommonBackupFileTest::createFromRootPath('.user.ini');
+		}
 
 
 		/** @var wfCommonBackupFileTest $test */
 		foreach ($backupFileTests as $test) {
 			$pathFromRoot = (strpos($test->getPath(), ABSPATH) === 0) ? substr($test->getPath(), strlen(ABSPATH)) : $test->getPath();
+		  wordfence::status(4, 'info', "Testing {$pathFromRoot}");
 			if ($test->fileExists() && $test->isPubliclyAccessible()) {
 				$key = "configReadable" . bin2hex($test->getUrl());
 				$added = $this->addIssue(
 					'configReadable',
-					2,
+					1,
 					$key,
 					$key,
 					'Publicly accessible config, backup, or log file found: ' . esc_html($pathFromRoot),
-					'<a href="' . $test->getUrl() . '" target="_blank" rel="noopener noreferrer">' . $test->getUrl() . '</a> is publicly
-					accessible and may expose sensitive information about your site. Files such as this one are commonly
-					checked for by scanners such as WPScan and should be removed or made inaccessible.',
+					'<a href="' . $test->getUrl() . '" target="_blank" rel="noopener noreferrer">' . $test->getUrl() . '</a> is publicly accessible and may expose source code or sensitive information about your site. Files such as this one are commonly checked for by scanners and should be made inaccessible. Alternately, some can be removed if you are certain your site does not need them. Sites using the nginx web server may need manual configuration changes to protect such files. <a href="https://docs.wordfence.com/en/Understanding_scan_results#Publicly_accessible_config_backup_or_log_file_found" target="_blank" rel="noopener noreferrer">Learn more</a>',
 					array(
 						'url'       => $test->getUrl(),
 						'file'      => $pathFromRoot,
@@ -874,9 +874,7 @@ class wfScanEngine {
 						$key,
 						$key,
 						'Publicly accessible quarantined file found: ' . esc_html($file),
-						'<a href="' . $test->getUrl() . '" target="_blank" rel="noopener noreferrer">' . $test->getUrl() . '</a> is publicly
-					accessible and may expose source code or sensitive information about your site. Files such as this one are commonly
-					checked for by scanners and should be removed or made inaccessible.',
+						'<a href="' . $test->getUrl() . '" target="_blank" rel="noopener noreferrer">' . $test->getUrl() . '</a> is publicly accessible and may expose source code or sensitive information about your site. Files such as this one are commonly checked for by scanners and should be removed or made inaccessible.',
 						array(
 							'url'       => $test->getUrl(),
 							'file'      => $file,
@@ -1891,6 +1889,7 @@ class wfScanEngine {
 		}
 	}
 	public static function startScan($isFork = false, $scanMode = self::SCAN_MODE_FULL){
+		if (!defined('DONOTCACHEDB')) { define('DONOTCACHEDB', true); }
 		if(! $isFork){ //beginning of scan
 			wfConfig::inc('totalScansRun');	
 			wfConfig::set('wfKillRequested', 0, wfConfig::DONT_AUTOLOAD); 
@@ -1950,13 +1949,13 @@ class wfScanEngine {
 	public static function getMaxExecutionTime($staySilent = false) {
 		$config = wfConfig::get('maxExecutionTime');
 		if (!$staySilent) { wordfence::status(4, 'info', "Got value from wf config maxExecutionTime: $config"); }
-		if(is_numeric($config) && $config >= 10){
+		if(is_numeric($config) && $config >= WORDFENCE_SCAN_MIN_EXECUTION_TIME){
 			if (!$staySilent) { wordfence::status(4, 'info', "getMaxExecutionTime() returning config value: $config"); }
 			return $config;
 		}
 		$ini = @ini_get('max_execution_time');
 		if (!$staySilent) { wordfence::status(4, 'info', "Got max_execution_time value from ini: $ini"); }
-		if(is_numeric($ini) && $ini >= 10){
+		if(is_numeric($ini) && $ini >= WORDFENCE_SCAN_MIN_EXECUTION_TIME){
 			$ini = floor($ini / 2);
 			if (!$staySilent) { wordfence::status(4, 'info', "getMaxExecutionTime() returning half ini value: $ini"); }
 			return $ini;
@@ -2239,13 +2238,37 @@ class wfScanKnownFilesException extends Exception {
 }
 
 class wfCommonBackupFileTest {
-
+	const MATCH_EXACT = 'exact';
+	const MATCH_REGEX = 'regex';
+	
 	/**
 	 * @param string $path
+	 * @param string $mode
+	 * @param bool|string $matcher If $mode is MATCH_REGEX, this will be the regex pattern.
 	 * @return wfCommonBackupFileTest
 	 */
-	public static function createFromRootPath($path) {
-		return new self(site_url($path), ABSPATH . $path); 
+	public static function createFromRootPath($path, $mode = self::MATCH_EXACT, $matcher = false) {
+		return new self(site_url($path), ABSPATH . $path, array(), $mode, $matcher); 
+	}
+	
+	/**
+	 * Identical to createFromRootPath except it returns an entry for each file in the index that matches $name
+	 * 
+	 * @param $name
+	 * @param string $mode
+	 * @param bool|string $matcher
+	 * @return array
+	 */
+	public static function createAllForFile($file, $mode = self::MATCH_EXACT, $matcher = false) {
+		global $wpdb;
+		$escapedFile = esc_sql(preg_quote($file));
+		$files = $wpdb->get_col("SELECT path FROM {$wpdb->base_prefix}wfKnownFileList WHERE path REGEXP '(^|/){$escapedFile}$'");
+		$tests = array();
+		foreach ($files as $f) {
+			$tests[] = new self(site_url($f), ABSPATH . $f, array(), $mode, $matcher);
+		}
+		
+		return $tests;
 	}
 
 	private $url;
@@ -2254,6 +2277,8 @@ class wfCommonBackupFileTest {
 	 * @var array
 	 */
 	private $requestArgs;
+	private $mode;
+	private $matcher;
 	private $response;
 
 
@@ -2262,9 +2287,11 @@ class wfCommonBackupFileTest {
 	 * @param string $path
 	 * @param array $requestArgs
 	 */
-	public function __construct($url, $path, $requestArgs = array()) {
+	public function __construct($url, $path, $requestArgs = array(), $mode = self::MATCH_EXACT, $matcher = false) {
 		$this->url = $url;
 		$this->path = $path;
+		$this->mode = $mode;
+		$this->matcher = $matcher;
 		$this->requestArgs = $requestArgs;
 	}
 
@@ -2286,6 +2313,10 @@ class wfCommonBackupFileTest {
 				$contents = fread($handle, 700);
 				fclose($handle);
 				$remoteContents = substr(wp_remote_retrieve_body($this->response), 0, 700);
+				if ($this->mode == self::MATCH_REGEX) {
+					return preg_match($this->matcher, $remoteContents);
+				}
+				//else MATCH_EXACT
 				return $contents === $remoteContents;
 			}
 		}

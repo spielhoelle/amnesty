@@ -2,8 +2,8 @@
 Tags: bundle, widget, button, slider, image, carousel, price table, google maps, tinymce, social links
 Requires at least: 4.2
 Tested up to: 4.8.1
-Stable tag: 1.9.7
-Build time: 2017-08-11T11:57:54+02:00
+Stable tag: 1.10.2
+Build time: 2017-10-20T17:00:13+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis
 Donate link: https://siteorigin.com/downloads/contribution/
@@ -53,6 +53,44 @@ The SiteOrigin Widgets Bundle is the perfect platform to build widgets for your 
 3. An example of the button widget.
 
 == Changelog ==
+
+= 1.10.2 - 20 October 2017 =
+* Fix for links sometimes not working in slider widgets.
+* Fix multi-measurement field labels.
+
+= 1.10.1 - 13 October 2017 =
+* Fix subwidget fields initializion when not contained in a section.
+* TinyMCE field: fix initialization in repeaters.
+
+= 1.10.0 - 11 October 2017 =
+* New Accordion widget!
+* Prevent multiple initialization of media field.
+* Use correct path for widget banner when defined in a theme.
+* Video: Added option to show/hide related YouTube videos at end of video.
+* Slider: Handle links inside slider frames first and then allow processing of frame background clicks.
+* Give repeated fields in widget fields unique ids for state handling.
+* New multi-measurement field.
+* Widget Manager Path Comparison fix. (allows for settings to work)
+* Button: Use `esc_js` instead of `esc_attr` for onclick.
+
+= 1.9.10 - 14 September 2017 =
+* TinyMCE field: fixed issue with filter for TinyMCE plugins.
+* Added teaser messages for SiteOrigin Premium addons.
+
+= 1.9.9 - 31 August 2017 =
+* Avoid using relative paths in asset URLs.
+* Fixed compat with latest Elementor update.
+
+= 1.9.8 - 21 August 2017 =
+* Use WordPress functions to exit AJAX actions.
+* TinyMCE field: Initialized once.
+* TinyMCE field: Simplified switching between TinyMCE and QuickTags.
+* TinyMCE field: Check if individual TinyMCE settings are encoded as JSON and decode before re-encoding all settings.
+* Some compat fixes for Elementor.
+* TinyMCE field: Temporarily disable Jetpack Grunion editor.
+* Use correct JS dependencies for Beaver Builder compatibility when `WP_DEBUG` not defined.
+* Removed unnecessary enqueues in Beaver Builder compat for dashicons and wp media scripts.
+* Post carousel: Only handle horizontal swipes.
 
 = 1.9.7 - 11 August 2017 =
 * Contact: Added user configurable field for 'From:' address.

@@ -1804,6 +1804,11 @@ class wfUtils {
 			return $cached_url;
 		}
 		
+		if (defined('WP_HOME') && WORDFENCE_PREFER_WP_HOME_FOR_WPML) {
+			$cached_url = WP_HOME;
+			return $cached_url;
+		}
+		
 		if ( empty( $blog_id ) || !is_multisite() ) {
 			$url = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name = 'home' LIMIT 1");
 			if (empty($url)) { //get_option uses siteurl instead if home is empty
@@ -1876,6 +1881,11 @@ class wfUtils {
 		
 		static $cached_url = null;
 		if ($cached_url !== null) {
+			return $cached_url;
+		}
+		
+		if (defined('WP_SITEURL') && WORDFENCE_PREFER_WP_HOME_FOR_WPML) {
+			$cached_url = WP_SITEURL;
 			return $cached_url;
 		}
 		
