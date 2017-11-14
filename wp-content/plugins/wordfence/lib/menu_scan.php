@@ -309,7 +309,7 @@ $sigUpdateTime = wfConfig::get('signatureUpdateTime');
 		<table border="0" class="wfIssue" cellspacing="0" cellpadding="0">
 		<tr><th><span class="wf-hidden-xs">Plugin </span>Name:</th><td>${data.Name}</td></tr>
 		{{if data.PluginURI}}<tr><th><span class="wf-hidden-xs">Plugin </span>Website:</th><td><a href="${data.PluginURI}" target="_blank" rel="noopener noreferrer"><span class="wf-hidden-xs wf-split-word">${data.PluginURI}</span><span class="wf-visible-xs">View</span></a></td></tr>{{/if}}
-		<tr><th>Changelog:</th><td><a href="${data.wpURL}/#developers" target="_blank" rel="noopener noreferrer"><span class="wf-hidden-xs wf-split-word">${data.wpURL}/#developers</span><span class="wf-visible-xs">View</span></a></td></tr>
+		{{if data.wpURL}}<tr><th>Changelog:</th><td><a href="${data.wpURL}/#developers" target="_blank" rel="noopener noreferrer"><span class="wf-hidden-xs wf-split-word">${data.wpURL}/#developers</span><span class="wf-visible-xs">View</span></a></td></tr>{{/if}}
 		<tr><th>Current <span class="wf-hidden-xs">Plugin </span>Version:</th><td>${data.Version}</td></tr>
 		<tr><th>New <span class="wf-hidden-xs">Plugin </span>Version:</th><td>${data.newVersion}</td></tr>
 		<tr><th>Severity:</th><td>{{if severity == '1'}}Critical{{else}}Warning{{/if}}</td></tr>

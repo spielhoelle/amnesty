@@ -1639,7 +1639,7 @@ class wfScanEngine {
 							}
 						}
 						
-						if (isset($allPlugins[$slug])) {
+						if (isset($allPlugins[$slug]) && isset($allPlugins[$slug]['wpURL'])) {
 							$statusArray['wpURL'] = $allPlugins[$slug]['wpURL'];
 						}
 						
