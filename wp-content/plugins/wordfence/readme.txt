@@ -2,8 +2,8 @@
 Contributors: mmaunder 
 Tags: security, firewall, login security, limit login attempts, malware scanner, antivirus, web application firewall, block hackers, country blocking, clean hacked site, blacklist, waf
 Requires at least: 3.9
-Tested up to: 4.8.3
-Stable tag: 6.3.21
+Tested up to: 4.9.1
+Stable tag: 6.3.22
 
 Secure your website with the most comprehensive WordPress security plugin. Firewall, malware scan, blocking, live traffic, login security & more.
 
@@ -149,6 +149,10 @@ Secure your website with Wordfence.
 7. The Advanced Options page allows technically-minded users fine-tune their security settings.
 
 == Changelog ==
+
+= 6.3.22 =
+* Fix: Addressed a warning that could occur on PHP 7.1 when reading php.ini size values.
+* Fix: Fixed a warning by adjusting a query to remove old-style variable references.
 
 = 6.3.21 =
 * Improvement: Updated bundled GeoIP database.

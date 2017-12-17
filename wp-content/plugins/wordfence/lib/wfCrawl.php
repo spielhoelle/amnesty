@@ -175,16 +175,10 @@ class wfCrawl {
 			));
 			if (is_array($data) && !empty($data['verified'])) {
 				// Cache results
-				$db->queryWrite("insert into $table (IP, patternSig, status, lastUpdate)
-values (%s, UNHEX(MD5('%s')), '%s', unix_timestamp())
-ON DUPLICATE KEY UPDATE status='%3\$s', lastUpdate=unix_timestamp()",
-						$IPn, $patternSig, 'verified');
+				$db->queryWrite("INSERT INTO {$table} (IP, patternSig, status, lastUpdate) VALUES ('%s', UNHEX(MD5('%s')), '%s', unix_timestamp()) ON DUPLICATE KEY UPDATE status = VALUES(status), lastUpdate = VALUES(lastUpdate)", $IPn, $patternSig, 'verified');
 				return self::GOOGLE_BOT_VERIFIED;
 			} else {
-				$db->queryWrite("insert into $table (IP, patternSig, status, lastUpdate)
-values (%s, UNHEX(MD5('%s')), '%s', unix_timestamp())
-ON DUPLICATE KEY UPDATE status='%3\$s', lastUpdate=unix_timestamp()",
-						$IPn, $patternSig, 'fakeBot');
+				$db->queryWrite("INSERT INTO {$table} (IP, patternSig, status, lastUpdate) VALUES ('%s', UNHEX(MD5('%s')), '%s', unix_timestamp()) ON DUPLICATE KEY UPDATE status = VALUES(status), lastUpdate = VALUES(lastUpdate)", $IPn, $patternSig, 'fakeBot');
 				self::GOOGLE_BOT_FAKE;
 			}
 		} catch (Exception $e) {

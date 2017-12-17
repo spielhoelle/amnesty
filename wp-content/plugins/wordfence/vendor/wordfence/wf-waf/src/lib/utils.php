@@ -534,7 +534,12 @@ class wfWAFUtils {
 	 */
 	public static function iniSizeToBytes($val) {
 		$val = trim($val);
+		if (preg_match('/^\d+$/', $val)) {
+			return (int) $val;
+		}
+		
 		$last = strtolower(substr($val, -1));
+		$val = (int) substr($val, 0, -1);
 		switch ($last) {
 			case 'g':
 				$val *= 1024;
@@ -544,7 +549,7 @@ class wfWAFUtils {
 				$val *= 1024;
 		}
 		
-		return intval($val);
+		return $val;
 	}
 	
 	public static function reverseLookup($IP) {

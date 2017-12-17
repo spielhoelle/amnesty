@@ -297,7 +297,7 @@ msgstr ""
 msgid "Author"
 msgstr ""
 
-#: tmp/base/inc/fields/posts.class.php:82, tmp/widgets/accordion/accordion.php:55, tmp/widgets/contact/contact.php:47, tmp/widgets/cta/cta.php:63, tmp/widgets/editor/editor.php:32, tmp/widgets/features/features.php:132, tmp/widgets/post-carousel/post-carousel.php:97, tmp/widgets/price-table/price-table.php:41, tmp/widgets/price-table/price-table.php:60, tmp/widgets/simple-masonry/simple-masonry.php:43, tmp/widgets/simple-masonry/simple-masonry.php:74, tmp/widgets/social-media-buttons/social-media-buttons.php:42, tmp/widgets/tabs/tabs.php:46, tmp/widgets/tabs/tabs.php:59, tmp/widgets/taxonomy/taxonomy.php:33, tmp/widgets/testimonial/testimonial.php:40, tmp/widgets/video/video.php:32
+#: tmp/base/inc/fields/posts.class.php:82, tmp/widgets/accordion/accordion.php:46, tmp/widgets/accordion/accordion.php:59, tmp/widgets/contact/contact.php:47, tmp/widgets/cta/cta.php:63, tmp/widgets/editor/editor.php:32, tmp/widgets/features/features.php:132, tmp/widgets/post-carousel/post-carousel.php:97, tmp/widgets/price-table/price-table.php:41, tmp/widgets/price-table/price-table.php:60, tmp/widgets/simple-masonry/simple-masonry.php:43, tmp/widgets/simple-masonry/simple-masonry.php:74, tmp/widgets/social-media-buttons/social-media-buttons.php:42, tmp/widgets/tabs/tabs.php:46, tmp/widgets/tabs/tabs.php:59, tmp/widgets/taxonomy/taxonomy.php:33, tmp/widgets/testimonial/testimonial.php:40, tmp/widgets/video/video.php:32
 msgid "Title"
 msgstr ""
 
@@ -357,7 +357,7 @@ msgstr ""
 msgid "Sticky posts"
 msgstr ""
 
-#: tmp/base/inc/fields/posts.class.php:115, tmp/compat/beaver-builder/beaver-builder.php:60, tmp/widgets/google-map/google-map.php:276, tmp/widgets/image/image.php:46
+#: tmp/base/inc/fields/posts.class.php:115, tmp/compat/beaver-builder/beaver-builder.php:58, tmp/widgets/google-map/google-map.php:276, tmp/widgets/image/image.php:46
 msgid "Default"
 msgstr ""
 
@@ -537,15 +537,15 @@ msgstr ""
 msgid "Clicking %s will replace the current widget contents. You can revert by refreshing the page before updating."
 msgstr ""
 
-#: tmp/compat/beaver-builder/beaver-builder.php:59
+#: tmp/compat/beaver-builder/beaver-builder.php:57
 msgid "Clear"
 msgstr ""
 
-#: tmp/compat/beaver-builder/beaver-builder.php:61
+#: tmp/compat/beaver-builder/beaver-builder.php:59
 msgid "Select Color"
 msgstr ""
 
-#: tmp/compat/beaver-builder/beaver-builder.php:62
+#: tmp/compat/beaver-builder/beaver-builder.php:60
 msgid "Current Color"
 msgstr ""
 
@@ -637,75 +637,75 @@ msgstr ""
 msgid "An accordion widget."
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:46, tmp/widgets/accordion/accordion.php:118, tmp/widgets/tabs/tabs.php:144
+#: tmp/widgets/accordion/accordion.php:50, tmp/widgets/accordion/accordion.php:122, tmp/widgets/tabs/tabs.php:144
 msgid "Panels"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:59, tmp/widgets/hero/hero.php:59, tmp/widgets/layout-slider/layout-slider.php:47, tmp/widgets/tabs/tabs.php:63
+#: tmp/widgets/accordion/accordion.php:63, tmp/widgets/hero/hero.php:59, tmp/widgets/layout-slider/layout-slider.php:47, tmp/widgets/tabs/tabs.php:63
 msgid "Content"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:63
+#: tmp/widgets/accordion/accordion.php:67
 msgid "Initial state"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:64
+#: tmp/widgets/accordion/accordion.php:68
 msgid "Whether this panel should be open or closed when the page first loads."
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:66
+#: tmp/widgets/accordion/accordion.php:70
 msgid "Open"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:67
+#: tmp/widgets/accordion/accordion.php:71
 msgid "Closed"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:75, tmp/widgets/contact/contact.php:276, tmp/widgets/cta/cta.php:73, tmp/widgets/tabs/tabs.php:75, tmp/widgets/testimonial/testimonial.php:182
+#: tmp/widgets/accordion/accordion.php:79, tmp/widgets/contact/contact.php:276, tmp/widgets/cta/cta.php:73, tmp/widgets/tabs/tabs.php:75, tmp/widgets/testimonial/testimonial.php:182
 msgid "Design"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:80
+#: tmp/widgets/accordion/accordion.php:84
 msgid "Headings"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:85, tmp/widgets/accordion/accordion.php:123, tmp/widgets/contact/contact.php:286, tmp/widgets/contact/contact.php:515, tmp/widgets/cta/cta.php:77, tmp/widgets/hero/hero.php:118, tmp/widgets/layout-slider/layout-slider.php:81, tmp/widgets/social-media-buttons/social-media-buttons.php:74, tmp/widgets/tabs/tabs.php:85, tmp/widgets/tabs/tabs.php:105, tmp/widgets/tabs/tabs.php:149
+#: tmp/widgets/accordion/accordion.php:89, tmp/widgets/accordion/accordion.php:127, tmp/widgets/contact/contact.php:286, tmp/widgets/contact/contact.php:515, tmp/widgets/cta/cta.php:77, tmp/widgets/hero/hero.php:118, tmp/widgets/layout-slider/layout-slider.php:81, tmp/widgets/social-media-buttons/social-media-buttons.php:74, tmp/widgets/tabs/tabs.php:85, tmp/widgets/tabs/tabs.php:105, tmp/widgets/tabs/tabs.php:149
 msgid "Background color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:90, tmp/widgets/tabs/tabs.php:109
+#: tmp/widgets/accordion/accordion.php:94, tmp/widgets/tabs/tabs.php:109
 msgid "Background hover color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:95, tmp/widgets/cta/cta.php:85, tmp/widgets/tabs/tabs.php:114
+#: tmp/widgets/accordion/accordion.php:99, tmp/widgets/cta/cta.php:85, tmp/widgets/tabs/tabs.php:114
 msgid "Title color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:100, tmp/widgets/tabs/tabs.php:119
+#: tmp/widgets/accordion/accordion.php:104, tmp/widgets/tabs/tabs.php:119
 msgid "Title hover color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:104, tmp/widgets/accordion/accordion.php:132, tmp/widgets/contact/contact.php:296, tmp/widgets/contact/contact.php:409, tmp/widgets/contact/contact.php:525, tmp/widgets/cta/cta.php:81, tmp/widgets/tabs/tabs.php:90, tmp/widgets/tabs/tabs.php:124, tmp/widgets/tabs/tabs.php:158
+#: tmp/widgets/accordion/accordion.php:108, tmp/widgets/accordion/accordion.php:136, tmp/widgets/contact/contact.php:296, tmp/widgets/contact/contact.php:409, tmp/widgets/contact/contact.php:525, tmp/widgets/cta/cta.php:81, tmp/widgets/tabs/tabs.php:90, tmp/widgets/tabs/tabs.php:124, tmp/widgets/tabs/tabs.php:158
 msgid "Border color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:108, tmp/widgets/tabs/tabs.php:129
+#: tmp/widgets/accordion/accordion.php:112, tmp/widgets/tabs/tabs.php:129
 msgid "Border hover color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:112, tmp/widgets/accordion/accordion.php:136, tmp/widgets/contact/contact.php:301, tmp/widgets/contact/contact.php:414, tmp/widgets/contact/contact.php:541, tmp/widgets/tabs/tabs.php:94, tmp/widgets/tabs/tabs.php:134, tmp/widgets/tabs/tabs.php:162
+#: tmp/widgets/accordion/accordion.php:116, tmp/widgets/accordion/accordion.php:140, tmp/widgets/contact/contact.php:301, tmp/widgets/contact/contact.php:414, tmp/widgets/contact/contact.php:541, tmp/widgets/tabs/tabs.php:94, tmp/widgets/tabs/tabs.php:134, tmp/widgets/tabs/tabs.php:162
 msgid "Border width"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:128, tmp/widgets/tabs/tabs.php:154
+#: tmp/widgets/accordion/accordion.php:132, tmp/widgets/tabs/tabs.php:154
 msgid "Font color"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:140
+#: tmp/widgets/accordion/accordion.php:144
 msgid "Bottom margin"
 msgstr ""
 
-#: tmp/widgets/accordion/accordion.php:216
+#: tmp/widgets/accordion/accordion.php:226
 msgid "Get more customization options and the ability to use widgets and layouts as your accordion content with %sSiteOrigin Premium%s"
 msgstr ""
 
@@ -2649,7 +2649,7 @@ msgstr ""
 msgid "Border hover width"
 msgstr ""
 
-#: tmp/widgets/tabs/tabs.php:240
+#: tmp/widgets/tabs/tabs.php:247
 msgid "Get more customization options and the ability to use widgets and layouts as your tabs content with %sSiteOrigin Premium%s"
 msgstr ""
 
