@@ -159,6 +159,19 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	}
 
 	/**
+	 * Is the query for a the static front page (redirected from the language page)?
+	 *
+	 * @since 2.3
+	 *
+	 * @param object $query
+	 * @return bool
+	 */
+	protected function is_front_page( $query ) {
+		$query = array_diff( array_keys( $query->query ), array( 'preview', 'page', 'paged', 'cpage', 'orderby' ) );
+		return 1 === count( $query ) && in_array( 'lang', $query );
+	}
+
+	/**
 	 * Setups query vars when requesting a static front page
 	 *
 	 * @since 1.8
@@ -178,8 +191,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		}
 
 		// Redirect the language page to the homepage when using a static front page
-		elseif ( ( $this->options['redirect_lang'] || $this->options['hide_default'] ) && ( count( $query->query ) == 1 || ( ( is_preview() || is_paged() || ! empty( $query->query['page'] ) ) && count( $query->query ) == 2 ) || ( ( is_preview() && ( is_paged() || ! empty( $query->query['page'] ) ) ) && count( $query->query ) == 3 ) ) && is_tax( 'language' ) ) {
-			$lang = $this->model->get_language( get_query_var( 'lang' ) );
+		elseif ( ( $this->options['redirect_lang'] || $this->options['hide_default'] ) && $this->is_front_page( $query ) && $lang = $this->model->get_language( get_query_var( 'lang' ) ) ) {
 			$query->set( 'page_id', $lang->page_on_front );
 			$query->is_singular = $query->is_page = true;
 			$query->is_archive = $query->is_tax = false;

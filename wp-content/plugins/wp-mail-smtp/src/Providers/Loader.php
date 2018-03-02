@@ -2,7 +2,9 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
+use WPMailSMTP\Options;
 
 /**
  * Class Loader.
@@ -17,12 +19,12 @@ class Loader {
 	 * @var array
 	 */
 	protected $providers = array(
-		'mail'     => '\WPMailSMTP\Providers\Mail\\',
-		'gmail'    => '\WPMailSMTP\Providers\Gmail\\',
-		'mailgun'  => '\WPMailSMTP\Providers\Mailgun\\',
-		'sendgrid' => '\WPMailSMTP\Providers\Sendgrid\\',
-		'pepipost' => '\WPMailSMTP\Providers\Pepipost\\',
-		'smtp'     => '\WPMailSMTP\Providers\SMTP\\',
+		'mail'     => 'WPMailSMTP\Providers\Mail\\',
+		'gmail'    => 'WPMailSMTP\Providers\Gmail\\',
+		'mailgun'  => 'WPMailSMTP\Providers\Mailgun\\',
+		'sendgrid' => 'WPMailSMTP\Providers\Sendgrid\\',
+		'pepipost' => 'WPMailSMTP\Providers\Pepipost\\',
+		'smtp'     => 'WPMailSMTP\Providers\SMTP\\',
 	);
 
 	/**
@@ -38,6 +40,11 @@ class Loader {
 	 * @return array
 	 */
 	public function get_providers() {
+
+		if ( ! Options::init()->is_pepipost_active() ) {
+			unset( $this->providers['pepipost'] );
+		}
+
 		return apply_filters( 'wp_mail_smtp_providers_loader_get_providers', $this->providers );
 	}
 
@@ -67,7 +74,7 @@ class Loader {
 	 *
 	 * @param string $provider
 	 *
-	 * @return \WPMailSMTP\Providers\OptionAbstract|null
+	 * @return \WPMailSMTP\Providers\OptionsAbstract|null
 	 */
 	public function get_options( $provider ) {
 		return $this->get_entity( $provider, 'Options' );
@@ -78,7 +85,7 @@ class Loader {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return \WPMailSMTP\Providers\OptionAbstract[]
+	 * @return \WPMailSMTP\Providers\OptionsAbstract[]
 	 */
 	public function get_options_all() {
 		$options = array();
@@ -87,7 +94,7 @@ class Loader {
 
 			$option = $this->get_options( $provider );
 
-			if ( ! $option instanceof OptionAbstract ) {
+			if ( ! $option instanceof OptionsAbstract ) {
 				continue;
 			}
 
@@ -116,7 +123,10 @@ class Loader {
 	 */
 	public function get_mailer( $provider, $phpmailer ) {
 
-		if ( $phpmailer instanceof MailCatcher ) {
+		if (
+			$phpmailer instanceof MailCatcher ||
+			$phpmailer instanceof \PHPMailer
+		) {
 			$this->phpmailer = $phpmailer;
 		}
 
@@ -169,7 +179,7 @@ class Loader {
 				}
 			}
 		} catch ( \Exception $e ) {
-			// TODO: save error message later to display a user.
+			Debug::set( "There was a problem while retrieving {$request} for {$provider}: {$e->getMessage()}" );
 			$entity = null;
 		}
 

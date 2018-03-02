@@ -62,7 +62,7 @@ class Core {
 	public function init() {
 
 		// Load translations just in case.
-		load_plugin_textdomain( 'wp-mail-smtp', false, wp_mail_smtp()->plugin_path . '/languages' );
+		load_plugin_textdomain( 'wp-mail-smtp', false, plugin_basename( wp_mail_smtp()->plugin_path ) . '/languages' );
 
 		/*
 		 * Constantly check in admin area, that we don't need to upgrade DB.
@@ -71,6 +71,7 @@ class Core {
 		 */
 		if ( WP::in_wp_admin() ) {
 			$this->get_migration();
+			$this->get_upgrade();
 			$this->get_admin();
 		}
 	}
@@ -148,6 +149,24 @@ class Core {
 	}
 
 	/**
+	 * Load the plugin upgrader.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return Upgrade
+	 */
+	public function get_upgrade() {
+
+		static $upgrade;
+
+		if ( ! isset( $upgrade ) ) {
+			$upgrade = apply_filters( 'wp_mail_smtp_core_get_upgrade', new Upgrade() );
+		}
+
+		return $upgrade;
+	}
+
+	/**
 	 * Awesome Motive Notifications.
 	 *
 	 * @since 1.0.0
@@ -201,13 +220,22 @@ class Core {
 	 */
 	public function activate() {
 
-		$options['mail'] = array(
-			'from_email'  => get_option( 'admin_email' ),
-			'from_name'   => get_bloginfo( 'name' ),
-			'mailer'      => 'mail',
-			'return_path' => false,
+		// Store the plugin version activated to reference with upgrades.
+		update_option( 'wp_mail_smtp_version', WPMS_PLUGIN_VER );
+
+		// Create and store initial plugin settings.
+		$options = array(
+			'mail' => array(
+				'from_email'  => get_option( 'admin_email' ),
+				'from_name'   => get_bloginfo( 'name' ),
+				'mailer'      => 'mail',
+				'return_path' => false,
+			),
+			'smtp' => array(
+				'autotls' => true,
+			),
 		);
 
-		Options::init()->set( $options );
+		Options::init()->set( $options, true );
 	}
 }

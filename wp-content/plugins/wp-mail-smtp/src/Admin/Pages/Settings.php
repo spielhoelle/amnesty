@@ -3,6 +3,7 @@
 namespace WPMailSMTP\Admin\Pages;
 
 use WPMailSMTP\Admin\PageAbstract;
+use WPMailSMTP\Debug;
 use WPMailSMTP\Options;
 use WPMailSMTP\WP;
 
@@ -87,7 +88,7 @@ class Settings extends PageAbstract {
 					<input name="wp-mail-smtp[mail][from_name]" type="text"
 						value="<?php echo esc_attr( $options->get( 'mail', 'from_name' ) ); ?>"
 						<?php echo $options->is_const_defined( 'mail', 'from_name' ) ? 'disabled' : ''; ?>
-						id="wp-mail-smtp-setting-from-name" spellcheck="false"
+						id="wp-mail-smtp-setting-from_name" spellcheck="false"
 					/>
 					<p class="desc">
 						<?php esc_html_e( 'You can specify the name that emails should be sent from.', 'wp-mail-smtp' ); ?><br/>
@@ -142,11 +143,13 @@ class Settings extends PageAbstract {
 				</div>
 				<div class="wp-mail-smtp-setting-field">
 					<input name="wp-mail-smtp[mail][return_path]" type="checkbox"
-						value="true" <?php checked( true, $options->get( 'mail', 'return_path' ) ); ?>
+						value="true" <?php checked( true, (bool) $options->get( 'mail', 'return_path' ) ); ?>
 						<?php echo $options->is_const_defined( 'mail', 'return_path' ) ? 'disabled' : ''; ?>
 						id="wp-mail-smtp-setting-return_path"
 					/>
-					<label for="wp-mail-smtp-setting-return_path"><?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?></label></label>
+					<label for="wp-mail-smtp-setting-return_path">
+						<?php esc_html_e( 'Set the return-path to match the From Email', 'wp-mail-smtp' ); ?>
+					</label>
 					<p class="desc">
 						<?php esc_html_e( 'Return Path indicates where non-delivery receipts - or bounce messages - are to be sent.', 'wp-mail-smtp' ); ?><br/>
 						<?php esc_html_e( 'If unchecked bounce messages may be lost.', 'wp-mail-smtp' ); ?>
@@ -162,7 +165,7 @@ class Settings extends PageAbstract {
 
 						<!-- Mailer Option Title -->
 						<?php $provider_desc = $provider->get_description(); ?>
-						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php empty( $provider_desc ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
+						<div class="wp-mail-smtp-setting-row wp-mail-smtp-setting-row-content wp-mail-smtp-clear section-heading <?php echo empty( $provider_desc ) ? 'no-desc' : ''; ?>" id="wp-mail-smtp-setting-row-email-heading">
 							<div class="wp-mail-smtp-setting-field">
 								<h2><?php echo $provider->get_title(); ?></h2>
 								<?php if ( ! empty( $provider_desc ) ) : ?>
@@ -197,6 +200,22 @@ class Settings extends PageAbstract {
 		$options = new Options();
 		$old_opt = $options->get_all();
 
+		// When checkbox is unchecked - it's not submitted at all, so we need to define its default false value.
+		if ( ! isset( $data['mail']['return_path'] ) ) {
+			$data['mail']['return_path'] = false;
+		}
+		if ( ! isset( $data['smtp']['autotls'] ) ) {
+			$data['smtp']['autotls'] = false;
+		}
+		if ( ! isset( $data['smtp']['auth'] ) ) {
+			$data['smtp']['auth'] = false;
+		}
+
+		// Remove all debug messages when switching mailers.
+		if ( $old_opt['mail']['mailer'] !== $data['mail']['mailer'] ) {
+			Debug::clear();
+		}
+
 		$to_redirect = false;
 
 		// Old and new Gmail client id/secret values are different - we need to invalidate tokens and scroll to Auth button.
@@ -217,10 +236,10 @@ class Settings extends PageAbstract {
 			}
 		}
 
-		// New gmail clients data will be added from new $data, except the old access/refresh_token.
-		$to_save = array_merge( $old_opt, $data );
+		// New gmail clients data will be added from new $data.
+		$to_save = Options::array_merge_recursive( $old_opt, $data );
 
-		// All the sanitization is done there.
+		// All the sanitization is done in Options class.
 		$options->set( $to_save );
 
 		if ( $to_redirect ) {

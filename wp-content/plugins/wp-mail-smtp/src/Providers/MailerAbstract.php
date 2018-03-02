@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP\Providers;
 
+use WPMailSMTP\Debug;
 use WPMailSMTP\MailCatcher;
 use WPMailSMTP\Options;
 
@@ -59,12 +60,13 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function __construct( MailCatcher $phpmailer ) {
 
-		if ( empty( $this->url ) ) {
-			return;
-		}
-
 		$this->options = new Options();
 		$this->mailer  = $this->options->get( 'mail', 'mailer' );
+
+		// Only non-SMTP mailers need URL.
+		if ( ! $this->options->is_mailer_smtp() && empty( $this->url ) ) {
+			return;
+		}
 
 		$this->process_phpmailer( $phpmailer );
 	}
@@ -76,14 +78,22 @@ abstract class MailerAbstract implements MailerInterface {
 	 *
 	 * @param MailCatcher $phpmailer
 	 */
-	protected function process_phpmailer( $phpmailer ) {
+	public function process_phpmailer( $phpmailer ) {
 
-		// Make sure that we have access to PHPMailer class methods.
-		if ( ! $phpmailer instanceof MailCatcher ) {
+		// Make sure that we have access to MailCatcher class methods.
+		if (
+			! $phpmailer instanceof MailCatcher &&
+			! $phpmailer instanceof \PHPMailer
+		) {
 			return;
 		}
 
 		$this->phpmailer = $phpmailer;
+
+		// Prevent working with those methods, as they are not needed for SMTP-like mailers.
+		if ( $this->options->is_mailer_smtp() ) {
+			return;
+		}
 
 		$this->set_headers( $this->phpmailer->getCustomHeaders() );
 		$this->set_from( $this->phpmailer->From, $this->phpmailer->FromName );
@@ -134,7 +144,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 * @internal param array $params
 	 */
 	protected function set_body_param( $param ) {
-		$this->body = $this->array_merge_recursive( $this->body, $param );
+		$this->body = Options::array_merge_recursive( $this->body, $param );
 	}
 
 	/**
@@ -211,7 +221,7 @@ abstract class MailerAbstract implements MailerInterface {
 	 */
 	public function send() {
 
-		$params = $this->array_merge_recursive( $this->get_default_params(), array(
+		$params = Options::array_merge_recursive( $this->get_default_params(), array(
 			'headers' => $this->get_headers(),
 			'body'    => $this->get_body(),
 		) );
@@ -232,11 +242,17 @@ abstract class MailerAbstract implements MailerInterface {
 	protected function process_response( $response ) {
 
 		if ( is_wp_error( $response ) ) {
+			// Save the error text.
+			$errors = $response->get_error_messages();
+			foreach ( $errors as $error ) {
+				Debug::set( $error );
+			}
+
 			return;
 		}
 
 		if ( isset( $response['body'] ) && $this->is_json( $response['body'] ) ) {
-			$response['body'] = json_decode( $response['body'] );
+			$response['body'] = \json_decode( $response['body'] );
 		}
 
 		$this->response = $response;
@@ -267,9 +283,26 @@ abstract class MailerAbstract implements MailerInterface {
 
 		if ( wp_remote_retrieve_response_code( $this->response ) === $this->email_sent_code ) {
 			$is_sent = true;
+		} else {
+			$error = $this->get_response_error();
+
+			if ( ! empty( $error ) ) {
+				Debug::set( $error );
+			}
 		}
 
 		return apply_filters( 'wp_mail_smtp_providers_mailer_is_email_sent', $is_sent );
+	}
+
+	/**
+	 * Should be overwritten when appropriate.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return string
+	 */
+	protected function get_response_error() {
+		return '';
 	}
 
 	/**
@@ -296,51 +329,44 @@ abstract class MailerAbstract implements MailerInterface {
 	}
 
 	/**
-	 * Merge recursively, including a proper substitution of values in sub-arrays when keys are the same.
-	 * It's more like array_merge() and array_merge_recursive() combined.
+	 * This method is relevant to SMTP and Pepipost.
+	 * All other custom mailers should override it with own information.
 	 *
-	 * @since 1.0.0
+	 * @since 1.2.0
 	 *
-	 * @return array
+	 * @return string
 	 */
-	protected function array_merge_recursive() {
+	public function get_debug_info() {
+		global $phpmailer;
 
-		$arrays = func_get_args();
+		$smtp_text = array();
 
-		if ( count( $arrays ) < 2 ) {
-			return isset( $arrays[0] ) ? $arrays[0] : array();
-		}
-
-		$merged = array();
-
-		while ( $arrays ) {
-			$array = array_shift( $arrays );
-
-			if ( ! is_array( $array ) ) {
-				return array();
-			}
-
-			if ( empty( $array ) ) {
-				continue;
-			}
-
-			foreach ( $array as $key => $value ) {
-				if ( is_string( $key ) ) {
-					if (
-						is_array( $value ) &&
-						array_key_exists( $key, $merged ) &&
-						is_array( $merged[ $key ] )
-					) {
-						$merged[ $key ] = call_user_func( __FUNCTION__, $merged[ $key ], $value );
-					} else {
-						$merged[ $key ] = $value;
-					}
-				} else {
-					$merged[] = $value;
-				}
+		// Mail mailer has nothing to return.
+		if ( $this->options->is_mailer_smtp() ) {
+			$smtp_text[] = '<strong>ErrorInfo:</strong> ' . make_clickable( wp_strip_all_tags( $phpmailer->ErrorInfo ) );
+			$smtp_text[] = '<strong>Host:</strong> ' . $phpmailer->Host;
+			$smtp_text[] = '<strong>Port:</strong> ' . $phpmailer->Port;
+			$smtp_text[] = '<strong>SMTPSecure:</strong> ' . Debug::pvar( $phpmailer->SMTPSecure );
+			$smtp_text[] = '<strong>SMTPAutoTLS:</strong> ' . Debug::pvar( $phpmailer->SMTPAutoTLS );
+			$smtp_text[] = '<strong>SMTPAuth:</strong> ' . Debug::pvar( $phpmailer->SMTPAuth );
+			if ( ! empty( $phpmailer->SMTPOptions ) ) {
+				$smtp_text[] = '<strong>SMTPOptions:</strong> <code>' . json_encode( $phpmailer->SMTPOptions ) . '</code>';
 			}
 		}
 
-		return $merged;
+		$smtp_text[] = '<br><strong>Server:</strong>';
+		$smtp_text[] = '<strong>OpenSSL:</strong> ' . ( extension_loaded( 'openssl' ) ? 'Yes' : 'No' );
+		if ( function_exists( 'apache_get_modules' ) ) {
+			$modules     = apache_get_modules();
+			$smtp_text[] = '<strong>Apache.mod_security:</strong> ' . ( in_array( 'mod_security', $modules, true ) || in_array( 'mod_security2', $modules, true ) ? 'Yes' : 'No' );
+		}
+		if ( function_exists( 'selinux_is_enabled' ) ) {
+			$smtp_text[] = '<strong>OS.SELinux:</strong> ' . ( selinux_is_enabled() ? 'Yes' : 'No' );
+		}
+		if ( function_exists( 'grsecurity_is_enabled' ) ) {
+			$smtp_text[] = '<strong>OS.grsecurity:</strong> ' . ( grsecurity_is_enabled() ? 'Yes' : 'No' );
+		}
+
+		return implode( '<br>', $smtp_text );
 	}
 }
