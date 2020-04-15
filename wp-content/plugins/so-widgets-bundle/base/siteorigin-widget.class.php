@@ -237,6 +237,11 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		echo '</div>';
 		echo $args['after_widget'];
 		do_action( 'siteorigin_widgets_after_widget_' . $this->id_base, $instance, $this );
+
+		if ( $this->is_preview( $instance ) ) {
+			// print inline styles if we're preview the widget.
+			siteorigin_widget_print_styles();
+		}
 	}
 
 	private function get_wrapper_data( $instance ) {
@@ -329,6 +334,22 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 	private function is_customize_preview(){
 		global $wp_customize;
 		return is_a( $wp_customize, 'WP_Customize_Manager' ) && $wp_customize->is_preview();
+	}
+
+	protected function is_block_editor_page() {
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+		// This is for the Gutenberg plugin.
+		$is_gutenberg_page = $current_screen != null &&
+							 function_exists( 'is_gutenberg_page' ) &&
+							 is_gutenberg_page();
+		// This is for WP 5 with the integrated block editor.
+		$is_block_editor = false;
+		if ( ! empty( $current_screen ) && method_exists( $current_screen, 'is_block_editor' ) ) {
+			$is_block_editor = $current_screen->is_block_editor();
+		}
+
+		return $is_block_editor || $is_gutenberg_page;
 	}
 
 	/**
@@ -442,14 +463,18 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		// Filter the instance specifically for the form
 		$instance = apply_filters('siteorigin_widgets_form_instance_' . $this->id_base, $instance, $this);
 
-		$form_id = 'siteorigin_widget_form_'.md5( uniqid( rand(), true ) );
+		// `more_entropy` adds a period to the id.
+		$id = str_replace( '.', '', uniqid( rand(), true ) );
+		$form_id = 'siteorigin_widget_form_' . md5( $id );
 		$class_name = str_replace( '_', '-', strtolower( $this->widget_class ) );
 
 		if( empty( $instance['_sow_form_id'] ) ) {
-			$instance['_sow_form_id'] = uniqid();
+			$instance['_sow_form_id'] = $id;
 		}
 		?>
-		<div class="siteorigin-widget-form siteorigin-widget-form-main siteorigin-widget-form-main-<?php echo esc_attr($class_name) ?>" id="<?php echo $form_id ?>" data-class="<?php echo esc_attr( $this->widget_class ) ?>" style="display: none">
+		<div class="siteorigin-widget-form siteorigin-widget-form-main siteorigin-widget-form-main-<?php echo esc_attr($class_name) ?>"
+			 id="<?php echo $form_id ?>" data-class="<?php echo esc_attr( $this->widget_class ) ?>"
+			 data-id-base="<?php echo esc_attr( $this->id_base ) ?>" style="display: none">
 			<?php
 			$this->display_teaser_message();
 			/* @var $field_factory SiteOrigin_Widget_Field_Factory */
@@ -701,7 +726,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		}
 
 		// Remove the old CSS, it'll be regenerated on page load.
-		$this->delete_css( $this->modify_instance( $new_instance ) );
+		$this->delete_css( $this->modify_instance( $old_instance ) );
 		return $new_instance;
 	}
 
@@ -720,23 +745,33 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 
 		$css = $this->get_instance_css($instance);
 
-		if( !empty($css) ) {
-
+		if ( ! empty( $css ) ) {
 			if ( WP_Filesystem() ) {
 				global $wp_filesystem;
 				$upload_dir = wp_upload_dir();
 
-				if ( ! $wp_filesystem->is_dir( $upload_dir['basedir'] . '/siteorigin-widgets/' ) ) {
-					$wp_filesystem->mkdir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
+				$dir_exists = $wp_filesystem->is_dir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
+
+				if ( empty( $dir_exists ) ) {
+					// The 'siteorigin-widgets' directory doesn't exist, so try to create it.
+					$dir_exists = $wp_filesystem->mkdir( $upload_dir['basedir'] . '/siteorigin-widgets/' );
 				}
 
-				$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $name );
-				$wp_filesystem->put_contents(
-					$upload_dir['basedir'] . '/siteorigin-widgets/' . $name,
-					$css
-				);
+				if ( ! empty( $dir_exists ) ) {
+					// The 'siteorigin-widgets' directory exists, so we can try to write the CSS to a file.
+					$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $name );
+					$file_put_success = $wp_filesystem->put_contents(
+						$upload_dir['basedir'] . '/siteorigin-widgets/' . $name,
+						$css
+					);
 
-			} else {
+					// Alert other plugins that we've added a new CSS file
+					do_action( 'siteorigin_widgets_stylesheet_added', $name, $instance );
+				}
+			}
+
+			// We couldn't write to file, so let's use cache instead.
+			if ( empty( $file_put_success ) ) {
 				wp_cache_add( $name, $css, 'siteorigin_widgets' );
 			}
 
@@ -767,6 +802,9 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 				//Reindex array
 				$this->generated_css = array_values( $this->generated_css );
 			}
+
+			// Alert other plugins that we've deleted a CSS file
+			do_action( 'siteorigin_widgets_stylesheet_deleted', $name, $instance );
 		}
 	}
 
@@ -812,7 +850,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 	 * @return string
 	 */
 	public function get_instance_css( $instance ){
-		if( !class_exists('lessc') ) require plugin_dir_path( __FILE__ ).'inc/lessc.inc.php';
+		if( !class_exists( 'SiteOrigin_LessC' ) ) require plugin_dir_path( __FILE__ ) . 'inc/lessc.inc.php';
 		if( !class_exists('SiteOrigin_Widgets_Less_Functions') ) require plugin_dir_path( __FILE__ ).'inc/less-functions.php';
 
 		if( !method_exists( $this, 'get_less_content' ) ) {
@@ -836,7 +874,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 		$less = preg_replace_callback( '/\.widget-function\((.*)\);/', array( $this, 'less_widget_inject' ), $less );
 
 		//handle less @import statements
-		$less = preg_replace_callback( '/^@import\s+".*?\/?([\w-\.]+)";/m', array( $this, 'get_less_import_contents' ), $less );
+		$less = preg_replace_callback( '/^@import\s+".*?\/?([\w\-\.]+)";/m', array( $this, 'get_less_import_contents' ), $less );
 
 		$vars = apply_filters( 'siteorigin_widgets_less_variables_' . $this->id_base, $this->get_less_variables( $instance ), $instance, $this );
 		if( !empty( $vars ) ){
@@ -867,7 +905,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 
 			$less = $css_imports . "\n\n" . '.so-widget-'.$css_name." { \n".$less."\n } ";
 
-			$compiler = new lessc();
+			$compiler = new SiteOrigin_LessC();
 			$lc_functions = new SiteOrigin_Widgets_Less_Functions($this, $instance);
 			$lc_functions->registerFunctions( $compiler );
 			$compiler = apply_filters( 'siteorigin_widgets_less_compiler', $compiler, $instance, $this );
@@ -1091,14 +1129,19 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 	 * @return string
 	 */
 	function get_style_hash( $instance ) {
-		if( method_exists( $this, 'get_style_hash_variables' ) ) {
-			$vars = apply_filters( 'siteorigin_widgets_hash_variables_' . $this->id_base, $this->get_style_hash_variables( $instance ), $instance, $this );
-		} else {
-			$vars = apply_filters( 'siteorigin_widgets_less_variables_' . $this->id_base, $this->get_less_variables( $instance ), $instance, $this );
-		}
-		$version = property_exists( $this, 'version' ) ? $this->version : '';
+		$style_hash = apply_filters('siteorigin_widgets_widget_style_hash', '', $this);
+		if( empty( $style_hash ) ) {
+			if( method_exists( $this, 'get_style_hash_variables' ) ) {
+				$vars = apply_filters( 'siteorigin_widgets_hash_variables_' . $this->id_base, $this->get_style_hash_variables( $instance ), $instance, $this );
+			} else {
+				$vars = apply_filters( 'siteorigin_widgets_less_variables_' . $this->id_base, $this->get_less_variables( $instance ), $instance, $this );
+			}
+			$version = property_exists( $this, 'version' ) ? $this->version : '';
 
-		return substr( md5( json_encode( $vars ) . $version ), 0, 12 );
+			$style_hash = substr( md5( json_encode( $vars ) . $version ), 0, 12 );
+		}
+
+		return $style_hash;
 	}
 
 	/**
@@ -1225,7 +1268,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 			$instance,
 			$this
 		);
-		
+
 		foreach ( $f_scripts as $f_script ) {
 			if ( ! wp_script_is( $f_script[0] ) ) {
 				wp_enqueue_script(
@@ -1262,7 +1305,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 			$instance,
 			$this
 		);
-		
+
 		foreach ( $f_styles as $f_style ) {
 			if ( ! wp_style_is( $f_style[0] ) ) {
 				wp_enqueue_style(
@@ -1307,10 +1350,12 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 
 		// Check if the general request is a preview
 		$is_preview =
-			is_preview() ||  // is this a standard preview
-			$this->is_customize_preview() ||    // Is this a customizer preview
-			!empty( $_GET['siteorigin_panels_live_editor'] ) ||     // Is this a Page Builder live editor request
-			( !empty( $_REQUEST['action'] ) && $_REQUEST['action'] == 'so_panels_builder_content' );    // Is this a Page Builder content ajax request
+			is_preview() || // Is this a standard preview
+			$this->is_customize_preview() || // Is this a customizer preview
+			$this->is_block_editor_page() || // Is this a block editor page
+			!empty( $_GET['siteorigin_panels_live_editor'] ) || // Is this a Page Builder live editor request
+			( !empty( $_REQUEST['action'] ) && $_REQUEST['action'] == 'so_panels_builder_content' ) || // Is this a Page Builder content ajax request
+			! empty( $GLOBALS[ 'SITEORIGIN_PANELS_PREVIEW_RENDER' ] ); // Is this a Page Builder preview render.
 
 		return apply_filters( 'siteorigin_widgets_is_preview', $is_preview, $this );
 	}
@@ -1321,7 +1366,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 	 * @return bool
 	 */
 	function show_preview_button(){
-		$show_preview = $this->widget_options['has_preview'] && ! $this->is_customize_preview();
+		$show_preview = ! empty( $this->widget_options['has_preview'] ) && ! $this->is_customize_preview();
 		$show_preview = apply_filters( 'siteorigin_widgets_form_show_preview_button', $show_preview, $this );
 		return $show_preview;
 	}
@@ -1329,9 +1374,11 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 	/**
 	 * Get the global settings from the options table.
 	 *
+	 * @param string|null $key
+	 *
 	 * @return mixed
 	 */
-	function get_global_settings( ){
+	function get_global_settings( $key = null ){
 		$values = get_option( 'so_widget_settings[' . $this->widget_class . ']', array() );
 
 		// Add in the defaults
@@ -1339,7 +1386,7 @@ abstract class SiteOrigin_Widget extends WP_Widget {
 			$values = $this->add_defaults( $this->get_settings_form(), $values );
 		}
 
-		return $values;
+		return !empty( $key ) ? $values[$key] : $values;
 	}
 
 	/**

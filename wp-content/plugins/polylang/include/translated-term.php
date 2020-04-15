@@ -15,7 +15,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 * @param object $model
 	 */
 	public function __construct( &$model ) {
-		$this->object_type = 'term';
+		$this->object_type = 'term'; // For taxonomies
+		$this->type = 'term'; // For capabilities
 		$this->tax_language = 'term_language';
 		$this->tax_translations = 'term_translations';
 		$this->tax_tt = 'tl_term_taxonomy_id';
@@ -84,7 +85,7 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 
 		// get_term_by still not cached in WP 3.5.1 but internally, the function is always called by term_id
 		elseif ( is_string( $value ) && $taxonomy ) {
-			$term_id = wpcom_vip_get_term_by( 'slug', $value, $taxonomy )->term_id;
+			$term_id = get_term_by( 'slug', $value, $taxonomy )->term_id;
 		}
 
 		// Get the language and make sure it is a PLL_Language object
@@ -125,10 +126,10 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 		parent::delete_translation( $id );
 		wp_delete_object_term_relationships( $id, 'term_translations' );
 
-		if ( $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $wpdb->terms WHERE term_id = %d;", $id ) ) ) {
+		if ( ! doing_action( 'pre_delete_term' ) && $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $wpdb->terms WHERE term_id = %d;", $id ) ) ) {
 			// Always keep a group for terms to allow relationships remap when importing from a WXR file
-			$translations[ $slug ] = $id;
-			wp_insert_term( $group = uniqid( 'pll_' ), 'term_translations', array( 'description' => serialize( $translations ) ) );
+			$translations = array( $slug => $id );
+			wp_insert_term( $group = uniqid( 'pll_' ), 'term_translations', array( 'description' => maybe_serialize( $translations ) ) );
 			wp_set_object_terms( $id, $group, 'term_translations' );
 		}
 	}
@@ -137,12 +138,14 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 * A join clause to add to sql queries when filtering by language is needed directly in query
 	 *
 	 * @since 1.2
+	 * @since 2.6 The `$alias` parameter was added.
 	 *
+	 * @param string $alias Alias for $wpdb->terms table
 	 * @return string join clause
 	 */
-	public function join_clause() {
+	public function join_clause( $alias = 't' ) {
 		global $wpdb;
-		return " INNER JOIN $wpdb->term_relationships AS pll_tr ON pll_tr.object_id = t.term_id";
+		return " INNER JOIN $wpdb->term_relationships AS pll_tr ON pll_tr.object_id = $alias.term_id";
 	}
 
 	/**
@@ -155,6 +158,8 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 * @return array unmodified $terms
 	 */
 	public function _prime_terms_cache( $terms, $taxonomies ) {
+		$term_ids = array();
+
 		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomies ) ) {
 			foreach ( $terms as $term ) {
 				$term_ids[] = is_object( $term ) ? $term->term_id : (int) $term;
@@ -192,7 +197,7 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 *
 	 * @param array $ids An array of term IDs.
 	 */
-	function clean_term_cache( $ids ) {
+	public function clean_term_cache( $ids ) {
 		clean_object_term_cache( $ids, 'term' );
 	}
 }

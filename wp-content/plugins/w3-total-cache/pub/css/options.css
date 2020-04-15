@@ -47,14 +47,9 @@ input.w3tc-error, textarea.w3tc-error {
 }
 
 #w3tc-help ul {
-	float: left;
-	width: 29%;
+	columns: 2;
 	list-style-type: disc;
 	margin: 1em 2% 1em 2%;
-}
-
-#w3tc-help li {
-	margin: 0;
 }
 
 #w3tc-help a {
@@ -369,7 +364,7 @@ input.w3tc-error, textarea.w3tc-error {
 	display:none;
 }
 
-#cdn_netdna_authorization_key, #cdn_maxcdn_authorization_key, .maxcdn-netdna-widget-base .button-secondary{
+#cdn_netdna_authorization_key, #cdn_maxcdn_authorization_key, {
 	margin-bottom: 3px;
 }
 
@@ -441,6 +436,9 @@ td.w3tc_config_value_text {
 	padding: 20px;
 }
 
+.w3tc_reject_roles label {
+	font-weight: normal;
+}
 
 /*---*/
 /* js bound to id */
@@ -449,4 +447,91 @@ th.w3tc_extensions_manage_column_check {
 	padding: 0 0 0 5px;
 	vertical-align: middle;
 	width: 2.2em;
+}
+
+#browsercache_security_xfo_allow {
+	padding-top:0;
+	padding-bottom:4px;
+}
+
+.lightbox-content-padded {
+	padding: 15px;
+}
+
+.w3tcbc_qrf {
+	width: 100%;
+}
+
+.w3tcbc_qrf th {
+	text-align: left;
+}
+
+.w3tcbc_qrf td code {
+	white-space: nowrap;
+}
+
+.w3tc-gopro {
+	background: #fbfbfb;
+	border-left: 4px solid #46b450;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+	padding: 5px;
+	grid-template-columns: 1fr auto;
+	display: grid;
+	grid-gap: 30px;
+	align-items: flex-start;
+}
+
+.w3tc-gopro-action strong,
+.w3tc-gopro-action i {
+	display: block;
+	text-align: center;
+}
+
+.w3tc-gopro-action i {
+	margin-top: 2px;
+	margin-bottom: 10px;
+}
+
+.w3tc-gopro-more {
+	display: block;
+}
+
+.w3tc-gopro-more:focus {
+	box-shadow: none;
+    outline: none;
+}
+
+.w3tc-gopro-more .dashicons {
+	display: inline;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.w3tc-gopro-excerpt {
+	display: block;
+}
+.w3tc-gopro-description {
+	display: block;
+	max-height: 0px;
+	transition: max-height 0.5s ease-out;
+	overflow: hidden;
+}
+
+/* For pro features in a table, ensure the checkboxes / etc remained aligned. */
+.form-table .w3tc-gopro {
+	margin-left: -9px;
+}
+
+.button.w3tc-gopro-button {
+	border-color: darkgreen;
+	box-shadow: 0 1px 0 darkgreen;
+	background: green;
+	color: #fff;
+}
+.button.w3tc-gopro-button:hover,
+.button.w3tc-gopro-button:focus {
+	border-color: green;
+	box-shadow: 0 1px 0 green;
+	background: #009900;
+	color: #fff;
 }

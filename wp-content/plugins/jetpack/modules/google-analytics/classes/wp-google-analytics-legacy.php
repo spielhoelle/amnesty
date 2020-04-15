@@ -77,7 +77,10 @@ class Jetpack_Google_Analytics_Legacy {
 		if ( is_404() ) {
 			// This is a 404 and we are supposed to track them.
 			$custom_vars[] = "_gaq.push(['_trackEvent', '404', document.location.href, document.referrer]);";
-		} elseif ( is_search() ) {
+		} elseif (
+			is_search()
+			&& isset( $_REQUEST['s'] )
+		) {
 			// Set track for searches, if it's a search, and we are supposed to.
 			$track['data'] = sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ); // Input var okay.
 			$track['code'] = 'search';
@@ -233,19 +236,15 @@ class Jetpack_Google_Analytics_Legacy {
 			global $product;
 			$product_sku_or_id = $product->get_sku() ? $product->get_sku() : "#" + $product->get_id();
 			wc_enqueue_js(
-				"jQuery( function( $ ) {
-					$( '.single_add_to_cart_button' ).click( function() {
-						_gaq.push(['_trackEvent', 'Products', 'Add to Cart', '#" . esc_js( $product_sku_or_id ) . "']);
-					} );
+				"$( '.single_add_to_cart_button' ).click( function() {
+					_gaq.push(['_trackEvent', 'Products', 'Add to Cart', '#" . esc_js( $product_sku_or_id ) . "']);
 				} );"
 			);
 		} else if ( is_woocommerce() ) { // any other page that uses templates (like product lists, archives, etc)
 			wc_enqueue_js(
-				"jQuery( function( $ ) {
-					$( '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' ).click( function() {
-						var label = $( this ).data( 'product_sku' ) ? $( this ).data( 'product_sku' ) : '#' + $( this ).data( 'product_id' );
-						_gaq.push(['_trackEvent', 'Products', 'Add to Cart', label]);
-					} );
+				"$( '.add_to_cart_button:not(.product_type_variable, .product_type_grouped)' ).click( function() {
+					var label = $( this ).data( 'product_sku' ) ? $( this ).data( 'product_sku' ) : '#' + $( this ).data( 'product_id' );
+					_gaq.push(['_trackEvent', 'Products', 'Add to Cart', label]);
 				} );"
 			);
 		}

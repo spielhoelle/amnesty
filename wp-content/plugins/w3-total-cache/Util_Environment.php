@@ -108,10 +108,10 @@ class Util_Environment {
 	}
 
 	/*
-     * Returns URL from filename/dirname
-     *
-     * @return string
-     */
+	 * Returns URL from filename/dirname
+	 *
+	 * @return string
+	 */
 	static public function filename_to_url( $filename, $use_site_url = false ) {
 		// using wp-content instead of document_root as known dir since dirbased
 		// multisite wp adds blogname to the path inside site_url
@@ -712,8 +712,9 @@ class Util_Environment {
 				'%BLOG_ID%',
 				'%HOST%'
 			), array(
-				( isset( $GLOBALS['blog_id'] ) ? (int) $GLOBALS['blog_id'] : 0 ),
-				( isset( $GLOBALS['post_id'] ) ? (int) $GLOBALS['post_id'] : 0 ),
+				( isset( $GLOBALS['blog_id'] ) && is_numeric( $GLOBALS['blog_id'] ) ? (int) $GLOBALS['blog_id'] : 0 ),
+				( isset( $GLOBALS['post_id'] ) && is_numeric( $GLOBALS['post_id'] ) ?
+					(int) $GLOBALS['post_id'] : 0 ),
 				Util_Environment::blog_id(),
 				Util_Environment::host()
 			), $path );
@@ -796,35 +797,36 @@ class Util_Environment {
 		if ( substr( $normalized_url, 0, strlen( $home_url ) ) != $home_url ) {
 			// not a home url, return unchanged since cant be
 			// converted to filename
-			return $url;
-		} else {
-			$path_relative_to_home = str_replace( $home_url, '', $normalized_url );
+			return null;
+		}
 
-			$home = set_url_scheme( get_option( 'home' ), 'http' );
-			$siteurl = set_url_scheme( get_option( 'siteurl' ), 'http' );
+		$path_relative_to_home = str_replace( $home_url, '', $normalized_url );
 
-			$home_path = rtrim( Util_Environment::site_path(), '/' );
-			// adjust home_path if site is not is home
-			if ( ! empty( $home ) && 0 !== strcasecmp( $home, $siteurl ) ) {
-				// $siteurl - $home
-				$wp_path_rel_to_home = rtrim( str_ireplace( $home, '', $siteurl ), '/' );
-				if ( substr( $home_path, -strlen( $wp_path_rel_to_home ) ) ==
-					$wp_path_rel_to_home ) {
-					$home_path = substr( $home_path, 0, -strlen( $wp_path_rel_to_home ) );
-				}
+		$home = set_url_scheme( get_option( 'home' ), 'http' );
+		$siteurl = set_url_scheme( get_option( 'siteurl' ), 'http' );
+
+		$home_path = rtrim( Util_Environment::site_path(), '/' );
+		// adjust home_path if site is not is home
+		if ( ! empty( $home ) && 0 !== strcasecmp( $home, $siteurl ) ) {
+			// $siteurl - $home
+			$wp_path_rel_to_home = rtrim( str_ireplace( $home, '', $siteurl ), '/' );
+			if ( substr( $home_path, -strlen( $wp_path_rel_to_home ) ) ==
+				$wp_path_rel_to_home ) {
+				$home_path = substr( $home_path, 0, -strlen( $wp_path_rel_to_home ) );
 			}
+		}
 
-			// common encoded characters
-			$path_relative_to_home = str_replace( '%20', ' ', $path_relative_to_home );
+		// common encoded characters
+		$path_relative_to_home = str_replace( '%20', ' ', $path_relative_to_home );
 
-			$full_filename = $home_path . DIRECTORY_SEPARATOR .
-				trim( $path_relative_to_home, DIRECTORY_SEPARATOR );
+		$full_filename = $home_path . DIRECTORY_SEPARATOR .
+			trim( $path_relative_to_home, DIRECTORY_SEPARATOR );
 
-			$docroot = Util_Environment::document_root();
-			if ( substr( $full_filename, 0, strlen( $docroot ) ) == $docroot )
-				$docroot_filename = substr( $full_filename, strlen( $docroot ) );
-			else
-				$docroot_filename = $path_relative_to_home;
+		$docroot = Util_Environment::document_root();
+		if ( substr( $full_filename, 0, strlen( $docroot ) ) == $docroot ) {
+			$docroot_filename = substr( $full_filename, strlen( $docroot ) );
+		} else {
+			$docroot_filename = $path_relative_to_home;
 		}
 
 		// sometimes urls (coming from other plugins/themes)
@@ -833,6 +835,11 @@ class Util_Environment {
 		$docroot_filename = str_replace( '//', DIRECTORY_SEPARATOR, $docroot_filename );
 
 		return ltrim( $docroot_filename, DIRECTORY_SEPARATOR );
+	}
+
+	static public function docroot_to_full_filename( $docroot_filename ) {
+		return rtrim( Util_Environment::document_root(), DIRECTORY_SEPARATOR ) .
+			DIRECTORY_SEPARATOR . $docroot_filename;
 	}
 
 	/**
@@ -947,8 +954,13 @@ class Util_Environment {
 		if ( isset( $rel['scheme'] ) || isset( $rel['host'] ) )
 			return $relative_url;
 
-		if ( !isset( $rel['host'] ) )
-			$rel['host'] = parse_url( get_home_url(), PHP_URL_HOST );
+		if ( !isset( $rel['host'] ) ) {
+			$home_parsed = parse_url( get_home_url() );
+			$rel['host'] = $home_parsed['host'];
+			if ( isset( $home_parsed['port'] ) ) {
+				$rel['port'] = $home_parsed['port'];
+			}
+		}
 
 		$scheme = isset( $rel['scheme'] ) ? $rel['scheme'] . '://' : '//';
 		$host = isset( $rel['host'] ) ? $rel['host'] : '';
@@ -982,12 +994,14 @@ class Util_Environment {
 	 *
 	 * @return string
 	 */
-	static public function redirect_temp( $url = '', $params = array() ) {
+	static public function safe_redirect_temp( $url = '', $params = array(),
+			$safe_redirect = false ) {
 		$url = Util_Environment::url_format( $url, $params );
-		if ( function_exists( 'do_action' ) )
+		if ( function_exists( 'do_action' ) ) {
 			do_action( 'w3tc_redirect' );
+		}
 
-		$status_code = 301;
+		$status_code = 302;
 
 		$protocol = $_SERVER["SERVER_PROTOCOL"];
 		if ( 'HTTP/1.1' === $protocol ) {
@@ -999,9 +1013,17 @@ class Util_Environment {
 			$status_header = "$protocol $status_code $text";
 			@header( $status_header, true, $status_code );
 		}
+
+		add_action( 'wp_safe_redirect_fallback', array(
+			'\W3TC\Util_Environment', 'wp_safe_redirect_fallback' ) );
+
 		@header( 'Cache-Control: no-cache' );
-		@header( 'Location: ' . $url, true, $status_code );
+		wp_safe_redirect( $url, $status_code );
 		exit();
+	}
+
+	static public function wp_safe_redirect_fallback( $url ) {
+		return home_url( '?w3tc_repeat=invalid' );
 	}
 
 	/**
@@ -1016,9 +1038,9 @@ class Util_Environment {
 			return $post_ID;
 		} elseif ( $comment_post_ID ) {
 			return $comment_post_ID;
-		} elseif ( ( is_single() || is_page() ) && is_array( $posts ) ) {
+		} elseif ( ( is_single() || is_page() ) && is_array( $posts ) && isset( $posts[0]->ID ) ) {
 			return $posts[0]->ID;
-		} elseif ( is_object( $posts ) && property_exists( $posts, 'ID' ) ) {
+		} elseif ( isset( $posts->ID ) ) {
 			return $posts->ID;
 		} elseif ( isset( $_REQUEST['p'] ) ) {
 			return (integer) $_REQUEST['p'];
@@ -1063,15 +1085,15 @@ class Util_Environment {
 	 */
 	static public function is_w3tc_pro( $config = null ) {
 		if ( defined( 'W3TC_PRO' ) && W3TC_PRO )
-		    return true;
+			return true;
 		if ( defined( 'W3TC_ENTERPRISE' ) && W3TC_ENTERPRISE )
-		    return true;
+			return true;
 
 		if ( is_object( $config ) ) {
-		    $plugin_type = $config->get_string( 'plugin.type' );
+			$plugin_type = $config->get_string( 'plugin.type' );
 
-		    if ( $plugin_type == 'pro' || $plugin_type == 'pro_dev' )
-		        return true;
+			if ( $plugin_type == 'pro' || $plugin_type == 'pro_dev' )
+				return true;
 		}
 
 		return false;
@@ -1206,5 +1228,17 @@ class Util_Environment {
 		$temp = isset( $sig[1] ) ? explode( ' ', $sig[1] ) : array( '0' );
 		$version = $temp[0];
 		return $version;
+	}
+
+	/**
+	 * Checks if current request is REST REQUEST
+	 */
+	static public function is_rest_request( $url ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST )
+			return true;
+
+		// in case when called before constant is set
+		// wp filters are not available in that case
+		return preg_match( '~' . W3TC_WP_JSON_URI . '~', $url );
 	}
 }

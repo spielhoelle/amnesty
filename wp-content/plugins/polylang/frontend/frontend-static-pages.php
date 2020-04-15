@@ -47,7 +47,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 		add_filter( 'option_page_for_posts', array( $this, 'translate_page_for_posts' ) );
 
 		// Support theme customizer
-		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
+		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			add_filter( 'pre_option_page_on_front', 'pll_get_post', 20 );
 			add_filter( 'pre_option_page_for_post', 'pll_get_post', 20 );
 		}
@@ -71,8 +71,8 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	 * @return int
 	 */
 	public function translate_page_on_front( $v ) {
-		// returns the current page if there is no translation to avoid ugly notices
-		return isset( $this->curlang->page_on_front ) ? $this->curlang->page_on_front : $v;
+		// Don't attempt to translate in a 'switch_blog' action as there is a risk to call this function while initializing the languages cache
+		return isset( $this->curlang->page_on_front ) && ! doing_action( 'switch_blog' ) ? $this->curlang->page_on_front : $v;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 			$url = is_paged() ? $this->links_model->add_paged_to_link( $this->links->get_home_url(), $wp_query->query_vars['page'] ) : $this->links->get_home_url();
 
 			// Don't forget additional query vars
-			$query = parse_url( $redirect_url, PHP_URL_QUERY );
+			$query = wp_parse_url( $redirect_url, PHP_URL_QUERY );
 			if ( ! empty( $query ) ) {
 				parse_str( $query, $query_vars );
 				$query_vars = rawurlencode_deep( $query_vars ); // WP encodes query vars values
@@ -130,7 +130,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	}
 
 	/**
-	 * Handles canonical redirection if we are on a static front page
+	 * Prevents canonical redirection if we are on a static front page
 	 *
 	 * @since 1.8
 	 *
@@ -138,24 +138,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	 * @return bool|string
 	 */
 	public function pll_check_canonical_url( $redirect_url ) {
-		if ( ! empty( $this->curlang->page_on_front ) && is_page( $this->curlang->page_on_front ) ) {
-			// Redirect www.mysite.fr to mysite.fr
-			if ( 3 === $this->options['force_lang'] ) {
-				foreach ( $this->options['domains'] as $lang => $domain ) {
-					$host = parse_url( $domain, PHP_URL_HOST );
-					if ( 'www.' . $_SERVER['HTTP_HOST'] === $host || 'www.' . $host === $_SERVER['HTTP_HOST'] ) {
-						$language = $this->model->get_language( $lang );
-						return $language->home_url;
-					}
-				}
-			}
-
-			// Prevents canonical redirection made by WP from secondary language to main language
-			if ( $this->options['redirect_lang'] ) {
-				return false;
-			}
-		}
-		return $redirect_url;
+		return $this->options['redirect_lang'] && ! $this->options['force_lang'] && ! empty( $this->curlang->page_on_front ) && is_page( $this->curlang->page_on_front ) ? false : $redirect_url;
 	}
 
 	/**
@@ -192,10 +175,15 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 
 		// Redirect the language page to the homepage when using a static front page
 		elseif ( ( $this->options['redirect_lang'] || $this->options['hide_default'] ) && $this->is_front_page( $query ) && $lang = $this->model->get_language( get_query_var( 'lang' ) ) ) {
-			$query->set( 'page_id', $lang->page_on_front );
-			$query->is_singular = $query->is_page = true;
 			$query->is_archive = $query->is_tax = false;
-			unset( $query->query_vars['lang'], $query->queried_object ); // Reset queried object
+			if ( ! empty( $lang->page_on_front ) ) {
+				$query->set( 'page_id', $lang->page_on_front );
+				$query->is_singular = $query->is_page = true;
+				unset( $query->query_vars['lang'], $query->queried_object ); // Reset queried object
+			} else {
+				// Handle case where the static front page hasn't be translated to avoid a possible infinite redirect loop.
+				$query->is_home = true;
+			}
 		}
 
 		// Fix paged static front page in plain permalinks when Settings > Reading doesn't match the default language

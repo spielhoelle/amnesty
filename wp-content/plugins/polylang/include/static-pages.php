@@ -1,23 +1,23 @@
 <?php
 
 /**
- * base class to manage the static front page and the page for posts
+ * Base class to manage the static front page and the page for posts
  *
  * @since 1.8
  */
-abstract class PLL_Static_Pages {
+class PLL_Static_Pages {
 	public $model, $options;
 	public $page_on_front, $page_for_posts;
 
 	/**
-	 * constructor: setups filters and actions
+	 * Constructor: setups filters and actions
 	 *
 	 * @since 1.8
 	 *
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 		$this->curlang = &$polylang->curlang;
 
@@ -26,17 +26,20 @@ abstract class PLL_Static_Pages {
 		// Modifies the page link in case the front page is not in the default language
 		add_filter( 'page_link', array( $this, 'page_link' ), 20, 2 );
 
-		// clean the languages cache when editing page of front, page for posts
+		// Clean the languages cache when editing page of front, page for posts
 		add_action( 'update_option_show_on_front', array( $this->model, 'clean_languages_cache' ) );
 		add_action( 'update_option_page_on_front', array( $this->model, 'clean_languages_cache' ) );
 		add_action( 'update_option_page_for_posts', array( $this->model, 'clean_languages_cache' ) );
 
-		// refresh rewrite rules when the page on front is modified
+		// Refresh rewrite rules when the page on front is modified
 		add_action( 'update_option_page_on_front', 'flush_rewrite_rules' );
+
+		// OEmbed
+		add_filter( 'oembed_request_post_id', array( $this, 'oembed_request_post_id' ), 10, 2 );
 	}
 
 	/**
-	 * stores the page on front and page for posts ids
+	 * Stores the page on front and page for posts ids
 	 *
 	 * @since 1.8
 	 */
@@ -44,9 +47,7 @@ abstract class PLL_Static_Pages {
 		if ( 'page' == get_option( 'show_on_front' ) ) {
 			$this->page_on_front = get_option( 'page_on_front' );
 			$this->page_for_posts = get_option( 'page_for_posts' );
-		}
-
-		else {
+		} else {
 			$this->page_on_front = 0;
 			$this->page_for_posts = 0;
 		}
@@ -62,14 +63,16 @@ abstract class PLL_Static_Pages {
 	 * @return string modified link
 	 */
 	public function page_link( $link, $id ) {
-		if ( ( $lang = $this->model->post->get_language( $id ) ) && $id == $lang->page_on_front ) {
+		$lang = $this->model->post->get_language( $id );
+
+		if ( $lang && $id == $lang->page_on_front ) {
 			return $lang->home_url;
 		}
 		return $link;
 	}
 
 	/**
-	 * adds page_on_front and page_for_posts properties to the language objects
+	 * Adds page_on_front and page_for_posts properties to the language objects
 	 *
 	 * @since 1.8
 	 *
@@ -96,7 +99,25 @@ abstract class PLL_Static_Pages {
 	 * @return int
 	 */
 	public function translate_page_for_posts( $v ) {
-		// Returns the current page if there is no translation to avoid ugly notices
-		return isset( $this->curlang->page_for_posts ) ? $this->curlang->page_for_posts : $v;
+		// Don't attempt to translate in a 'switch_blog' action as there is a risk to call this function while initializing the languages cache
+		return isset( $this->curlang->page_for_posts ) && ! doing_action( 'switch_blog' ) ? $this->curlang->page_for_posts : $v;
+	}
+
+	/**
+	 * Fixes the oembed for the translated static front page
+	 * when the language page is redirected to the front page
+	 *
+	 * @since 2.6
+	 *
+	 * @param int    $post_id The post ID.
+	 * @param string $url     The requested URL.
+	 */
+	public function oembed_request_post_id( $post_id, $url ) {
+		foreach ( $this->model->get_languages_list() as $lang ) {
+			if ( trailingslashit( $url ) === trailingslashit( $lang->home_url ) ) {
+				$post_id = $lang->page_on_front;
+			}
+		}
+		return $post_id;
 	}
 }

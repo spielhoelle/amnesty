@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 'zu_ZA' (Zulu)
  * 'zz_TR' (Zazaki)
  */
-$languages = array(
+return array(
 	'af' => array(
 		'code'     => 'af',
 		'locale'   => 'af',
@@ -189,6 +189,14 @@ $languages = array(
 		'dir'      => 'ltr',
 		'flag'     => 'dk',
 		'facebook' => 'da_DK',
+	),
+	'de_AT' => array(
+		'code'     => 'de',
+		'locale'   => 'de_AT',
+		'name'     => 'Deutsch',
+		'dir'      => 'ltr',
+		'flag'     => 'at',
+		'facebook' => 'de_DE',
 	),
 	'de_CH' => array(
 		'code'     => 'de',
@@ -360,6 +368,14 @@ $languages = array(
 		'flag'     => 'pe',
 		'facebook' => 'es_LA',
 	),
+	'es_UY' => array(
+		'code'     => 'es',
+		'locale'   => 'es_UY',
+		'name'     => 'Español',
+		'dir'      => 'ltr',
+		'flag'     => 'uy',
+		'facebook' => 'es_LA',
+	),
 	'es_VE' => array(
 		'code'     => 'es',
 		'locale'   => 'es_VE',
@@ -443,6 +459,13 @@ $languages = array(
 	'fuc' => array(
 		'facebook' => 'ff_NG',
 	),
+	'fur' => array(
+		'code'     => 'fur',
+		'locale'   => 'fur',
+		'name'     => 'Furlan',
+		'dir'      => 'ltr',
+		'flag'     => 'it',
+	),
 	'fy' => array(
 		'code'     => 'fy',
 		'locale'   => 'fy',
@@ -521,6 +544,13 @@ $languages = array(
 		'dir'      => 'ltr',
 		'flag'     => 'hu',
 		'facebook' => 'hu_HU',
+	),
+	'hsb' => array(
+		'code'     => 'hsb',
+		'locale'   => 'hsb',
+		'name'     => 'Hornjoserbšćina',
+		'dir'      => 'ltr',
+		'flag'     => 'de',
 	),
 	'hy' => array(
 		'code'     => 'hy',
@@ -609,6 +639,11 @@ $languages = array(
 		'facebook' => 'km_KH',
 	),
 	'kn' => array(
+		'code'     => 'kn',
+		'locale'   => 'kn',
+		'name'     => 'ಕನ್ನಡ',
+		'dir'      => 'ltr',
+		'flag'     => 'in',
 		'facebook' => 'kn_IN',
 	),
 	'ko_KR' => array(
@@ -800,6 +835,14 @@ $languages = array(
 		'flag'     => 'af',
 		'facebook' => 'ps_AF',
 	),
+	'pt_AO' => array(
+		'code'     => 'pt',
+		'locale'   => 'pt_AO',
+		'name'     => 'Português',
+		'dir'      => 'ltr',
+		'flag'     => 'ao',
+		'facebook' => 'pt_PT',
+	),
 	'pt_BR' => array(
 		'code'     => 'pt',
 		'locale'   => 'pt_BR',
@@ -877,6 +920,13 @@ $languages = array(
 		'flag'     => 'sk',
 		'facebook' => 'sk_SK',
 	),
+	'skr' => array(
+		'code'     => 'skr',
+		'locale'   => 'skr',
+		'name'     => 'سرائیکی',
+		'dir'      => 'rtl',
+		'flag'     => 'pk',
+	),
 	'sl_SI' => array(
 		'code'     => 'sl',
 		'locale'   => 'sl_SI',
@@ -887,6 +937,13 @@ $languages = array(
 	),
 	'sna' => array(
 		'facebook' => 'sn_ZW',
+	),
+	'snd' => array(
+		'code'     => 'sd',
+		'locale'   => 'snd',
+		'name'     => 'سنڌي',
+		'dir'      => 'rtl',
+		'flag'     => 'pk',
 	),
 	'so_SO' => array(
 		'code'     => 'so',
@@ -932,6 +989,11 @@ $languages = array(
 		'facebook' => 'sv_SE',
 	),
 	'sw' => array(
+		'code'     => 'sw',
+		'locale'   => 'sw',
+		'name'     => 'Kiswahili',
+		'dir'      => 'ltr',
+		'flag'     => 'ke',
 		'facebook' => 'sw_KE',
 	),
 	'syr' => array(

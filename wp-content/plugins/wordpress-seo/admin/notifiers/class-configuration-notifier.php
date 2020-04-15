@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin\Notifiers
  */
 
@@ -8,19 +10,32 @@
  */
 class WPSEO_Configuration_Notifier implements WPSEO_Listener {
 
-	const META_NAME  = 'wpseo-dismiss-configuration-notice';
+	/**
+	 * Option name use to determine whether the notice has been dismissed.
+	 *
+	 * @var string
+	 */
+	const META_NAME = 'wpseo-dismiss-configuration-notice';
+
+	/**
+	 * Default value.
+	 *
+	 * @var string
+	 */
 	const META_VALUE = 'yes';
 
-	/** @var bool */
+	/**
+	 * Should the notification be shown.
+	 *
+	 * @var bool
+	 */
 	protected $show_notification;
 
 	/**
 	 * Constructs the object by setting the show notification property based the given options.
-	 *
-	 * @param array $options The array with options.
 	 */
-	public function __construct( $options ) {
-		$this->show_notification = ! empty( $options['show_onboarding_notice'] );
+	public function __construct() {
+		$this->show_notification = WPSEO_Options::get( 'show_onboarding_notice', false );
 	}
 
 	/**
@@ -30,36 +45,10 @@ class WPSEO_Configuration_Notifier implements WPSEO_Listener {
 	 */
 	public function notify() {
 		if ( ! $this->show_notification() ) {
-			return '';
+			return $this->re_run_notification();
 		}
 
-		$notification  = '<div class="yoast-container yoast-container__configuration-wizard">';
-		$notification .= sprintf(
-			'<img src="%1$s" height="%2$s" width="%3$d"  />',
-			esc_url( plugin_dir_url( WPSEO_FILE ) . 'images/new-to-configuration-notice.svg' ),
-			60,
-			60
-		);
-		$notification .= '<div class="yoast-container__configuration-wizard--content">';
-		$notification .= '<h3>' . esc_html__( 'First-time SEO configuration', 'wordpress-seo' ) . '</h3>';
-		$notification .= '<p>';
-		$notification .= sprintf(
-			/* translators: %1$s expands to Yoast SEO, %2$s is a link start tag to the Onboarding Wizard, %3$s is the link closing tag. */
-			esc_html__( 'Get started quickly with the %1$s %2$sconfiguration wizard%3$s!', 'wordpress-seo' ),
-			'Yoast SEO',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=' . WPSEO_Configuration_Page::PAGE_IDENTIFIER ) ) . '">',
-			'</a>'
-		);
-		$notification .= '</p>';
-		$notification .= '</div>';
-		$notification .= sprintf(
-			'<a href="%1$s" style="" class="button dismiss yoast-container__configuration-wizard--dismiss"><span class="screen-reader-text">%2$s</span><span class="dashicons dashicons-no-alt"></span></a>',
-			esc_url( admin_url( 'admin.php?page=wpseo_dashboard&amp;dismiss_get_started=1' ) ),
-			esc_html__( 'Dismiss this item.', 'wordpress-seo' )
-		);
-		$notification .= '</div>';
-
-		return $notification;
+		return $this->first_time_notification();
 	}
 
 	/**
@@ -109,5 +98,79 @@ class WPSEO_Configuration_Notifier implements WPSEO_Listener {
 	 */
 	protected function show_notification() {
 		return $this->show_notification && ! $this->is_dismissed();
+	}
+
+	/**
+	 * Returns the notification to re-run the config wizard.
+	 *
+	 * @return string The notification.
+	 */
+	private function re_run_notification() {
+		$content = sprintf(
+			/* translators: %1$s expands to Yoast SEO, %2$s is a link start tag to the Onboarding Wizard, %3$s is the link closing tag. */
+			esc_html__( 'If you want to double-check your %1$s settings, or change something, you can always %2$sreopen the configuration wizard%3$s.', 'wordpress-seo' ),
+			'Yoast SEO',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=' . WPSEO_Configuration_Page::PAGE_IDENTIFIER ) ) . '">',
+			'</a>'
+		);
+
+		return $this->notification( __( 'SEO settings configured', 'wordpress-seo' ), $content );
+	}
+
+	/**
+	 * Returns the notification to start the config wizard for the first time.
+	 *
+	 * @return string The notification.
+	 */
+	private function first_time_notification() {
+		$content = sprintf(
+			/* translators: %1$s expands to Yoast SEO, %2$s is a link start tag to the Onboarding Wizard, %3$s is the link closing tag. */
+			esc_html__( 'Get started quickly with the %1$s %2$sconfiguration wizard%3$s!', 'wordpress-seo' ),
+			'Yoast SEO',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=' . WPSEO_Configuration_Page::PAGE_IDENTIFIER ) ) . '">',
+			'</a>'
+		);
+
+		return $this->notification( __( 'First-time SEO configuration', 'wordpress-seo' ), $content, true );
+	}
+
+	/**
+	 * Returns a styled notification.
+	 *
+	 * @param string $title          Title for the notification.
+	 * @param string $content        Content for the notification.
+	 * @param bool   $show_dismissal Whether to show the dismiss button or not.
+	 *
+	 * @return string The styled notification.
+	 */
+	private function notification( $title, $content, $show_dismissal = false ) {
+		$notification  = '<div class="yoast-container yoast-container__configuration-wizard">';
+		$notification .= sprintf(
+			'<img src="%1$s" height="%2$s" width="%3$d" alt="" />',
+			esc_url( plugin_dir_url( WPSEO_FILE ) . 'images/new-to-configuration-notice.svg' ),
+			60,
+			60
+		);
+		$notification .= '<div class="yoast-container__configuration-wizard--content">';
+		$notification .= sprintf(
+			'<h3>%s<span class="dashicons dashicons-yes"></span></h3>',
+			esc_html( $title )
+		);
+
+		$notification .= '<p>';
+		$notification .= $content;
+		$notification .= '</p>';
+
+		$notification .= '</div>';
+		if ( $show_dismissal ) {
+			$notification .= sprintf(
+				'<a href="%1$s" style="" class="button dismiss yoast-container__configuration-wizard--dismiss"><span class="screen-reader-text">%2$s</span><span class="dashicons dashicons-no-alt"></span></a>',
+				esc_url( admin_url( 'admin.php?page=wpseo_dashboard&amp;dismiss_get_started=1' ) ),
+				esc_html__( 'Dismiss this item.', 'wordpress-seo' )
+			);
+		}
+		$notification .= '</div>';
+
+		return $notification;
 	}
 }

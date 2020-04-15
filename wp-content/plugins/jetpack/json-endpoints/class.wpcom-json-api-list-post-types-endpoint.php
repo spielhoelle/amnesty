@@ -31,7 +31,8 @@ class WPCOM_JSON_API_List_Post_Types_Endpoint extends WPCOM_JSON_API_Endpoint {
 		'map_meta_cap' => 'map_meta_cap',
 		'cap'          => 'capabilities',
 		'hierarchical' => 'hierarchical',
-		'show_ui'   => 'show_ui',
+		'public'       => 'public',
+		'show_ui'      => 'show_ui',
 		'publicly_queryable' => 'publicly_queryable',
 	);
 
@@ -108,6 +109,9 @@ class WPCOM_JSON_API_List_Post_Types_Endpoint extends WPCOM_JSON_API_Endpoint {
 			return false;
 		}
 
-		return in_array( $post_type, $featured_content[0]['post_types'] );
+		if ( is_array( $featured_content[0]['post_types'] ) ) {
+			return in_array( $post_type, $featured_content[0]['post_types'] );
+		}
+		return $post_type === $featured_content[0]['post_types'];
 	}
 }

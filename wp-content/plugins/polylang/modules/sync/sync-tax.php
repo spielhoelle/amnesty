@@ -20,6 +20,8 @@ class PLL_Sync_Tax {
 
 		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
 		add_action( 'pll_save_term', array( $this, 'create_term' ), 10, 3 );
+		add_action( 'pre_delete_term', array( $this, 'pre_delete_term' ) );
+		add_action( 'delete_term', array( $this, 'delete_term' ) );
 	}
 
 	/**
@@ -99,6 +101,41 @@ class PLL_Sync_Tax {
 	}
 
 	/**
+	 * Maybe copy taxonomy terms from one post to the other
+	 *
+	 * @since 2.6
+	 *
+	 * @param int    $object_id Source object ID.
+	 * @param int    $tr_id     Target object ID.
+	 * @param string $lang      Target language.
+	 * @param array  $terms     An array of object terms.
+	 * @param string $taxonomy  Taxonomy slug.
+	 * @param bool   $append    Whether to append new terms to the old terms.
+	 */
+	protected function copy_object_terms( $object_id, $tr_id, $lang, $terms, $taxonomy, $append ) {
+		$to_copy = $this->get_taxonomies_to_copy( true, $object_id, $tr_id, $lang );
+
+		if ( in_array( $taxonomy, $to_copy ) ) {
+			$newterms = $this->maybe_translate_terms( $object_id, $terms, $taxonomy, $lang );
+
+			// For some reasons, the user may have untranslated terms in the translation. Don't forget them.
+			if ( $this->model->is_translated_taxonomy( $taxonomy ) ) {
+				$tr_terms = get_the_terms( $tr_id, $taxonomy );
+				if ( is_array( $tr_terms ) ) {
+					foreach ( $tr_terms as $term ) {
+						if ( ! $this->model->term->get_translation( $term->term_id, $this->model->post->get_language( $object_id ) ) ) {
+							$newterms[] = (int) $term->term_id;
+						}
+					}
+				}
+			}
+
+			wp_set_object_terms( $tr_id, $newterms, $taxonomy, $append );
+		}
+
+	}
+
+	/**
 	 * When assigning terms to a post, assign translated terms to the translated posts (synchronisation)
 	 *
 	 * @since 2.3
@@ -121,24 +158,22 @@ class PLL_Sync_Tax {
 
 			foreach ( $tr_ids as $lang => $tr_id ) {
 				if ( $tr_id !== $object_id ) {
-					$to_copy = $this->get_taxonomies_to_copy( true, $object_id, $tr_id, $lang );
+					if ( $this->model->post->current_user_can_synchronize( $object_id ) ) {
+						$this->copy_object_terms( $object_id, $tr_id, $lang, $terms, $taxonomy, $append );
+					} else {
+						// No permission to synchronize, so let's synchronize in reverse order
+						$orig_lang = array_search( $object_id, $tr_ids );
+						$tr_terms = get_the_terms( $tr_id, $taxonomy );
 
-					if ( in_array( $taxonomy, $to_copy ) ) {
-						$newterms = $this->maybe_translate_terms( $object_id, $terms, $taxonomy, $lang );
-
-						// For some reasons, the user may have untranslated terms in the translation. Don't forget them.
-						if ( $this->model->is_translated_taxonomy( $taxonomy ) ) {
-							$tr_terms = get_the_terms( $tr_id, $taxonomy );
-							if ( is_array( $tr_terms ) ) {
-								foreach ( $tr_terms as $term ) {
-									if ( ! $this->model->term->get_translation( $term->term_id, $this->model->post->get_language( $object_id ) ) ) {
-										$newterms[] = (int) $term->term_id;
-									}
-								}
-							}
+						if ( false === $tr_terms ) {
+							$tr_terms = array();
 						}
 
-						wp_set_object_terms( $tr_id, $newterms, $taxonomy, $append );
+						if ( is_array( $tr_terms ) ) {
+							$tr_terms = wp_list_pluck( $tr_terms, 'term_id' );
+							$this->copy_object_terms( $tr_id, $object_id, $orig_lang, $tr_terms, $taxonomy, $append );
+						}
+						break;
 					}
 				}
 			}
@@ -192,21 +227,23 @@ class PLL_Sync_Tax {
 	public function create_term( $term_id, $taxonomy, $translations ) {
 		if ( doing_action( 'create_term' ) && in_array( $taxonomy, $this->get_taxonomies_to_copy( true ) ) ) {
 			// Get all posts associated to the translated terms
-			$tr_posts = get_posts( array(
-				'numberposts' => -1,
-				'nopaging'    => true,
-				'post_type'   => 'any',
-				'post_status' => 'any',
-				'fields'      => 'ids',
-				'tax_query'   => array(
-					array(
-						'taxonomy'         => $taxonomy,
-						'field'            => 'id',
-						'terms'            => array_merge( array( $term_id ), array_values( $translations ) ),
-						'include_children' => false,
+			$tr_posts = get_posts(
+				array(
+					'numberposts' => -1,
+					'nopaging'    => true,
+					'post_type'   => 'any',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+					'tax_query'   => array(
+						array(
+							'taxonomy'         => $taxonomy,
+							'field'            => 'id',
+							'terms'            => array_merge( array( $term_id ), array_values( $translations ) ),
+							'include_children' => false,
+						),
 					),
-				),
-			) );
+				)
+			);
 
 			$lang = $this->model->term->get_language( $term_id ); // Language of the created term
 			$posts = array();
@@ -222,8 +259,29 @@ class PLL_Sync_Tax {
 			$posts = array_unique( $posts );
 
 			foreach ( $posts as $post_id ) {
-				wp_set_object_terms( $post_id, $term_id, $taxonomy, true );
+				if ( current_user_can( 'assign_term', $term_id ) ) {
+					wp_set_object_terms( $post_id, $term_id, $taxonomy, true );
+				}
 			}
 		}
+	}
+
+	/**
+	 * Deactivate the synchronization of terms before deleting a term
+	 * to avoid translated terms to be removed from translated posts
+	 *
+	 * @since 2.3.2
+	 */
+	public function pre_delete_term() {
+		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
+	}
+
+	/**
+	 * Re-activate the synchronization of terms after a term is deleted
+	 *
+	 * @since 2.3.2
+	 */
+	public function delete_term() {
+		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
 	}
 }

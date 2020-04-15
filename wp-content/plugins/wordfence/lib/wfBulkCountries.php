@@ -1,4 +1,6 @@
 <?php
+if (!defined('WORDFENCE_VERSION')) { exit; }
+
 $wfBulkCountries = array(
 "AD" => __("Andorra", 'wordfence'),
 "AE" => __("United Arab Emirates", 'wordfence'),
@@ -121,8 +123,8 @@ $wfBulkCountries = array(
 "KI" => __("Kiribati", 'wordfence'),
 "KM" => __("Comoros", 'wordfence'),
 "KN" => __("Saint Kitts and Nevis", 'wordfence'),
-"KP" => __("Korea, Democratic Peoples Republic of", 'wordfence'),
-"KR" => __("Korea, Republic of", 'wordfence'),
+"KP" => __("North Korea", 'wordfence'),
+"KR" => __("South Korea", 'wordfence'),
 "KW" => __("Kuwait", 'wordfence'),
 "KY" => __("Cayman Islands", 'wordfence'),
 "KZ" => __("Kazakhstan", 'wordfence'),
@@ -244,6 +246,7 @@ $wfBulkCountries = array(
 "VU" => __("Vanuatu", 'wordfence'),
 "WF" => __("Wallis and Futuna", 'wordfence'),
 "WS" => __("Samoa", 'wordfence'),
+"XK" => __("Kosovo", 'wordfence'),
 "YE" => __("Yemen", 'wordfence'),
 "YT" => __("Mayotte", 'wordfence'),
 "ZA" => __("South Africa", 'wordfence'),

@@ -53,20 +53,27 @@ class Generic_Plugin_AdminNotifications {
 		$state = Dispatcher::config_state_master();
 
 		// support us
+		$day7 = 604800;
 		$support_reminder =
-			$state->get_integer( 'common.support_us_invitations' ) < 3 &&
+			$state->get_integer( 'common.support_us_invitations' ) < 5 &&
 			( $state->get_integer( 'common.install' ) <
-			( time() - W3TC_SUPPORT_US_TIMEOUT ) ) &&
+			( time() - $day7 ) ) &&
 			( $state->get_integer( 'common.next_support_us_invitation' ) <
 			time() ) &&
-			$this->_config->get_string( 'common.support' ) == '' &&
 			!$this->_config->get_boolean( 'common.tweeted' );
 
 		if ( $support_reminder ) {
+			$invitations = $state->get_integer( 'common.support_us_invitations' );
+
+			if ( $invitations <= 0 ) {
+				$delay = 259200;   // delay 3 days to day10
+			} else {
+				$delay = 2592000;
+			}
+
 			$state->set( 'common.next_support_us_invitation',
-				time() + W3TC_SUPPORT_US_TIMEOUT );
-			$state->set( 'common.support_us_invitations',
-				$state->get_integer( 'common.support_us_invitations' ) + 1 );
+				time() + $delay );
+			$state->set( 'common.support_us_invitations', $invitations + 1 );
 			$state->save();
 
 			do_action( 'w3tc_message_action_generic_support_us' );
@@ -85,30 +92,10 @@ class Generic_Plugin_AdminNotifications {
 
 
 	public function w3tc_ajax_generic_support_us() {
-		$supports = $this->get_supports();
 		$current_user = wp_get_current_user();
 		wp_get_current_user();
 		$email = $current_user->user_email;
 		include W3TC_INC_DIR . '/lightbox/support_us.php';
-	}
-
-
-
-	private function get_supports() {
-		$supports = array(
-			'footer' => 'page footer'
-		);
-
-		$link_categories = get_terms( 'link_category', array(
-				'hide_empty' => 0
-			) );
-
-		foreach ( $link_categories as $link_category ) {
-			$supports['link_category_' . $link_category->term_id] =
-				strtolower( $link_category->name );
-		}
-
-		return $supports;
 	}
 
 

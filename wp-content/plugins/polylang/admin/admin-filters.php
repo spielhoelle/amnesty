@@ -42,6 +42,9 @@ class PLL_Admin_Filters extends PLL_Filters {
 		}
 
 		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
+
+		// Add post state for translations of the privacy policy page
+		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 10, 2 );
 	}
 
 	/**
@@ -57,23 +60,28 @@ class PLL_Admin_Filters extends PLL_Filters {
 		$screen = get_current_screen();
 
 		// Test the Widgets screen and the Customizer to avoid displaying the option in page builders
-		// Saving the widget reloads the form. And curiously the action is in $_REQUEST but neither in $_POST, not in $_GET.
-		if ( ( isset( $screen ) && 'widgets' === $screen->base ) || ( isset( $_REQUEST['action'] ) && 'save-widget' === $_REQUEST['action'] ) || isset( $GLOBALS['wp_customize'] ) ) {
+		// Saving the widget reloads the form. And curiously the action is in $_REQUEST but neither in $_POST, nor in $_GET.
+		if ( ( isset( $screen ) && 'widgets' === $screen->base ) || ( isset( $_REQUEST['action'] ) && 'save-widget' === $_REQUEST['action'] ) || isset( $GLOBALS['wp_customize'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			$dropdown = new PLL_Walker_Dropdown();
-			printf( '<p><label for="%1$s">%2$s %3$s</label></p>',
+
+			$dropdown_html = $dropdown->walk(
+				array_merge(
+					array( (object) array( 'slug' => 0, 'name' => __( 'All languages', 'polylang' ) ) ),
+					$this->model->get_languages_list()
+				),
+				-1,
+				array(
+					'name'     => $widget->id . '_lang_choice',
+					'class'    => 'tags-input pll-lang-choice',
+					'selected' => empty( $instance['pll_lang'] ) ? '' : $instance['pll_lang'],
+				)
+			);
+
+			printf(
+				'<p><label for="%1$s">%2$s %3$s</label></p>',
 				esc_attr( $widget->id . '_lang_choice' ),
 				esc_html__( 'The widget is displayed for:', 'polylang' ),
-				$dropdown->walk(
-					array_merge(
-						array( (object) array( 'slug' => 0, 'name' => __( 'All languages', 'polylang' ) ) ),
-						$this->model->get_languages_list()
-					),
-					array(
-						'name'        => $widget->id . '_lang_choice',
-						'class'       => 'tags-input',
-						'selected'    => empty( $instance['pll_lang'] ) ? '' : $instance['pll_lang'],
-					)
-				)
+				$dropdown_html // phpcs:ignore WordPress.Security.EscapeOutput
 			);
 		}
 	}
@@ -91,8 +99,10 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array Widget options
 	 */
 	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
-		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ) {
-			$instance['pll_lang'] = $_POST[ $key ];
+		$key = $widget->id . '_lang_choice';
+
+		if ( ! empty( $_POST[ $key ] ) && $lang = $this->model->get_language( sanitize_key( $_POST[ $key ] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$instance['pll_lang'] = $lang->slug;
 		} else {
 			unset( $instance['pll_lang'] );
 		}
@@ -108,17 +118,10 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @param int $user_id
 	 */
 	public function personal_options_update( $user_id ) {
-		// Admin language
-		// FIXME Backward compatibility with WP < 4.7
-		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( array( 'fields' => 'locale' ) ) ) ? $_POST['user_lang'] : 0;
-			update_user_meta( $user_id, 'locale', $user_lang );
-		}
-
 		// Biography translations
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
-			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] );
+			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] ); // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
 
 			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'pre_user_description', $description ); // Applies WP default filter wp_filter_kses
@@ -127,44 +130,21 @@ class PLL_Admin_Filters extends PLL_Filters {
 	}
 
 	/**
-	 * Form for language user preference in user profile
+	 * Outputs hidden information to modify the biography form with js
 	 *
 	 * @since 0.4
 	 *
 	 * @param object $profileuser
 	 */
 	public function personal_options( $profileuser ) {
-		// FIXME: Backward compatibility with WP < 4.7
-		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$dropdown = new PLL_Walker_Dropdown();
-			printf( '
-				<tr>
-					<th><label for="user_lang">%s</label></th>
-					<td>%s</td>
-				</tr>',
-				esc_html__( 'Admin language', 'polylang' ),
-				$dropdown->walk(
-					array_merge(
-						array( (object) array( 'locale' => 0, 'name' => __( 'WordPress default', 'polylang' ) ) ),
-						$this->model->get_languages_list()
-					),
-					array(
-						'name'        => 'user_lang',
-						'value'       => 'locale',
-						'selected'    => get_user_meta( $profileuser->ID, 'locale', true ),
-					)
-				)
-			);
-		}
-
-		// Hidden information to modify the biography form with js
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
 
 			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'user_description', get_user_meta( $profileuser->ID, $meta, true ) ); // Applies WP default filter wp_kses_data
 
-			printf( '<input type="hidden" class="biography" name="%s___%s" value="%s" />',
+			printf(
+				'<input type="hidden" class="biography" name="%s___%s" value="%s" />',
 				esc_attr( $lang->slug ),
 				esc_attr( $lang->name ),
 				esc_attr( $description )
@@ -198,7 +178,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @param array $locales Not used
 	 * @return array list of locales to update
 	 */
-	function update_check_locales( $locales ) {
+	public function update_check_locales( $locales ) {
 		return $this->model->get_languages_list( array( 'fields' => 'locale' ) );
 	}
 
@@ -212,7 +192,17 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return string
 	 */
 	public function get_locale( $locale ) {
-		return $this->curlang->locale;
+		if ( isset( $_POST['post_lang_choice'] ) && $lang = $this->model->get_language( sanitize_key( $_POST['post_lang_choice'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$locale = $lang->locale;
+		} elseif ( isset( $_POST['term_lang_choice'] ) && $lang = $this->model->get_language( sanitize_key( $_POST['term_lang_choice'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$locale = $lang->locale;
+		} elseif ( isset( $_POST['inline_lang_choice'] ) && $lang = $this->model->get_language( sanitize_key( $_POST['inline_lang_choice'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$locale = $lang->locale;
+		} elseif ( ! empty( $this->curlang ) ) {
+			$locale = $this->curlang->locale;
+		}
+
+		return $locale;
 	}
 
 	/**
@@ -231,7 +221,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	public function sanitize_title( $title, $raw_title, $context ) {
 		static $once = false;
 
-		if ( ! $once && 'save' == $context && ! empty( $this->curlang ) && ! empty( $title ) ) {
+		if ( ! $once && 'save' == $context && ! empty( $title ) ) {
 			$once = true;
 			add_filter( 'locale', array( $this, 'get_locale' ), 20 ); // After the filter for the admin interface
 			$title = sanitize_title( $raw_title, '', $context );
@@ -254,7 +244,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	public function sanitize_user( $username, $raw_username, $strict ) {
 		static $once = false;
 
-		if ( ! $once && ! empty( $this->curlang ) ) {
+		if ( ! $once ) {
 			$once = true;
 			add_filter( 'locale', array( $this, 'get_locale' ), 20 ); // After the filter for the admin interface
 			$username = sanitize_user( $raw_username, '', $strict );
@@ -277,5 +267,24 @@ class PLL_Admin_Filters extends PLL_Filters {
 			$classes .= ' pll-dir-' . ( $this->curlang->is_rtl ? 'rtl' : 'ltr' );
 		}
 		return $classes;
+	}
+
+	/**
+	 * Add post state for translations of the privacy policy page
+	 *
+	 * @since 2.7
+	 *
+	 * @param array  $post_states An array of post display states.
+	 * @param object $post        The current post object.
+	 * @return array
+	 */
+	public function display_post_states( $post_states, $post ) {
+		$page_for_privacy_policy = get_option( 'wp_page_for_privacy_policy' );
+
+		if ( $page_for_privacy_policy && in_array( $post->ID, $this->model->post->get_translations( $page_for_privacy_policy ) ) ) {
+			$post_states['page_for_privacy_policy'] = __( 'Privacy Policy Page', 'polylang' );
+		}
+
+		return $post_states;
 	}
 }

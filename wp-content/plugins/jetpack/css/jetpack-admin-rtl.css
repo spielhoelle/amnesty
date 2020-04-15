@@ -70,41 +70,36 @@
   }
 }
 
-@-webkit-keyframes "candy" {
+@keyframes jetpack-candy {
   0% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
   20% {
-    -webkit-transform: scale(1.15);
-            transform: scale(1.15);
+    transform: scale(1.15);
   }
   60% {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    transform: scale(0.95);
   }
   100% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
   }
 }
 
-@keyframes "candy" {
+@keyframes jetpack-loading-fade {
   0% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    opacity: .5;
   }
-  20% {
-    -webkit-transform: scale(1.15);
-            transform: scale(1.15);
-  }
-  60% {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+  50% {
+    opacity: 1;
   }
   100% {
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    opacity: .5;
+  }
+}
+
+@keyframes jetpack-rotate {
+  to {
+    transform: rotate(-1turn);
   }
 }
 
@@ -242,6 +237,35 @@
     height: 19px;
     margin-left: 9px;
   }
+}
+
+.jp-spinner {
+  display: flex;
+  align-items: center;
+}
+
+.jp-spinner__inner,
+.jp-spinner__outer {
+  margin: auto;
+  box-sizing: border-box;
+  border: .1em solid transparent;
+  border-radius: 50%;
+  border-top-color: #00aadc;
+  animation: 3s linear infinite;
+  animation-name: jetpack-rotate;
+}
+
+.jp-spinner__outer {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.jp-spinner__inner {
+  width: 100%;
+  height: 100%;
+  border-left-color: #00aadc;
+  opacity: .4;
 }
 
 @font-face {
@@ -774,8 +798,7 @@
 }
 
 .footer .a8c-attribution a:hover:after {
-  -webkit-animation: candy .4s ease-in-out;
-          animation: candy .4s ease-in-out;
+  animation: jetpack-candy .4s ease-in-out;
 }
 
 @media (min-width: 782px) {
@@ -1069,6 +1092,7 @@
   float: left;
   padding: 0 0 1px;
   visibility: visible;
+  position: static;
 }
 
 .table-bordered.jetpack-modules tr.jetpack-module td .row-actions span {
@@ -1095,14 +1119,6 @@
 
 .table-bordered.jetpack-modules.with-transparency tr.jetpack-module.unavailable {
   opacity: 0.3;
-}
-
-.table-bordered.jetpack-modules.with-transparency tr.jetpack-module td .row-actions span a {
-  opacity: 0;
-}
-
-.table-bordered.jetpack-modules.with-transparency tr.jetpack-module td .row-actions span a:focus {
-  opacity: 1;
 }
 
 .table-bordered.jetpack-modules > thead > tr > th {

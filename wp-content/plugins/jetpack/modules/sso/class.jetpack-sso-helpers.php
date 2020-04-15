@@ -192,7 +192,7 @@ class Jetpack_SSO_Helpers {
 		$hosts[] = 'public-api.wordpress.com';
 
 		if ( false === strpos( $api_base, 'jetpack.wordpress.com/jetpack' ) ) {
-			$base_url_parts = parse_url( esc_url_raw( $api_base ) );
+			$base_url_parts = wp_parse_url( esc_url_raw( $api_base ) );
 			if ( $base_url_parts && ! empty( $base_url_parts[ 'host' ] ) ) {
 				$hosts[] = $base_url_parts[ 'host' ];
 			}
@@ -250,10 +250,11 @@ class Jetpack_SSO_Helpers {
 		 * @module sso
 		 *
 		 * @since 4.4.0
+		 * @since 6.1.0 Fixed a typo. Filter was previously jetpack_sso_auth_cookie_expirtation.
 		 *
 		 * @param int YEAR_IN_SECONDS
 		 */
-		return intval( apply_filters( 'jetpack_sso_auth_cookie_expirtation', YEAR_IN_SECONDS ) );
+		return intval( apply_filters( 'jetpack_sso_auth_cookie_expiration', YEAR_IN_SECONDS ) );
 	}
 
 	/**

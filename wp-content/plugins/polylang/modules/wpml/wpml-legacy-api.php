@@ -24,7 +24,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 	 * Used for building custom language selectors
 	 * available only on frontend
 	 *
-	 * list of paramaters accepted in $args
+	 * List of paramaters accepted in $args:
 	 *
 	 * skip_missing  => whether to skip missing translation or not, 0 or 1, defaults to 0
 	 * orderby       => 'id', 'code', 'name', defaults to 'id'
@@ -63,8 +63,8 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 		}
 
 		foreach ( $languages as $lang ) {
-			// We can find a translation only on frontend
-			if ( method_exists( PLL()->links, 'get_translation_url' ) ) {
+			// We can find a translation only on frontend once the global $wp_query object has been instantiated
+			if ( method_exists( PLL()->links, 'get_translation_url' ) && ! empty( $GLOBALS['wp_query'] ) ) {
 				$url = PLL()->links->get_translation_url( $lang );
 			}
 
@@ -116,7 +116,7 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 		}
 
 		$pll_type = ( 'post' == $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' == $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
-		if ( $pll_type && ( $lang = pll_current_language() ) && ( $tr_id = PLL()->model->$pll_type->get_translation( $id, $lang ) ) && PLL()->links->current_user_can_read( $tr_id ) ) {
+		if ( $pll_type && ( $lang = pll_current_language() ) && ( $tr_id = PLL()->model->$pll_type->get_translation( $id, $lang ) ) && ( 'term' === $pll_type || PLL()->model->post->current_user_can_read( $tr_id ) ) ) {
 			$id = $tr_id;
 		} elseif ( ! $return_original_if_missing ) {
 			return '';
@@ -128,7 +128,7 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 				$text = get_the_title( $id );
 			}
 		} elseif ( taxonomy_exists( $type ) ) {
-			$link = wpcom_vip_get_term_link( $id, $type );
+			$link = get_term_link( $id, $type );
 			if ( empty( $text ) && ( $term = get_term( $id, $type ) ) && ! empty( $term ) && ! is_wp_error( $term ) ) {
 				$text = $term->name;
 			}
@@ -149,7 +149,7 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 		$link = sprintf( '<a href="%s">%s</a>', esc_url( $link ), esc_html( $text ) );
 
 		if ( $echo ) {
-			echo $link;
+			echo $link; // phpcs:ignore WordPress.Security.EscapeOutput
 		}
 
 		return $link;
@@ -174,7 +174,7 @@ if ( ! function_exists( 'icl_object_id' ) ) {
 		if ( 'nav_menu' === $type ) {
 			$theme = get_option( 'stylesheet' );
 			if ( isset( PLL()->options['nav_menus'][ $theme ] ) ) {
-				foreach ( PLL()->options['nav_menus'][ $theme ] as $loc => $menu ) {
+				foreach ( PLL()->options['nav_menus'][ $theme ] as $menu ) {
 					if ( array_search( $id, $menu ) && ! empty( $menu[ $lang ] ) ) {
 						$tr_id = $menu[ $lang ];
 						break;
@@ -210,6 +210,7 @@ if ( ! function_exists( 'wpml_get_language_information' ) ) {
 	/**
 	 * Undocumented function used by the theme Maya
 	 * returns the post language
+	 *
 	 * @see original WPML code at https://wpml.org/forums/topic/canonical-urls-for-wpml-duplicated-posts/#post-52198
 	 *
 	 * @since 1.8
@@ -324,12 +325,14 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 	 * @return array
 	 */
 	function wpml_get_copied_fields_for_post_edit() {
-		if ( empty( $_GET['from_post'] ) ) {
+		if ( empty( $_GET['from_post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			return array();
 		}
 
+		$arr = array( 'original_post_id' => (int) $_GET['from_post'] ); // phpcs:ignore WordPress.Security.NonceVerification
+
 		// Don't know what WPML does but Polylang does copy all public meta keys by default
-		foreach ( $keys = array_unique( array_keys( get_post_custom( (int) $_GET['from_post'] ) ) ) as $k => $meta_key ) {
+		foreach ( $keys = array_unique( array_keys( get_post_custom( $arr['original_post_id'] ) ) ) as $k => $meta_key ) {
 			if ( is_protected_meta( $meta_key ) ) {
 				unset( $keys[ $k ] );
 			}
@@ -338,7 +341,6 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 		// Apply our filter and fill the expected output ( see /types/embedded/includes/fields-post.php )
 		/** This filter is documented in modules/sync/admin-sync.php */
 		$arr['fields'] = array_unique( apply_filters( 'pll_copy_post_metas', empty( $keys ) ? array() : $keys, false ) );
-		$arr['original_post_id'] = (int) $_GET['from_post'];
 		return $arr;
 	}
 }
@@ -359,6 +361,7 @@ if ( ! function_exists( 'icl_get_default_language' ) ) {
 if ( ! function_exists( 'wpml_get_default_language' ) ) {
 	/**
 	 * Undocumented function reported to be used by Table Rate Shipping for WooCommerce
+	 *
 	 * @see https://wordpress.org/support/topic/add-wpml-compatibility-function
 	 *
 	 * @since 1.8.2

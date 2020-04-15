@@ -34,7 +34,7 @@ else {
 		if ( isset( $term_id ) && ( $translation_id = $this->model->term->get_translation( $term_id, $language ) ) && $translation_id != $term_id ) {
 			$translation = get_term( $translation_id, $taxonomy );
 		}
-		if ( isset( $_GET['from_tag'] ) && ( $translation_id = $this->model->term->get( (int) $_GET['from_tag'], $language ) ) && ! $this->model->term->get_translation( $translation_id, $lang ) ) {
+		if ( ! empty( $from_term_id ) && ( $translation_id = $this->model->term->get( $from_term_id, $language ) ) && ! $this->model->term->get_translation( $translation_id, $lang ) ) {
 			$translation = get_term( $translation_id, $taxonomy );
 		}
 
@@ -48,7 +48,7 @@ else {
 		?>
 		<tr>
 			<th class = "pll-language-column">
-				<span class = "pll-translation-flag"><?php echo $language->flag; ?></span>
+				<span class = "pll-translation-flag"><?php echo $language->flag ? $language->flag : esc_html( $language->slug ); // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
 				<?php
 				printf(
 					'<span class="pll-language-name%1$s">%2$s</span>',
@@ -60,25 +60,25 @@ else {
 			<?php
 			if ( isset( $term_id ) ) {
 				?>
-				<td class = "hidden"><?php echo $add_link; ?></td>
-				<td class = "pll-edit-column"><?php echo $link; ?></td>
+				<td class = "hidden"><?php echo $add_link; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
+				<td class = "pll-edit-column"><?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput ?></td>
 				<?php
 			}
 			?>
 			<td class = "pll-translation-column">
 				<?php
-				printf( '
-					<label class="screen-reader-text" for="tr_lang_%1$s">%2$s</label>
+				printf(
+					'<label class="screen-reader-text" for="tr_lang_%1$s">%2$s</label>
 					<input type="hidden" class="htr_lang" name="term_tr_lang[%1$s]" id="htr_lang_%1$s" value="%3$s" />
 					<span lang="%6$s" dir="%7$s"><input type="text" class="tr_lang" id="tr_lang_%1$s" value="%4$s"%5$s /></span>',
 					esc_attr( $language->slug ),
 					/* translators: accessibility text */
 					esc_html__( 'Translation', 'polylang' ),
-					empty( $translation ) ? 0 : esc_attr( $translation->term_id ),
-					empty( $translation ) ? '' : esc_attr( $translation->name ),
-					empty( $disabled ) ? '' : ' disabled="disabled"',
+					( empty( $translation ) ? 0 : esc_attr( $translation->term_id ) ),
+					( empty( $translation ) ? '' : esc_attr( $translation->name ) ),
+					disabled( empty( $disabled ), false, false ),
 					esc_attr( $language->get_locale( 'display' ) ),
-					$language->is_rtl ? 'rtl' : 'ltr'
+					( $language->is_rtl ? 'rtl' : 'ltr' )
 				);
 				?>
 			</td>

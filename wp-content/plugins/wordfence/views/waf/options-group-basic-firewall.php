@@ -25,7 +25,7 @@ if (!isset($collapseable)) {
 					<div class="wf-block-title">
 						<strong><?php _e('Basic Firewall Options', 'wordfence'); ?></strong>
 					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure"></div></div><?php endif; ?>
+					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
 				</div>
 			</div>
 			<div class="wf-block-content">
@@ -50,13 +50,13 @@ if (!isset($collapseable)) {
 								<script type="application/javascript">
 									(function($) {
 										$(function() {
-											$('#input-wafStatus').select2({
+											$('#input-wafStatus').wfselect2({
 												minimumResultsForSearch: -1,
 												width: '200px'
 											}).on('change', function() {
 												var select = $(this);
 												var value = select.val();
-												var container = $($(this).data('select2').$container);
+												var container = $($(this).data('wfselect2').$container);
 												container.removeClass('wafStatus-enabled wafStatus-learning-mode wafStatus-disabled')
 													.addClass('wafStatus-' + value);
 
@@ -82,7 +82,7 @@ if (!isset($collapseable)) {
 
 											$('#waf-learning-mode-grace-period .wf-datetime').datetimepicker({
 												dateFormat: 'yy-mm-dd',
-												timezone: <?php echo (int) wfUtils::timeZoneMinutes($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : false); ?>,
+												timezone: <?php try { echo (int) wfUtils::timeZoneMinutes($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : false); } catch (Exception $e) { echo 0; }; ?>,
 												showTime: false,
 												showTimepicker: false,
 												showMonthAfterYear: true
@@ -158,7 +158,7 @@ if (!isset($collapseable)) {
 									})(jQuery);
 								</script>
 							</p>
-							<div id="waf-learning-mode-grace-period" class="wf-add-bottom" style="display: none;"><div class="waf-learning-mode wf-option-checkbox<?php echo $config->getConfig('learningModeGracePeriodEnabled') ? ' wf-checked' : ''; ?>" data-original-value="<?php echo $config->getConfig('learningModeGracePeriodEnabled') ? 1 : 0; ?>"><i class="wf-ion-ios-checkmark-empty" aria-hidden="true"></i></div><span> <?php _e('Automatically enable on', 'wordfence'); ?> </span><input type="text" name="learningModeGracePeriod" id="input-learningModeGracePeriod" class="wf-datetime wf-form-control" placeholder="Enabled until..." data-value="<?php echo esc_attr($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : '') ?>" data-original-value="<?php echo esc_attr($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : '') ?>"<?php echo $config->getConfig('learningModeGracePeriodEnabled') ? '' : ' disabled'; ?>></div>
+							<div id="waf-learning-mode-grace-period" class="wf-add-bottom" style="display: none;"><div class="waf-learning-mode wf-option-checkbox<?php try { echo $config->getConfig('learningModeGracePeriodEnabled') ? ' wf-checked' : ''; } catch (Exception $e) { /* Do nothing */ } ?>" data-original-value="<?php try { echo $config->getConfig('learningModeGracePeriodEnabled') ? 1 : 0; } catch (Exception $e) { echo 0; } ?>"><i class="wf-ion-ios-checkmark-empty" aria-hidden="true"></i></div><span> <?php _e('Automatically enable on', 'wordfence'); ?> </span><input type="text" name="learningModeGracePeriod" id="input-learningModeGracePeriod" class="wf-datetime wf-form-control" placeholder="Enabled until..." data-value="<?php try { echo esc_attr($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : ''); } catch (Exception $e) { /* Do nothing */ } ?>" data-original-value="<?php try { echo esc_attr($config->getConfig('learningModeGracePeriod') ? (int) $config->getConfig('learningModeGracePeriod') : ''); } catch (Exception $e) { /* Do nothing */ } ?>"<?php try { echo $config->getConfig('learningModeGracePeriodEnabled') ? '' : ' disabled'; } catch (Exception $e) { echo ' disabled'; } ?>></div>
 						<?php endif; ?>
 					</li>
 					<li id="wf-option-protectionMode" class="wf-flex-vertical wf-flex-align-left">
@@ -194,7 +194,6 @@ if (!isset($collapseable)) {
 										}
 
 										$('#wf-waf-install-continue, #wf-waf-uninstall-continue').toggleClass('wf-disabled', matchCount != backupsAvailable.length);
-										$('#wf-waf-install-continue, #wf-waf-uninstall-continue').text($('.wf-manual-waf-config').is(':visible') ? 'Close' : 'Continue');
 									};
 
 									var installUninstallResponseHandler = function(action, res) {
@@ -233,6 +232,24 @@ if (!isset($collapseable)) {
 												WFAD.colorboxClose();
 											});
 											$.wfcolorbox.resize();
+
+											var payload = {serverConfiguration: res.serverConfiguration, iniModified: 1};
+											if (res.credentials) {
+												payload['credentials'] = res.credentials;
+												payload['credentialsSignature'] = res.credentialsSignature;
+											}
+											
+											$('.wf-waf-uninstall-try-again').on('click', function(e) {
+												e.preventDefault();
+												e.stopPropagation();
+												
+												$(this).text('Retrying');
+												payload['retryAttempted'] = 1;
+
+												WFAD.ajax(action, payload, function(res) {
+													installUninstallResponseHandler(action, res);
+												});
+											});
 										}
 										else if (res.uninstallationWaiting) {
 											var replacement = $(res.html);
@@ -298,7 +315,7 @@ if (!isset($collapseable)) {
 												}
 											});
 
-											$('#wf-waf-server-config').select2({
+											$('#wf-waf-server-config').wfselect2({
 												minimumResultsForSearch: -1,
 												width: WFAD.isSmallScreen ? '300px' : '500px'
 											});
@@ -323,24 +340,26 @@ if (!isset($collapseable)) {
 												var el = $(this);
 												if (manualNotice.length) {
 													if (el.val() == 'manual') {
-														$('.wf-waf-automatic-only').hide();
 														manualNotice.fadeIn(400, function () {
 															$.wfcolorbox.resize();
 														});
 													}
 													else {
-														$('.wf-waf-automatic-only').show();
 														manualNotice.fadeOut(400, function () {
 															$.wfcolorbox.resize();
 														});
 													}
 												}
-												else {
-													$('.wf-waf-automatic-only').show();
-												}
 												
+												var identifier = '.wf-waf-backups-' + el.val().replace(/[^a-z0-9\-]/i, '');
 												$('.wf-waf-backups').hide();
-												$('.wf-waf-backups-' + el.val().replace(/[^a-z0-9\-]/i, '')).show();
+												$(identifier).show();
+												if ($(identifier).find('.wf-waf-backup-file-list').children().length > 0) {
+													$('.wf-waf-download-instructions').show();
+												}
+												else {
+													$('.wf-waf-download-instructions').hide();
+												}
 
 												if (nginxNotice.length) { //Install only
 													if (el.val() == 'nginx') {
@@ -365,11 +384,6 @@ if (!isset($collapseable)) {
 											$('#wf-waf-install-continue').on('click', function(e) {
 												e.preventDefault();
 												e.stopPropagation();
-
-												if ($('.wf-manual-waf-config').is(':visible')) {
-													WFAD.colorboxClose();
-													return;
-												}
 
 												var serverConfiguration = $('#wf-waf-server-config').val();
 												var currentAutoPrepend = $('#wf-waf-include-prepend .wf-active').data('optionValue');
@@ -416,7 +430,7 @@ if (!isset($collapseable)) {
 									});
 
 									if (window.location.hash) {
-										var hashes = window.location.hash.split('#');
+										var hashes = WFAD.parseHashes();
 										for (var i = 0; i < hashes.length; i++) {
 											if (hashes[i] == 'configureAutoPrepend') {
 												$('#wf-waf-install').trigger('click');
@@ -430,7 +444,7 @@ if (!isset($collapseable)) {
 									}
 
 									$(window).on('hashchange', function () {
-										var hashes = window.location.hash.split('#');
+										var hashes = WFAD.parseHashes();
 										for (var i = 0; i < hashes.length; i++) {
 											if (hashes[i] == 'configureAutoPrepend') {
 												$('#wf-waf-install').trigger('click');
@@ -455,8 +469,8 @@ if (!isset($collapseable)) {
 							<p class="wf-no-top"><?php printf(__('You are currently running the Wordfence Web Application Firewall from another WordPress installation. Please <a href="%s">click here</a> to configure the Firewall to run correctly on this site.', 'wordfence'), esc_attr(network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#configureAutoPrepend'))); ?></p>
 						<?php else: ?>
 							<p class="wf-no-top"><?php _e('This feature blocks all traffic from IPs with a high volume of recent malicious activity using Wordfence\'s real-time blacklist.', 'wordfence'); ?></p>
-							<div class="wf-option wf-option-switch wf-padding-add-bottom" data-option-name="disableWAFBlacklistBlocking" data-original-value="<?php echo $config->getConfig('disableWAFBlacklistBlocking') ? '1': '0'; ?>">
-								<ul class="wf-switch">
+							<div class="wf-option wf-option-switch wf-padding-add-bottom" data-option-name="disableWAFBlacklistBlocking" data-original-value="<?php try { echo $config->getConfig('disableWAFBlacklistBlocking') ? '1': '0'; } catch (Exception $e) { echo 0; } ?>">
+								<ul class="wf-switch" role="radiogroup">
 									<?php
 									$states = array(
 										array('value' => '1', 'label' => __('Disabled', 'wordfence')),
@@ -464,8 +478,13 @@ if (!isset($collapseable)) {
 									);
 									
 									foreach ($states as $s):
+										$disableBlacklist = false;
+										try {
+											$disableBlacklist = !!$config->getConfig('disableWAFBlacklistBlocking');
+										}
+										catch (Exception $e) { }
 										?>
-										<li<?php if ($s['value'] == ($config->getConfig('disableWAFBlacklistBlocking') ? '1': '0')) { echo ' class="wf-active"'; } ?> data-option-value="<?php echo esc_attr($s['value']); ?>"><?php echo esc_html($s['label']); ?></li>
+										<li<?php if ($s['value'] == ($disableBlacklist ? '1': '0')) { echo ' class="wf-active"'; } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio" aria-checked="<?php echo (($s['value'] == ($disableBlacklist ? '1': '0')) ? 'true' : 'false'); ?>" tabindex="0"><?php echo esc_html($s['label']); ?></li>
 									<?php endforeach; ?>
 								</ul>
 							</div>

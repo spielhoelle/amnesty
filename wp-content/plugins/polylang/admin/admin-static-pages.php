@@ -6,6 +6,7 @@
  * @since 1.8
  */
 class PLL_Admin_Static_Pages extends PLL_Static_Pages {
+	protected $links;
 
 	/**
 	 * Constructor: setups filters and actions
@@ -17,7 +18,10 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	public function __construct( &$polylang ) {
 		parent::__construct( $polylang );
 
+		$this->links = &$polylang->links;
+
 		// Removes the editor and the template select dropdown for pages for posts
+		add_filter( 'use_block_editor_for_post', array( $this, 'use_block_editor_for_post' ), 10, 2 ); // Since WP 5.0
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
 
 		// Add post state for translations of the front page and posts page
@@ -32,6 +36,29 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 
 		// Prevents WP resetting the option
 		add_filter( 'pre_update_option_show_on_front', array( $this, 'update_show_on_front' ), 10, 2 );
+
+		add_action( 'admin_notices', array( $this, 'notice_must_translate' ) );
+	}
+
+	/**
+	 * Don't use the block editor for the translations of the pages for posts
+	 *
+	 * @since 2.5
+	 *
+	 * @param bool    $use_block_editor Whether the post can be edited or not.
+	 * @param WP_Post $post             The post being checked.
+	 * @return bool
+	 */
+	public function use_block_editor_for_post( $use_block_editor, $post ) {
+		if ( 'page' === $post->post_type ) {
+			add_filter( 'option_page_for_posts', array( $this, 'translate_page_for_posts' ) );
+
+			if ( ( get_option( 'page_for_posts' ) == $post->ID ) && empty( $post->post_content ) ) {
+				return false;
+			}
+		}
+
+		return $use_block_editor;
 	}
 
 	/**
@@ -43,7 +70,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 * @param string $post_type Current post type
 	 * @param object $post      Current post
 	 */
-	function add_meta_boxes( $post_type, $post ) {
+	public function add_meta_boxes( $post_type, $post ) {
 		if ( 'page' === $post_type ) {
 			add_filter( 'option_page_for_posts', array( $this, 'translate_page_for_posts' ) );
 
@@ -59,17 +86,17 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 *
 	 * @since 1.8
 	 *
-	 * @param array  $post_states
-	 * @param object $post
+	 * @param array  $post_states An array of post display states.
+	 * @param object $post        The current post object.
 	 * @return array
 	 */
 	public function display_post_states( $post_states, $post ) {
 		if ( in_array( $post->ID, $this->model->get_languages_list( array( 'fields' => 'page_on_front' ) ) ) ) {
-			$post_states['page_on_front'] = __( 'Front Page' );
+			$post_states['page_on_front'] = __( 'Front Page', 'polylang' );
 		}
 
 		if ( in_array( $post->ID, $this->model->get_languages_list( array( 'fields' => 'page_for_posts' ) ) ) ) {
-			$post_states['page_for_posts'] = __( 'Posts Page' );
+			$post_states['page_for_posts'] = __( 'Posts Page', 'polylang' );
 		}
 
 		return $post_states;
@@ -161,5 +188,41 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 			$value = $old_value;
 		}
 		return $value;
+	}
+
+	/**
+	 * Add a notice to translate the static front page if it is not translated in all languages
+	 * This is especially useful after a new language is created.
+	 * The notice is not dismissible and displayed on the Languages pages and the list of pages.
+	 *
+	 * @since 2.6
+	 */
+	public function notice_must_translate() {
+		$screen = get_current_screen();
+
+		if ( $this->page_on_front && ( 'toplevel_page_mlang' === $screen->id || 'edit-page' === $screen->id ) ) {
+			$untranslated = array();
+
+			foreach ( $this->model->get_languages_list() as $language ) {
+				if ( ! $this->model->post->get( $this->page_on_front, $language ) ) {
+					$untranslated[] = sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( $this->links->get_new_post_translation_link( $this->page_on_front, $language ) ),
+						esc_html( $language->name )
+					);
+				}
+			}
+
+			if ( ! empty( $untranslated ) ) {
+				printf(
+					'<div class="error"><p>%s</p></div>',
+					sprintf(
+						/* translators: %s is a comma separated list of native language names */
+						esc_html__( 'You must translate your static front page in %s.', 'polylang' ),
+						implode( ', ', $untranslated ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					)
+				);
+			}
+		}
 	}
 }

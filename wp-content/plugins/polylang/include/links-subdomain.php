@@ -49,6 +49,8 @@ class PLL_Links_Subdomain extends PLL_Links_Abstract_Domain {
 	 * @return string modified url
 	 */
 	public function remove_language_from_link( $url ) {
+		$languages = array();
+
 		foreach ( $this->model->get_languages_list() as $language ) {
 			if ( ! $this->options['hide_default'] || $this->options['default_lang'] != $language->slug ) {
 				$languages[] = $language->slug;
@@ -56,7 +58,7 @@ class PLL_Links_Subdomain extends PLL_Links_Abstract_Domain {
 		}
 
 		if ( ! empty( $languages ) ) {
-			$url = preg_replace( '#:\/\/(' . implode( '|', $languages ) . ')\.#', $this->www, $url );
+			$url = preg_replace( '#://(' . implode( '|', $languages ) . ')\.#', $this->www, $url );
 		}
 
 		return $url;
@@ -72,7 +74,7 @@ class PLL_Links_Subdomain extends PLL_Links_Abstract_Domain {
 	public function get_hosts() {
 		$hosts = array();
 		foreach ( $this->model->get_languages_list() as $lang ) {
-			$hosts[ $lang->slug ] = parse_url( $this->home_url( $lang ), PHP_URL_HOST );
+			$hosts[ $lang->slug ] = wp_parse_url( $this->home_url( $lang ), PHP_URL_HOST );
 		}
 		return $hosts;
 	}

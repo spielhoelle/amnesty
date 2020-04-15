@@ -27,7 +27,7 @@ sowb.SiteOriginSlider = function($) {
 				active = $(newActive),
 				video = active.find('video.sow-background-element');
 
-			if( speed == undefined ) {
+			if( speed === undefined ) {
 				sentinel.css( 'height', active.outerHeight() );
 			}
 			else {
@@ -70,6 +70,12 @@ jQuery( function($){
 
 		$('.sow-slider-images').each(function(){
 			var $$ = $(this);
+			
+			
+			if ( $$.data( 'initialized' ) ) {
+				return $$;
+			}
+			
 			var $p = $$.siblings('.sow-slider-pagination');
 			var $base = $$.closest('.sow-slider-base');
 			var $n = $base.find('.sow-slide-nav');
@@ -101,25 +107,24 @@ jQuery( function($){
 				// If we're inside a fittext wrapper, wait for it to complete, before setting up the slider.
 				var fitTextWrapper = $$.closest('.so-widget-fittext-wrapper');
 				if ( fitTextWrapper.length > 0 && ! fitTextWrapper.data('fitTextDone') ) {
-				fitTextWrapper.on('fitTextDone', function () {
-					setupSlider();
-				});
-				return;
+					fitTextWrapper.on('fitTextDone', function () {
+						setupSlider();
+					});
+					return;
 				}
 
 				// Show everything for this slider
 				$base.show();
-
+				
+				var resizeFrames = function () {
+					$$.find( '.sow-slider-image' ).each( function () {
+						var $i = $( this );
+						$i.css( 'height', $i.find( '.sow-slider-image-wrapper' ).outerHeight() );
+					} );
+				};
 				// Setup each of the slider frames
-				$$.find('.sow-slider-image').each( function(){
-					var $i = $(this);
-
-					$(window)
-						.on('resize panelsStretchRows', function(){
-							$i.css( 'height', $i.find('.sow-slider-image-wrapper').outerHeight() );
-						})
-						.resize();
-				} );
+				$(window).on('resize panelsStretchRows', resizeFrames ).resize();
+				$(sowb).on('setup_widgets', resizeFrames );
 
 				// Set up the Cycle with videos
 				$$
@@ -155,6 +160,7 @@ jQuery( function($){
 							$(window).resize();
 
 							setTimeout(function() {
+								resizeFrames();
 								siteoriginSlider.setupActiveSlide( $$, optionHash.slides[0] );
 								// Ensure we keep auto-height functionality, but we don't want the duplicated content.
 								$$.find('.cycle-sentinel').empty();
@@ -166,7 +172,8 @@ jQuery( function($){
 						'speed' : settings.speed,
 						'timeout' : settings.timeout,
 						'swipe' : settings.swipe,
-						'swipe-fx' : 'scrollHorz'
+						'swipe-fx' : 'scrollHorz',
+						'log' : false,
 					} )	;
 
 				$$ .find('video.sow-background-element').on('loadeddata', function(){
@@ -175,29 +182,36 @@ jQuery( function($){
 
 				// Set up showing and hiding navs
 				$p.add($n).hide();
-				if( !$base.hasClass('sow-slider-is-mobile') && $slides.length > 1 ) {
+				if( $slides.length > 1 ) {
+					if( !$base.hasClass('sow-slider-is-mobile') ) {
 
-					var toHide = false;
-					$base
-						.mouseenter(function(){
-							$p.add($n).clearQueue().fadeIn(150);
-							toHide = false;
-						})
-						.mouseleave(function(){
-							toHide = true;
-							setTimeout(function(){
-								if( toHide ) {
-									$p.add($n).clearQueue().fadeOut(150);
-								}
+						var toHide = false;
+						$base
+							.mouseenter(function(){
+								$p.add($n).clearQueue().fadeIn(150);
 								toHide = false;
-							}, 750);
-						});
+							})
+							.mouseleave(function(){
+								toHide = true;
+								setTimeout(function(){
+									if( toHide ) {
+										$p.add($n).clearQueue().fadeOut(150);
+									}
+									toHide = false;
+								}, 750);
+							});
+					} else if ( settings.nav_always_show_mobile && window.matchMedia('(max-width: ' + settings.breakpoint + ')').matches) {
+						$p.show();
+						$n.show();
+					}
 				}
 
-				// Resize the sentinel when ever the window is resized
-				$( window ).resize( function(){
+				// Resize the sentinel when ever the window is resized, or when widgets are being set up.
+				var setupActiveSlide = function () {
 					siteoriginSlider.setupActiveSlide( $$, $$.find( '.cycle-slide-active' ) );
-				} );
+				};
+				$( window ).on( 'resize', setupActiveSlide );
+				$( sowb ).on( 'setup_widgets', setupActiveSlide );
 
 				// Setup clicks on the pagination
 				$p.find( '> li > a' ).click( function(e){
@@ -257,6 +271,8 @@ jQuery( function($){
 			if(images.length === 0) {
 				setupSlider();
 			}
+			
+			$$.data( 'initialized', true );
 		});
 	};
 	sowb.setupSliders();

@@ -1,5 +1,7 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin
  */
 
@@ -7,27 +9,24 @@
  * Changes the asset paths to dev server paths.
  */
 final class WPSEO_Admin_Asset_Dev_Server_Location implements WPSEO_Admin_Asset_Location {
+
+	/**
+	 * Holds the dev server's default URL.
+	 *
+	 * @var string
+	 */
 	const DEFAULT_URL = 'http://localhost:8080';
 
 	/**
-	 * @var array
-	 */
-	private static $dev_server_script = array(
-		'commons',
-		'configuration-wizard',
-		'wp-seo-dashboard-widget',
-		'wp-seo-help-center',
-		'wp-seo-metabox',
-		'wp-seo-post-scraper',
-		'wp-seo-term-scraper',
-	);
-
-	/**
+	 * Holds the url where the server is located.
+	 *
 	 * @var string
 	 */
 	private $url;
 
 	/**
+	 * Class constructor.
+	 *
 	 * @param string $url Where the dev server is located.
 	 */
 	public function __construct( $url = null ) {
@@ -55,7 +54,7 @@ final class WPSEO_Admin_Asset_Dev_Server_Location implements WPSEO_Admin_Asset_L
 		$flat_version        = $asset_manager->flatten_version( WPSEO_VERSION );
 		$version_less_source = str_replace( '-' . $flat_version, '', $asset->get_src() );
 
-		if ( ! in_array( $version_less_source, self::$dev_server_script, true ) ) {
+		if ( strpos( $version_less_source, 'select2' ) !== false ) {
 			return $this->get_default_url( $asset, $type );
 		}
 

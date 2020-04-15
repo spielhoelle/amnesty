@@ -85,6 +85,12 @@ class WPCOM_JSON_API_List_Posts_v1_1_Endpoint extends WPCOM_JSON_API_Post_v1_1_E
 			return new WP_Error( 'invalid_number',  'The NUMBER parameter must be less than or equal to 100.', 400 );
 		}
 
+		if ( isset( $args['type'] ) &&
+			   ! in_array( $args['type'], array( 'post', 'revision', 'page', 'any' ) ) &&
+			   defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			$this->load_theme_functions();
+		}
+
 		if ( isset( $args['type'] ) && ! $site->is_post_type_allowed( $args['type'] ) ) {
 			return new WP_Error( 'unknown_post_type', 'Unknown post type', 404 );
 		}
@@ -124,12 +130,6 @@ class WPCOM_JSON_API_List_Posts_v1_1_Endpoint extends WPCOM_JSON_API_Post_v1_1_E
 			$status = array();
 		}
 
-		if ( isset( $args['type'] ) &&
-			   ! in_array( $args['type'], array( 'post', 'revision', 'page', 'any' ) ) &&
-			   defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$this->load_theme_functions();
-		}
-
 		// let's be explicit about defaulting to 'post'
 		$args['type'] = isset( $args['type'] ) ? $args['type'] : 'post';
 
@@ -162,7 +162,7 @@ class WPCOM_JSON_API_List_Posts_v1_1_Endpoint extends WPCOM_JSON_API_Post_v1_1_E
 			'post_status'    => $status,
 			'post_parent'    => isset( $args['parent_id'] ) ? $args['parent_id'] : null,
 			'author'         => isset( $args['author'] ) && 0 < $args['author'] ? $args['author'] : null,
-			's'              => isset( $args['search'] ) ? $args['search'] : null,
+			's'              => isset( $args['search'] ) && '' !== $args['search'] ? $args['search'] : null,
 			'fields'         => 'ids',
 		);
 
@@ -277,11 +277,11 @@ class WPCOM_JSON_API_List_Posts_v1_1_Endpoint extends WPCOM_JSON_API_Post_v1_1_E
 			}
 		}
 
-		if ( isset( $args['before'] ) ) {
-			$this->date_range['before'] = $args['before'];
+		if ( isset( $args['before_gmt'] ) ) {
+			$this->date_range['before'] = $args['before_gmt'];
 		}
-		if ( isset( $args['after'] ) ) {
-			$this->date_range['after'] = $args['after'];
+		if ( isset( $args['after_gmt'] ) ) {
+			$this->date_range['after'] = $args['after_gmt'];
 		}
 
 		if ( isset( $args['modified_before_gmt'] ) ) {
@@ -439,7 +439,7 @@ class WPCOM_JSON_API_List_Posts_v1_1_Endpoint extends WPCOM_JSON_API_Post_v1_1_E
 	}
 
 	function handle_date_range( $where ) {
-		return $this->_build_date_range_query( 'post_date', $this->date_range, $where );
+		return $this->_build_date_range_query( 'post_date_gmt', $this->date_range, $where );
 	}
 
 	function handle_modified_range( $where ) {

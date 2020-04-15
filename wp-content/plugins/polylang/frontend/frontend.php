@@ -5,18 +5,21 @@
  * accessible as $polylang global object
  *
  * Properties:
- * options          => inherited, reference to Polylang options array
- * model            => inherited, reference to PLL_Model object
- * links_model      => inherited, reference to PLL_Links_Model object
- * links            => reference to PLL_Links object
- * static_pages     => reference to PLL_Frontend_Static_Pages object
- * filters_links    => inherited, reference to PLL_Frontend_Filters_Links object
- * choose_lang      => reference to PLL_Choose_lang object
- * curlang          => current language
- * filters          => reference to PLL_Filters object
- * filters_search   => reference to PLL_Frontend_Filters_Search object
- * nav_menu         => reference to PLL_Frontend_Nav_Menu object
- * auto_translate   => optional, reference to PLL_Auto_Translate object
+ * options        => inherited, reference to Polylang options array
+ * model          => inherited, reference to PLL_Model object
+ * links_model    => inherited, reference to PLL_Links_Model object
+ * links          => reference to PLL_Links object
+ * static_pages   => reference to PLL_Frontend_Static_Pages object
+ * choose_lang    => reference to PLL_Choose_Lang object
+ * curlang        => current language
+ * filters        => reference to PLL_Frontend_Filters object
+ * filters_links  => reference to PLL_Frontend_Filters_Links object
+ * filters_search => reference to PLL_Frontend_Filters_Search object
+ * posts          => reference to PLL_CRUD_Posts object
+ * terms          => reference to PLL_CRUD_Terms object
+ * nav_menu       => reference to PLL_Frontend_Nav_Menu object
+ * sync           => reference to PLL_Sync object
+ * auto_translate => optional, reference to PLL_Auto_Translate object
  *
  * @since 1.2
  */
@@ -54,26 +57,51 @@ class PLL_Frontend extends PLL_Base {
 	 * @since 1.2
 	 */
 	public function init() {
+		parent::init();
+
 		$this->links = new PLL_Frontend_Links( $this );
 
-		// Don't set any language for REST requests
-		if ( 0 === strpos( str_replace( 'index.php', '', $_SERVER['REQUEST_URI'] ), '/' . rest_get_url_prefix() . '/' ) ) {
-			/** This action is documented in include/class-polylang.php */
-			do_action( 'pll_no_language_defined' );
-		} else {
-			// Static front page and page for posts
-			if ( 'page' === get_option( 'show_on_front' ) ) {
-				$this->static_pages = new PLL_Frontend_Static_Pages( $this );
+		// Static front page and page for posts
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$this->static_pages = new PLL_Frontend_Static_Pages( $this );
+		}
+
+		// Setup the language chooser
+		$c = array( 'Content', 'Url', 'Url', 'Domain' );
+		$class = 'PLL_Choose_Lang_' . $c[ $this->options['force_lang'] ];
+		$this->choose_lang = new $class( $this );
+		$this->choose_lang->init();
+
+		// Need to load nav menu class early to correctly define the locations in the customizer when the language is set from the content
+		$this->nav_menu = new PLL_Frontend_Nav_Menu( $this );
+
+		// Cross domain
+		if ( PLL_COOKIE ) {
+			$class = array( 2 => 'PLL_Xdata_Subdomain', 3 => 'PLL_Xdata_Domain' );
+			if ( isset( $class[ $this->options['force_lang'] ] ) && class_exists( $class[ $this->options['force_lang'] ] ) ) {
+				$this->xdata = new $class[ $this->options['force_lang'] ]( $this );
+			}
+		}
+
+		if ( get_option( 'permalink_structure' ) ) {
+			// Translate slugs
+			if ( class_exists( 'PLL_Frontend_Translate_Slugs' ) ) {
+				$slugs_model = new PLL_Translate_Slugs_Model( $this );
+				$this->translate_slugs = new PLL_Frontend_Translate_Slugs( $slugs_model, $this->curlang );
 			}
 
-			// Setup the language chooser
-			$c = array( 'Content', 'Url', 'Url', 'Domain' );
-			$class = 'PLL_Choose_Lang_' . $c[ $this->options['force_lang'] ];
-			$this->choose_lang = new $class( $this );
-			$this->choose_lang->init();
+			// Share term slugs
+			if ( $this->options['force_lang'] && class_exists( 'PLL_Share_Term_Slug' ) ) {
+				$this->share_term_slug = new PLL_Share_Term_Slug( $this );
+			}
+		}
 
-			// Need to load nav menu class early to correctly define the locations in the customizer when the language is set from the content
-			$this->nav_menu = new PLL_Frontend_Nav_Menu( $this );
+		if ( class_exists( 'PLL_Sync_Post_Model' ) ) {
+			$this->sync_post_model = new PLL_Sync_Post_Model( $this );
+		}
+
+		if ( class_exists( 'PLL_Sync_Post' ) ) {
+			$this->sync_post = new PLL_Sync_Post( $this );
 		}
 	}
 
@@ -87,6 +115,10 @@ class PLL_Frontend extends PLL_Base {
 		$this->filters_links = new PLL_Frontend_Filters_Links( $this );
 		$this->filters = new PLL_Frontend_Filters( $this );
 		$this->filters_search = new PLL_Frontend_Filters_Search( $this );
+		$this->posts = new PLL_CRUD_Posts( $this );
+		$this->terms = new PLL_CRUD_Terms( $this );
+
+		$this->sync = new PLL_Sync( $this );
 
 		// Auto translate for Ajax
 		if ( ( ! defined( 'PLL_AUTO_TRANSLATE' ) || PLL_AUTO_TRANSLATE ) && wp_doing_ajax() ) {
@@ -111,7 +143,7 @@ class PLL_Frontend extends PLL_Base {
 	}
 
 	/**
-	 * mMdifies some query vars to "hide" that the language is a taxonomy and avoid conflicts
+	 * Modifies some query vars to "hide" that the language is a taxonomy and avoid conflicts
 	 *
 	 * @since 1.2
 	 *
@@ -134,7 +166,7 @@ class PLL_Frontend extends PLL_Base {
 
 			// Remove pages query when the language is set unless we do a search
 			// Take care not to break the single page, attachment and taxonomies queries!
-			if ( empty( $qv['post_type'] ) && ! $query->is_search && ! $query->is_page && ! $query->is_attachment && empty( $taxonomies ) ) {
+			if ( empty( $qv['post_type'] ) && ! $query->is_search && ! $query->is_singular && empty( $taxonomies ) && ! $query->is_category && ! $query->is_tag ) {
 				$query->set( 'post_type', 'post' );
 			}
 

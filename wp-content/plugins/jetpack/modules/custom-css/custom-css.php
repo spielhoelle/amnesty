@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\Jetpack\Assets;
+
 class Jetpack_Custom_CSS {
 	static function init() {
 		add_action( 'switch_theme', array( __CLASS__, 'reset' ) );
@@ -24,7 +26,7 @@ class Jetpack_Custom_CSS {
 			! Jetpack_User_Agent_Info::is_ipad() &&
 			/**
 			 * Should the Custom CSS module use ACE to process CSS.
-			 * @see http://ace.c9.io/
+			 * @see https://ace.c9.io/
 			 *
 			 * @module custom-css
 			 *
@@ -632,7 +634,7 @@ class Jetpack_Custom_CSS {
 					apply_filters(
 						'safecss_default_css',
 						__(
-							"Welcome to Custom CSS!\n\nTo learn how this works, see http://wp.me/PEmnE-Bt",
+							"Welcome to Custom CSS!\n\nTo learn how this works, see https://wp.me/PEmnE-Bt",
 							'jetpack'
 						)
 					)
@@ -932,7 +934,7 @@ class Jetpack_Custom_CSS {
 		wp_enqueue_script( 'postbox' );
 		wp_enqueue_script(
 			'custom-css-editor',
-			Jetpack::get_file_url_for_environment(
+			Assets::get_file_url_for_environment(
 				'_inc/build/custom-css/custom-css/js/css-editor.min.js',
 				'modules/custom-css/custom-css/js/css-editor.js'
 			),
@@ -949,7 +951,7 @@ class Jetpack_Custom_CSS {
 			wp_register_script( 'jetpack-css-codemirror', plugins_url( 'custom-css/js/codemirror.min.js', __FILE__ ), array(), '3.16', true );
 			wp_enqueue_script(
 				'jetpack-css-use-codemirror',
-				Jetpack::get_file_url_for_environment(
+				Assets::get_file_url_for_environment(
 					'_inc/build/custom-css/custom-css/js/use-codemirror.min.js',
 					'modules/custom-css/custom-css/js/use-codemirror.js'
 				),
@@ -1004,8 +1006,8 @@ class Jetpack_Custom_CSS {
 						 *
 						 * @param string $str Intro text appearing above the Custom CSS editor.
 						 */
-						echo apply_filters( 'safecss_intro_text', __( 'New to CSS? Start with a <a href="http://www.htmldog.com/guides/cssbeginner/" target="_blank">beginner tutorial</a>. Questions?
-		Ask in the <a href="https://wordpress.org/support/forum/themes-and-templates" target="_blank">Themes and Templates forum</a>.', 'jetpack' ) );
+						echo apply_filters( 'safecss_intro_text', __( 'New to CSS? Start with a <a href="https://www.htmldog.com/guides/css/beginner/" rel="noopener noreferrer" target="_blank">beginner tutorial</a>. Questions?
+		Ask in the <a href="https://wordpress.org/support/forum/themes-and-templates" rel="noopener noreferrer" target="_blank">Themes and Templates forum</a>.', 'jetpack' ) );
 					?></p>
 					<p class="css-support"><?php echo __( 'Note: Custom CSS will be reset when changing themes.', 'jetpack' ); ?></p>
 
@@ -1053,7 +1055,7 @@ class Jetpack_Custom_CSS {
 					<?php
 
 					printf( /* translators: %1$s is replaced with an input field for numbers. */
-						__( 'Limit width to %1$s pixels for full size images. (<a href="%2$s" target="_blank">More info</a>.)', 'jetpack' ),
+						__( 'Limit width to %1$s pixels for full size images. (<a href="%2$s" rel="noopener noreferrer" target="_blank">More info</a>.)', 'jetpack' ),
 						'<input type="text" id="custom_content_width_visible" value="' . esc_attr( $custom_content_width ) . '" size="4" />',
 						/**
 						 * Filter the Custom CSS limited width's support doc URL.
@@ -1064,7 +1066,7 @@ class Jetpack_Custom_CSS {
 						 *
 						 * @param string $url Custom CSS limited width's support doc URL.
 						 */
-						apply_filters( 'safecss_limit_width_link', 'http://jetpack.com/support/custom-css/#limited-width' )
+						apply_filters( 'safecss_limit_width_link', 'https://jetpack.com/support/custom-css/#limited-width' )
 					);
 
 					?>
@@ -1751,7 +1753,7 @@ function safecss_post_title( $title, $post_id ) {
 function safe_css_enqueue_scripts() {
 	_deprecated_function( __FUNCTION__, '2.1', 'Jetpack_Custom_CSS::enqueue_scripts()' );
 
-	return Jetpack_Custom_CSS::enqueue_scripts();
+	return Jetpack_Custom_CSS::enqueue_scripts( null );
 }
 
 function safecss_admin_head() {

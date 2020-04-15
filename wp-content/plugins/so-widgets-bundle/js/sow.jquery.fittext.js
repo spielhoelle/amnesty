@@ -36,6 +36,7 @@ var sowb = window.sowb || {};
 
             // Call on resize. Opera debounces their resize by default.
             $(window).on('resize.fittext orientationchange.fittext', resizer);
+			$( sowb ).on( 'setup_widgets', resizer );
 
         });
     };
@@ -47,11 +48,15 @@ jQuery( function( $ ){
 	sowb.runFitText = function () {
 		$( '.so-widget-fittext-wrapper' ).each( function() {
 			var fitTextWrapper = $( this );
+			if ( ! fitTextWrapper.is( ':visible' ) || fitTextWrapper.data( 'fitTextDone' ) ) {
+				return fitTextWrapper;
+			}
 
 			var compressor = fitTextWrapper.data( 'fitTextCompressor' ) || 0.85;
 			fitTextWrapper.find( 'h1,h2,h3,h4,h5,h6' ).each( function () {
 				var $$ = $( this );
 				$$.fitText( compressor, {
+					minFontSize: '12px',
 					maxFontSize: $$.css( 'font-size' )
 				} );
 			} );
@@ -60,6 +65,7 @@ jQuery( function( $ ){
 		});
 	};
 
+	$( window ).on( 'resize', sowb.runFitText );
 	$( sowb ).on( 'setup_widgets', sowb.runFitText );
 
 	sowb.runFitText();

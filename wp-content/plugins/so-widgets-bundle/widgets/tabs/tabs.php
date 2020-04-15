@@ -4,6 +4,7 @@ Widget Name: Tabs
 Description: A tabby widget to switch between tabbed content panels.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
+Documentation: https://siteorigin.com/widgets-bundle/tabs-widget/
 */
 
 class SiteOrigin_Widget_Tabs_Widget extends SiteOrigin_Widget {
@@ -169,6 +170,10 @@ class SiteOrigin_Widget_Tabs_Widget extends SiteOrigin_Widget {
 	}
 	
 	public function get_less_variables( $instance ) {
+		if ( empty( $instance ) || empty( $instance['design'] ) ) {
+			return array();
+		}
+
 		$design = $instance['design'];
 		
 		return array(

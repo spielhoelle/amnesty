@@ -12,7 +12,7 @@ $d = new wfDashboard();
 
 			//Hash-based option block linking
 			if (window.location.hash) {
-				var hashes = window.location.hash.split('#');
+				var hashes = WFAD.parseHashes();
 				var hash = hashes[hashes.length - 1];
 				var block = $('.wf-block[data-persistence-key="' + hash + '"]');
 				if (block) {
@@ -56,7 +56,12 @@ $d = new wfDashboard();
 <div class="wf-options-controls-spacer"></div>
 <?php
 if (wfOnboardingController::shouldShowAttempt3()) {
+	echo wfView::create('onboarding/disabled-overlay')->render();
 	echo wfView::create('onboarding/banner')->render();
+}
+else if (wfConfig::get('touppPromptNeeded')) {
+	echo wfView::create('gdpr/disabled-overlay')->render();
+	echo wfView::create('gdpr/banner')->render();
 }
 ?>
 <div class="wrap wordfence" id="wf-global-options">
@@ -253,15 +258,32 @@ if (wfOnboardingController::shouldShowAttempt3()) {
 					echo wfView::create('dashboard/options-group-email-summary', array(
 						'stateKey' => 'global-options-email-summary',
 					))->render();
-					
-					echo wfView::create('dashboard/options-group-import', array(
-						'stateKey' => 'global-options-import',
-					))->render();
 					?>
-					
-					
-					
-					
+					<div class="wf-row">
+						<div class="wf-col-xs-12">
+							<div class="wf-block wf-always-active">
+								<div class="wf-block-header">
+									<div class="wf-block-header-content">
+										<div class="wf-block-title">
+											<strong><?php _e('Import/Export Options', 'wordfence'); ?></strong>
+										</div>
+									</div>
+								</div>
+								<div class="wf-block-content">
+									<ul class="wf-block-list">
+										<li>
+											<ul class="wf-flex-horizontal wf-flex-vertical-xs wf-flex-full-width wf-add-top wf-add-bottom">
+												<li><?php _e('Importing and exporting of options has moved to the Tools page', 'wordfence'); ?></li>
+												<li class="wf-right wf-left-xs wf-padding-add-top-xs-small">
+													<a href="<?php echo esc_url(network_admin_url('admin.php?page=WordfenceTools&subpage=importexport')); ?>" class="wf-btn wf-btn-primary wf-btn-callout-subtle" id="wf-export-options"><?php _e('Import/Export Options', 'wordfence'); ?></a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div> <!-- end import options -->
 				</div> <!-- end options block -->
 			</div> <!-- end content block -->
 		</div> <!-- end row -->

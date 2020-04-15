@@ -17,12 +17,13 @@ class wfOnboardingController {
 	const TOUR_SCAN = 'scan';
 	const TOUR_BLOCKING = 'blocking';
 	const TOUR_LIVE_TRAFFIC = 'livetraffic';
+	const TOUR_LOGIN_SECURITY = 'loginsecurity';
 	
 	/**
 	 * Sets the appropriate initial settings for an existing install so it's not forced through onboarding.
 	 */
 	public static function migrateOnboarding() {
-		$alertEmails = wfConfig::get('alertEmails');
+		$alertEmails = wfConfig::getAlertEmails();
 		$onboardingAttempt1 = wfConfig::get('onboardingAttempt1');
 		if (!empty($alertEmails) && empty($onboardingAttempt1)) {
 			wfConfig::set('onboardingAttempt1', self::ONBOARDING_FIRST_LICENSE); //Mark onboarding as done
@@ -45,7 +46,8 @@ class wfOnboardingController {
 							self::shouldShowNewTour(self::TOUR_FIREWALL) || self::shouldShowUpgradeTour(self::TOUR_FIREWALL) ||
 							self::shouldShowNewTour(self::TOUR_SCAN) || self::shouldShowUpgradeTour(self::TOUR_SCAN) ||
 							self::shouldShowNewTour(self::TOUR_BLOCKING) || self::shouldShowUpgradeTour(self::TOUR_BLOCKING) ||
-							self::shouldShowNewTour(self::TOUR_LIVE_TRAFFIC) || self::shouldShowUpgradeTour(self::TOUR_LIVE_TRAFFIC));
+							self::shouldShowNewTour(self::TOUR_LIVE_TRAFFIC) || self::shouldShowUpgradeTour(self::TOUR_LIVE_TRAFFIC) ||
+							self::shouldShowNewTour(self::TOUR_LOGIN_SECURITY) || self::shouldShowUpgradeTour(self::TOUR_LOGIN_SECURITY));
 		if (!self::shouldShowAttempt1() && !self::shouldShowAttempt2() && !self::shouldShowAttempt3() && !$willShowAnyTour) {
 			return;
 		}
@@ -59,12 +61,30 @@ class wfOnboardingController {
 	 * Enqueues the scripts and styles we need globally on the backend for onboarding.
 	 */
 	public static function _enqueue_scripts() {
-		wp_enqueue_style('wordfence-font', 'https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900,900i', '', WORDFENCE_VERSION);
-		wp_enqueue_style('wordfence-ionicons-style', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-ionicons.css'), '', WORDFENCE_VERSION);
-		wp_enqueue_style('wordfenceOnboardingCSS', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-onboarding.css'), '', WORDFENCE_VERSION);
-		wp_enqueue_style('wordfence-colorbox-style', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-colorbox.css'), '', WORDFENCE_VERSION);
+		$willShowAnyPluginOnboarding = (self::shouldShowAttempt1() || self::shouldShowAttempt2());
+		$willShowAnyTour = (self::shouldShowNewTour(self::TOUR_DASHBOARD) || self::shouldShowUpgradeTour(self::TOUR_DASHBOARD) ||
+			self::shouldShowNewTour(self::TOUR_FIREWALL) || self::shouldShowUpgradeTour(self::TOUR_FIREWALL) ||
+			self::shouldShowNewTour(self::TOUR_SCAN) || self::shouldShowUpgradeTour(self::TOUR_SCAN) ||
+			self::shouldShowNewTour(self::TOUR_BLOCKING) || self::shouldShowUpgradeTour(self::TOUR_BLOCKING) ||
+			self::shouldShowNewTour(self::TOUR_LIVE_TRAFFIC) || self::shouldShowUpgradeTour(self::TOUR_LIVE_TRAFFIC) ||
+			self::shouldShowNewTour(self::TOUR_LOGIN_SECURITY) || self::shouldShowUpgradeTour(self::TOUR_LOGIN_SECURITY));
 		
-		wp_enqueue_script('jquery.wfcolorbox', wfUtils::getBaseURL() . wfUtils::versionedAsset('js/jquery.colorbox-min.js'), array('jquery'), WORDFENCE_VERSION);
+		if (wfUtils::isAdmin() && 
+			(($willShowAnyPluginOnboarding && preg_match('~(?:^|/)wp-admin(?:/network)?/plugins\.php~i', $_SERVER['REQUEST_URI'])) || 
+				(isset($_GET['page']) && 
+					(preg_match('/^Wordfence/', @$_GET['page']) || 
+						($willShowAnyTour && preg_match('/^WFLS/', @$_GET['page']))
+					)
+				)
+			)
+		) {
+			wp_enqueue_style('wordfence-font', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-roboto-font.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfence-ionicons-style', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-ionicons.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfenceOnboardingCSS', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-onboarding.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfence-colorbox-style', wfUtils::getBaseURL() . wfUtils::versionedAsset('css/wf-colorbox.css'), '', WORDFENCE_VERSION);
+			
+			wp_enqueue_script('jquery.wfcolorbox', wfUtils::getBaseURL() . wfUtils::versionedAsset('js/jquery.colorbox-min.js'), array('jquery'), WORDFENCE_VERSION);
+		}
 	}
 	
 	/**
@@ -75,7 +95,8 @@ class wfOnboardingController {
 							self::shouldShowNewTour(self::TOUR_FIREWALL) || self::shouldShowUpgradeTour(self::TOUR_FIREWALL) ||
 							self::shouldShowNewTour(self::TOUR_SCAN) || self::shouldShowUpgradeTour(self::TOUR_SCAN) ||
 							self::shouldShowNewTour(self::TOUR_BLOCKING) || self::shouldShowUpgradeTour(self::TOUR_BLOCKING) ||
-							self::shouldShowNewTour(self::TOUR_LIVE_TRAFFIC) || self::shouldShowUpgradeTour(self::TOUR_LIVE_TRAFFIC));
+							self::shouldShowNewTour(self::TOUR_LIVE_TRAFFIC) || self::shouldShowUpgradeTour(self::TOUR_LIVE_TRAFFIC) ||
+							self::shouldShowNewTour(self::TOUR_LOGIN_SECURITY) || self::shouldShowUpgradeTour(self::TOUR_LOGIN_SECURITY));
 		
 		$screen = get_current_screen();
 		if ($screen->base == 'plugins' && self::shouldShowAttempt1()) {
@@ -119,14 +140,14 @@ class wfOnboardingController {
 			return false;
 		}
 		
-		$alertEmails = wfConfig::get('alertEmails');
+		$alertEmails = wfConfig::getAlertEmails();
 		$show = !wfConfig::get('onboardingAttempt2') && empty($alertEmails); //Unset defaults to true, all others false
 		return $show;
 	}
 	
 	public static function shouldShowAttempt3() {
 		if (isset($_GET['page']) && preg_match('/^Wordfence/', $_GET['page'])) {
-			$alertEmails = wfConfig::get('alertEmails');
+			$alertEmails = wfConfig::getAlertEmails();
 			return empty($alertEmails);
 		}
 		
@@ -160,7 +181,7 @@ class wfOnboardingController {
 	
 	public static function shouldShowNewTour($page) {
 		$key = 'needsNewTour_' . $page;
-		return (!self::shouldShowAttempt3Automatically() && wfConfig::get($key));
+		return (!self::shouldShowAttempt3Automatically() && !wfConfig::get('touppPromptNeeded') && wfConfig::get($key));
 	}
 	
 	public static function willShowUpgradeTour($page) {
@@ -170,6 +191,6 @@ class wfOnboardingController {
 	
 	public static function shouldShowUpgradeTour($page) {
 		$key = 'needsUpgradeTour_' . $page;
-		return (!self::shouldShowAttempt3Automatically() && wfConfig::get($key));
+		return (!self::shouldShowAttempt3Automatically() && !wfConfig::get('touppPromptNeeded') && wfConfig::get($key));
 	}
 }

@@ -27,11 +27,11 @@ var sowb = window.sowb || {};
 				keys      	= [],
 				matches	 	= [],
 				settings 	= {};
-			var sowbWidgetValues = sowbForms.getWidgetFormValues( form.find( '.siteorigin-widget-form' ) );
+			
 			// Loop through the form data.
 			for ( i = 0; i < data.length; i++ ) {
 				
-				value = data[ i ].value.replace( /\r/gm, '' );
+				value = data[ i ].value.replace( /\r/gm, '' ).replace( /&#39;/g, "'" );
 				
 				// Don't save text editor textareas.
 				if ( data[ i ].name.indexOf( 'flrich' ) > -1 ) {
@@ -48,19 +48,19 @@ var sowb = window.sowb || {};
 					// Remove [] from the keys.
 					for ( k = 0; k < matches.length; k++ ) {
 						
-						if ( '[]' == matches[ k ] ) {
+						if ( '[]' === matches[ k ] ) {
 							continue;
 						}
 						
-						keys.push( matches[ k ].replace( /\[|\]/g, '' ) );
+						keys.push( matches[ k ].replace( /[\[\]]/g, '' ) );
 					}
 
 
 					var f = function(object, val, head, tail) {
-						if( tail.length == 0) {
+						if( tail.length === 0) {
 							object[ head ] = val;
 						} else {
-							if( 'undefined' == typeof object [ head ] ) {
+							if( 'undefined' === typeof object [ head ] ) {
 								object [ head ] = {};
 							}
 							f(object[ head ], val, tail.shift(), tail);
@@ -70,13 +70,13 @@ var sowb = window.sowb || {};
 					if(keys.length > 0) {
 
 						var keysCopy = keys.slice();
-						if ( 'undefined' == typeof settings[ name ] ) {
+						if ( 'undefined' === typeof settings[ name ] ) {
 							settings[ name ] = {};
 						}
 						f(settings[ name ], value, keysCopy.shift(), keysCopy);
 					} else {
 
-						if ( 'undefined' == typeof settings[ name ] ) {
+						if ( 'undefined' === typeof settings[ name ] ) {
 							settings[ name ] = [];
 						}
 
@@ -92,7 +92,7 @@ var sowb = window.sowb || {};
 			// Update auto suggest values.
 			for ( key in settings ) {
 				
-				if ( 'undefined' != typeof settings[ 'as_values_' + key ] ) {
+				if ( 'undefined' !== typeof settings[ 'as_values_' + key ] ) {
 					
 					settings[ key ] = $.grep(
 						settings[ 'as_values_' + key ].split( ',' ),
@@ -108,12 +108,24 @@ var sowb = window.sowb || {};
 				}
 			}
 			
+			// In the case of multi-select or checkboxes we need to put the blank setting back in.
+			$.each( form.find( '[name]' ), function( key, input ) {
+				var name = $( input ).attr( 'name' ).replace( /\[(.*)\]/, '' );
+				if ( ! ( name in settings ) ) {
+					settings[ name ] = '';
+				}
+			});
+			
 			if ( typeof FLBuilder._getOriginalSettings === 'function' ) {
 				// Merge in the original settings in case legacy fields haven't rendered yet.
 				settings = $.extend( {}, FLBuilder._getOriginalSettings( form ), settings );
 			}
 			
-			settings[ name ] = sowbWidgetValues;
+			var widgetForm = form.find( '.siteorigin-widget-form' );
+			if ( widgetForm.length ) {
+				var widgetSettingKey = 'widget-' + sowbForms.getWidgetIdBase( widgetForm );
+				settings[ widgetSettingKey ] = sowbForms.getWidgetFormValues( widgetForm );
+			}
 			// Return the settings.
 			return settings;
 		}
@@ -122,7 +134,7 @@ var sowb = window.sowb || {};
 	// To ensure necessary scripts are executed again when settings are changed
 	$( document ).on( 'fl-builder.preview-rendered fl-builder.layout-rendered', '.fl-builder-content', function() {
 		// Trigger Widgets Bundle widgets to setup
-		$( sowb ).trigger( 'setup_widgets' );
+		$( sowb ).trigger( 'setup_widgets', { preview: true } );
 	} );
 
 })(jQuery);

@@ -1,4 +1,5 @@
 <?php
+if (defined('WFWAF_VERSION') && !defined('WFWAF_RUN_COMPLETE')) {
 
 require_once dirname(__FILE__) . '/lexer.php';
 
@@ -796,6 +797,13 @@ class wfWAFRuleVariable {
 		$this->value = $value;
 	}
 
+	public function __sleep() {
+		return array(
+			'name',
+			'value',
+		);
+	}
+
 	public function render() {
 		return sprintf('new %s($this, %s, %s)', get_class($this),
 			var_export($this->getName(), true), var_export($this->getValue(), true));
@@ -858,4 +866,5 @@ class wfWAFRuleVariable {
 	public function setWAF($waf) {
 		$this->waf = $waf;
 	}
+}
 }

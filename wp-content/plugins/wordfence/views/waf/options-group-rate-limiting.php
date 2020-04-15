@@ -25,7 +25,7 @@ if (!isset($collapseable)) {
 					<div class="wf-block-title">
 						<strong><?php _e('Rate Limiting', 'wordfence'); ?></strong>
 					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure"></div></div><?php endif; ?>
+					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
 				</div>
 			</div>
 			<div class="wf-block-content">
@@ -179,22 +179,6 @@ if (!isset($collapseable)) {
 					</li>
 					<li>
 						<?php
-						echo wfView::create('waf/option-rate-limit', array(
-							'toggleOptionName' => 'maxScanHits_enabled',
-							'toggleValue' => !!wfConfig::get('maxScanHits_enabled') ? 1 : 0,
-							'rateOptionName' => 'maxScanHits',
-							'rateOptions' => $rateOptions,
-							'rateValue' => wfConfig::get('maxScanHits'),
-							'actionOptionName' => 'maxScanHits_action',
-							'actionOptions' => $actionOptions,
-							'actionValue' => wfConfig::get('maxScanHits_action'),
-							'title' => __('If 404s for known vulnerable URLs exceed', 'wordfence'),
-							'helpLink' => wfSupportController::supportURL(wfSupportController::ITEM_FIREWALL_WAF_OPTION_RATE_LIMIT_ANY_404),
-						))->render();
-						?>
-					</li>
-					<li>
-						<?php
 						$breakpoints = array(60, 300, 1800, 3600, 7200, 21600, 43200, 86400, 172800, 432000, 864000, 2592000);
 						$options = array();
 						foreach ($breakpoints as $b) {
@@ -224,7 +208,7 @@ if (!isset($collapseable)) {
 				<script type="application/javascript">
 					(function($) {
 						$(function() {
-							$('.wf-option.wf-option-rate-limit > .wf-option-content > ul > li.wf-option-select select').select2({
+							$('.wf-option.wf-option-rate-limit > .wf-option-content > ul > li.wf-option-select select').wfselect2({
 								minimumResultsForSearch: -1
 							}).on('change', function () {
 								var optionElement = $(this).closest('.wf-option');
@@ -255,6 +239,15 @@ if (!isset($collapseable)) {
 
 								WFAD.updatePendingChanges();
 							}).triggerHandler('change');
+
+							$(window).on('wfOptionsReset', function() {
+								$('.wf-option.wf-option-rate-limit').each(function() {
+									var originalRateValue = $(this).data('originalRateValue');
+									$(this).find('.wf-rate-limit-rate').val(originalRateValue).trigger('change');
+									var originalActionValue = $(this).data('originalActionValue');
+									$(this).find('.wf-rate-limit-action').val(originalActionValue).trigger('change');
+								});
+							});
 						});
 					})(jQuery);
 				</script>

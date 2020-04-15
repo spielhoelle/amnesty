@@ -4,6 +4,7 @@ Widget Name: Image
 Description: A very simple image widget.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
+Documentation: https://siteorigin.com/widgets-bundle/image-widget-documentation/
 */
 
 class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
@@ -47,6 +48,18 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 					'left' => __('Left', 'so-widgets-bundle'),
 					'right' => __('Right', 'so-widgets-bundle'),
 					'center' => __('Center', 'so-widgets-bundle'),
+				),
+			),
+
+			'title_align' => array(
+				'type' => 'select',
+				'label' => __( 'Title alignment', 'so-widgets-bundle' ),
+				'default' => 'default',
+				'options' => array(
+					'default' => __( 'Default', 'so-widgets-bundle' ),
+					'left' =>    __( 'Left', 'so-widgets-bundle' ),
+					'right' =>   __( 'Right', 'so-widgets-bundle' ),
+					'center' =>  __( 'Center', 'so-widgets-bundle' ),
 				),
 			),
 
@@ -172,12 +185,15 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 
 
 	function get_less_variables($instance){
+		if ( empty( $instance ) ) {
+			return array();
+		}
 		return array(
+			'title_alignment' => ! empty( $instance['title_align'] ) ? $instance['title_align'] : '',
 			'image_alignment' => $instance['align'],
-			'image_display' => $instance['align'] == 'default' ? 'block' : 'inline-block',
 			'image_max_width' => ! empty( $instance['bound'] ) ? '100%' : '',
 			'image_height' => ! empty( $instance['bound'] ) ? 'auto' : '',
-			'image_width' => ! empty( $instance['full_width'] ) ? '100%' : ( ! empty( $instance['bound'] ) ? 'inherit' : '' ),
+			'image_width' => ! empty( $instance['full_width'] ) ? '100%' : '',
 		);
 	}
 

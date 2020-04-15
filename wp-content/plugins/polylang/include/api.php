@@ -25,7 +25,7 @@
  */
 function pll_the_languages( $args = '' ) {
 	if ( PLL() instanceof PLL_Frontend ) {
-		$switcher = new PLL_Switcher;
+		$switcher = new PLL_Switcher();
 		return $switcher->the_languages( PLL()->links, $args );
 	}
 	return '';
@@ -37,10 +37,13 @@ function pll_the_languages( $args = '' ) {
  *
  * @since 0.8.1
  *
- * @param string $field Optional, the language field to return ( see PLL_Language ), defaults to 'slug'
- * @return string|bool The requested field for the current language
+ * @param string $field Optional, the language field to return ( see PLL_Language ), defaults to 'slug', pass OBJECT constant to get the language object.
+ * @return string|PLL_Language|bool The requested field for the current language
  */
 function pll_current_language( $field = 'slug' ) {
+	if ( OBJECT === $field ) {
+		return PLL()->curlang;
+	}
 	return isset( PLL()->curlang->$field ) ? PLL()->curlang->$field : false;
 }
 
@@ -49,11 +52,20 @@ function pll_current_language( $field = 'slug' ) {
  *
  * @since 1.0
  *
- * @param string $field Optional, the language field to return ( see PLL_Language ), defaults to 'slug'
- * @return string The requested field for the default language
+ * @param string $field Optional, the language field to return ( see PLL_Language ), defaults to 'slug', pass OBJECT constant to get the language object.
+ * @return string|PLL_Language|bool The requested field for the default language
  */
 function pll_default_language( $field = 'slug' ) {
-	return isset( PLL()->options['default_lang'] ) && ( $lang = PLL()->model->get_language( PLL()->options['default_lang'] ) ) && isset( $lang->$field ) ? $lang->$field : false;
+	if ( isset( PLL()->options['default_lang'] ) ) {
+		$lang = PLL()->model->get_language( PLL()->options['default_lang'] );
+		if ( $lang ) {
+			if ( OBJECT === $field ) {
+				return $lang;
+			}
+			return isset( $lang->$field ) ? $lang->$field : false;
+		}
+	}
+	return false;
 }
 
 /**
@@ -123,7 +135,7 @@ function pll_register_string( $name, $string, $context = 'polylang', $multiline 
  * @return string the string translation in the current language
  */
 function pll__( $string ) {
-	return is_scalar( $string ) ? __( $string, 'pll_string' ) : $string;
+	return is_scalar( $string ) ? __( $string, 'pll_string' ) : $string; // PHPCS:ignore WordPress.WP.I18n
 }
 
 /**
@@ -152,13 +164,14 @@ function pll_esc_attr__( $string ) {
 
 /**
  * Echoes a translated string ( previously registered with pll_register_string )
+ * It is an equivalent of _e() and is not escaped.
  *
  * @since 0.6
  *
  * @param string $string The string to translate
  */
 function pll_e( $string ) {
-	echo pll__( $string );
+	echo pll__( $string ); // phpcs:ignore
 }
 
 /**
@@ -169,7 +182,7 @@ function pll_e( $string ) {
  * @param string $string The string to translate
  */
 function pll_esc_html_e( $string ) {
-	echo pll_esc_html__( $string );
+	echo pll_esc_html__( $string ); // phpcs:ignore WordPress.Security.EscapeOutput
 }
 
 /**
@@ -180,7 +193,7 @@ function pll_esc_html_e( $string ) {
  * @param string $string The string to translate
  */
 function pll_esc_attr_e( $string ) {
-	echo pll_esc_attr__( $string );
+	echo pll_esc_attr__( $string ); // phpcs:ignore WordPress.Security.EscapeOutput
 }
 
 /**
@@ -359,9 +372,9 @@ function pll_get_term_translations( $term_id ) {
  *
  * @since 1.5
  *
- * @param string $lang language code
- * @param array  $args ( accepted keys: post_type, m, year, monthnum, day, author, author_name, post_format )
- * @return int posts count
+ * @param string $lang Language code.
+ * @param array  $args WP_Query arguments ( accepted keys: post_type, m, year, monthnum, day, author, author_name, post_format, post_status ).
+ * @return int Posts count.
  */
 function pll_count_posts( $lang, $args = array() ) {
 	return PLL()->model->count_posts( PLL()->model->get_language( $lang ), $args );
@@ -374,6 +387,6 @@ function pll_count_posts( $lang, $args = array() ) {
  *
  * @since 1.8
  */
-function PLL() {
+function PLL() { // PHPCS:ignore WordPress.NamingConventions.ValidFunctionName
 	return $GLOBALS['polylang'];
 }

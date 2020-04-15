@@ -21,6 +21,14 @@
 	font-family: 'dashicons';
 	content: "\f155";
 }
+.pll-icon:before{
+	display: inline-block;
+	text-align: left;
+	width: 15px;
+}
+.pll-circle:before{
+	content: "\25cf";
+}
 
 .form-field input[type="radio"] {
 	width: auto;
@@ -219,6 +227,25 @@ td[class*='column-language_'] {
 	float: right;
 }
 
+/* Languages metabox buttons */
+.pll-button {
+	padding: 0;
+	height: 20px;
+	background: none;
+	border: none;
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.pll-button:not(.wp-ui-text-highlight) {
+	color: #DDDDDD;
+}
+
+#pll-duplicate {
+	float: right;
+	margin: 13px 7px;
+}
+
 /* language and translations in edit-tags.php */
 .pll-translation-flag { /* also for media */
 	margin-right: 14px;
@@ -236,7 +263,7 @@ td[class*='column-language_'] {
 
 #term-translations p {
 	/* same style as label */
-	font-size: 12px;
+	font-weight: 400;
 	font-style: normal;
 	padding: 2px;
 	color: #23282d;
@@ -266,9 +293,11 @@ td[class*='column-language_'] {
 .pll_icon_tick:before {
 	content: "\f147";
 }
+
 .pll_icon_add:before {
 	content: "\f132";
 }
+
 .pll_icon_edit:before {
 	content: "\f464";
 }
@@ -291,6 +320,40 @@ td[class*='column-language_'] {
 #wpadminbar #wp-admin-bar-languages .ab-icon:before {
 	content: "\f326";
 	top: 1px;
+}
+
+/* Notices */
+.pll-notice.notice {
+	padding-right: 38px;
+	position: relative;
+}
+
+.pll-notice a.notice-dismiss {
+	text-decoration: none;
+}
+
+.pll-notice .button {
+	margin-right: 10px;
+}
+
+/* Bulk translate */
+.bulk-translate-save .button {
+	margin-right: 20px;
+}
+
+#wpbody-content #pll-translate fieldset {
+	display: inline-block;
+	width: 300px;
+}
+
+#pll-translate .pll-translation-flag {
+	margin-right: 0.3em;
+}
+
+#pll-translate .title {
+	display: block;
+	margin: 0.2em 0;
+	line-height: 2.5;
 }
 
 @media screen and ( max-width: 782px ) {

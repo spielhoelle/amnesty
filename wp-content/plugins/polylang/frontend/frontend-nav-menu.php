@@ -30,7 +30,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		add_filter( 'wp_nav_menu_args', array( $this, 'wp_nav_menu_args' ) );
 
 		// The customizer
-		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
+		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			add_filter( 'wp_nav_menu_args', array( $this, 'filter_args_before_customizer' ) );
 			add_filter( 'wp_nav_menu_args', array( $this, 'filter_args_after_customizer' ), 2000 );
 		}
@@ -92,17 +92,21 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		$new_items = array();
 		$offset = 0;
 
-		foreach ( $items as $key => $item ) {
+		foreach ( $items as $item ) {
 			if ( $options = get_post_meta( $item->ID, '_pll_menu_item', true ) ) {
 				$i = 0;
 
-				$switcher = new PLL_Switcher;
+				/** This filter is documented in include/switcher.php */
+				$options = apply_filters( 'pll_the_languages_args', $options ); // Honor the filter here for 'show_flags', 'show_names' and 'dropdown'.
+
+				$switcher = new PLL_Switcher();
 				$args = array_merge( array( 'raw' => 1 ), $options );
 				$the_languages = $switcher->the_languages( PLL()->links, $args );
 
 				// parent item for dropdown
 				if ( ! empty( $options['dropdown'] ) ) {
-					$item->title = $this->get_item_title( $this->curlang->flag, $this->curlang->name, $options );
+					$name = isset( $options['display_names_as'] ) && 'slug' === $options['display_names_as'] ? $this->curlang->slug : $this->curlang->name;
+					$item->title = $this->get_item_title( $this->curlang->flag, $name, $options );
 					$item->attr_title = '';
 					$item->classes = array( 'pll-parent-menu-item' );
 					$new_items[] = $item;
@@ -215,25 +219,21 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 			// First get multilingual menu locations from DB
 			$theme = get_option( 'stylesheet' );
 
-			foreach ( $menus as $loc => $menu ) {
+			foreach ( array_keys( $menus ) as $loc ) {
 				$menus[ $loc ] = empty( $this->options['nav_menus'][ $theme ][ $loc ][ $this->curlang->slug ] ) ? 0 : $this->options['nav_menus'][ $theme ][ $loc ][ $this->curlang->slug ];
 			}
 
 			// Support for theme customizer
-			// Let's look for multilingual menu locations directly in $_POST as there are not in customizer object
-			if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
-				$customized = json_decode( wp_unslash( $_POST['customized'] ) );
-
-				if ( is_object( $customized ) ) {
-					foreach ( $customized as $key => $c ) {
-						if ( false !== strpos( $key, 'nav_menu_locations[' ) ) {
-							$loc = substr( trim( $key, ']' ), 19 );
-							$infos = $this->explode_location( $loc );
-							if ( $infos['lang'] == $this->curlang->slug ) {
-								$menus[ $infos['location'] ] = $c;
-							} elseif ( $this->curlang->slug == $this->options['default_lang'] ) {
-								$menus[ $loc ] = $c;
-							}
+			if ( is_customize_preview() ) {
+				global $wp_customize;
+				foreach ( $wp_customize->unsanitized_post_values() as $key => $value ) {
+					if ( false !== strpos( $key, 'nav_menu_locations[' ) ) {
+						$loc = substr( trim( $key, ']' ), 19 );
+						$infos = $this->explode_location( $loc );
+						if ( $infos['lang'] === $this->curlang->slug ) {
+							$menus[ $infos['location'] ] = (int) $value;
+						} elseif ( $this->curlang->slug === $this->options['default_lang'] ) {
+							$menus[ $loc ] = (int) $value;
 						}
 					}
 				}
@@ -275,7 +275,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		if ( ! $menu && ! $args['theme_location'] ) {
 			$menus = wp_get_nav_menus();
 			foreach ( $menus as $menu_maybe ) {
-				if ( $menu_items = wp_get_nav_menu_items( $menu_maybe->term_id, array( 'update_post_term_cache' => false ) ) ) {
+				if ( wp_get_nav_menu_items( $menu_maybe->term_id, array( 'update_post_term_cache' => false ) ) ) {
 					foreach ( $this->options['nav_menus'][ $theme ] as $menus ) {
 						if ( in_array( $menu_maybe->term_id, $menus ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
 							$args['menu'] = $menus[ $this->curlang->slug ];

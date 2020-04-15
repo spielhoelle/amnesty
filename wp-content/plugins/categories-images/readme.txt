@@ -1,10 +1,11 @@
 === Categories Images ===
 Contributors: elzahlan
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G8LC4VSYKYSGA
-Tags: Category Image, Category Images, Categories Images, taxonomy image, taxonomy images, taxonomies images, category icon, categories icons, category logo, categories logos, admin, wp-admin, category image plugin, categories images plugin, category featured image, categories featured images, feature image for category
+Tags: Category Image, Category Images, Categories Images, taxonomy image, taxonomy images, taxonomies images, category icon, categories icons, category logo, categories logos, admin, wp-admin, category image plugin, categories images plugin, category featured image, categories featured images, feature image for category,term image, tag image, term images, tag images, media category
 Requires at least: 2.8
-Tested up to: 4.9.1
-Stable tag: 2.5.4
+Tested up to: 5.4
+Stable tag: 3.0.1
+License: GPLv2 or later
 
 The Categories Images Plugin allow you to add image with category or taxonomy.
 
@@ -52,10 +53,19 @@ Please check the documentation page:
 1. Image preview and new image field in add/edit category or taxonomy with upload button which allow you to select current or upload a new image.
 2. New image field with (upload/remove) buttons to allow you to edit category or taxonomy image in quick edit.
 3. When you click the upload button the wordpress upload box will popup, upload or select image then press use this image.
-4. New submenu (Categories Images) in Settings menu.
+4. New menu (Categories Images) for the plugin settings.
 5. Now you can exclude any taxonomy from the plugin and save changes.
 
 == Changelog ==
+
+= 3.0.1 =
+* Disable options autoload to enhance wordpress queries performace
+
+= 3.0.0 =
+* Fix settings page issues
+* Fix compatibility with the latest Wordpress version
+* Rewrote the whole plugin from scratch, now the code is much efficient, readable and cleaner
+
 = 2.5.4 =
 * Fix compatibility with the latest Wordpress version
 
@@ -133,7 +143,6 @@ Thanks to Patrick http://www.patrickbos.nl and Hassan http://profiles.wordpress.
 * Added default image placeholder.
 * Added thumbnail in categories or taxonomies list.
 * Added image thumbnail, image text box, upload button and remove button in quick edit.
-
 Thank so much to Joe Tse http://tkjune.com :)
 
 = 1.2 =

@@ -58,11 +58,6 @@ class Jetpack_Testimonial {
 			return;
 		}
 
-		// Enable Omnisearch for CPT.
-		if ( class_exists( 'Jetpack_Omnisearch_Posts' ) ) {
-			new Jetpack_Omnisearch_Posts( self::CUSTOM_POST_TYPE );
-		}
-
 		// CPT magic
 		$this->register_post_types();
 		add_action( sprintf( 'add_option_%s', self::OPTION_NAME ),               array( $this, 'flush_rules_on_enable' ), 10 );
@@ -157,7 +152,7 @@ class Jetpack_Testimonial {
 			<label for="<?php echo esc_attr( self::OPTION_NAME ); ?>">
 				<input name="<?php echo esc_attr( self::OPTION_NAME ); ?>" id="<?php echo esc_attr( self::OPTION_NAME ); ?>" <?php echo checked( get_option( self::OPTION_NAME, '0' ), true, false ); ?> type="checkbox" value="1" />
 				<?php esc_html_e( 'Enable Testimonials for this site.', 'jetpack' ); ?>
-				<a target="_blank" href="http://en.support.wordpress.com/testimonials/"><?php esc_html_e( 'Learn More', 'jetpack' ); ?></a>
+				<a target="_blank" href="https://en.support.wordpress.com/testimonials/"><?php esc_html_e( 'Learn More', 'jetpack' ); ?></a>
 			</label>
 		<?php endif;
 
@@ -319,6 +314,7 @@ class Jetpack_Testimonial {
 				'thumbnail',
 				'page-attributes',
 				'revisions',
+				'excerpt',
 			),
 			'rewrite' => array(
 				'slug'       => 'testimonial',
@@ -356,7 +352,7 @@ class Jetpack_Testimonial {
 			7  => esc_html__( 'Testimonial saved.', 'jetpack' ),
 			8  => sprintf( __( 'Testimonial submitted. <a target="_blank" href="%s">Preview testimonial</a>', 'jetpack'), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post->ID ) ) ) ),
 			9  => sprintf( __( 'Testimonial scheduled for: <strong>%1$s</strong>. <a target="_blank" href="%2$s">Preview testimonial</a>', 'jetpack' ),
-				// translators: Publish box date format, see http://php.net/date
+				// translators: Publish box date format, see https://php.net/date
 				date_i18n( __( 'M j, Y @ G:i', 'jetpack' ), strtotime( $post->post_date ) ), esc_url( get_permalink($post->ID) ) ),
 			10 => sprintf( __( 'Testimonial draft updated. <a target="_blank" href="%s">Preview testimonial</a>', 'jetpack' ), esc_url( add_query_arg( 'preview', 'true', get_permalink( $post->ID ) ) ) ),
 		);
@@ -368,10 +364,9 @@ class Jetpack_Testimonial {
 	 * Change ‘Enter Title Here’ text for the Testimonial.
 	 */
 	function change_default_title( $title ) {
-		$screen = get_current_screen();
-
-		if ( self::CUSTOM_POST_TYPE == $screen->post_type )
+		if ( self::CUSTOM_POST_TYPE == get_post_type() ) {
 			$title = esc_html__( "Enter the customer's name here", 'jetpack' );
+		}
 
 		return $title;
 	}
@@ -536,7 +531,7 @@ class Jetpack_Testimonial {
 			'columns'         => 1,
 			'showposts'       => -1,
 			'order'           => 'asc',
-			'orderby'         => 'date',
+			'orderby'         => 'menu_order,date',
 		), $atts, 'testimonial' );
 
 		// A little sanitization
@@ -563,7 +558,7 @@ class Jetpack_Testimonial {
 		if ( $atts['orderby'] ) {
 			$atts['orderby'] = urldecode( $atts['orderby'] );
 			$atts['orderby'] = strtolower( $atts['orderby'] );
-			$allowed_keys = array('author', 'date', 'title', 'rand');
+			$allowed_keys = array( 'author', 'date', 'title', 'menu_order', 'rand' );
 
 			$parsed = array();
 			foreach ( explode( ',', $atts['orderby'] ) as $testimonial_index_number => $orderby ) {

@@ -33,6 +33,35 @@ abstract class PLL_Base {
 	}
 
 	/**
+	 * Instantiate classes always needed
+	 *
+	 * @since 2.6
+	 */
+	public function init() {
+		// REST API
+		if ( class_exists( 'PLL_REST_API' ) ) {
+			$this->rest_api = new PLL_REST_API( $this );
+		}
+
+		if ( $this->model->get_languages_list() ) {
+			// Used by content duplicate and post synchronization
+			if ( class_exists( 'PLL_Sync_Content' ) ) {
+				$this->sync_content = new PLL_Sync_Content( $this );
+			}
+
+			// Active languages
+			if ( class_exists( 'PLL_Active_Languages' ) ) {
+				$this->active_languages = new PLL_Active_Languages( $this );
+			}
+
+			// Share post slugs
+			if ( get_option( 'permalink_structure' ) && $this->options['force_lang'] && class_exists( 'PLL_Share_Post_Slug' ) ) {
+				$this->share_post_slug = new PLL_Share_Post_Slug( $this );
+			}
+		}
+	}
+
+	/**
 	 * Registers our widgets
 	 *
 	 * @since 0.1
@@ -89,6 +118,7 @@ abstract class PLL_Base {
 		// 3rd test needed when Polylang is networked activated and a new site is created
 		if ( $new_blog != $old_blog && in_array( POLYLANG_BASENAME, $plugins ) && get_option( 'polylang' ) ) {
 			$this->options = get_option( 'polylang' ); // Needed for menus
+			remove_action( 'pre_option_rewrite_rules', array( $this->links_model, 'prepare_rewrite_rules' ) );
 			$this->links_model = $this->model->get_links_model();
 			return true;
 		}
@@ -109,18 +139,31 @@ abstract class PLL_Base {
 		foreach ( $this as $prop => &$obj ) {
 			if ( is_object( $obj ) && method_exists( $obj, $func ) ) {
 				if ( WP_DEBUG ) {
-					$debug = debug_backtrace();
+					$debug = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 					$i = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
-					trigger_error( sprintf(
-						'%1$s was called incorrectly in %3$s on line %4$s: the call to $polylang->%1$s() has been deprecated in Polylang 1.2, use PLL()->%2$s->%1$s() instead.' . "\nError handler",
-						$func, $prop, $debug[ $i ]['file'], $debug[ $i ]['line']
-					) );
+					trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+						sprintf(
+							'%1$s was called incorrectly in %3$s on line %4$s: the call to $polylang->%1$s() has been deprecated in Polylang 1.2, use PLL()->%2$s->%1$s() instead.' . "\nError handler",
+							esc_html( $func ),
+							esc_html( $prop ),
+							esc_html( $debug[ $i ]['file'] ),
+							absint( $debug[ $i ]['line'] )
+						)
+					);
 				}
 				return call_user_func_array( array( $obj, $func ), $args );
 			}
 		}
 
-		$debug = debug_backtrace();
-		trigger_error( sprintf( 'Call to undefined function PLL()->%1$s() in %2$s on line %3$s' . "\nError handler", $func, $debug[0]['file'], $debug[0]['line'] ), E_USER_ERROR );
+		$debug = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+		trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+			sprintf(
+				'Call to undefined function PLL()->%1$s() in %2$s on line %3$s' . "\nError handler",
+				esc_html( $func ),
+				esc_html( $debug[0]['file'] ),
+				absint( $debug[0]['line'] )
+			),
+			E_USER_ERROR
+		);
 	}
 }

@@ -12,6 +12,8 @@ class Migration {
 	/**
 	 * All old values for pre 1.0 version of a plugin.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $old_keys = array(
@@ -35,12 +37,16 @@ class Migration {
 	/**
 	 * Old values, taken from $old_keys options.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @var array
 	 */
 	protected $old_values = array();
 
 	/**
 	 * Converted array of data from previous option values.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @var array
 	 */
@@ -60,9 +66,9 @@ class Migration {
 		$this->old_values = $this->get_old_values();
 		$this->new_values = $this->get_converted_options();
 
-		Options::init()->set( $this->new_values );
+		Options::init()->set( $this->new_values, true );
 
-		// Removing all options will be enabled some time in the future.
+		// Removing all old options will be enabled some time in the future.
 		// $this->clean_deprecated_data();
 	}
 
@@ -97,7 +103,11 @@ class Migration {
 		$old_values = array();
 
 		foreach ( $this->old_keys as $old_key ) {
-			$old_values[ $old_key ] = get_option( $old_key, '' );
+			$value = get_option( $old_key, '' );
+
+			if ( ! empty( $value ) ) {
+				$old_values[ $old_key ] = $value;
+			}
 		}
 
 		return $old_values;
@@ -114,19 +124,21 @@ class Migration {
 
 		foreach ( $this->old_keys as $old_key ) {
 
+			$old_value = isset( $this->old_values[ $old_key ] ) ? $this->old_values[ $old_key ] : '';
+
 			switch ( $old_key ) {
 				case 'pepipost_user':
 				case 'pepipost_pass':
 				case 'pepipost_port':
 				case 'pepipost_ssl':
 					// Do not migrate pepipost options if it's not activated at the moment.
-					if ( 'pepipost' === $this->old_values['mailer'] ) {
+					if ( isset( $this->old_values['mailer'] ) && $this->old_values['mailer'] === 'pepipost' ) {
 						$shortcut = explode( '_', $old_key );
 
 						if ( $old_key === 'pepipost_ssl' ) {
-							$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+							$converted[ $shortcut[0] ]['encryption'] = $old_value;
 						} else {
-							$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+							$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 						}
 					}
 					break;
@@ -140,29 +152,29 @@ class Migration {
 					$shortcut = explode( '_', $old_key );
 
 					if ( $old_key === 'smtp_ssl' ) {
-						$converted[ $shortcut[0] ]['encryption'] = $this->old_values[ $old_key ];
+						$converted[ $shortcut[0] ]['encryption'] = $old_value;
 					} elseif ( $old_key === 'smtp_auth' ) {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $this->old_values[ $old_key ] === 'true' ? 'yes' : 'no' );
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = ( $old_value === 'true' ? 'yes' : 'no' );
 					} else {
-						$converted[ $shortcut[0] ][ $shortcut[1] ] = $this->old_values[ $old_key ];
+						$converted[ $shortcut[0] ][ $shortcut[1] ] = $old_value;
 					}
 
 					break;
 
 				case 'mail_from':
-					$converted['mail']['from_email'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_email'] = $old_value;
 					break;
 				case 'mail_from_name':
-					$converted['mail']['from_name'] = $this->old_values[ $old_key ];
+					$converted['mail']['from_name'] = $old_value;
 					break;
 				case 'mail_set_return_path':
-					$converted['mail']['return_path'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['mail']['return_path'] = ( $old_value === 'true' );
 					break;
 				case 'mailer':
-					$converted['mail']['mailer'] = $this->old_values[ $old_key ];
+					$converted['mail']['mailer'] = $old_value;
 					break;
 				case 'wp_mail_smtp_am_notifications_hidden':
-					$converted['general']['am_notifications_hidden'] = ( $this->old_values[ $old_key ] === 'true' );
+					$converted['general']['am_notifications_hidden'] = ( isset( $old_value ) && $old_value === 'true' );
 					break;
 			}
 		}
@@ -200,10 +212,10 @@ class Migration {
 			$converted['mail']['from_name'] = WPMS_MAIL_FROM_NAME;
 		}
 		if ( defined( 'WPMS_MAILER' ) ) {
-			$converted['mail']['return_path'] = WPMS_MAILER;
+			$converted['mail']['mailer'] = WPMS_MAILER;
 		}
 		if ( defined( 'WPMS_SET_RETURN_PATH' ) ) {
-			$converted['mail']['mailer'] = WPMS_SET_RETURN_PATH;
+			$converted['mail']['return_path'] = WPMS_SET_RETURN_PATH;
 		}
 
 		/*

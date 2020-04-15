@@ -91,11 +91,22 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 				'default' => '25',
 			),
 
+			'nav_always_show_mobile' => array(
+				'type' => 'checkbox',
+				'label' => __( 'Always show navigation on mobile', 'so-widgets-bundle' ),
+			),
+			
 			'swipe' => array(
 				'type' => 'checkbox',
-				'label' => __( 'Swipe Control', 'so-widgets-bundle' ),
+				'label' => __( 'Swipe control', 'so-widgets-bundle' ),
 				'description' => __( 'Allow users to swipe through frames on mobile devices.', 'so-widgets-bundle' ),
 				'default' => true,
+			),
+
+			'background_video_mobile' => array(
+				'type' => 'checkbox',
+				'label' => __( 'Show slide background videos on mobile', 'so-widgets-bundle' ),
+				'description' => __( 'Allow slide background videos to appear on mobile devices that support autoplay.', 'so-widgets-bundle' ),
 			)
 		);
 	}
@@ -115,6 +126,13 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 				'optional' => 'true',
 				'description' => __('An external URL of the video. Overrides video file.', 'so-widgets-bundle')
 			),
+			
+			'autoplay' => array(
+				'type' => 'checkbox',
+				'label' => __( 'Autoplay', 'so-widgets-bundle' ),
+				'default' => false,
+				'description' => __( 'Currently only for YouTube videos.', 'so-widgets-bundle' ),
+			),
 
 			'format' => array(
 				'type' => 'select',
@@ -125,21 +143,28 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 					'video/ogg' => 'Ogg',
 				),
 			),
+		);
+	}
 
-			'height' => array(
-				'type' => 'number',
-				'label' => __( 'Maximum height', 'so-widgets-bundle' )
-			),
-
+	function get_settings_form() {
+		return array(
+			'responsive_breakpoint' => array(
+				'type'        => 'measurement',
+				'label'       => __( 'Responsive Breakpoint', 'so-widgets-bundle' ),
+				'default'     => '780px',
+				'description' => __( "This setting controls when the Slider will switch to the responsive mode. This breakpoint will only be used if always show navigation on mobile is enabled. The default value is 780px.", 'so-widgets-bundle' )
+			)
 		);
 	}
 
 	function slider_settings( $controls ){
 		return array(
-			'pagination' => true,
-			'speed'      => empty( $controls['speed'] ) ? 1 : $controls['speed'],
-			'timeout'    => $controls['timeout'],
-			'swipe'      => $controls['swipe'],
+			'pagination'               => true,
+			'speed'                    => empty( $controls['speed'] ) ? 1 : $controls['speed'],
+			'timeout'                  => $controls['timeout'],
+			'swipe'                    => $controls['swipe'],
+			'nav_always_show_mobile'   => ! empty( $controls['nav_always_show_mobile'] ) ? true : '',
+			'breakpoint'               => ! empty( $controls['breakpoint'] ) ? $controls['breakpoint'] : '780px',
 		);
 	}
 
@@ -148,7 +173,7 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 		$this->render_template_part('before_slides', $controls, $frames);
 
 		foreach( $frames as $i => $frame ) {
-			$this->render_frame( $i, $frame );
+			$this->render_frame( $i, $frame, $controls );
 		}
 
 		$this->render_template_part('after_slides', $controls, $frames);
@@ -172,18 +197,18 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 				?>
 				<ol class="sow-slider-pagination">
 					<?php foreach($frames as $i => $frame) : ?>
-						<li><a href="#" data-goto="<?php echo $i ?>"><?php echo $i+1 ?></a></li>
+						<li><a href="#" data-goto="<?php echo $i ?>" aria-label="<?php printf( __( 'display slide %s', 'so-widgets-bundle' ), $i+1 ) ?>"><?php echo $i+1 ?></a></li>
 					<?php endforeach; ?>
 				</ol>
 
 				<div class="sow-slide-nav sow-slide-nav-next">
-					<a href="#" data-goto="next" data-action="next">
+					<a href="#" data-goto="next" aria-label="<?php _e( 'next slide', 'so-widgets-bundle' ) ?>" data-action="next">
 						<em class="sow-sld-icon-<?php echo sanitize_html_class( $controls['nav_style'] ) ?>-right"></em>
 					</a>
 				</div>
 
 				<div class="sow-slide-nav sow-slide-nav-prev">
-					<a href="#" data-goto="previous" data-action="prev">
+					<a href="#" data-goto="previous" aria-label="<?php _e( 'previous slide', 'so-widgets-bundle' ) ?>" data-action="prev">
 						<em class="sow-sld-icon-<?php echo sanitize_html_class( $controls['nav_style'] ) ?>-left"></em>
 					</a>
 				</div>
@@ -212,7 +237,7 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 	 * @param $i
 	 * @param $frame
 	 */
-	function render_frame( $i, $frame ){
+	function render_frame( $i, $frame, $controls ){
 		$background = wp_parse_args( $this->get_frame_background( $i, $frame ), array(
 			'color' => false,
 			'image' => false,
@@ -264,7 +289,13 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 			<?php
 			$this->render_frame_contents( $i, $frame );
 			if( !empty( $background['videos'] ) ) {
-				$this->video_code( $background['videos'], array('sow-' . $background['video-sizing'] . '-element') );
+
+				$classes = array( 'sow-' . $background['video-sizing'] . '-element' );
+				if ( ! empty( $controls['background_video_mobile'] ) ) {
+					$classes[] = 'sow-mobile-video_enabled';
+				}
+
+				$this->video_code( $background['videos'], $classes );
 			}
 
 			if( $background['opacity'] < 1 && !empty($background['image']) ) {
@@ -305,23 +336,21 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 	 */
 	function video_code( $videos, $classes = array() ){
 		if( empty( $videos ) ) return;
-		$video_element = '<video class="' . esc_attr( implode( ',', $classes ) ) . '" autoplay loop muted playsinline>';
+		$video_element = '<video class="' . esc_attr( implode( ' ', $classes ) ) . '" autoplay loop muted playsinline>';
 
+		$so_video = new SiteOrigin_Video();
 		foreach( $videos as $video ) {
 			if( empty( $video['file'] ) && empty ( $video['url'] ) ) continue;
 			// If video is an external file, try and display it using oEmbed
 			if( !empty( $video['url'] ) ) {
-				$args = array();
-				if ( ! empty( $video['height'] ) ) {
-					$args['height'] = $video['height'];
-				}
-				$embedded_video = wp_oembed_get( $video['url'], $args );
+
+				$can_oembed = $so_video->can_oembed( $video['url'] );
 
 				// Check if we can oEmbed the video or not
-				if( !$embedded_video ) {
+				if( ! $can_oembed ) {
 					$video_file = sow_esc_url( $video['url'] );
-				}else{
-					echo $embedded_video;
+				} else {
+					echo $so_video->get_video_oembed( $video['url'], ! empty( $video['autoplay'] ) );
 					continue;
 				}
 			}

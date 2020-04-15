@@ -20,8 +20,11 @@ namespace Google\Auth;
 use DomainException;
 use Google\Auth\Credentials\AppIdentityCredentials;
 use Google\Auth\Credentials\GCECredentials;
+use Google\Auth\HttpHandler\HttpClientCache;
+use Google\Auth\HttpHandler\HttpHandlerFactory;
 use Google\Auth\Middleware\AuthTokenMiddleware;
 use Google\Auth\Subscriber\AuthTokenSubscriber;
+use GuzzleHttp\Client;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
@@ -86,7 +89,7 @@ class ApplicationDefaultCredentials
     ) {
         $creds = self::getCredentials($scope, $httpHandler, $cacheConfig, $cache);
 
-        return new AuthTokenSubscriber($creds, $cacheConfig);
+        return new AuthTokenSubscriber($creds, $httpHandler);
     }
 
     /**
@@ -114,7 +117,7 @@ class ApplicationDefaultCredentials
     ) {
         $creds = self::getCredentials($scope, $httpHandler, $cacheConfig, $cache);
 
-        return new AuthTokenMiddleware($creds, $cacheConfig);
+        return new AuthTokenMiddleware($creds, $httpHandler);
     }
 
     /**
@@ -144,12 +147,21 @@ class ApplicationDefaultCredentials
         $jsonKey = CredentialsLoader::fromEnv()
             ?: CredentialsLoader::fromWellKnownFile();
 
+        if (!$httpHandler) {
+            if (!($client = HttpClientCache::getHttpClient())) {
+                $client = new Client();
+                HttpClientCache::setHttpClient($client);
+            }
+
+            $httpHandler = HttpHandlerFactory::build($client);
+        }
+
         if (!is_null($jsonKey)) {
             $creds = CredentialsLoader::makeCredentials($scope, $jsonKey);
         } elseif (AppIdentityCredentials::onAppEngine() && !GCECredentials::onAppEngineFlexible()) {
             $creds = new AppIdentityCredentials($scope);
         } elseif (GCECredentials::onGce($httpHandler)) {
-            $creds = new GCECredentials();
+            $creds = new GCECredentials(null, $scope);
         }
 
         if (is_null($creds)) {

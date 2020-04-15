@@ -82,6 +82,23 @@ class SiteOrigin_Widgets_Widget_Manager {
 	}
 
 	/**
+	 * Get the filename of the widget
+	 *
+	 * @param $id
+	 *
+	 * @return string|bool
+	 */
+	public function get_widget_filename( $id ) {
+		$path = $this->get_plugin_path( $id );
+		if ( ! empty( $path ) ) {
+			$info = pathinfo( $path );
+
+			return $info['filename'];
+		}
+		return false;
+	}
+
+	/**
 	 * @param $id
 	 *
 	 * @return string
@@ -121,6 +138,37 @@ class SiteOrigin_Widgets_Widget_Manager {
 			if( $r->path == $path ) return $r->class;
 		}
 		return false;
+	}
+
+	/**
+	 * Get the list of registered widgets.
+	 *
+	 * @return array
+	 */
+	function get_registered_widgets() {
+		return $this->registered;
+	}
+
+	/**
+	 * Get the registered widget instance by it's class name or the hash generated when it was registered.
+	 *
+	 * @param $class_or_hash
+	 *
+	 * @return array
+	 *
+	 */
+	static function get_widget_instance( $class_or_hash ) {
+		global $wp_widget_factory;
+		if ( isset( $wp_widget_factory->widgets[ $class_or_hash ] ) ) {
+			return $wp_widget_factory->widgets[ $class_or_hash ];
+		} else {
+			foreach ( $wp_widget_factory->widgets as $widget_instance ) {
+				if ( $widget_instance instanceof $class_or_hash ) {
+					return $widget_instance;
+				}
+			}
+		}
+		return null;
 	}
 }
 SiteOrigin_Widgets_Widget_Manager::single();

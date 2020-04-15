@@ -86,7 +86,8 @@ class Root_AdminMenu {
 				'page_title' => __( 'FAQ', 'w3-total-cache' ),
 				'menu_text' => __( 'FAQ', 'w3-total-cache' ),
 				'visible_always' => true,
-				'order' => 2000
+				'order' => 2000,
+				'redirect_faq' => '*'
 			),
 			'w3tc_support' => array(
 				'page_title' => __( 'Support', 'w3-total-cache' ),
@@ -116,7 +117,7 @@ class Root_AdminMenu {
 		$pages = $this->generate_menu_array();
 
 		uasort( $pages, function($a, $b) {
-    			return ($a['order'] - $b['order']);
+				return ($a['order'] - $b['order']);
 			}
 		);
 
@@ -124,7 +125,7 @@ class Root_AdminMenu {
 			__( 'Performance', 'w3-total-cache' ),
 			apply_filters( 'w3tc_capability_menu_w3tc_dashboard',
 				$base_capability ),
-			'w3tc_dashboard', '', 'div' );
+			'w3tc_dashboard', '', 'none' );
 
 		$submenu_pages = array();
 		$is_master = ( is_network_admin() || !Util_Environment::is_wpmu() );
@@ -132,7 +133,7 @@ class Root_AdminMenu {
 
 		foreach ( $pages as $slug => $titles ) {
 			if ( $is_master || $titles['visible_always'] || $remaining_visible ) {
-				$submenu_pages[] = add_submenu_page( 'w3tc_dashboard',
+				$hook = add_submenu_page( 'w3tc_dashboard',
 					$titles['page_title'] . ' | W3 Total Cache',
 					$titles['menu_text'],
 					apply_filters( 'w3tc_capability_menu_' . $slug,
@@ -140,11 +141,11 @@ class Root_AdminMenu {
 					$slug,
 					array( $this, 'options' )
 				);
+				$submenu_pages[] = $hook;
 			}
 		}
 		return $submenu_pages;
 	}
-
 
 	/**
 	 * Options page
@@ -157,8 +158,8 @@ class Root_AdminMenu {
 			$this->_page = 'w3tc_dashboard';
 
 		/*
-         * Hidden pages
-         */
+		 * Hidden pages
+		 */
 		if ( isset( $_REQUEST['w3tc_dbcluster_config'] ) ) {
 			$options_dbcache = new DbCache_Page();
 			$options_dbcache->dbcluster_config();
@@ -218,9 +219,9 @@ class Root_AdminMenu {
 			$options_cdn->options();
 			break;
 
-		case 'w3tc_faq':
-			$options_faq = new Generic_Page_Faq();
-			$options_faq->options();
+		case 'w3tc_stats':
+			$p = new UsageStatistics_Page();
+			$p->render();
 			break;
 
 		case 'w3tc_support':

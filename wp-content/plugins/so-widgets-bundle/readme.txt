@@ -1,18 +1,18 @@
 === SiteOrigin Widgets Bundle ===
 Tags: bundle, widget, button, slider, image, carousel, price table, google maps, tinymce, social links
 Requires at least: 4.2
-Tested up to: 4.9.1
-Stable tag: 1.11.4
-Build time: 2018-02-07T08:38:59+02:00
+Tested up to: 5.4
+Stable tag: 1.16.0
+Build time: 2020-02-13T20:00:45+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis
-Donate link: https://siteorigin.com/downloads/contribution/
+Donate link: https://siteorigin.com/downloads/premium/
 
-The SiteOrigin widget bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
+The SiteOrigin Widgets Bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
 
 == Description ==
 
-The SiteOrigin widget bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
+The SiteOrigin Widgets Bundle gives you a collection of widgets that you can use and customize. All the widgets are built on our powerful framework, giving you advanced forms, unlimited colours and 1500+ icons.
 
 Widgets are great. No matter where you’re using them. In a [Page Builder](http://siteorigin.com/page-builder/) page or on your widgetized areas. It's even compatible with other popular page building plugins.
 
@@ -30,7 +30,7 @@ The collection is growing, but here’s what we have so far.
 * Features Widget that lets you display a set of site or service features.
 * Video Widget to get your videos out there.
 * Headline Widget to get you noticed.
-* Social Links Widget to show you're active.
+* Social Media Buttons which link to all your social media profiles.
 * Accordion Widget to compress your content.
 * Contact Form Widget to let people know you care.
 * Editor Widget let's you richly edit text anywhere.
@@ -40,14 +40,14 @@ The collection is growing, but here’s what we have so far.
 * Layout Slider Widget lets you build layouts on slides using SiteOrigin Page Builder.
 * Masonry Widget to add images in a masonry layout.
 * Tabs Widget that'll let you group content into tabbed sections.
-* Taxonomy Widget to display a post's taxonomies.
+* Taxonomy Widget to display the selected taxonomy for the current post.
 * Testimonials Widget to show people what your users/customers think of you.
 
 Once you enable a widget, you'll be able to use it anywhere standard widgets are used. You can manage your widgets by going to Plugins > SiteOrigin Widgets in your WordPress admin.
 
 == Documentation ==
 
-[Documentation](https://siteorigin.com/css/getting-started/) is available on SiteOrigin.
+[Documentation](https://siteorigin.com/widgets-bundle/getting-started/) is available on SiteOrigin.
 
 == Support ==
 
@@ -64,6 +64,283 @@ The SiteOrigin Widgets Bundle is the perfect platform to build widgets for your 
 3. An example of the button widget.
 
 == Changelog ==
+
+= 1.16.0 - 11 February 2020 =
+* Block Editor: Fixed widget select field width and alignment.
+* Removed unused template files.
+* Contact Form: Improved checking for SiteOrigin development email addresses.
+* Minor styling improvements to the Classic and Block Editor admin interfaces.
+* Features: Added a new setting to select the H tag to be used for the title field.
+* Hero: If a height value is assigned, added prefilling to avoid a page jump.
+* Hero: Added `font-display: swap` for Google font imports.
+* Layout Slider: If a height value is assigned, added prefilling to avoid a page jump.
+* Image Grid: Added a class of `sow-image-grid-image_html` to each image. Can be used to exclude images from Lazy Loading plugins.
+* Simple Masonry: Added a class of `sow-masonry-grid-image` to each image. Can be used to exclude images from Lazy Loading plugins.
+* Features: Added fallback support for the Icon image field.
+* Testimonials: Add fallback support for the Image field.
+* Post Carousel: Prevented looping until all posts are loaded.
+* Post Carousel: Added a new setting to disable looping.
+* Post Carousel: Prevented scrolling past loading items and loop as soon as last item is completely visible.
+* Contact Form: Added disabled cursor to submit button when disabled.
+* Block Editor: Resolved Features widget default settings.
+* Tabs and Accordion: Account for accented characters.
+* Social Media Buttons: Allowed for multiple instances of the same network without duplicating colors.
+* Social Media Buttons: Ensured all icons are correctly centered.
+* Contact Form: Added lightweight validation for phone numbers.
+* Block Editor: Display author for third party widgets.
+* Block Editor: Added processing for the more quicktag in the Editor widget.
+* Tabs and Accordion: Added icon spacing.
+* Testimonials: Improved image sizing behavior for square images.
+
+= 1.15.9 - 11 November 2019 =
+* Contact Form: Improved default email address handling.
+* Contact Form: Improved subject field labeling.
+* Post Carousel: Loop the carousel when reaching the end.
+* Social Media Buttons: Fixed issue with responsive breakpoint unit of measurement.
+* Google Maps: Ensured settings modal window opens when directed to insert API key.
+* Google Maps: Fixed map center field when used in the Customizer.
+* Fixed compatibility with WordPress 5.3.
+* Minor code style and widget label improvements.
+
+= 1.15.8 - 20 August 2019 =
+* Run FitText setup on window resize events.
+* TinyMCE field: Copy any missing content CSS urls from main editor.
+* Post Carousel: Prevent scrolling past the last item.
+* Contact Form: Prevent sending to testing/dev emails.
+* Widget block: Add `h3` wrapper for widget titles.
+* Image widget: Remove `width:inherit;` IE8 fix for bound setting which breaks in IE11.
+* Sliders: Added padding to slider navigation arrows.
+* Accordion: Check if if anchor is present in URL and scroll to Accordion item.
+* Various form description and styling fixes.
+
+= 1.15.7 - 22 May 2019 =
+* Widget Block: Ensure changed data is retained after previewing.
+* Image widget: Prevent overflow of image container when wrapped in link.
+* Image Grid: Dispatch event to notify listeners that layout is complete.
+* Image Grid: Fix layout for images wrapped in links.
+* Image grid: Use image media title for display if title isn't set in the widget form.
+* Layout Slider: Remove header and text style fields.
+* Remove Autoptimize cache clearing as it detects changes automatically.
+* Update FontAwesome icons.
+* Google Maps location field: Ensure value is retained after preview in the block editor.
+* Prevent issue in SiteOrigin Layout Block when `sowb` hasn't been defined.
+
+= 1.15.6 - 29 April 2019 =
+* Image: Fix images vertical stretching.
+* Image: Fix widths for images wrapped in links.
+* Google Maps Location Field: Remove some unnecessary use of jQuery to avoid `$ is not a function` errors.
+* Google Maps Location Field: Check if matchError exists before accessing.
+
+= 1.15.5 - 25 April 2019 =
+* Removed admin notice for new widgets.
+* Slider Base Widget: Removed unused background videos height setting.
+* Price Table: Recalc equalized heights when window size or orientation changes.
+* Google Maps location field: Use value in sanitization if already an array.
+* Add compatibility for Autoptimize.
+* Simple Masonry: Ensure all available width is used for layout.
+* Image: Change alignment to use `display:flex` instead of `text-align`.
+
+= 1.15.4 - 27 March 2019 =
+* Slider field: Live updates for display value.
+* Widget block: Show error if missing or invalid widget data.
+* Google Maps: Add more links to relevant docs for enabling required APIs.
+* Google Maps Location field: Catch API key errors and display notice.
+* Run FitText resizer on `setup_widgets` too.
+* Add font url as property of font info object.
+* Image grid: Use opacity for initial hide of images so that size may still be detected.
+* Google Maps: Detect draggable or scroll_zoom before running setting migration.
+* Accordion and Tabs: Trigger window resize on start of animation.
+* Icon: Prevent undefined index notices.
+
+= 1.15.3 - 6 March 2019 =
+* Image grid: Fallback support, alt text, use measurement fields.
+* Features: Fix responsive layout.
+* Google Maps: Update to use gesture handling and separate zoom level for mobile.
+* Google Maps: Default height when height field is empty.
+* Sliders: Option to always show navigation on mobile devices.
+* Accordion: Keyboard navigation.
+* Beaver Builder: Fix icons and widgets not saving.
+* Video: Allow using YouTube embed URLs.
+* Post Carousel: Accessibility improvements.
+* Escape namespaced widgets in previews.
+* Flag additional metaboxes as incompatible with the block editor.
+* Fix state emitters for sub-widget fields.
+* Google Maps: Remove API key field from widget form, in favor of global API key field.
+* Google Maps: Display notice when API key missing.
+* Contact form: Prevent double nonce.
+* TinyMCE field: Prevent twemoji from replacing emoji in the textarea.
+* Widget block: Show appropriate message when widget is missing or deactivated.
+* Accordion: Fix open/close icon layout when set to left position.
+* Social Media Buttons: Prevent the phone network from opening in a new window.
+* Google Maps: Add map styles filter.
+* Image radio field: New field created.
+* Posts field: Option to specify allowed post types.
+* Contact form: Add description to reCAPTCHA field specifying reCAPTCHA v2.
+
+= 1.15.2 - 18 February 2019 =
+* Tabs: Set default tab position to top.
+
+= 1.15.1 - 15 February 2019 =
+* Google maps: Use correct locations for static maps.
+
+= 1.15.0 - 14 February 2019 =
+* Location field: New specialized admin form field which autocompletes addresses using the Google Maps places library.
+* Google maps: Moved global API key override to `modify_instance` to make key available in admin form too.
+* Google maps: Auto-migration of locations to new location field format.
+* Update LESS PHP library with fixes for PHP 7.3 compatibility.
+* Features: Apply text styles to all features content, not just `<p>` tags.
+* Social Media: New networks: Bandcamp, Goodreads, Telegram, Strava, Blogger.
+* Accordion: Fix issue preventing use of numbers in panel titles.
+* Block editor: Preview fixes.
+* Beaver Builder compat: Fix widgets failing to update and CSS for FontAwesome icons.
+
+= 1.14.1 - 9 January 2019 =
+* Icon field: Set correct value of currently selected icon for non-FA icons.
+* Icon field: Avoid requiring that third party icon families include a `filter.php` file.
+* Widget block: Use JS array reduce function instead of lodash.
+* Allow widgets registered by instance.
+* Multi-measurement field: Fix layout.
+* Block editor: Send widgetData when fetching widget forms.
+* Tinymce field: Prevent JS console errors for hidden fields.
+* Order field: Additional sanitization before rendering.
+
+= 1.14.0 - 4 January 2019 =
+* Accordion: allow multiple panels with the same title.
+* Actions when widgets' CSS files are created/deleted.
+* Compat fixes for PHP 7.3
+* Indicate when 'setup_widgets' is triggered for previews.
+* Accordion: Debounce window.location.hash updates to prevent incorrect states.
+* Don't remove FitText window listener to ensure previously set up FitText elements still work.
+* Icon field: Show loading indicator while icons are loading.
+* Widget documentation links.
+* Icons: Update to use latest FontAwesome icon sets.
+* Sliders: Resize slides when widgets are set up.
+* Elementor compat: Directly enqueue necessary scripts and styles for previews.
+* Allow widget headers to be translated.
+* Accordion: Keep the clicked panel in the viewport, if it moves out.
+* TinyMCE field: Check if tinymce is available before using.
+
+= 1.13.4 - 6 December 2018 =
+* Widget block: Fix Layout Slider not being editable.
+* Widget block: Correct used of i18n for block editor.
+* Widget block: Fix previews.
+* Google map: Move global API key override to `modify_instance` to ensure key is available in form.
+* Widget block: Prevent multiple API requests.
+
+= 1.13.3 - 15 November 2018 =
+* Contact: Fix checkboxes and radio alignment on android.
+* FitText: Set minimum font size to ensure readability.
+* TinyMCE field: Use correct editor when block editor is present.
+* Google maps: Use correct info window text for markers.
+* TinyMCE: Remove 'editor-buttons' style enqueue causing conflicts.
+* TinyMCE field: Prevent adding multiple copies of media buttons.
+* Image widget: if no alt text is supplied add an empty alt attribute.
+* Repeaters: Reverted some commits causing multiple issues.
+* WP 5: Fixed some styles in the block editor.
+* Only setup form fields in the dialog when a PB edit widget dialog is opened.
+* Multi-measurement field: Fix autoFill in block editor and attempt to fix in PHP <= 5.3.
+
+= 1.13.2 - 31 October 2018 =
+* Builder field: Prevent error in PHP <= 5.4
+* Avoid replacing repeater item id placeholders for child repeaters.
+* Repeaters: In repeater setup, don't setup child repeaters.
+
+= 1.13.1 - 29 October 2018 =
+* Gutenberg: Alert user that changes will be lost when changing the widget type.
+* Tabs: Keyboard navigation and more accessibility improvements.
+* Google maps: Better geocoding request management.
+* TinyMCE field: Use correct selector for checking whether click target is editor switching tab.
+* Slider: Option to prevent hiding video on mobile.
+* Accordion: Deep-linking for child accordions.
+* Use inline CSS fallback if writing to file failed.
+* Better FitText compressor description.
+* Delete old widget styles when updating widgets.
+* Layout Slider: Resoonsive height.
+* Accordion: Expand when user is printing.
+* Features: Text case adjustments and formatting.
+* Beaver Builder: Dark styling.
+* Builder field: Allow double-encoding to allow already encoded text in editors.
+* Contact form: Prevent adding the anchor again if it's already been added.
+* Contact form: Attempt to scroll to contact form after submitting, so result is visible.
+* Builder field: Set data correctly from JS.
+* Builder field: Don't encode already JSON encoded values.
+* Gutenberg: Allow editing page containing deactivated widget.
+* Gutenberg: Reset global `$post` after enqueueing widgets' scripts and styles, which might run secondary queries.
+
+= 1.13.0 - 13 September 2018 =
+* SiteOrigin Widgets Gutenberg block!
+* Google Map: Prevent script from running further if no map canvas elements found.
+* Removed style to set `p` margins to zero.
+* Check that fallback image for static maps is not an empty string before attempting to use it.
+* TinyMCE: Ensure target is one of the editor tabs when switching modes.
+* Set values for repeaters which are direct children of section fields.
+* Prevent unselected radio input state emitters from affecting form states, when form values are set programmatically.
+* Plugin Action Links: Check if edit link is present before removal.
+* Social Media Buttons: Added Phone and Angelist. Changed email title text.
+* Metabox manager: Set empty post meta string value to array. Ensure metabox widget form values are saved when saving drafts too.
+
+= 1.12.1 - 17 July 2018 =
+* Contact: Allow non-string values in required field validation.
+* Initialize CTA, Price Table and Video JS widgets correctly when in accordion/tabs widgets.
+
+= 1.12.0 - 11 July 2018 =
+* Contact: Add dedicated textarea height.
+* Social Media Buttons: Adds WhatsApp social network.
+* Features: Allow icon size to use a different unit of measurement.
+* Repeater field: Update editor id in media buttons when duplicating item with TinyMCE editor.
+* Posts field: taxonomy description.
+* Price Table: Disable equalized row heights on mobile.
+* Beaver Builder: Force icon fonts.
+* Slider widgets: Added autoplay option for background videos.
+* Maps: Renamed Google maps script to more sensible `sow.google-map.js`
+* Editor: Prevent errors when visual editing is disabled for a user.
+* Optimized images.
+* Accordion/tabs: Trigger 'setup_widgets' to ensure any widgets in panels are initialized correctly.
+* Contact: Use 'From' email address if there is no email field in the form.
+* Hero: Filter out the align field in the button sub-widget form.
+* Testimonials: Switch mobile and tablet resolution width field descriptions.
+* Posts field: Allow clearing dates.
+* Font field: Use correct value for 'Helvetica Neue' and added 'Arial' option.
+* TA: Additional setting to allow clearing the default background colors.
+* Contact: Allow a value of '0' for required fields and subject values.
+
+= 1.11.8 - 12 April 2018 =
+* Added action just before rendering widget previews.
+* Editor: Removed `unwpautop`.
+* Editor: Ensure TinyMCE field knows whether to apply `autop` or not.
+* Editor: Only apply `autop` on display when using HTML editor.
+* Editor: Prevent `widget_text` filters from running `do_shortcode`.
+
+= 1.11.7 - 23 March 2018 =
+* Image: Add title alignment setting.
+* Button: Add max-width to ensure buttons are responsive.
+* Hero: New filter for frame content 'siteorigin_hero_frame_content'
+* Features: Don't set margin for one column left/right feature.
+* Updated widget icons.
+* Updated google web fonts.
+
+= 1.11.6 - 14 March 2018 =
+* Hero: Add responsive height settings.
+* Added pikaday jQuery plugin and register pikaday scripts for front end too.
+* Features: item float clearing and padding mobile specific.
+
+= 1.11.5 - 13 March 2018 =
+* Features: Better feature padding removal on row ends.
+* Sliders: WCAG 2.4.4 compliance.
+* Tabs: Hide widget title when no title is set.
+* TinyMCE field: Added setting for `wpautop` processing which is on by default.
+* Contact: When Gradient disabled, set basic background.
+* Beaver Builder compat: Only set SOWB widget form values when editing a SOWB widget.
+* Contact: Option to log submitter's IP address.
+* Add random number and set `more_entropy` to increase chance of unique form ids.
+* Contact: Added 'tel' field type which should show numeric keyboard on mobile.
+* Media field: Trigger change event when removing selected image.
+* Renamed the PHP LESS parser to `SiteOrigin_LessC` to avoid conflicts.
+* Date range field: Prevent initializing date range fields multiple times and ensure date format consistent.
+* Register pikaday as common script and enqueue as needed in fields.
+* Google Map: Show satellite map type.
+* Translation: Add context to From strings.
+* Add missing semicolons to Ionicons codes.
 
 = 1.11.4 - 7 February 2018 =
 * Slider: Add playsinline for Video backgrounds for iOS.

@@ -7,10 +7,6 @@ $last_row = floor( ( count($instance['features']) - 1 ) / $instance['per_row'] )
 	<?php if( isset( $instance['features'] ) ) : ?>
 		<?php foreach( $instance['features'] as $i => $feature ) : ?>
 
-			<?php if( $i % $instance['per_row'] == 0 && $i != 0 ) : ?>
-				<div class="sow-features-clear"></div>
-			<?php endif; ?>
-
 			<div class="sow-features-feature sow-icon-container-position-<?php echo esc_attr( $feature['container_position'] ) ?> <?php if(  floor( $i / $instance['per_row'] ) == $last_row ) echo 'sow-features-feature-last-row' ?>" style="width: <?php echo round( 100 / $instance['per_row'], 3 ) ?>%">
 
 				<?php if( !empty( $feature['more_url'] ) && $instance['icon_link'] ) echo '<a href="' . sow_esc_url( $feature['more_url'] ) . '" ' . ( $instance['new_window'] ? 'target="_blank" rel="noopener noreferrer"' : '' ) . '>'; ?>
@@ -20,9 +16,13 @@ $last_row = floor( ( count($instance['features']) - 1 ) / $instance['per_row'] )
 					<?php  echo ( ! empty( $feature['icon_title'] ) ? 'title="' . esc_attr( $feature['icon_title'] ) . '"' : '' ); ?>>
 					<?php
 					$icon_styles = array();
-					if( !empty($feature['icon_image']) ) {
+					if( !empty($feature['icon_image']) || !empty($feature['icon_image_fallback']) ) {
 						$size = empty( $feature['icon_image_size'] ) ? 'thumbnail' : $feature['icon_image_size'];
-						$attachment = wp_get_attachment_image_src( $feature['icon_image'], $size );
+						$attachment = siteorigin_widgets_get_attachment_image_src(
+							$feature['icon_image'],
+							$size,
+							! empty( $feature['icon_image_fallback'] ) ? $feature['icon_image_fallback'] : false
+						);
 						if(!empty($attachment)) {
 							$icon_styles[] = 'background-image: url(' . sow_esc_url($attachment[0]) . ')';
 							if(!empty($instance['icon_size'])) $icon_styles[] = 'font-size: '.intval($instance['icon_size']) . esc_attr( $instance['icon_size_unit'] );
@@ -31,7 +31,7 @@ $last_row = floor( ( count($instance['features']) - 1 ) / $instance['per_row'] )
 						}
 					}
 					else {
-						if(!empty($instance['icon_size'])) $icon_styles[] = 'font-size: '.intval($instance['icon_size']).'px';
+						if(!empty($instance['icon_size'])) $icon_styles[] = 'font-size: '.intval($instance['icon_size']) . esc_attr( $instance['icon_size_unit'] );
 						if(!empty($feature['icon_color'])) $icon_styles[] = 'color: '.$feature['icon_color'];
 
 						echo siteorigin_widget_get_icon($feature['icon'], $icon_styles);
@@ -42,11 +42,11 @@ $last_row = floor( ( count($instance['features']) - 1 ) / $instance['per_row'] )
 
 				<div class="textwidget">
 					<?php if(!empty($feature['title'])) : ?>
-						<h5>
+						<<?php echo esc_html( $instance['title_tag'] ); ?>>
 							<?php if( !empty( $feature['more_url'] ) && $instance['title_link'] ) echo '<a href="' . sow_esc_url( $feature['more_url'] ) . '" ' . ( $instance['new_window'] ? 'target="_blank" rel="noopener noreferrer"' : '' ) . '>'; ?>
 							<?php echo wp_kses_post( $feature['title'] ) ?>
 							<?php if( !empty( $feature['more_url'] ) && $instance['title_link'] ) echo '</a>'; ?>
-						</h5>
+						</<?php echo esc_html( $instance['title_tag'] ); ?>>
 					<?php endif; ?>
 
 					<?php if(!empty($feature['text'])) : ?>

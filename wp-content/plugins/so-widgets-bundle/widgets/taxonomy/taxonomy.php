@@ -5,6 +5,7 @@ Widget Name: Taxonomy
 Description: Displays the selected taxonomy for the current post.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
+Documentation: https://siteorigin.com/widgets-bundle/taxonomy-widget/
 */
 
 class SiteOrigin_Widget_Taxonomy_Widget extends SiteOrigin_Widget {
@@ -67,6 +68,10 @@ class SiteOrigin_Widget_Taxonomy_Widget extends SiteOrigin_Widget {
 	}
 
 	function get_less_variables( $instance ) {
+		if ( empty( $instance ) ) {
+			return array();
+		}
+
 		return array(
 			'color' => $instance['color'],
 			'has_color' => empty($instance['color']) ? 'false' : 'true',

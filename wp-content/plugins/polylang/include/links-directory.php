@@ -8,6 +8,7 @@
  * @since 1.2
  */
 class PLL_Links_Directory extends PLL_Links_Permalinks {
+	protected $home_relative;
 
 	/**
 	 * Constructor
@@ -18,6 +19,8 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 */
 	public function __construct( &$model ) {
 		parent::__construct( $model );
+
+		$this->home_relative = home_url( '/', 'relative' );
 
 		if ( did_action( 'pll_init' ) ) {
 			$this->init();
@@ -56,8 +59,12 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		if ( ! empty( $lang ) ) {
 			$base = $this->options['rewrite'] ? '' : 'language/';
 			$slug = $this->options['default_lang'] == $lang->slug && $this->options['hide_default'] ? '' : $base . $lang->slug . '/';
-			if ( false === strpos( $url, $this->home . '/' . $this->root . $slug ) ) {
-				return str_replace( $this->home . '/' . $this->root, $this->home . '/' . $this->root . $slug, $url );
+			$root = ( false === strpos( $url, '://' ) ) ? $this->home_relative . $this->root : preg_replace( '#^https?://#', '://', $this->home . '/' . $this->root );
+
+			if ( false === strpos( $url, $new = $root . $slug ) ) {
+				$pattern = preg_quote( $root, '#' );
+				$pattern = '#' . $pattern . '#';
+				return preg_replace( $pattern, $new, $url, 1 ); // Only once
 			}
 		}
 		return $url;
@@ -72,7 +79,9 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 * @param string $url url to modify
 	 * @return string modified url
 	 */
-	function remove_language_from_link( $url ) {
+	public function remove_language_from_link( $url ) {
+		$languages = array();
+
 		foreach ( $this->model->get_languages_list() as $language ) {
 			if ( ! $this->options['hide_default'] || $this->options['default_lang'] != $language->slug ) {
 				$languages[] = $language->slug;
@@ -80,9 +89,11 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		}
 
 		if ( ! empty( $languages ) ) {
-			$pattern = str_replace( '/', '\/', $this->home . '/' . $this->root );
-			$pattern = '#' . $pattern . ( $this->options['rewrite'] ? '' : 'language\/' ) . '(' . implode( '|', $languages ) . ')(\/|$)#';
-			$url = preg_replace( $pattern, $this->home . '/' . $this->root, $url );
+			$root = ( false === strpos( $url, '://' ) ) ? $this->home_relative . $this->root : preg_replace( '#^https?://#', '://', $this->home . '/' . $this->root );
+
+			$pattern = preg_quote( $root, '#' );
+			$pattern = '#' . $pattern . ( $this->options['rewrite'] ? '' : 'language/' ) . '(' . implode( '|', $languages ) . ')(/|$)#';
+			$url = preg_replace( $pattern, $root, $url );
 		}
 		return $url;
 	}
@@ -99,14 +110,15 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 */
 	public function get_language_from_url( $url = '' ) {
 		if ( empty( $url ) ) {
-			$path = $_SERVER['REQUEST_URI'];
-		} else {
-			$path = parse_url( $url, PHP_URL_PATH );
+			$url = pll_get_requested_url();
 		}
 
-		$pattern = parse_url( $this->home . '/' . $this->root . ( $this->options['rewrite'] ? '' : 'language/' ), PHP_URL_PATH );
-		$pattern = str_replace( '/', '\/', $pattern );
-		$pattern = '#' . $pattern . '(' . implode( '|', $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) . ')(\/|$)#';
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+		$root = ( false === strpos( $url, '://' ) ) ? $this->home_relative . $this->root : $this->home . '/' . $this->root;
+
+		$pattern = wp_parse_url( $root . ( $this->options['rewrite'] ? '' : 'language/' ), PHP_URL_PATH );
+		$pattern = preg_quote( $pattern, '#' );
+		$pattern = '#^' . $pattern . '(' . implode( '|', $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) . ')(/|$)#';
 		return preg_match( $pattern, trailingslashit( $path ), $matches ) ? $matches[1] : ''; // $matches[1] is the slug of the requested language
 	}
 
@@ -130,7 +142,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 *
 	 * @since 1.2
 	 */
-	function add_permastruct() {
+	public function add_permastruct() {
 		// Language information always in front of the uri ( 'with_front' => false )
 		// The 3rd parameter structure has been modified in WP 3.4
 		// Leads to error 404 for pages when there is no language created yet

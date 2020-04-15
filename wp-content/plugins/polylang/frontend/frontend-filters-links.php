@@ -40,6 +40,8 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			// Rewrites next and previous post links when not automatically done by WordPress
 			add_filter( 'get_pagenum_link', array( $this, 'archive_link' ), 20 );
 
+			add_filter( 'get_shortlink', array( $this, 'shortlink' ), 20, 2 );
+
 			// Rewrites ajax url
 			add_filter( 'admin_url', array( $this, 'admin_url' ), 10, 2 );
 		}
@@ -148,6 +150,20 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	}
 
 	/**
+	 * Modifies the post short link when using one domain or subdomain per language.
+	 *
+	 * @since 2.6.9
+	 *
+	 * @param string $link    Post permalink.
+	 * @param int    $post_id Post id.
+	 * @return Post permalink with the correct domain.
+	 */
+	public function shortlink( $link, $post_id ) {
+		$post_type = get_post_type( $post_id );
+		return $this->model->is_translated_post_type( $post_type ) ? $this->links_model->switch_language_in_link( $link, $this->model->post->get_language( $post_id ) ) : $link;
+	}
+
+	/**
 	 * Outputs references to translated pages ( if exists ) in the html head section
 	 *
 	 * @since 0.1
@@ -159,6 +175,8 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			return;
 		}
 
+		$urls = array();
+
 		// Google recommends to include self link https://support.google.com/webmasters/answer/189077?hl=en
 		foreach ( $this->model->get_languages_list() as $language ) {
 			if ( $url = $this->links->get_translation_url( $language ) ) {
@@ -168,6 +186,8 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		// Outputs the section only if there are translations ( $urls always contains self link )
 		if ( ! empty( $urls ) && count( $urls ) > 1 ) {
+			$languages = array();
+			$hreflangs = array();
 
 			// Prepare the list of languages to remove the country code
 			foreach ( array_keys( $urls ) as $locale ) {
@@ -236,12 +256,15 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			 *
 			 * @param array $args
 			 */
-			$white_list = apply_filters( 'pll_home_url_white_list', array(
-				array( 'file' => $theme_root ),
-				array( 'function' => 'wp_nav_menu' ),
-				array( 'function' => 'login_footer' ),
-				array( 'function' => 'get_custom_logo' ),
-			) );
+			$white_list = apply_filters(
+				'pll_home_url_white_list',
+				array(
+					array( 'file' => $theme_root ),
+					array( 'function' => 'wp_nav_menu' ),
+					array( 'function' => 'login_footer' ),
+					array( 'function' => 'get_custom_logo' ),
+				)
+			);
 		}
 
 		// We don't want to filter the home url in these cases
@@ -257,13 +280,16 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			 *
 			 * @param array $args
 			 */
-			$black_list = apply_filters( 'pll_home_url_black_list', array(
-				array( 'file' => 'searchform.php' ), // Since WP 3.6 searchform.php is passed through get_search_form
-				array( 'function' => 'get_search_form' ),
-			) );
+			$black_list = apply_filters(
+				'pll_home_url_black_list',
+				array(
+					array( 'file' => 'searchform.php' ), // Since WP 3.6 searchform.php is passed through get_search_form
+					array( 'function' => 'get_search_form' ),
+				)
+			);
 		}
 
-		$traces = version_compare( PHP_VERSION, '5.2.5', '>=' ) ? debug_backtrace( false ) : debug_backtrace();
+		$traces = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 		unset( $traces[0], $traces[1] ); // We don't need the last 2 calls: this function + call_user_func_array (or apply_filters on PHP7+)
 
 		foreach ( $traces as $trace ) {
@@ -317,7 +343,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 
 		// Don't redirect mysite.com/?attachment_id= to mysite.com/en/?attachment_id=
-		if ( 1 == $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) {
+		if ( 1 == $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			return;
 		}
 
@@ -328,7 +354,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 
 		if ( empty( $requested_url ) ) {
-			$requested_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$requested_url = pll_get_requested_url();
 		}
 
 		if ( is_single() || is_page() ) {
@@ -339,7 +365,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		elseif ( is_category() || is_tag() || is_tax() ) {
 			$obj = $wp_query->get_queried_object();
-			if ( $this->model->is_translated_taxonomy( $obj->taxonomy ) ) {
+			if ( ! empty( $obj ) && $this->model->is_translated_taxonomy( $obj->taxonomy ) ) {
 				$language = $this->model->term->get_language( (int) $obj->term_id );
 			}
 		}
@@ -355,10 +381,21 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			$language = $this->model->post->get_language( (int) $id );
 		}
 
+		if ( 3 === $this->options['force_lang'] ) {
+			$requested_host = wp_parse_url( $requested_url, PHP_URL_HOST );
+			foreach ( $this->options['domains'] as $lang => $domain ) {
+				$host = wp_parse_url( $domain, PHP_URL_HOST );
+				if ( 'www.' . $requested_host === $host || 'www.' . $host === $requested_host ) {
+					$language = $this->model->get_language( $lang );
+					$redirect_url = str_replace( '://' . $requested_host, '://' . $host, $requested_url );
+				}
+			}
+		}
+
 		if ( empty( $language ) ) {
 			$language = $this->curlang;
 			$redirect_url = $requested_url;
-		} else {
+		} elseif ( empty( $redirect_url ) ) {
 			// First get the canonical url evaluated by WP
 			// Workaround a WP bug which removes the port for some urls and get it back at second call to redirect_canonical
 			$_redirect_url = ( ! $_redirect_url = redirect_canonical( $requested_url, false ) ) ? $requested_url : $_redirect_url;
@@ -382,7 +419,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		// The language is not correctly set so let's redirect to the correct url for this object
 		if ( $do_redirect && $redirect_url && $requested_url != $redirect_url ) {
-			wp_redirect( $redirect_url, 301 );
+			wp_safe_redirect( $redirect_url, 301, POLYLANG );
 			exit;
 		}
 

@@ -1,18 +1,24 @@
 <?php
 /**
+ * WPSEO plugin file.
+ *
  * @package WPSEO\Admin\Links
  */
 
 /**
- * Represents the filter for filtering links
+ * Represents the filter for filtering links.
  */
 class WPSEO_Link_Filter {
 
-	/** @var string|null */
+	/**
+	 * Path to the current page.
+	 *
+	 * @var string|null
+	 */
 	protected $current_page_path;
 
 	/**
-	 * Sets the current page path
+	 * Sets the current page path.
 	 *
 	 * @param string $current_page The current page.
 	 */

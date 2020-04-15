@@ -7,7 +7,7 @@
  */
 class PLL_Query {
 
-	static protected $excludes = array(
+	protected static $excludes = array(
 		'p',
 		'post_parent',
 		'attachment',
@@ -18,6 +18,7 @@ class PLL_Query {
 		'category_name',
 		'tag',
 		'tag_id',
+		'cat',
 		'category__in',
 		'category__and',
 		'post__in',
@@ -45,6 +46,7 @@ class PLL_Query {
 	/**
 	 * Check if translated taxonomy is queried
 	 * Compatible with nested queries introduced in WP 4.1
+	 *
 	 * @see https://wordpress.org/support/topic/tax_query-bug
 	 *
 	 * @since 1.7
@@ -90,12 +92,30 @@ class PLL_Query {
 	 */
 	public function set_language( $lang ) {
 		// Defining directly the tax_query ( rather than setting 'lang' avoids transforming the query by WP )
-		$this->query->query_vars['tax_query'][] = array(
+		$lang_query = array(
 			'taxonomy' => 'language',
 			'field'    => 'term_taxonomy_id', // Since WP 3.5
 			'terms'    => $lang->term_taxonomy_id,
 			'operator' => 'IN',
 		);
+
+		$tax_query = &$this->query->query_vars['tax_query'];
+
+		if ( isset( $tax_query['relation'] ) && 'OR' === $tax_query['relation'] ) {
+			$tax_query = array(
+				$lang_query,
+				array( $tax_query ),
+				'relation' => 'AND',
+			);
+		} elseif ( is_array( $tax_query ) ) {
+			// The tax query is expected to be *always* an array, but it seems that 3rd parties fill it with a string
+			// Causing a fatal error if we don't check it.
+			// See https://wordpress.org/support/topic/fatal-error-2947/
+			$tax_query[] = $lang_query;
+		} elseif ( empty( $tax_query ) ) {
+			// Supposing the tax query has been wrongly filled with an empty string
+			$tax_query = array( $lang_query );
+		}
 	}
 
 	/**
@@ -109,17 +129,28 @@ class PLL_Query {
 		$qvars = &$this->query->query_vars;
 
 		if ( ! isset( $qvars['lang'] ) ) {
-			// Do not filter the query if the language is already specified in another way
-			foreach ( self::$excludes as $k ) {
-				if ( ! empty( $qvars[ $k ] ) ) {
-					return;
-				}
-			}
+			/**
+			 * Filter the query vars which disable the language filter in a query
+			 *
+			 * @since 2.3.5
+			 *
+			 * @param array  $excludes Query vars excluded from the language filter
+			 * @param object $query    WP Query
+			 * @param object $lang     Language
+			 */
+			$excludes = apply_filters( 'pll_filter_query_excluded_query_vars', self::$excludes, $this->query, $lang );
 
-			// Specific case for 'cat' as it can contain negative values
-			if ( ! empty( $qvars['cat'] ) ) {
-				foreach ( explode( ',', $qvars['cat'] ) as $cat ) {
-					if ( $cat > 0 ) {
+			// Do not filter the query if the language is already specified in another way
+			foreach ( $excludes as $k ) {
+				if ( ! empty( $qvars[ $k ] ) ) {
+					// Specific case for 'cat' as it can contain negative values
+					if ( 'cat' === $k ) {
+						foreach ( explode( ',', $qvars['cat'] ) as $cat ) {
+							if ( $cat > 0 ) {
+								return;
+							}
+						}
+					} else {
 						return;
 					}
 				}

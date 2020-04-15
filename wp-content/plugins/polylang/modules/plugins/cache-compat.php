@@ -13,8 +13,14 @@ class PLL_Cache_Compat {
 	 * @since 2.3
 	 */
 	public function init() {
-		add_action( 'wp_print_footer_scripts', array( $this, 'add_cookie_script' ) );
-		add_action( 'wp', array( $this, 'do_not_cache_site_home' ) );
+		if ( PLL_COOKIE ) {
+			add_action( 'wp_print_footer_scripts', array( $this, 'add_cookie_script' ) );
+		}
+
+		// Since version 3.0.5, WP Rocket does not serve the cached page if our cookie is not set
+		if ( ! defined( 'WP_ROCKET_VERSION' ) || version_compare( WP_ROCKET_VERSION, '3.0.5', '<' ) ) {
+			add_action( 'wp', array( $this, 'do_not_cache_site_home' ) );
+		}
 	}
 
 	/**
@@ -25,18 +31,20 @@ class PLL_Cache_Compat {
 	 * @since 2.3
 	 */
 	public function add_cookie_script() {
-		$domain = ( 2 == PLL()->options['force_lang'] ) ? parse_url( PLL()->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN;
-		$js = sprintf( '
-			var date = new Date();
-			date.setTime( date.getTime() + %d );
-			document.cookie = "%s=%s; expires=" + date.toUTCString() + "; path=%s%s";',
+		$domain = ( 2 == PLL()->options['force_lang'] ) ? wp_parse_url( PLL()->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN;
+		$js = sprintf(
+			'(function() {
+				var expirationDate = new Date();
+				expirationDate.setTime( expirationDate.getTime() + %d * 1000 );
+				document.cookie = "%s=%s; expires=" + expirationDate.toUTCString() + "; path=%s%s";
+			}());',
 			esc_js( apply_filters( 'pll_cookie_expiration', YEAR_IN_SECONDS ) ),
 			esc_js( PLL_COOKIE ),
 			esc_js( pll_current_language() ),
 			esc_js( COOKIEPATH ),
 			$domain ? '; domain=' . esc_js( $domain ) : ''
 		);
-		echo '<script type="text/javascript">' . $js . '</script>';
+		echo '<script type="text/javascript">' . $js . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	}
 
 	/**

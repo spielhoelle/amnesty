@@ -26,7 +26,7 @@ if (isset($_GET['source']) && wfPage::isValidPage($_GET['source'])) {
 
 			//Hash-based option block linking
 			if (window.location.hash) {
-				var hashes = window.location.hash.split('#');
+				var hashes = WFAD.parseHashes();
 				var hash = hashes[hashes.length - 1];
 				var block = $('.wf-block[data-persistence-key="' + hash + '"]');
 				if (block.length) {
@@ -86,7 +86,12 @@ if (isset($_GET['source']) && wfPage::isValidPage($_GET['source'])) {
 <div class="wf-options-controls-spacer"></div>
 <?php
 if (wfOnboardingController::shouldShowAttempt3()) {
+	echo wfView::create('onboarding/disabled-overlay')->render();
 	echo wfView::create('onboarding/banner')->render();
+}
+else if (wfConfig::get('touppPromptNeeded')) {
+	echo wfView::create('gdpr/disabled-overlay')->render();
+	echo wfView::create('gdpr/banner')->render();
 }
 ?>
 <div class="wrap wordfence">
@@ -104,6 +109,9 @@ if (wfOnboardingController::shouldShowAttempt3()) {
 		<div class="wf-row">
 			<div class="wf-col-xs-12">
 				<div class="wp-header-end"></div>
+				<?php if (isset($storageExceptionMessage)): ?>
+				<div class="notice notice-error"><p><?php echo $storageExceptionMessage; ?></p></div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<div class="wf-row">

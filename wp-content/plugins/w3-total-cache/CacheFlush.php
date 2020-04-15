@@ -92,9 +92,9 @@ class CacheFlush {
 	/**
 	 * Purge CDN mirror cache
 	 */
-	function cdn_purge_all() {
+	function cdn_purge_all( $extras = array() ) {
 		if ( $this->_config->get_boolean( 'cdn.enabled' ) )
-			return $this->_executor->cdn_purge_all();
+			return $this->_executor->cdn_purge_all( $extras );
 
 		return false;
 	}
@@ -113,16 +113,6 @@ class CacheFlush {
 	 */
 	function opcache_flush() {
 		return $this->_executor->opcache_flush();
-	}
-
-	/**
-	 * Reloads/compiles a PHP file.
-	 *
-	 * @param string  $filename
-	 * @return mixed
-	 */
-	function opcache_flush_file( $filename ) {
-		return $this->_executor->opcache_flush_file( $filename );
 	}
 
 	/**
@@ -156,6 +146,17 @@ class CacheFlush {
 		if ( !$flushed ) {
 			$flushed = true;
 			$this->_executor->flush_all( $extras );
+		}
+	}
+
+	/**
+	 * Purges/Flushes cache group
+	 */
+	function flush_group( $group, $extras = null ) {
+		static $flushed_groups = array();
+		if ( !isset( $flushed_groups[$group] ) ) {
+			$flushed_groups[$group] = '*';
+			$this->_executor->flush_group( $group, $extras );
 		}
 	}
 

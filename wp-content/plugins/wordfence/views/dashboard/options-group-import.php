@@ -21,7 +21,7 @@ if (!isset($collapseable)) {
 					<div class="wf-block-title">
 						<strong><?php _e('Import/Export Options', 'wordfence'); ?></strong>
 					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure"></div></div><?php endif; ?>
+					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
 				</div>
 			</div>
 			<div class="wf-block-content">
@@ -95,8 +95,10 @@ if (!isset($collapseable)) {
 								});
 							});
 
-							$('#wf-import-token').on('keyup', function() {
-								$('#wf-import-options').toggleClass('wf-disabled', $(this).val() == '');
+							$('#wf-import-token').on('change paste keyup', function() {
+								setTimeout(function() {
+									$('#wf-import-options').toggleClass('wf-disabled', $('#wf-import-token').val() == '');
+								}, 4);
 							});
 
 							$('#wf-import-options').on('click', function(e) {

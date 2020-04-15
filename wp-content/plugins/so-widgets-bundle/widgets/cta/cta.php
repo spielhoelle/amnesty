@@ -4,6 +4,7 @@ Widget Name: Call-To-Action
 Description: A simple call-to-action widget. You can do what ever you want with a call-to-action widget.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
+Documentation: https://siteorigin.com/widgets-bundle/call-action-widget/
 */
 
 class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
@@ -80,6 +81,11 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 						'type' => 'color',
 						'label' => __('Border color', 'so-widgets-bundle'),
 					),
+					'use_default_background' => array(
+						'type' => 'checkbox',
+						'label' => __( 'Use default background colors', 'so-widgets-bundle' ),
+						'default' => true,
+					),
 					'title_color' => array(
 						'type' => 'color',
 						'label' => __('Title color', 'so-widgets-bundle'),
@@ -110,7 +116,9 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 	}
 
 	function get_less_variables($instance) {
-		if( empty( $instance ) ) return array();
+		if ( empty( $instance ) || empty( $instance['design'] ) ) {
+			return array();
+		}
 
 		return array(
 			'border_color' => $instance['design']['border_color'],
@@ -124,6 +132,23 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 	function modify_child_widget_form($child_widget_form, $child_widget) {
 		unset( $child_widget_form['design']['fields']['align'] );
 		return $child_widget_form;
+	}
+	
+	function modify_instance( $instance ) {
+		if ( ! isset( $instance['design']['use_default_background'] ) ) {
+			$instance['design']['use_default_background'] = true;
+		}
+		
+		if ( ! empty( $instance['design']['use_default_background'] ) ) {
+			if ( empty( $instance['design']['background_color'] ) ) {
+				$instance['design']['background_color'] = '#F8F8F8';
+			}
+			if ( empty( $instance['design']['border_color'] ) ) {
+				$instance['design']['border_color'] = '#E3E3E3';
+			}
+		}
+		
+		return $instance;
 	}
 
 	function get_form_teaser(){

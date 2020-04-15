@@ -32,11 +32,11 @@ class CdnEngine {
 				break;
 
 			case 'cf':
-				$instances[$instance_key] = new CdnEngine_S3_Cf_S3( $config );
+				$instances[$instance_key] = new CdnEngine_CloudFront( $config );
 				break;
 
 			case 'cf2':
-				$instances[$instance_key] = new CdnEngine_S3_Cf_Custom( $config );
+				$instances[$instance_key] = new CdnEngine_Mirror_CloudFront( $config );
 				break;
 
 			case 'cotendo':
@@ -57,6 +57,10 @@ class CdnEngine {
 
 			case 'highwinds':
 				$instances[$instance_key] = new CdnEngine_Mirror_Highwinds( $config );
+				break;
+
+			case 'limelight':
+				$instances[$instance_key] = new CdnEngine_Mirror_LimeLight( $config );
 				break;
 
 			case 'maxcdn':
@@ -82,6 +86,14 @@ class CdnEngine {
 
 			case 's3_compatible':
 				$instances[$instance_key] = new CdnEngine_S3_Compatible( $config );
+				break;
+
+			case 'stackpath':
+				$instances[$instance_key] = new CdnEngine_Mirror_StackPath( $config );
+				break;
+
+			case 'stackpath2':
+				$instances[$instance_key] = new CdnEngine_Mirror_StackPath2( $config );
 				break;
 
 			default :

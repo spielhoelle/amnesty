@@ -17,9 +17,9 @@ class PLL_Switcher {
 	 * @param string $key  optional either 'string' or 'default', defaults to 'string'
 	 * @return array list of switcher options strings or default values
 	 */
-	static public function get_switcher_options( $type = 'widget', $key = 'string' ) {
+	public static function get_switcher_options( $type = 'widget', $key = 'string' ) {
 		$options = array(
-			'dropdown'               => array( 'string' => __( 'Displays as dropdown', 'polylang' ), 'default' => 0 ),
+			'dropdown'               => array( 'string' => __( 'Displays as a dropdown', 'polylang' ), 'default' => 0 ),
 			'show_names'             => array( 'string' => __( 'Displays language names', 'polylang' ), 'default' => 1 ),
 			'show_flags'             => array( 'string' => __( 'Displays flags', 'polylang' ), 'default' => 0 ),
 			'force_home'             => array( 'string' => __( 'Forces link to front page', 'polylang' ), 'default' => 0 ),
@@ -33,8 +33,7 @@ class PLL_Switcher {
 	/**
 	 * Get the language elements for use in a walker
 	 *
-	 * List of parameters accepted in $args:
-	 * @see PLL_Switcher::the_languages
+	 * @see list of parameters accepted in $args documented for PLL_Switcher::the_languages
 	 *
 	 * @since 1.2
 	 *
@@ -43,8 +42,8 @@ class PLL_Switcher {
 	 * @return array
 	 */
 	protected function get_elements( $links, $args ) {
-
 		$first = true;
+		$out   = array();
 
 		foreach ( $links->model->get_languages_list( array( 'hide_empty' => $args['hide_if_empty'] ) ) as $language ) {
 			$id = (int) $language->term_id;
@@ -54,21 +53,15 @@ class PLL_Switcher {
 			$classes = array( 'lang-item', 'lang-item-' . $id, 'lang-item-' . esc_attr( $slug ) );
 			$url = null; // Avoids potential notice
 
-			if ( $first ) {
-				$classes[] = 'lang-item-first';
-				$first = false;
-			}
-
 			if ( $current_lang = $links->curlang->slug == $slug ) {
 				if ( $args['hide_current'] && ! ( $args['dropdown'] && ! $args['raw'] ) ) {
 					continue; // Hide current language except for dropdown
-				}
-				else {
+				} else {
 					$classes[] = 'current-lang';
 				}
 			}
 
-			if ( null !== $args['post_id'] && ( $tr_id = $links->model->post->get( $args['post_id'], $language ) ) && $links->current_user_can_read( $tr_id ) ) {
+			if ( null !== $args['post_id'] && ( $tr_id = $links->model->post->get( $args['post_id'], $language ) ) && $links->model->post->current_user_can_read( $tr_id ) ) {
 				$url = get_permalink( $tr_id );
 			} elseif ( null === $args['post_id'] ) {
 				$url = $links->get_translation_url( $language );
@@ -99,10 +92,15 @@ class PLL_Switcher {
 			$name = $args['show_names'] || ! $args['show_flags'] || $args['raw'] ? ( 'slug' == $args['display_names_as'] ? $slug : $language->name ) : '';
 			$flag = $args['raw'] && ! $args['show_flags'] ? $language->flag_url : ( $args['show_flags'] ? $language->flag : '' );
 
+			if ( $first ) {
+				$classes[] = 'lang-item-first';
+				$first = false;
+			}
+
 			$out[ $slug ] = compact( 'id', 'order', 'slug', 'locale', 'name', 'url', 'flag', 'current_lang', 'no_translation', 'classes' );
 		}
 
-		return empty( $out ) ? array() : $out;
+		return $out;
 	}
 
 	/**
@@ -185,18 +183,20 @@ class PLL_Switcher {
 		 * @param string $html html returned/outputted by the template tag
 		 * @param array  $args arguments passed to the template tag
 		 */
-		$out = apply_filters( 'pll_the_languages', $walker->walk( $elements, $args ), $args );
+		$out = apply_filters( 'pll_the_languages', $walker->walk( $elements, -1, $args ), $args );
 
 		// Javascript to switch the language when using a dropdown list
 		if ( $args['dropdown'] ) {
+			$urls = array();
+
 			foreach ( $links->model->get_languages_list() as $language ) {
 				$url = $links->get_translation_url( $language );
 				$urls[ $language->slug ] = $args['force_home'] || empty( $url ) ? $links->get_home_url( $language ) : $url;
 			}
 
 			// Accept only few valid characters for the urls_x variable name ( as the widget id includes '-' which is invalid )
-			$out .= sprintf( '
-				<script type="text/javascript">
+			$out .= sprintf(
+				'<script type="text/javascript">
 					//<![CDATA[
 					var %1$s = %2$s;
 					document.getElementById( "%3$s" ).onchange = function() {
@@ -204,12 +204,14 @@ class PLL_Switcher {
 					}
 					//]]>
 				</script>',
-				'urls_' . preg_replace( '#[^a-zA-Z0-9]#', '', $args['dropdown'] ), json_encode( $urls ), esc_js( $args['name'] )
+				'urls_' . preg_replace( '#[^a-zA-Z0-9]#', '', $args['dropdown'] ),
+				wp_json_encode( $urls ),
+				esc_js( $args['name'] )
 			);
 		}
 
 		if ( $args['echo'] ) {
-			echo $out;
+			echo $out; // phpcs:ignore WordPress.Security.EscapeOutput
 		}
 		return $out;
 	}

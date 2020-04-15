@@ -3,7 +3,7 @@
 Plugin Name: Page Builder by SiteOrigin
 Plugin URI: https://siteorigin.com/page-builder/
 Description: A drag and drop, responsive page builder that simplifies building your website.
-Version: 2.6.2
+Version: 2.10.15
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 License: GPL3
@@ -11,11 +11,12 @@ License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: http://siteorigin.com/page-builder/#donate
 */
 
-define( 'SITEORIGIN_PANELS_VERSION', '2.6.2' );
+define( 'SITEORIGIN_PANELS_VERSION', '2.10.15' );
 if ( ! defined( 'SITEORIGIN_PANELS_JS_SUFFIX' ) ) {
 	define( 'SITEORIGIN_PANELS_JS_SUFFIX', '.min' );
 }
-define( 'SITEORIGIN_PANELS_VERSION_SUFFIX', '-262' );
+define( 'SITEORIGIN_PANELS_CSS_SUFFIX', '.min' );
+define( 'SITEORIGIN_PANELS_VERSION_SUFFIX', '-21015' );
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/functions.php';
 
@@ -36,16 +37,21 @@ class SiteOrigin_Panels {
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 		add_filter( 'siteorigin_panels_data', array( $this, 'process_panels_data' ), 5 );
 		add_filter( 'siteorigin_panels_widget_class', array( $this, 'fix_namespace_escaping' ), 5 );
+		
+		add_action( 'activated_plugin', array($this, 'activation_flag_redirect') );
+		add_action( 'admin_init', array($this, 'activation_do_redirect') );
+
+		if (
+			is_admin() ||
+			( wp_doing_ajax() && isset($_REQUEST['action']) && $_REQUEST['action'] == 'inline-save' )
+		) {
+			SiteOrigin_Panels_Admin::single();
+		}
 
 		if ( is_admin() ) {
 			// Setup all the admin classes
 			SiteOrigin_Panels_Settings::single();
 			SiteOrigin_Panels_Revisions::single();
-			SiteOrigin_Panels_Admin::single();
-
-			if( ! class_exists( 'SiteOrigin_Learn_Dialog' ) ) {
-				include plugin_dir_path( __FILE__ ) . 'learn/learn.php';
-			}
 		}
 
 		// Include the live editor file if we're in live editor mode.
@@ -64,11 +70,18 @@ class SiteOrigin_Panels {
 		
 		// We need to generate fresh post content
 		add_filter( 'the_content', array( $this, 'generate_post_content' ) );
+		add_filter( 'woocommerce_format_content', array( $this, 'generate_woocommerce_content' ) );
 		add_filter( 'wp_enqueue_scripts', array( $this, 'generate_post_css' ) );
+		
+		// Remove the default excerpt function
+		add_filter( 'get_the_excerpt', array( $this, 'generate_post_excerpt' ), 9 );
 		
 		// Content cache has been removed. SiteOrigin_Panels_Cache_Renderer just deletes any existing caches.
 		SiteOrigin_Panels_Cache_Renderer::single();
 		
+		if ( function_exists( 'register_block_type' ) ) {
+			SiteOrigin_Panels_Compat_Layout_Block::single();
+		}
 		
 		define( 'SITEORIGIN_PANELS_BASE_FILE', __FILE__ );
 	}
@@ -135,6 +148,10 @@ class SiteOrigin_Panels {
 			$filename = strtolower( preg_replace( '/([a-z])([A-Z])/', '$1-$2', $filename ) );
 			$filename = plugin_dir_path( __FILE__ ) . 'inc/widgets/' . $filename . '.php';
 		}
+		else if ( strpos( $class, 'SiteOrigin_Panels_Compat_' ) === 0 ) {
+			$filename = str_replace( array( 'SiteOrigin_Panels_Compat_', '_' ), array( '', '-' ), $class );
+			$filename = plugin_dir_path( __FILE__ ) . 'compat/' . strtolower( $filename ) . '.php';
+		}
 		else if ( strpos( $class, 'SiteOrigin_Panels_' ) === 0 ) {
 			$filename = str_replace( array( 'SiteOrigin_Panels_', '_' ), array( '', '-' ), $class );
 			$filename = plugin_dir_path( __FILE__ ) . 'inc/' . strtolower( $filename ) . '.php';
@@ -173,6 +190,11 @@ class SiteOrigin_Panels {
 		// Check if we need to initialize the admin class.
 		if ( is_admin() ) {
 			SiteOrigin_Panels_Admin::single();
+		}
+		
+		// Compatibility with Widget Options plugin
+		if( class_exists('WP_Widget_Options') ) {
+			require_once plugin_dir_path( __FILE__ ) . 'compat/widget-options.php';
 		}
 	}
 
@@ -253,6 +275,23 @@ class SiteOrigin_Panels {
 
 		return $panels_data;
 	}
+	
+	/**
+	 * Generate post content for WooCommerce shop page if it's using a PB layout.
+	 *
+	 * @param $content
+	 *
+	 * @return string
+	 *
+	 * @filter woocommerce_format_content
+	 */
+	public function generate_woocommerce_content( $content ) {
+		if ( class_exists( 'WooCommerce' ) && is_shop() ) {
+			return $this->generate_post_content( $content );
+		}
+		
+		return $content;
+	}
 
 	/**
 	 * Generate post content for the current post.
@@ -273,14 +312,8 @@ class SiteOrigin_Panels {
 			return $content;
 		}
 		
-		$post_id = get_the_ID();
-		// If we're viewing a preview make sure we load and render the autosave post's meta.
-		if ( $preview ) {
-			$preview_post = wp_get_post_autosave( $post_id );
-			if ( ! empty( $preview_post ) ) {
-				$post_id = $preview_post->ID;
-			}
-		}
+		$post_id = $this->get_post_id();
+		
 		// Check if this post has panels_data
 		if ( get_post_meta( $post_id, 'panels_data', true ) ) {
 			$panel_content = SiteOrigin_Panels::renderer()->render(
@@ -299,7 +332,7 @@ class SiteOrigin_Panels {
 						$content = explode( $matches[0], $content, 2 );
 						$content = $content[0];
 						$content = force_balance_tags( $content );
-						if ( ! empty( $matches[1] ) && ! empty( $more_link_text ) ) {
+						if ( ! empty( $matches[1] ) ) {
 							$more_link_text = strip_tags( wp_kses_no_null( trim( $matches[1] ) ) );
 						} else {
 							$more_link_text = __( 'Read More', 'siteorigin-panels' );
@@ -316,13 +349,101 @@ class SiteOrigin_Panels {
 	}
 	
 	/**
+	 * Generate an excerpt for the current post, if possible.
+	 *
+	 * @param $text
+	 *
+	 * @return mixed|string
+	 */
+	public function generate_post_excerpt( $text ) {
+		global $post;
+		if ( ( empty( $post ) && ! in_the_loop() ) || $text !== '' ) {
+			return $text;
+		}
+		
+		$post_id = $this->get_post_id();
+		
+		// Check if this post has panels_data
+		$panels_data = get_post_meta( $post_id, 'panels_data', true );
+		if ( $panels_data && ! empty( $panels_data['widgets'] ) ) {
+			$raw_excerpt = '';
+			$excerpt_length = apply_filters( 'excerpt_length', 55 );
+			foreach ( $panels_data['widgets'] as $widget ) {
+				$panels_info = $widget['panels_info'];
+				if ( $panels_info['grid'] > 1 ) {
+					// Limiting search for a text type widget to the first two PB rows to avoid having excerpt content
+					// that's very far down in a post.
+					break;
+				}
+				if ( $panels_info['class'] == 'SiteOrigin_Widget_Editor_Widget' || $panels_info['class'] == 'WP_Widget_Text' ) {
+					$raw_excerpt .= ' ' . $widget['text'];
+					// This is all effectively default behavior for excerpts, copied from the `wp_trim_excerpt` function.
+					// We're just applying it to text type widgets content in the first two rows.
+					$text = strip_shortcodes( $raw_excerpt );
+					$text = str_replace( ']]>', ']]&gt;', $text );
+					if ( $this->get_localized_word_count( $text ) >= $excerpt_length ) {
+						break;
+					}
+				}
+			}
+			
+			$text = strip_shortcodes( $raw_excerpt );
+			$text = str_replace( ']]>', ']]&gt;', $text );
+			
+			$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+			$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+		}
+		
+		return $text;
+	}
+	
+	private function get_localized_word_count( $text ) {
+		
+		// From the core `wp_trim_words` function to get localized word count.
+		$text = wp_strip_all_tags( $text );
+		if ( strpos( _x( 'words', 'Word count type. Do not translate!' ), 'characters' ) === 0 && preg_match( '/^utf\-?8$/i', get_option( 'blog_charset' ) ) ) {
+			$text = trim( preg_replace( "/[\n\r\t ]+/", ' ', $text ), ' ' );
+			preg_match_all( '/./u', $text, $words_array );
+			$words_array = $words_array[0];
+		} else {
+			$words_array = preg_split( "/[\n\r\t ]+/", $text, -1, PREG_SPLIT_NO_EMPTY );
+		}
+		
+		return count( $words_array );
+	}
+	
+	/**
 	 * Generate CSS for the current post
 	 */
 	public function generate_post_css() {
-		if( is_singular() && get_post_meta( get_the_ID(), 'panels_data', true ) ) {
+		$post_id = $this->get_post_id();
+		
+		if( is_singular() && get_post_meta( $post_id, 'panels_data', true ) ) {
 			$renderer = SiteOrigin_Panels::renderer();
-			$renderer->add_inline_css( get_the_ID(), $renderer->generate_css( get_the_ID() ) );
+			$renderer->add_inline_css( $post_id, $renderer->generate_css( $post_id ) );
 		}
+	}
+	
+	/**
+	 * Get the post id for the current post.
+	 */
+	function get_post_id() {
+		
+		$post_id = get_the_ID();
+		
+		if ( class_exists( 'WooCommerce' ) && is_shop() ) {
+			$post_id = wc_get_page_id( 'shop' );
+		}
+		global $preview;
+		// If we're viewing a preview make sure we load and render the autosave post's meta.
+		if ( $preview ) {
+			$preview_post = wp_get_post_autosave( $post_id, get_current_user_id() );
+			if ( ! empty( $preview_post ) ) {
+				$post_id = $preview_post->ID;
+			}
+		}
+		
+		return $post_id;
 	}
 
 	/**
@@ -483,11 +604,6 @@ class SiteOrigin_Panels {
 		}
 	}
 
-	static function display_learn_button() {
-		return siteorigin_panels_setting( 'display-learn' ) &&
-			   apply_filters( 'siteorigin_panels_learn', true );
-	}
-
 	/**
 	 * Script that removes the siteorigin-panels-before-js class from the body.
 	 */
@@ -521,6 +637,55 @@ class SiteOrigin_Panels {
 			$url = add_query_arg( 'ref', urlencode( $ref ), $url );
 		}
 		return $url;
+	}
+	
+	
+	/**
+	 * Get the registered widget instance by it's class name or the hash generated when it was registered.
+	 *
+	 * @param $class_or_hash
+	 *
+	 * @return array
+	 */
+	static function get_widget_instance( $class_or_hash ) {
+		global $wp_widget_factory;
+		if ( isset( $wp_widget_factory->widgets[ $class_or_hash ] ) ) {
+			return $wp_widget_factory->widgets[ $class_or_hash ];
+		} else {
+			foreach ( $wp_widget_factory->widgets as $widget_instance ) {
+				if ( $widget_instance instanceof $class_or_hash ) {
+					return $widget_instance;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 *  Flag redirect to welcome page after activation
+	 *
+	 * @param $plugin
+	 */
+	public function activation_flag_redirect( $plugin ) {
+		if ( $plugin == plugin_basename( __FILE__ ) ) {
+			set_transient( 'siteorigin_panels_activation_welcome', true, 30 );
+		}
+	}
+
+	/**
+	 * Redirect to a welcome page after activation.
+	 */
+	public function activation_do_redirect() {
+		if ( get_transient( 'siteorigin_panels_activation_welcome' ) ) {
+			delete_transient( 'siteorigin_panels_activation_welcome' );
+
+			// Postpone redirect in certain situations
+			if ( ! wp_doing_ajax() && ! is_network_admin() && ! isset( $_GET['activate-multi'] ) ) {
+				delete_transient( 'siteorigin_panels_activation_welcome' );
+				wp_safe_redirect( admin_url( 'options-general.php?page=siteorigin_panels#welcome' ) );
+				exit();
+			}
+		}
 	}
 }
 
