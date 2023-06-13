@@ -24,19 +24,18 @@
                 <div>
                     <a title="Impressum" href="<?php echo get_permalink( get_page_by_path( 'impressum' ) ) ?>">Impressum</a> |
                     <a title="Datenschutz" href="<?php echo get_permalink( get_page_by_path( 'datenschutz' ) )?>">Datenschutz</a> |
-                    © 2016 AMNESTY INTERNATIONAL
+                    © 2023 AMNESTY INTERNATIONAL
                 </div>
                 <ul class="socialicons">
                     <li><a title="Amnesty International Deutschland" href="https://www.amnesty.de"><i class="fa fa-globe"></i></a></li>
                     <li><a title="Facebook" href="https://www.facebook.com/AmnestyDeutschland"><i class="fa fa-facebook"></i></a></li>
                     <li><a title="Twitter" href="https://twitter.com/amnesty_de"><i class="fa fa-twitter"></i></a></li>
-                    <li><a title="Google Plus" href="https://plus.google.com/u/0/b/110370722626798674939/+AmnestyDeutschland"><i class="fa fa-google-plus"></i></a></li>
                     <li><a title="Youtube" href="https://www.youtube.com/channel/UC5jDXV8yNFtmJZE_Yo4AFlw"><i class="fa fa-youtube"></i></a></li>
                 </ul>
             </div>
 
             <div class="tommy">
-                &copy; 2016 with <i class="fa fa-heart"></i>
+                &copy; 2023 with <i class="fa fa-heart"></i>
                 by <a target="_blank" href="http://www.thomaskuhnert.com">Thomas Kuhnert</a>
 
             </div>
