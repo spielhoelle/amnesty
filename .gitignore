@@ -67,6 +67,12 @@ wp-content/mysql.sql
 /wp-content/themes/twentyfifteen
 /wp-content/themes/twentysixteen
 /wp-content/themes/twentyseventeen
+/wp-content/themes/twentytwentyone
+/wp-content/themes/twentytwentytwo
+/wp-content/themes/twentytwentythree
+
+
+
 
 # large/disallowed file types
 # a CDN should be used for these
