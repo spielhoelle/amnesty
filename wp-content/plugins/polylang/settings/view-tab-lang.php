@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Displays the languages tab in Polylang settings
+ *
+ * @package Polylang
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,18 +54,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<select name="lang_list" id="lang_list">
 							<option value=""></option>
 							<?php
-							foreach ( $this->get_predefined_languages() as $lg ) {
-								$lg['flag_code'] = $lg['flag'];
-								$language = new PLL_Language( $lg );
-								$language->set_flag();
+							foreach ( PLL_Settings::get_predefined_languages() as $language ) {
 								printf(
 									'<option value="%1$s:%2$s:%3$s:%4$s" data-flag-html="%6$s">%5$s - %2$s</option>' . "\n",
-									esc_attr( $lg['code'] ),
-									esc_attr( $lg['locale'] ),
-									'rtl' == $lg['dir'] ? '1' : '0',
-									esc_attr( $lg['flag'] ),
-									esc_html( $lg['name'] ),
-									esc_html( $language->flag )
+									esc_attr( $language['code'] ),
+									esc_attr( $language['locale'] ),
+									'rtl' == $language['dir'] ? '1' : '0',
+									esc_attr( $language['flag'] ),
+									esc_html( $language['name'] ),
+									esc_attr( PLL_Language::get_predefined_flag( $language['flag'] ) )
 								);
 							}
 							?>
@@ -106,7 +104,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 
 					<div class="form-field"><fieldset>
-						<legend><?php esc_html_e( 'Text direction', 'polylang' ); ?></legend>
+						<legend class="pll-legend"><?php esc_html_e( 'Text direction', 'polylang' ); ?></legend>
 						<?php
 						printf(
 							'<label><input name="rtl" type="radio" value="0" %s /> %s</label>',
@@ -127,7 +125,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<select name="flag" id="flag_list">
 							<option value=""></option>
 							<?php
-							$flags = include PLL_SETTINGS_INC . '/flags.php';
+							$flags = include __DIR__ . '/flags.php';
 							foreach ( $flags as $code => $label ) {
 								printf(
 									'<option value="%s" data-flag-html="%s"%s>%s</option>' . "\n",
@@ -159,7 +157,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						 *
 						 * @since 1.7.10
 						 *
-						 * @param object $lang language being edited.
+						 * @param PLL_Language $lang language being edited.
 						 */
 						do_action( 'pll_language_edit_form_fields', $edit_lang );
 					} else {

@@ -1,2 +1,3 @@
 <?php
-    require_once('matomo.php');
+
+    require_once("matomo.php");

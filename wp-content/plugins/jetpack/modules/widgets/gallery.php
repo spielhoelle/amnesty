@@ -1,21 +1,33 @@
-<?php
+<?php // phpcs:ignore eWordPress.Files.FileName.InvalidClassFileName
+/**
+ * Module Name: Gallery widget
+ *
+ * @package automattic/jetpack
+ */
 
-/*
-Plugin Name: Gallery
-Description: Gallery widget
-Author: Automattic Inc.
-Version: 1.0
-Author URI: https://automattic.com
-*/
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- TODO: Move classes to appropriately-named class files.
 
 use Automattic\Jetpack\Assets;
+use Automattic\Jetpack\Image_CDN\Image_CDN_Core;
 
+/**
+ * Jetpack_Gallery_Widget main class.
+ */
 class Jetpack_Gallery_Widget extends WP_Widget {
 	const THUMB_SIZE    = 45;
 	const DEFAULT_WIDTH = 265;
 
-	protected $_instance_width;
+	/**
+	 * The width of the gallery widget.
+	 * May be customized by the 'gallery_widget_content_width' filter.
+	 *
+	 * @var int
+	 */
+	protected $instance_width;
 
+	/**
+	 * Jetpack_Gallery_Widget constructor.
+	 */
 	public function __construct() {
 		$widget_ops = array(
 			'classname'                   => 'widget-gallery',
@@ -52,6 +64,8 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	}
 
 	/**
+	 * Display the widget.
+	 *
 	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
 	 * @param array $instance The settings for the particular instance of the widget.
 	 */
@@ -60,7 +74,10 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 
 		$this->enqueue_frontend_scripts();
 
-		extract( $args );
+		$before_widget = isset( $args['before_widget'] ) ? $args['before_widget'] : '';
+		$before_title  = isset( $args['before_title'] ) ? $args['before_title'] : '';
+		$after_title   = isset( $args['after_title'] ) ? $args['after_title'] : '';
+		$after_widget  = isset( $args['after_widget'] ) ? $args['after_widget'] : '';
 
 		$instance['attachments'] = $this->get_attachments( $instance );
 
@@ -68,11 +85,14 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 
 		$classes[] = 'widget-gallery-' . $instance['type'];
 
-		// Due to a bug in the carousel plugin, carousels will be triggered for all tiled galleries that exist on a page
-		// with other tiled galleries, regardless of whether or not the widget was set to Carousel mode. The onClick selector
-		// is simply too broad, since it was not written with widgets in mind. This special class prevents that behavior, via
-		// an override handler in gallery.js
-		if ( 'carousel' != $instance['link'] && 'slideshow' != $instance['type'] ) {
+		/*
+		 * Due to a bug in the carousel plugin,
+		 * carousels will be triggered for all tiled galleries that exist on a page with other tiled galleries,
+		 * regardless of whether or not the widget was set to Carousel mode.
+		 * The onClick selector is simply too broad, since it was not written with widgets in mind.
+		 * This special class prevents that behavior, via an override handler in gallery.js.
+		 */
+		if ( 'carousel' !== $instance['link'] && 'slideshow' !== $instance['type'] ) {
 			$classes[] = 'no-carousel';
 		} else {
 			$classes[] = 'carousel';
@@ -80,8 +100,8 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 
 		$classes = implode( ' ', $classes );
 
-		if ( 'carousel' == $instance['link'] ) {
-			require_once plugin_dir_path( realpath( dirname( __FILE__ ) . '/../carousel/jetpack-carousel.php' ) ) . 'jetpack-carousel.php';
+		if ( 'carousel' === $instance['link'] ) {
+			require_once plugin_dir_path( realpath( __DIR__ . '/../carousel/jetpack-carousel.php' ) ) . 'jetpack-carousel.php';
 
 			if ( class_exists( 'Jetpack_Carousel' ) ) {
 				// Create new carousel so we can use the enqueue_assets() method. Not ideal, but there is a decent amount
@@ -93,13 +113,13 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 			}
 		}
 
-		echo $before_widget . "\n";
+		echo $before_widget . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		/** This filter is documented in core/src/wp-includes/default-widgets.php */
 		$title = apply_filters( 'widget_title', $instance['title'] );
 
 		if ( $title ) {
-			echo $before_title . esc_html( $title ) . $after_title . "\n";
+			echo $before_title . $title . $after_title . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		echo '<div class="' . esc_attr( $classes ) . '">' . "\n";
@@ -117,25 +137,25 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 		 * @param string $args Display arguments including before_title, after_title, before_widget, and after_widget.
 		 * @param array $instance The settings for the particular instance of the widget.
 		 */
-		$this->_instance_width = apply_filters( 'gallery_widget_content_width', self::DEFAULT_WIDTH, $args, $instance );
+		$this->instance_width = apply_filters( 'gallery_widget_content_width', self::DEFAULT_WIDTH, $args, $instance );
 
 		// Register a filter to modify the tiled_gallery_content_width, so Jetpack_Tiled_Gallery
 		// can appropriately size the tiles.
 		add_filter( 'tiled_gallery_content_width', array( $this, 'tiled_gallery_content_width' ) );
 
 		if ( method_exists( $this, $method ) ) {
-			echo $this->$method( $args, $instance );
+			echo $this->$method( $args, $instance ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		// Remove the stored $_instance_width, as it is no longer needed
-		$this->_instance_width = null;
+		// Remove the stored $instance_width, as it is no longer needed.
+		$this->instance_width = null;
 
-		// Remove the filter, so any Jetpack_Tiled_Gallery in a post is not affected
+		// Remove the filter, so any Jetpack_Tiled_Gallery in a post is not affected.
 		remove_filter( 'tiled_gallery_content_width', array( $this, 'tiled_gallery_content_width' ) );
 
 		echo "\n" . '</div>'; // .widget-gallery-$type
 
-		echo "\n" . $after_widget;
+		echo "\n" . $after_widget; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		/** This action is documented in modules/widgets/gravatar-profile.php */
 		do_action( 'jetpack_stats_extra', 'widget_view', 'gallery' );
@@ -144,13 +164,13 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	/**
 	 * Fetch the images attached to the gallery Widget
 	 *
-	 * @param array $instance The Widget instance for which you'd like attachments
+	 * @param array $instance The Widget instance for which you'd like attachments.
 	 * @return array Array of attachment objects for the Widget in $instance
 	 */
 	public function get_attachments( $instance ) {
 		$ids = explode( ',', $instance['ids'] );
 
-		if ( isset( $instance['random'] ) && 'on' == $instance['random'] ) {
+		if ( isset( $instance['random'] ) && 'on' === $instance['random'] ) {
 			shuffle( $ids );
 		}
 
@@ -176,7 +196,7 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	 * Generate HTML for a rectangular, tiled Widget
 	 *
 	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
-	 * @param array $instance The Widget instance to generate HTML for
+	 * @param array $instance The Widget instance to generate HTML for.
 	 * @return string String of HTML representing a rectangular gallery
 	 */
 	public function rectangular_widget( $args, $instance ) {
@@ -195,7 +215,7 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	 * Generate HTML for a square (grid style) Widget
 	 *
 	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
-	 * @param array $instance The Widget instance to generate HTML for
+	 * @param array $instance The Widget instance to generate HTML for.
 	 * @return string String of HTML representing a square gallery
 	 */
 	public function square_widget( $args, $instance ) {
@@ -214,7 +234,7 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	 * Generate HTML for a circular (grid style) Widget
 	 *
 	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
-	 * @param array $instance The Widget instance to generate HTML for
+	 * @param array $instance The Widget instance to generate HTML for.
 	 * @return string String of HTML representing a circular gallery
 	 */
 	public function circle_widget( $args, $instance ) {
@@ -232,14 +252,16 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	/**
 	 * Generate HTML for a slideshow Widget
 	 *
+	 * @todo Is slideshow_widget() still used?
+	 *
 	 * @param array $args Display arguments including before_title, after_title, before_widget, and after_widget.
-	 * @param array $instance The Widget instance to generate HTML for
+	 * @param array $instance The Widget instance to generate HTML for.
 	 * @return string String of HTML representing a slideshow gallery
 	 */
 	public function slideshow_widget( $args, $instance ) {
 		global $content_width;
 
-		require_once plugin_dir_path( realpath( dirname( __FILE__ ) . '/../shortcodes/slideshow.php' ) ) . 'slideshow.php';
+		require_once plugin_dir_path( realpath( __DIR__ . '/../shortcodes/slideshow.php' ) ) . 'slideshow.php';
 
 		if ( ! class_exists( 'Jetpack_Slideshow_Shortcode' ) ) {
 			return;
@@ -259,9 +281,9 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 
 		foreach ( $instance['attachments'] as $attachment ) {
 			$attachment_image_src = wp_get_attachment_image_src( $attachment->ID, 'full' );
-			$attachment_image_src = jetpack_photon_url( $attachment_image_src[0], array( 'w' => $this->_instance_width ) ); // [url, width, height]
+			$attachment_image_src = Image_CDN_Core::cdn_url( $attachment_image_src[0], array( 'w' => $this->instance_width ) ); /** [url, width, height] */
 
-			$caption = wptexturize( strip_tags( $attachment->post_excerpt ) );
+			$caption = wptexturize( wp_strip_all_tags( $attachment->post_excerpt ) );
 
 			$gallery[] = (object) array(
 				'src'     => (string) esc_url_raw( $attachment_image_src ),
@@ -270,16 +292,14 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 			);
 		}
 
-		$max_width  = intval( get_option( 'large_size_w' ) );
+		$max_width  = (int) get_option( 'large_size_w' );
 		$max_height = 175;
 
-		if ( intval( $content_width ) > 0 ) {
-			$max_width = min( intval( $content_width ), $max_width );
+		if ( (int) $content_width > 0 ) {
+			$max_width = min( (int) $content_width, $max_width );
 		}
 
-		$color     = Jetpack_Options::get_option( 'slideshow_background_color', 'black' );
-		$autostart = isset( $attr['autostart'] ) ? $attr['autostart'] : true;
-
+		$color   = Jetpack_Options::get_option( 'slideshow_background_color', 'black' );
 		$js_attr = array(
 			'gallery'   => $gallery,
 			'selector'  => $gallery_instance,
@@ -287,7 +307,7 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 			'height'    => $max_height,
 			'trans'     => 'fade',
 			'color'     => $color,
-			'autostart' => $autostart,
+			'autostart' => true,
 		);
 
 		$html = $slideshow->slideshow_js( $js_attr );
@@ -296,29 +316,38 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	}
 
 	/**
-	 * tiled_gallery_content_width filter
-	 *
 	 * Used to adjust the content width of Jetpack_Tiled_Gallery's in sidebars
 	 *
-	 * $this->_instance_width is filtered in widget() and this filter is added then removed in widget()
+	 * $this->instance_width is filtered in widget() and this filter is added then removed in widget()
 	 *
-	 * @param int $width int The original width value
 	 * @return int The filtered width
 	 */
-	public function tiled_gallery_content_width( $width ) {
-		return $this->_instance_width;
+	public function tiled_gallery_content_width() {
+		return $this->instance_width;
 	}
 
+	/**
+	 * Outputs the widget settings form.
+	 *
+	 * @param array $instance Current settings.
+	 */
 	public function form( $instance ) {
 		$defaults       = $this->defaults();
-		$allowed_values = $this->allowed_values();
+		$allowed_values = $this->allowed_values(); // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Used in included form template.
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
 
-		include dirname( __FILE__ ) . '/gallery/templates/form.php';
+		include __DIR__ . '/gallery/templates/form.php';
 	}
 
-	public function update( $new_instance, $old_instance ) {
+	/**
+	 * Save the widget options.
+	 *
+	 * @param array $new_instance The new instance options.
+	 * @param array $old_instance The old instance options.
+	 * @return array The saved options.
+	 */
+	public function update( $new_instance, $old_instance ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$instance = $this->sanitize( $new_instance );
 
 		return $instance;
@@ -328,9 +357,9 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 	 * Sanitize the $instance's values to the set of allowed values. If a value is not acceptable,
 	 * it is set to its default.
 	 *
-	 * Helps keep things nice and secure by whitelisting only allowed values
+	 * Helps keep things nice and secure by listing only allowed values.
 	 *
-	 * @param array $instance The Widget instance to sanitize values for
+	 * @param array $instance The Widget instance to sanitize values for.
 	 * @return array $instance The Widget instance with values sanitized
 	 */
 	public function sanitize( $instance ) {
@@ -338,6 +367,11 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 		$defaults       = $this->defaults();
 
 		foreach ( $instance as $key => $value ) {
+			if ( ! is_scalar( $value ) ) {
+				// $instance may hold an Array value type for the Jetpack widget visibility feature.
+				continue;
+			}
+
 			$value = trim( $value );
 
 			if ( isset( $allowed_values[ $key ] ) && $allowed_values[ $key ] && ! array_key_exists( $value, $allowed_values[ $key ] ) ) {
@@ -362,7 +396,7 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 		$max_columns = 5;
 
 		// Create an associative array of allowed column values. This just automates the generation of
-		// column <option>s, from 1 to $max_columns
+		// column <option>s, from 1 to $max_columns.
 		$allowed_columns = array_combine( range( 1, $max_columns ), range( 1, $max_columns ) );
 
 		return array(
@@ -399,22 +433,31 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 		);
 	}
 
+	/**
+	 * Enqueue frontend scripts.
+	 */
 	public function enqueue_frontend_scripts() {
 		wp_register_script(
 			'gallery-widget',
 			Assets::get_file_url_for_environment(
 				'_inc/build/widgets/gallery/js/gallery.min.js',
 				'modules/widgets/gallery/js/gallery.js'
-			)
+			),
+			array( 'jquery' ),
+			JETPACK__VERSION,
+			false
 		);
 
 		wp_enqueue_script( 'gallery-widget' );
 	}
 
+	/**
+	 * Enqueue admin scripts and styles.
+	 */
 	public function enqueue_admin_scripts() {
 		global $pagenow;
 
-		if ( 'widgets.php' == $pagenow || 'customize.php' == $pagenow ) {
+		if ( 'widgets.php' === $pagenow || 'customize.php' === $pagenow ) {
 			wp_enqueue_media();
 
 			wp_enqueue_script(
@@ -424,10 +467,12 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 					'modules/widgets/gallery/js/admin.js'
 				),
 				array(
+					'jquery',
 					'media-models',
 					'media-views',
 				),
-				'20150501'
+				'20150501',
+				false
 			);
 
 			$js_settings = array(
@@ -435,7 +480,12 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 			);
 
 			wp_localize_script( 'gallery-widget-admin', '_wpGalleryWidgetAdminSettings', $js_settings );
-			wp_enqueue_style( 'gallery-widget-admin', plugins_url( '/gallery/css/admin.css', __FILE__ ) );
+			wp_enqueue_style(
+				'gallery-widget-admin',
+				plugins_url( '/gallery/css/admin.css', __FILE__ ),
+				array(),
+				JETPACK__VERSION
+			);
 			wp_style_add_data( 'gallery-widget-admin', 'rtl', 'replace' );
 		}
 	}
@@ -443,6 +493,9 @@ class Jetpack_Gallery_Widget extends WP_Widget {
 
 add_action( 'widgets_init', 'jetpack_gallery_widget_init' );
 
+/**
+ * Jetpack Gallery widget init; the widget is conditionally registered.
+ */
 function jetpack_gallery_widget_init() {
 	/**
 	 * Allow the Gallery Widget to be enabled even when Core supports the Media Gallery Widget

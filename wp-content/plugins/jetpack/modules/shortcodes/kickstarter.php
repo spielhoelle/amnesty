@@ -5,7 +5,7 @@
  * Usage:
  * [kickstarter url="https://www.kickstarter.com/projects/peaktoplateau/yak-wool-baselayers-from-tibet-to-the-world" width="480" height=""]
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 add_shortcode( 'kickstarter', 'jetpack_kickstarter_shortcode' );
@@ -64,7 +64,7 @@ function jetpack_kickstarter_embed_to_shortcode( $content ) {
 			$params = $match[1] . $match[3];
 
 			if ( 'regexp_ent' === $reg ) {
-				$params = html_entity_decode( $params );
+				$params = html_entity_decode( $params, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 );
 			}
 
 			$params = wp_kses_hair( $params, array( 'http' ) );

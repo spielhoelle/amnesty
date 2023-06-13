@@ -429,11 +429,13 @@ class wfIssues {
 		}
 		$overflowCount = $this->totalIssues - count($this->newIssues);
 		$finalIssues = array();
+		$previousIssues = array();
 		foreach($this->newIssues as $newIssue){
 			$alreadyEmailed = false;
 			foreach($emailedIssues as $emailedIssue){
 				if($newIssue['ignoreP'] == $emailedIssue['ignoreP'] || $newIssue['ignoreC'] == $emailedIssue['ignoreC']){
 					$alreadyEmailed = true;
+					$previousIssues[] = $newIssue;
 					break;
 				}
 			}
@@ -472,6 +474,7 @@ class wfIssues {
 		$content = wfUtils::tmpl('email_newIssues.php', array(
 			'isPaid' => wfConfig::get('isPaid'),
 			'issues' => $finalIssues,
+			'previousIssues' => $previousIssues,
 			'totals' => $totals,
 			'level' => $level,
 			'issuesNotShown' => $overflowCount,
@@ -481,19 +484,44 @@ class wfIssues {
 			));
 		
 		foreach ($emails as $email) {
-			$uniqueContent = str_replace('<!-- ##UNSUBSCRIBE## -->', sprintf(__('No longer an administrator for this site? <a href="%s" target="_blank">Click here</a> to stop receiving security alerts.', 'wordfence'), wfUtils::getSiteBaseURL() . '?_wfsf=removeAlertEmail&jwt=' . wfUtils::generateJWT(array('email' => $email))), $content);
+			$uniqueContent = str_replace('<!-- ##UNSUBSCRIBE## -->', wp_kses(sprintf(__('No longer an administrator for this site? <a href="%s" target="_blank">Click here</a> to stop receiving security alerts.', 'wordfence'), wfUtils::getSiteBaseURL() . '?_wfsf=removeAlertEmail&jwt=' . wfUtils::generateJWT(array('email' => $email))), array('a'=>array('href'=>array(), 'target'=>array()))), $content);
 			wp_mail($email, $subject, $uniqueContent, 'Content-type: text/html');
 		}
 	}
+	public function clearEmailedStatus($issues) {
+		if (empty($issues)) { return; }
+		
+		$emailed_issues = wfConfig::get_ser('emailedIssuesList', array());
+		if (!is_array($emailed_issues)) { return; }
+		
+		$updated = array();
+		foreach ($emailed_issues as $ei) {
+			$cleared = false;
+			foreach ($issues as $issue) {
+				if ($issue['ignoreP'] == $ei['ignoreP'] || $issue['ignoreC'] == $ei['ignoreC']) {
+					//Discard this one
+					$cleared = true;
+				}
+			}
+			if (!$cleared) {
+				$updated[] = $ei;
+			}
+		}
+		
+		wfConfig::set_ser('emailedIssuesList', $updated);
+	}
 	public function deleteIssue($id){ 
+		$this->clearEmailedStatus(array($this->getIssueByID($id)));
 		$this->getDB()->queryWrite("delete from " . $this->issuesTable . " where id=%d", $id);
 		if (wfCentral::isConnected()) {
 			wfCentral::deleteIssue($id);
 		}
 	}
 
-	public function deleteUpdateIssues($type)
-	{
+	public function deleteUpdateIssues($type) {
+		$issues = $this->getDB()->querySelect("SELECT id, status, ignoreP, ignoreC FROM {$this->issuesTable} WHERE status = 'new' AND type = '%s'", $type);
+		$this->clearEmailedStatus($issues);
+		
 		$this->getDB()->queryWrite("DELETE FROM {$this->issuesTable} WHERE status = 'new' AND type = '%s'", $type);
 
 		if (wfCentral::isConnected()) {
@@ -501,8 +529,10 @@ class wfIssues {
 		}
 	}
 
-	public function deleteAllUpdateIssues()
-	{
+	public function deleteAllUpdateIssues() {
+		$issues = $this->getDB()->querySelect("SELECT id, status, ignoreP, ignoreC FROM {$this->issuesTable} WHERE status = 'new' AND (type = 'wfUpgrade' OR type = 'wfPluginUpgrade' OR type = 'wfThemeUpgrade')");
+		$this->clearEmailedStatus($issues);
+		
 		$this->getDB()->queryWrite("DELETE FROM {$this->issuesTable} WHERE status = 'new' AND (type = 'wfUpgrade' OR type = 'wfPluginUpgrade' OR type = 'wfThemeUpgrade')");
 
 		if (wfCentral::isConnected()) {
@@ -515,6 +545,7 @@ class wfIssues {
 			if (wfCentral::isConnected()) {
 				wfCentral::deleteIssue($id);
 			}
+			$this->clearEmailedStatus(array($this->getIssueByID($id)));
 			$this->getDB()->queryWrite("delete from " . $this->issuesTable . " where id=%d", $id);
 		} else if($status == 'ignoreC' || $status == 'ignoreP' || $status == 'new'){
 			$this->getDB()->queryWrite("update " . $this->issuesTable . " set status='%s' where id=%d", $status, $id);
@@ -527,7 +558,7 @@ class wfIssues {
 			}
 		}
 	}
-	public function getIssueByID($id){
+	public function getIssueByID($id) {
 		$rec = $this->getDB()->querySingleRec("select * from " . $this->issuesTable . " where id=%d", $id);
 		$rec['data'] = unserialize($rec['data']);
 		return $rec;
@@ -577,12 +608,18 @@ class wfIssues {
 		foreach($ret as $status => &$issueList){
 			for($i = 0; $i < sizeof($issueList); $i++){
 				if ($issueList[$i]['type'] == 'file' || $issueList[$i]['type'] == 'knownfile') {
-					$localFile = $issueList[$i]['data']['file'];
-					if ($localFile != '.htaccess' && $localFile != $userIni) {
-						$localFile = ABSPATH . '/' . preg_replace('/^[\.\/]+/', '', $localFile);
+					if (array_key_exists('realFile', $issueList[$i]['data'])) {
+						$localFile = $issueList[$i]['data']['realFile'];
+						$issueList[$i]['data']['realFileToken'] = self::generateRealFileToken($localFile);
 					}
 					else {
-						$localFile = ABSPATH . '/' . $localFile;
+						$localFile = $issueList[$i]['data']['file'];
+						if ($localFile != '.htaccess' && $localFile != $userIni) {
+							$localFile = ABSPATH . '/' . preg_replace('/^[\.\/]+/', '', $localFile);
+						}
+						else {
+							$localFile = ABSPATH . '/' . $localFile;
+						}
 					}
 					
 					if(file_exists($localFile)){
@@ -715,5 +752,19 @@ class wfIssues {
 	 */
 	public function getIssuesTable() {
 		return $this->issuesTable;
+	}
+
+	private static function getRealFileTokenKey($realFile) {
+		return 'wf-real-file-' . base64_encode($realFile);
+	}
+
+	private static function generateRealFileToken($realFile) {
+		$key = self::getRealFileTokenKey($realFile);
+		return wp_create_nonce($key);
+	}
+
+	public static function verifyRealFileToken($token, $realFile) {
+		$key = self::getRealFileTokenKey($realFile);
+		return wp_verify_nonce($token, $key);
 	}
 }

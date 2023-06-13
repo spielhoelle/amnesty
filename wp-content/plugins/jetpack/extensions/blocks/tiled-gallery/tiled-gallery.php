@@ -5,11 +5,14 @@
  *
  * @since 6.9.0
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 namespace Automattic\Jetpack\Extensions;
 
+use Automattic\Jetpack\Blocks;
+use Automattic\Jetpack\Status;
+use Jetpack;
 use Jetpack_Gutenberg;
 use Jetpack_Plan;
 
@@ -31,12 +34,18 @@ class Tiled_Gallery {
 	 * Register the block
 	 */
 	public static function register() {
-		jetpack_register_block(
-			self::BLOCK_NAME,
-			array(
-				'render_callback' => array( __CLASS__, 'render' ),
-			)
-		);
+		if (
+			( defined( 'IS_WPCOM' ) && IS_WPCOM )
+			|| Jetpack::is_connection_ready()
+			|| ( new Status() )->is_offline_mode()
+		) {
+			Blocks::jetpack_register_block(
+				self::BLOCK_NAME,
+				array(
+					'render_callback' => array( __CLASS__, 'render' ),
+				)
+			);
+		}
 	}
 
 	/**
@@ -52,8 +61,8 @@ class Tiled_Gallery {
 
 		$is_squareish_layout = self::is_squareish_layout( $attr );
 
-		// Jetpack_Plan does not exist on WordPress.com.
-		if ( class_exists( 'Jetpack_Plan' ) ) {
+		// Jetpack_Plan::get does not exist on WordPress.com.
+		if ( method_exists( 'Jetpack_Plan', 'get' ) ) {
 			$jetpack_plan = Jetpack_Plan::get();
 			wp_localize_script( 'jetpack-gallery-settings', 'jetpack_plan', array( 'data' => $jetpack_plan['product_slug'] ) );
 		}
@@ -71,8 +80,8 @@ class Tiled_Gallery {
 
 			foreach ( $images[0] as $image_html ) {
 				if (
-					preg_match( '/data-width="([0-9]+)"/', $image_html, $img_height )
-					&& preg_match( '/data-height="([0-9]+)"/', $image_html, $img_width )
+					preg_match( '/data-width="([0-9]+)"/', $image_html, $img_width )
+					&& preg_match( '/data-height="([0-9]+)"/', $image_html, $img_height )
 					&& preg_match( '/src="([^"]+)"/', $image_html, $img_src )
 				) {
 					// Drop img src query string so it can be used as a base to add photon params

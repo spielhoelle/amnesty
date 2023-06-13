@@ -26,7 +26,7 @@ var W3tc_Lightbox = {
 			me.resize();
 		});
 
-		this.container.find('.lightbox-close').click(function() {
+		this.container.find('.lightbox-close').on( 'click', function() {
 			me.close();
 		});
 
@@ -310,8 +310,8 @@ function w3tc_lightbox_minify_recommendations(nonce) {
 				lightbox.load('admin.php?page=w3tc_minify&w3tc_test_minify_recommendations&theme_key=' + jQuery(this).val() + '&_wpnonce=' + nonce, lightbox.options.callback);
 			});
 
-			jQuery('#recom_js_check').click(function() {
-				if (jQuery('#recom_js_files :checkbox:checked').size()) {
+			jQuery('#recom_js_check').on( 'click', function() {
+				if (jQuery('#recom_js_files :checkbox:checked').length) {
 					jQuery('#recom_js_files :checkbox').removeAttr('checked');
 				} else {
 					jQuery('#recom_js_files :checkbox').attr('checked', 'checked');
@@ -320,8 +320,8 @@ function w3tc_lightbox_minify_recommendations(nonce) {
 				return false;
 			});
 
-			jQuery('#recom_css_check').click(function() {
-				if (jQuery('#recom_css_files :checkbox:checked').size()) {
+			jQuery('#recom_css_check').on( 'click', function() {
+				if (jQuery('#recom_css_files :checkbox:checked').length) {
 					jQuery('#recom_css_files :checkbox').removeAttr('checked');
 				} else {
 					jQuery('#recom_css_files :checkbox').attr('checked', 'checked');
@@ -330,7 +330,7 @@ function w3tc_lightbox_minify_recommendations(nonce) {
 				return false;
 			});
 
-			jQuery('.recom_apply', lightbox.container).click(function() {
+			jQuery('.recom_apply', lightbox.container).on( 'click', function() {
 				var theme = jQuery('#recom_theme').val();
 
 				jQuery('#js_files li').each(function() {
@@ -346,13 +346,13 @@ function w3tc_lightbox_minify_recommendations(nonce) {
 				});
 
 				jQuery('#recom_js_files li').each(function() {
-					if (jQuery(this).find(':checkbox:checked').size()) {
+					if (jQuery(this).find(':checkbox:checked').length) {
 						w3tc_minify_js_file_add(theme, jQuery(this).find('[name=recom_js_template]').val(), jQuery(this).find('[name=recom_js_location]').val(), jQuery(this).find('[name=recom_js_file]').val());
 					}
 				});
 
 				jQuery('#recom_css_files li').each(function() {
-					if (jQuery(this).find(':checkbox:checked').size()) {
+					if (jQuery(this).find(':checkbox:checked').length) {
 						w3tc_minify_css_file_add(theme, jQuery(this).find('[name=recom_css_template]').val(), jQuery(this).find('[name=recom_css_file]').val());
 					}
 				});
@@ -360,8 +360,8 @@ function w3tc_lightbox_minify_recommendations(nonce) {
 				w3tc_minify_js_theme(theme);
 				w3tc_minify_css_theme(theme);
 
-				w3tc_input_enable('.js_enabled', jQuery('#minify_js_enable:checked').size());
-				w3tc_input_enable('.css_enabled', jQuery('#minify_css_enable:checked').size());
+				w3tc_input_enable('.js_enabled', jQuery('#minify_js_enable:checked').length);
+				w3tc_input_enable('.css_enabled', jQuery('#minify_css_enable:checked').length);
 
 				lightbox.close();
 			});
@@ -375,7 +375,7 @@ function w3tc_lightbox_self_test(nonce) {
 		minHeight: 300,
 		url: 'admin.php?page=w3tc_dashboard&w3tc_test_self&_wpnonce=' + w3tc_nonce,
 		callback: function(lightbox) {
-				jQuery('.button-primary', lightbox.container).click(function() {
+				jQuery('.button-primary', lightbox.container).on( 'click', function() {
 				lightbox.close();
 			});
 		}
@@ -400,21 +400,26 @@ function w3tc_lightbox_upgrade(nonce, data_src, renew_key) {
 		(renew_key ? '&renew_key=' + encodeURIComponent(renew_key) : '') +
 		(client_id ? '&client_id=' + encodeURIComponent(client_id) : ''),
 	callback: function(lightbox) {
-		lightbox.options.height = jQuery('#w3tc-upgrade').height() - 57;
-		jQuery('.button-primary', lightbox.container).click(function() {
+		lightbox.options.height = jQuery('#w3tc-upgrade').outerHeight();
+
+		jQuery('.button-primary', lightbox.container).on( 'click', function() {
 			lightbox.close();
 		});
-		jQuery('#w3tc-purchase', lightbox.container).click(function() {
+		jQuery('#w3tc-purchase', lightbox.container).on( 'click', function() {
 			lightbox.close();
 			w3tc_lightbox_buy_plugin(nonce, data_src, renew_key, client_id);
 		});
-		jQuery('#w3tc-purchase-link', lightbox.container).click(function() {
+		jQuery('#w3tc-purchase-link', lightbox.container).on( 'click', function() {
 			lightbox.close();
 
 			jQuery([document.documentElement, document.body]).animate({
 				scrollTop: jQuery("#licensing").offset().top
 			}, 2000);
 		});
+
+		// Allow for customizations of the "upgrade" overlay specifically.
+		jQuery( '.w3tc-overlay' ).addClass( 'w3tc-overlay-upgrade' );
+
 		lightbox.resize();
 	}
   });
@@ -464,7 +469,7 @@ function w3tc_lightbox_buy_plugin(nonce, data_src, renew_key, client_id) {
 				attachEvent("onmessage", w3tc_license_listener);
 			}
 
-			jQuery('.button-primary', lightbox.container).click(function() {
+			jQuery('.button-primary', lightbox.container).on( 'click', function() {
 				lightbox.close();
 			});
 		}
@@ -485,25 +490,25 @@ function w3tc_lightbox_save_licence_key(license_key, nonce, callback) {
 }
 
 jQuery(function() {
-	jQuery('.button-minify-recommendations').click(function() {
+	jQuery('.button-minify-recommendations').on( 'click', function() {
 		var nonce = jQuery(this).metadata().nonce;
 		w3tc_lightbox_minify_recommendations(nonce);
 		return false;
 	});
 
-	jQuery('.button-self-test').click(function() {
+	jQuery('.button-self-test').on( 'click', function() {
 		var nonce = jQuery(this).metadata().nonce;
 		w3tc_lightbox_self_test(nonce);
 		return false;
 	});
 
-	jQuery('.button-buy-plugin').click(function() {
-		var data_src = jQuery(this).attr('data-src');
-		var nonce = jQuery(this).attr('data-nonce');
+	jQuery('.button-buy-plugin').on( 'click', function() {
+		var data_src = jQuery(this).data('src');
+		var nonce = jQuery(this).data('nonce');
 		if (!nonce) {
 			nonce = w3tc_nonce;
 		}
-		var renew_key = jQuery(this).attr('data-renew-key');
+		var renew_key = jQuery(this).data('renew-key');
 
 		w3tc_lightbox_upgrade(nonce, data_src, renew_key);
 		jQuery('#w3tc-license-instruction').show();

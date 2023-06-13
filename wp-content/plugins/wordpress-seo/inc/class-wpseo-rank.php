@@ -146,6 +146,19 @@ class WPSEO_Rank {
 	}
 
 	/**
+	 * Returns an inclusive language label for this rank.
+	 * The only difference with get_label above is that we return "Potentially non-inclusive" for an OK rank.
+	 *
+	 * @return string
+	 */
+	public function get_inclusive_language_label() {
+		if ( $this->rank === self::OK ) {
+			return __( 'Potentially non-inclusive', 'wordpress-seo' );
+		}
+		return $this->get_label();
+	}
+
+	/**
 	 * Returns a label for use in a drop down.
 	 *
 	 * @return mixed
@@ -216,7 +229,7 @@ class WPSEO_Rank {
 	 */
 	public function get_starting_score() {
 		// No index does not have a starting score.
-		if ( self::NO_INDEX === $this->rank ) {
+		if ( $this->rank === self::NO_INDEX ) {
 			return -1;
 		}
 
@@ -230,7 +243,7 @@ class WPSEO_Rank {
 	 */
 	public function get_end_score() {
 		// No index does not have an end score.
-		if ( self::NO_INDEX === $this->rank ) {
+		if ( $this->rank === self::NO_INDEX ) {
 			return -1;
 		}
 

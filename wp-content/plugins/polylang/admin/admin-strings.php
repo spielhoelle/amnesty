@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * A fully static class to manage strings translations on admin side
@@ -6,13 +9,31 @@
  * @since 1.6
  */
 class PLL_Admin_Strings {
-	protected static $strings = array(); // strings to translate
-	protected static $default_strings; // default strings to register
+	/**
+	 * Stores the strings to translate.
+	 *
+	 * @var array {
+	 *   @type string $name      A unique name for the string.
+	 *   @type string $string    The actual string to translate.
+	 *   @type string $context   The group in which the string is registered.
+	 *   @type bool   $multiline Whether the string table should display a multiline textarea or a single line input.
+	 * }
+	 */
+	protected static $strings = array();
+
+	/**
+	 * The strings to register by default.
+	 *
+	 * @var string[]|null
+	 */
+	protected static $default_strings;
 
 	/**
 	 * Add filters
 	 *
 	 * @since 1.6
+	 *
+	 * @return void
 	 */
 	public static function init() {
 		// default strings translations sanitization
@@ -28,14 +49,9 @@ class PLL_Admin_Strings {
 	 * @param string $string    The string to register
 	 * @param string $context   Optional, the group in which the string is registered, defaults to 'polylang'
 	 * @param bool   $multiline Optional, whether the string table should display a multiline textarea or a single line input, defaults to single line
+	 * @return void
 	 */
 	public static function register_string( $name, $string, $context = 'Polylang', $multiline = false ) {
-		// Backward compatibility with Polylang older than 1.1
-		if ( is_bool( $context ) ) {
-			$multiline = $context;
-			$context = 'Polylang';
-		}
-
 		if ( $string && is_scalar( $string ) ) {
 			self::$strings[ md5( $string ) ] = compact( 'name', 'string', 'context', 'multiline' );
 		}
@@ -50,20 +66,9 @@ class PLL_Admin_Strings {
 	 */
 	public static function &get_strings() {
 		self::$default_strings = array(
-			'options' => array(
-				'blogname'        => __( 'Site Title', 'polylang' ),
-				'blogdescription' => __( 'Tagline', 'polylang' ),
-				'date_format'     => __( 'Date Format', 'polylang' ),
-				'time_format'     => __( 'Time Format', 'polylang' ),
-			),
 			'widget_title' => __( 'Widget title', 'polylang' ),
 			'widget_text'  => __( 'Widget text', 'polylang' ),
 		);
-
-		// WP strings
-		foreach ( self::$default_strings['options'] as $option => $string ) {
-			self::register_string( $string, get_option( $option ), 'WordPress' );
-		}
 
 		// Widgets titles
 		global $wp_registered_widgets;
@@ -118,11 +123,6 @@ class PLL_Admin_Strings {
 	 * @return string
 	 */
 	public static function sanitize_string_translation( $translation, $name ) {
-
-		if ( false !== ( $option = array_search( $name, self::$default_strings['options'], true ) ) ) {
-			$translation = sanitize_option( $option, $translation );
-		}
-
 		if ( $name == self::$default_strings['widget_title'] ) {
 			$translation = sanitize_text_field( $translation );
 		}

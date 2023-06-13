@@ -14,7 +14,7 @@ class Util_Admin {
 		$page_url = Util_Request::get_string( 'page' );
 		if ( $url == '' ) {
 			if ( $check_referrer && !empty( $_SERVER['HTTP_REFERER'] ) ) {
-				$url = $_SERVER['HTTP_REFERER'];
+				$url = isset( $_SERVER['HTTP_REFERER'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '';
 			} else {
 				$url = 'admin.php';
 				if ( empty( $page ) )
@@ -380,7 +380,7 @@ class Util_Admin {
 			if ( $new_config->get_boolean( 'minify.css.enable' ) && ( $new_config->get_boolean( 'minify.auto' ) || count( $new_config->get_array( 'minify.css.groups' ) ) ) ) {
 				$minify_dependencies = array_merge( $minify_dependencies, array(
 						'minify.css.engine',
-						'minify.css.combine',
+						'minify.css.method',
 						'minify.css.strip.comments',
 						'minify.css.strip.crlf',
 						'minify.css.imports',
@@ -411,6 +411,7 @@ class Util_Admin {
 			if ( $new_config->get_boolean( 'minify.js.enable' ) && ( $new_config->get_boolean( 'minify.auto' ) || count( $new_config->get_array( 'minify.js.groups' ) ) ) ) {
 				$minify_dependencies = array_merge( $minify_dependencies, array(
 						'minify.js.engine',
+						'minify.js.method',
 						'minify.js.combine.header',
 						'minify.js.combine.body',
 						'minify.js.combine.footer',
@@ -712,7 +713,7 @@ class Util_Admin {
 			return $parse_url['host'];
 		}
 
-		return $_SERVER['HTTP_HOST'];
+		return isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
 	}
 
 	/*
@@ -733,10 +734,15 @@ class Util_Admin {
 	 * @return bool
 	 */
 	static public function is_w3tc_admin_page() {
-		if ( isset( $_GET['page'] ) && substr( $_GET['page'], 0, 5 ) == 'w3tc_' )
+		$page_val = Util_Request::get_string( 'page' );
+		if ( ! empty( $page_val ) && 'w3tc_' === substr( $page_val, 0, 5 ) ) {
 			return true;
-		if ( isset( $_REQUEST['action'] ) && substr( $_REQUEST['action'], 0, 5 ) == 'w3tc_' )
+		}
+
+		$action_val = Util_Request::get_string( 'action' );
+		if ( ! empty( $action_val ) && 'w3tc_' === substr( $action_val, 0, 5 ) ) {
 			return true;
+		}
 
 		return false;
 	}

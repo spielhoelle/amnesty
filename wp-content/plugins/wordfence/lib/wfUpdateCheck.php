@@ -1,6 +1,11 @@
 <?php
 
 class wfUpdateCheck {
+	const VULN_SEVERITY_CRITICAL = 90;
+	const VULN_SEVERITY_HIGH = 70;
+	const VULN_SEVERITY_MEDIUM = 40;
+	const VULN_SEVERITY_LOW = 1;
+	const VULN_SEVERITY_NONE = 0;
 
 	private $needs_core_update = false;
 	private $core_update_version = 0;
@@ -9,7 +14,136 @@ class wfUpdateCheck {
 	private $plugin_slugs = array();
 	private $theme_updates = array();
 	private $api = null;
+	
+	/**
+	 * This hook exists because some plugins override their own update check and can return invalid 
+	 * responses (e.g., null) due to logic errors or their update check server being unreachable. This
+	 * can interfere with our scan running the outdated plugins check. When scanning, we adjust the 
+	 * response in those cases to be `false`, which causes WP to fall back to the plugin repo data.
+	 */
+	public static function installPluginAPIFixer() {
+		add_filter('plugins_api', 'wfUpdateCheck::_pluginAPIFixer', 999, 3);
+	}
+	
+	public static function _pluginAPIFixer($result, $action, $args) {
+		if ($result === false || is_object($result) || is_array($result)) {
+			return $result;
+		}
+		
+		if (!wfScanEngine::isScanRunning(true)) { //Skip fixing if it's not the call the scanner made
+			return $result;
+		}
+		
+		$slug = null;
+		if (is_object($args) && isset($args->slug)) {
+			$slug = $args->slug;
+		}
+		else if (is_array($args) && isset($args['slug'])) {
+			$slug = $args['slug'];
+		}
+		wordfence::status(2, 'info', sprintf(/* translators: 1. Plugin slug. */ __('Outdated plugin scan adjusted invalid return value in plugins_api filter for %s', 'wordfence'), $slug));
+		return false;
+	}
 
+	public static function syncAllVersionInfo() {
+		// Load the core/plugin/theme versions into the WAF configuration.
+		wfConfig::set('wordpressVersion', wfUtils::getWPVersion());
+		wfWAFConfig::set('wordpressVersion', wfUtils::getWPVersion(), wfWAF::getInstance(), 'synced');
+
+		if (!function_exists('get_plugins')) {
+			require_once(ABSPATH . '/wp-admin/includes/plugin.php');
+		}
+
+		$pluginVersions = array();
+		foreach (get_plugins() as $pluginFile => $pluginData) {
+			$slug = plugin_basename($pluginFile);
+			if (preg_match('/^([^\/]+)\//', $pluginFile, $matches)) {
+				$slug = $matches[1];
+			} else if (preg_match('/^([^\/.]+)\.php$/', $pluginFile, $matches)) {
+				$slug = $matches[1];
+			}
+			$pluginVersions[$slug] = isset($pluginData['Version']) ? $pluginData['Version'] : null;
+		}
+
+		wfConfig::set_ser('wordpressPluginVersions', $pluginVersions);
+		wfWAFConfig::set('wordpressPluginVersions', $pluginVersions, wfWAF::getInstance(), 'synced');
+
+		if (!function_exists('wp_get_themes')) {
+			require_once(ABSPATH . '/wp-includes/theme.php');
+		}
+
+		$themeVersions = array();
+		foreach (wp_get_themes() as $slug => $theme) {
+			$themeVersions[$slug] = isset($theme['Version']) ? $theme['Version'] : null;
+		}
+
+		wfConfig::set_ser('wordpressThemeVersions', $themeVersions);
+		wfWAFConfig::set('wordpressThemeVersions', $themeVersions, wfWAF::getInstance(), 'synced');
+	}
+	
+	public static function cvssScoreSeverity($score) {
+		$intScore = floor($score * 10);
+		if ($intScore >= self::VULN_SEVERITY_CRITICAL) {
+			return self::VULN_SEVERITY_CRITICAL;
+		}
+		else if ($intScore >= self::VULN_SEVERITY_HIGH) {
+			return self::VULN_SEVERITY_HIGH;
+		}
+		else if ($intScore >= self::VULN_SEVERITY_MEDIUM) {
+			return self::VULN_SEVERITY_MEDIUM;
+		}
+		else if ($intScore >= self::VULN_SEVERITY_LOW) {
+			return self::VULN_SEVERITY_LOW;
+		}
+		
+		return self::VULN_SEVERITY_NONE;
+	}
+	
+	public static function cvssScoreSeverityLabel($score) {
+		$severity = self::cvssScoreSeverity($score);
+		switch ($severity) {
+			case self::VULN_SEVERITY_CRITICAL:
+				return __('Critical', 'wordfence');
+			case self::VULN_SEVERITY_HIGH:
+				return __('High', 'wordfence');
+			case self::VULN_SEVERITY_MEDIUM:
+				return __('Medium', 'wordfence');
+			case self::VULN_SEVERITY_LOW:
+				return __('Low', 'wordfence');
+		}
+		return __('None', 'wordfence');
+	}
+	
+	public static function cvssScoreSeverityHexColor($score) {
+		$severity = self::cvssScoreSeverity($score);
+		switch ($severity) {
+			case self::VULN_SEVERITY_CRITICAL:
+				return '#cc0500';
+			case self::VULN_SEVERITY_HIGH:
+				return '#df3d03';
+			case self::VULN_SEVERITY_MEDIUM:
+				return '#f9a009';
+			case self::VULN_SEVERITY_LOW:
+				return '#ffcb0d';
+		}
+		return '#000000';
+	}
+	
+	public static function cvssScoreSeverityClass($score) {
+		$severity = self::cvssScoreSeverity($score);
+		switch ($severity) {
+			case self::VULN_SEVERITY_CRITICAL:
+				return 'wf-vulnerability-severity-critical';
+			case self::VULN_SEVERITY_HIGH:
+				return 'wf-vulnerability-severity-high';
+			case self::VULN_SEVERITY_MEDIUM:
+				return 'wf-vulnerability-severity-medium';
+			case self::VULN_SEVERITY_LOW:
+				return 'wf-vulnerability-severity-low';
+		}
+		return 'wf-vulnerability-severity-none';
+	}
+	
 	public function __construct() {
 		$this->api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
 	}
@@ -74,30 +208,92 @@ class wfUpdateCheck {
 		return $this;
 	}
 
+	private function checkPluginFile($plugin, &$installedPlugins) {
+		if (!array_key_exists($plugin, $installedPlugins))
+			return null;
+		$file = wfUtils::getPluginBaseDir() . $plugin;
+		if (!file_exists($file)) {
+			unset($installedPlugins[$plugin]);
+			return null;
+		}
+		return $file;
+	}
+
+	private function initializePluginUpdateData($plugin, &$installedPlugins, $checkVulnerabilities, $populator = null) {
+		$file = $this->checkPluginFile($plugin, $installedPlugins);
+		if ($file === null)
+			return null;
+		$data = $installedPlugins[$plugin];
+		$data['pluginFile'] = $file;
+		if ($populator !== null)
+			$populator($data, $file);
+		if (!array_key_exists('slug', $data) || empty($data['slug']))
+			$data['slug'] = $this->extractSlug($plugin);
+		$slug = $data['slug'];
+		if ($slug !== null) {
+			$vulnerable = $checkVulnerabilities ? $this->isPluginVulnerable($slug, $data['Version']) : null;
+			$data['vulnerable'] = !empty($vulnerable);
+			if ($data['vulnerable']) {
+				if (isset($vulnerable['link']) && is_string($vulnerable['link'])) { $data['vulnerabilityLink'] = $vulnerable['link']; }
+				if (isset($vulnerable['score'])) {
+					$data['cvssScore'] = number_format(floatval($vulnerable['score']), 1);
+					$data['severityColor'] = self::cvssScoreSeverityHexColor($data['cvssScore']);
+					$data['severityLabel'] = self::cvssScoreSeverityLabel($data['cvssScore']);
+					$data['severityClass'] = self::cvssScoreSeverityClass($data['cvssScore']);
+				}
+				if (isset($vulnerable['vector']) && is_string($vulnerable['vector'])) { $data['cvssVector'] = $vulnerable['vector']; }
+			}
+			$this->plugin_slugs[] = $slug;
+			$this->all_plugins[$slug] = $data;
+		}
+		unset($installedPlugins[$plugin]);
+		return $data;
+	}
+
+	public function extractSlug($plugin, $data = null) {
+		$slug = null;
+		if (is_array($data) && array_key_exists('slug', $data))
+			$slug = $data['slug'];
+		if (!is_string($slug) || empty($slug)) {
+			if (preg_match('/^([^\/]+)\//', $plugin, $matches)) {
+				$slug = $matches[1];
+			}
+			else if (preg_match('/^([^\/.]+)\.php$/', $plugin, $matches)) {
+				$slug = $matches[1];
+			}
+		}
+		return $slug;
+	}
+
+	private static function requirePluginsApi() {
+		if (!function_exists('plugins_api'))
+			require_once(ABSPATH . '/wp-admin/includes/plugin-install.php');
+	}
+
+	private function fetchPluginUpdates($useCache = true) {
+		$update_plugins = get_site_transient('update_plugins');
+		if ($useCache && isset($update_plugins->last_checked) && 12 * HOUR_IN_SECONDS > (time() - $update_plugins->last_checked)) //Duplicate of _maybe_update_plugins, which is a private call
+			return $update_plugins;
+		if (!function_exists('wp_update_plugins'))
+			require_once(ABSPATH . WPINC . '/update.php');
+		wp_update_plugins();
+		return get_site_transient('update_plugins');
+	}
+
 	/**
 	 * Check if any plugins need an update.
 	 *
+	 * @param bool $checkVulnerabilities whether or not to check for vulnerabilities while checking updates
+	 *
 	 * @return $this
 	 */
-	public function checkPluginUpdates($useCachedValued = true) {
-		$this->plugin_updates = array();
+	public function checkPluginUpdates($useCachedValued = true, $checkVulnerabilities = true) {
+		if($checkVulnerabilities)
+			$this->plugin_updates = array();
 
-		if (!function_exists('wp_update_plugins')) {
-			require_once(ABSPATH . WPINC . '/update.php');
-		}
+		self::requirePluginsApi();
 
-		if (!function_exists('plugins_api')) {
-			require_once(ABSPATH . '/wp-admin/includes/plugin-install.php');
-		}
-		
-		$update_plugins = get_site_transient('update_plugins');
-		if ($useCachedValued && isset($update_plugins->last_checked) && 12 * HOUR_IN_SECONDS > (time() - $update_plugins->last_checked)) { //Duplicate of _maybe_update_plugins, which is a private call
-			//Do nothing, use cached value
-		}
-		else {
-			wp_update_plugins();
-			$update_plugins = get_site_transient('update_plugins');
-		}
+		$update_plugins = $this->fetchPluginUpdates();
 		
 		//Get the full plugin list
 		if (!function_exists('get_plugins')) {
@@ -105,120 +301,37 @@ class wfUpdateCheck {
 		}
 		$installedPlugins = get_plugins();
 
+		$context = $this;
+
 		if ($update_plugins && !empty($update_plugins->response)) {
 			foreach ($update_plugins->response as $plugin => $vals) {
-				if (!function_exists('get_plugin_data')) {
-					require_once(ABSPATH . '/wp-admin/includes/plugin.php');
-				}
-				
-				$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-				if (!file_exists($pluginFile)) { //Plugin has been removed since the update status was pulled
-					unset($installedPlugins[$plugin]);
-					continue;
-				}
-				
-				$valsArray = (array) $vals;
-				
-				$slug = (isset($valsArray['slug']) ? $valsArray['slug'] : null);
-				if ($slug === null) { //Plugin may have been removed from the repo or was never in it so guess
-					if (preg_match('/^([^\/]+)\//', $pluginFile, $matches)) {
-						$slug = $matches[1];
-					}
-					else if (preg_match('/^([^\/.]+)\.php$/', $pluginFile, $matches)) {
-						$slug = $matches[1];
-					}
-				}
-				
-				$data = get_plugin_data($pluginFile);
-				$data['pluginFile'] = $pluginFile;
-				$data['newVersion'] = (isset($valsArray['new_version']) ? $valsArray['new_version'] : 'Unknown');
-				$data['slug'] = $slug;
-				$data['wpURL'] = (isset($valsArray['url']) ? rtrim($valsArray['url'], '/') : null);
+				$data = $this->initializePluginUpdateData($plugin, $installedPlugins, $checkVulnerabilities, function (&$data, $file) use ($context, $plugin, $vals) {
+					$vals = (array) $vals;
+					$data['slug'] = $context->extractSlug($plugin, $vals);
+					$data['newVersion'] = (isset($vals['new_version']) ? $vals['new_version'] : 'Unknown');
+					$data['wpURL'] = (isset($vals['url']) ? rtrim($vals['url'], '/') : null);
+					$data['updateAvailable'] = true;
+				});
 
-				//Check the vulnerability database
-				if ($slug !== null && isset($data['Version'])) {
-					$status = $this->isPluginVulnerable($slug, $data['Version']);
-					$data['vulnerable'] = !!$status;
-					if (is_string($status)) {
-						$data['vulnerabilityLink'] = $status;
-					}
-				}
-				else {
-					$data['vulnerable'] = false;
-				}
-				
-				if ($slug !== null) {
-					$this->plugin_slugs[] = $slug;
-					$this->all_plugins[$slug] = $data;
-				}
-
-				$this->plugin_updates[] = $data;
-				unset($installedPlugins[$plugin]);
+				if($checkVulnerabilities && $data !== null)
+					$this->plugin_updates[] = $data;
 			}
 		}
 		
 		//We have to grab the slugs from the update response because no built-in function exists to return the true slug from the local files
 		if ($update_plugins && !empty($update_plugins->no_update)) {
 			foreach ($update_plugins->no_update as $plugin => $vals) {
-				if (!function_exists('get_plugin_data')) {
-					require_once(ABSPATH . '/wp-admin/includes/plugin.php');
-				}
-				
-				$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-				if (!file_exists($pluginFile)) { //Plugin has been removed since the update status was pulled
-					unset($installedPlugins[$plugin]);
-					continue;
-				}
-				
-				$valsArray = (array) $vals;
-				
-				$data = get_plugin_data($pluginFile);
-				$data['pluginFile'] = $pluginFile;
-				$data['slug'] = (isset($valsArray['slug']) ? $valsArray['slug'] : null);
-				$data['wpURL'] = (isset($valsArray['url']) ? rtrim($valsArray['url'], '/') : null);
-				
-				//Check the vulnerability database
-				if (isset($valsArray['slug']) && isset($data['Version'])) {
-					$status = $this->isPluginVulnerable($valsArray['slug'], $data['Version']);
-					$data['vulnerable'] = !!$status;
-					if (is_string($status)) {
-						$data['vulnerabilityLink'] = $status;
-					}
-				}
-				else {
-					$data['vulnerable'] = false;
-				}
-				
-				if (isset($valsArray['slug'])) {
-					$this->plugin_slugs[] = $valsArray['slug'];
-					$this->all_plugins[$valsArray['slug']] = $data;
-				}
-				
-				unset($installedPlugins[$plugin]);
+				$this->initializePluginUpdateData($plugin, $installedPlugins, $checkVulnerabilities, function (&$data, $file) use ($context, $plugin, $vals) {
+					$vals = (array) $vals;
+					$data['slug'] = $context->extractSlug($plugin, $vals);
+					$data['wpURL'] = (isset($vals['url']) ? rtrim($vals['url'], '/') : null);
+				});
 			}	
 		}
 		
 		//Get the remaining plugins (not in the wordpress.org repo for whatever reason)
 		foreach ($installedPlugins as $plugin => $data) {
-			$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-			if (!file_exists($pluginFile)) { //Plugin has been removed since the list was generated
-				continue;
-			}
-			
-			$data = get_plugin_data($pluginFile);
-			
-			$slug = null;
-			if (preg_match('/^([^\/]+)\//', $plugin, $matches)) {
-				$slug = $matches[1];
-			}
-			else if (preg_match('/^([^\/.]+)\.php$/', $plugin, $matches)) {
-				$slug = $matches[1];
-			}
-			
-			if ($slug !== null) {
-				$this->plugin_slugs[] = $slug;
-				$this->all_plugins[$slug] = $data;
-			}
+			$data = $this->initializePluginUpdateData($plugin, $installedPlugins, $checkVulnerabilities);
 		}
 
 		return $this;
@@ -227,10 +340,13 @@ class wfUpdateCheck {
 	/**
 	 * Check if any themes need an update.
 	 *
+	 * @param bool $checkVulnerabilities whether or not to check for vulnerabilities while checking for updates
+	 *
 	 * @return $this
 	 */
-	public function checkThemeUpdates($useCachedValued = true) {
-		$this->theme_updates = array();
+	public function checkThemeUpdates($useCachedValued = true, $checkVulnerabilities = true) {
+		if($checkVulnerabilities)
+			$this->theme_updates = array();
 
 		if (!function_exists('wp_update_themes')) {
 			require_once(ABSPATH . WPINC . '/update.php');
@@ -245,7 +361,7 @@ class wfUpdateCheck {
 			$update_themes = get_site_transient('update_themes');
 		}
 
-		if ($update_themes && (!empty($update_themes->response))) {
+		if ($update_themes && (!empty($update_themes->response)) && $checkVulnerabilities) {
 			if (!function_exists('wp_get_themes')) {
 				require_once(ABSPATH . '/wp-includes/theme.php');
 			}
@@ -258,7 +374,7 @@ class wfUpdateCheck {
 							$vulnerable = $this->isThemeVulnerable($theme, $themeData['Version']);
 						}
 						
-						$this->theme_updates[] = array(
+						$data = array(
 							'newVersion' => (isset($vals['new_version']) ? $vals['new_version'] : 'Unknown'),
 							'package'    => (isset($vals['package']) ? $vals['package'] : null),
 							'URL'        => (isset($vals['url']) ? $vals['url'] : null),
@@ -267,6 +383,20 @@ class wfUpdateCheck {
 							'version'    => $themeData['Version'],
 							'vulnerable' => $vulnerable
 						);
+						
+						$data['vulnerable'] = !empty($vulnerable);
+						if ($data['vulnerable']) {
+							if (isset($vulnerable['link']) && is_string($vulnerable['link'])) { $data['vulnerabilityLink'] = $vulnerable['link']; }
+							if (isset($vulnerable['score'])) {
+								$data['cvssScore'] = number_format(floatval($vulnerable['score']), 1);
+								$data['severityColor'] = self::cvssScoreSeverityHexColor($data['cvssScore']);
+								$data['severityLabel'] = self::cvssScoreSeverityLabel($data['cvssScore']);
+								$data['severityClass'] = self::cvssScoreSeverityClass($data['cvssScore']);
+							}
+							if (isset($vulnerable['vector']) && is_string($vulnerable['vector'])) { $data['cvssVector'] = $vulnerable['vector']; }
+						}
+						
+						$this->theme_updates[] = $data;
 					}
 				}
 			}
@@ -278,15 +408,29 @@ class wfUpdateCheck {
 		$this->checkPluginVulnerabilities();
 		$this->checkThemeVulnerabilities();
 	}
-	
-	public function checkPluginVulnerabilities() {
-		if (!function_exists('wp_update_plugins')) {
-			require_once(ABSPATH . WPINC . '/update.php');
-		}
-		
-		if (!function_exists('plugins_api')) {
-			require_once(ABSPATH . '/wp-admin/includes/plugin-install.php');
-		}
+
+	private function initializePluginVulnerabilityData($plugin, &$installedPlugins, &$records, $values = null, $update = false) {
+		$file = $this->checkPluginFile($plugin, $installedPlugins);
+		if ($file === null)
+			return null;
+		$data = $installedPlugins[$plugin];
+		$record = array(
+			'slug' => $this->extractSlug($plugin, $values),
+			'fromVersion' => isset($data['Version']) ? $data['Version'] : 'Unknown',
+			'vulnerable' => false
+		);
+		if ($update && is_array($values))
+			$record['toVersion'] = isset($values['new_version']) ? $values['new_version'] : 'Unknown';
+		$records[] = $record;
+		unset($installedPlugins[$plugin]);
+	}
+
+	/**
+	 * @param bool $initial if true, treat as the initial scan run
+	 */
+	public function checkPluginVulnerabilities($initial=false) {
+
+		self::requirePluginsApi();
 		
 		$vulnerabilities = array();
 		
@@ -297,100 +441,24 @@ class wfUpdateCheck {
 		$installedPlugins = get_plugins();
 		
 		//Get the info for plugins on wordpress.org
-		$this->checkPluginUpdates();
-		$update_plugins = get_site_transient('update_plugins');
+		$update_plugins = $this->fetchPluginUpdates();
 		if ($update_plugins) {
-			if (!function_exists('get_plugin_data'))
-			{
-				require_once(ABSPATH . '/wp-admin/includes/plugin.php');
-			}
-			
 			if (!empty($update_plugins->response)) {
 				foreach ($update_plugins->response as $plugin => $vals) {
-					$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-					if (!file_exists($pluginFile)) { //Plugin has been removed since the update status was pulled
-						unset($installedPlugins[$plugin]);
-						continue;
-					}
-					
-					$valsArray = (array) $vals;
-					$data = get_plugin_data($pluginFile);
-					
-					$slug = (isset($valsArray['slug']) ? $valsArray['slug'] : null);
-					if ($slug === null) { //Plugin may have been removed from the repo or was never in it so guess
-						if (preg_match('/^([^\/]+)\//', $plugin, $matches)) {
-							$slug = $matches[1];
-						}
-						else if (preg_match('/^([^\/.]+)\.php$/', $plugin, $matches)) {
-							$slug = $matches[1];
-						}
-					}
-					
-					$record = array();
-					$record['slug'] = $slug;
-					$record['toVersion'] = (isset($valsArray['new_version']) ? $valsArray['new_version'] : 'Unknown');
-					$record['fromVersion'] = (isset($data['Version']) ? $data['Version'] : 'Unknown');
-					$record['vulnerable'] = false;
-					$vulnerabilities[] = $record;
-					
-					unset($installedPlugins[$plugin]);
+					$this->initializePluginVulnerabilityData($plugin, $installedPlugins, $vulnerabilities, (array) $vals, true);
 				}
 			}
 			
 			if (!empty($update_plugins->no_update)) {
 				foreach ($update_plugins->no_update as $plugin => $vals) {
-					$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-					if (!file_exists($pluginFile)) { //Plugin has been removed since the update status was pulled
-						unset($installedPlugins[$plugin]);
-						continue;
-					}
-					
-					$valsArray = (array) $vals;
-					$data = get_plugin_data($pluginFile);
-					
-					$slug = (isset($valsArray['slug']) ? $valsArray['slug'] : null);
-					if ($slug === null) { //Plugin may have been removed from the repo or was never in it so guess
-						if (preg_match('/^([^\/]+)\//', $plugin, $matches)) {
-							$slug = $matches[1];
-						}
-						else if (preg_match('/^([^\/.]+)\.php$/', $plugin, $matches)) {
-							$slug = $matches[1];
-						}
-					}
-					
-					$record = array();
-					$record['slug'] = $slug;
-					$record['fromVersion'] = (isset($data['Version']) ? $data['Version'] : 'Unknown');
-					$record['vulnerable'] = false;
-					$vulnerabilities[] = $record;
-					
-					unset($installedPlugins[$plugin]);
+					$this->initializePluginVulnerabilityData($plugin, $installedPlugins, $vulnerabilities, (array) $vals);
 				}
 			}
 		}
 		
 		//Get the remaining plugins (not in the wordpress.org repo for whatever reason)
 		foreach ($installedPlugins as $plugin => $data) {
-			$pluginFile = wfUtils::getPluginBaseDir() . $plugin;
-			if (!file_exists($pluginFile)) { //Plugin has been removed since the update status was pulled
-				continue;
-			}
-			
-			$data = get_plugin_data($pluginFile);
-			
-			$slug = null;
-			if (preg_match('/^([^\/]+)\//', $plugin, $matches)) {
-				$slug = $matches[1];
-			}
-			else if (preg_match('/^([^\/.]+)\.php$/', $plugin, $matches)) {
-				$slug = $matches[1];
-			}
-			
-			$record = array();
-			$record['slug'] = $slug;
-			$record['fromVersion'] = (isset($data['Version']) ? $data['Version'] : 'Unknown');
-			$record['vulnerable'] = false;
-			$vulnerabilities[] = $record;
+			$this->initializePluginVulnerabilityData($plugin, $installedPlugins, $vulnerabilities, $data);
 		}
 		
 		if (count($vulnerabilities) > 0) {
@@ -407,6 +475,12 @@ class wfUpdateCheck {
 							if (isset($r['link'])) {
 								$v['link'] = $r['link'];
 							}
+							if (isset($r['score'])) {
+								$v['score'] = $r['score'];
+							}
+							if (isset($r['vector'])) {
+								$v['vector'] = $r['vector'];
+							}
 							break;
 						}
 					}
@@ -419,17 +493,18 @@ class wfUpdateCheck {
 			wfConfig::set_ser('vulnerabilities_plugin', $vulnerabilities);
 		}
 	}
-	
-	public function checkThemeVulnerabilities() {
+
+	/**
+	 * @param bool $initial whether or not this is the initial run
+	 */
+	public function checkThemeVulnerabilities($initial = false) {
 		if (!function_exists('wp_update_themes')) {
 			require_once(ABSPATH . WPINC . '/update.php');
 		}
 		
-		if (!function_exists('plugins_api')) {
-			require_once(ABSPATH . '/wp-admin/includes/plugin-install.php');
-		}
+		self::requirePluginsApi();
 		
-		$this->checkThemeUpdates();
+		$this->checkThemeUpdates(!$initial, false);
 		$update_themes = get_site_transient('update_themes');
 		
 		$vulnerabilities = array();
@@ -462,6 +537,15 @@ class wfUpdateCheck {
 					foreach ($vulnerableList as $r) {
 						if ($r['slug'] == $v['slug']) {
 							$v['vulnerable'] = !!$r['vulnerable'];
+							if (isset($r['link'])) {
+								$v['link'] = $r['link'];
+							}
+							if (isset($r['score'])) {
+								$v['score'] = $r['score'];
+							}
+							if (isset($r['vector'])) {
+								$v['vector'] = $r['vector'];
+							}
 							break;
 						}
 					}
@@ -476,32 +560,32 @@ class wfUpdateCheck {
 	}
 	
 	public function isPluginVulnerable($slug, $version) {
-		return $this->_isSlugVulnerable('vulnerabilities_plugin', $slug, $version);
+		return $this->_isSlugVulnerable('vulnerabilities_plugin', $slug, $version, function(){ $this->checkPluginVulnerabilities(true); });
 	}
 	
 	public function isThemeVulnerable($slug, $version) {
-		return $this->_isSlugVulnerable('vulnerabilities_theme', $slug, $version);
+		return $this->_isSlugVulnerable('vulnerabilities_theme', $slug, $version, function(){ $this->checkThemeVulnerabilities(true); });
 	}
 	
-	private function _isSlugVulnerable($vulnerabilitiesKey, $slug, $version) {
-		$vulnerabilities = wfConfig::get_ser($vulnerabilitiesKey, array());
+	private function _isSlugVulnerable($vulnerabilitiesKey, $slug, $version, $populateVulnerabilities=null) {
+		$vulnerabilities = wfConfig::get_ser($vulnerabilitiesKey, null);
+		if($vulnerabilities===null){
+			if(is_callable($populateVulnerabilities)){
+				$populateVulnerabilities();
+				return $this->_isSlugVulnerable($vulnerabilitiesKey, $slug, $version);
+			}
+			return false;
+		}
 		foreach ($vulnerabilities as $v) {
 			if ($v['slug'] == $slug) {
-				if ($v['fromVersion'] == 'Unknown' && $v['toVersion'] == 'Unknown') {
-					if ($v['vulnerable'] && isset($v['link']) && is_string($v['link'])) { return $v['link']; }
-					return $v['vulnerable'];
-				}
-				else if ((!isset($v['toVersion']) || $v['toVersion'] == 'Unknown') && version_compare($version, $v['fromVersion']) >= 0) {
-					if ($v['vulnerable'] && isset($v['link']) && is_string($v['link'])) { return $v['link']; }
-					return $v['vulnerable'];
-				}
-				else if ($v['fromVersion'] == 'Unknown' && isset($v['toVersion']) && version_compare($version, $v['toVersion']) < 0) {
-					if ($v['vulnerable'] && isset($v['link']) && is_string($v['link'])) { return $v['link']; }
-					return $v['vulnerable'];
-				}
-				else if (version_compare($version, $v['fromVersion']) >= 0 && isset($v['toVersion']) && version_compare($version, $v['toVersion']) < 0) {
-					if ($v['vulnerable'] && isset($v['link']) && is_string($v['link'])) { return $v['link']; }
-					return $v['vulnerable'];
+				if (
+					($v['fromVersion'] == 'Unknown' && $v['toVersion'] == 'Unknown') ||
+					((!isset($v['toVersion']) || $v['toVersion'] == 'Unknown') && version_compare($version, $v['fromVersion']) >= 0) ||
+					($v['fromVersion'] == 'Unknown' && isset($v['toVersion']) && version_compare($version, $v['toVersion']) < 0) ||
+					(version_compare($version, $v['fromVersion']) >= 0 && isset($v['toVersion']) && version_compare($version, $v['toVersion']) < 0)
+				) {
+					if ($v['vulnerable']) { return $v; }
+					return false;
 				}
 			}
 		}

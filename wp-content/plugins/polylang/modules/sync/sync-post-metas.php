@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * A class to manage copy and synchronization of post metas
@@ -6,6 +9,11 @@
  * @since 2.3
  */
 class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
+	/**
+	 * Stores the plugin options.
+	 *
+	 * @var array
+	 */
 	public $options;
 
 	/**
@@ -26,31 +34,33 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 	}
 
 	/**
-	 * Get the custom fields to copy or synchronize
+	 * Get the custom fields to copy or synchronize.
 	 *
 	 * @since 2.3
 	 *
-	 * @param int    $from Id of the post from which we copy informations
-	 * @param int    $to   Id of the post to which we paste informations
-	 * @param string $lang Language slug
-	 * @param bool   $sync True if it is synchronization, false if it is a copy
-	 * @return array List of meta keys
+	 * @param int    $from Id of the post from which we copy informations.
+	 * @param int    $to   Id of the post to which we paste informations.
+	 * @param string $lang Language slug.
+	 * @param bool   $sync True if it is synchronization, false if it is a copy.
+	 * @return string[] List of meta keys.
 	 */
 	protected function get_metas_to_copy( $from, $to, $lang, $sync = false ) {
-		// Copy or synchronize post metas and allow plugins to do the same
-		$metas = get_post_custom( $from );
 		$keys = array();
 
-		// Get public meta keys ( including from translated post in case we just deleted a custom field )
+		// Get public meta keys ( including from translated post in case we just deleted a custom field ).
 		if ( ! $sync || in_array( 'post_meta', $this->options['sync'] ) ) {
-			foreach ( $keys = array_unique( array_merge( array_keys( $metas ), array_keys( get_post_custom( $to ) ) ) ) as $k => $meta_key ) {
+			$from_keys = (array) get_post_custom_keys( $from );
+			$to_keys   = (array) get_post_custom_keys( $to );
+
+			$keys = array_unique( array_merge( $from_keys, $to_keys ) );
+			foreach ( $keys as $k => $meta_key ) {
 				if ( is_protected_meta( $meta_key ) ) {
 					unset( $keys[ $k ] );
 				}
 			}
 		}
 
-		// Add page template and featured image
+		// Add page template and featured image.
 		foreach ( array( '_wp_page_template', '_thumbnail_id' ) as $meta ) {
 			if ( ! $sync || in_array( $meta, $this->options['sync'] ) ) {
 				$keys[] = $meta;

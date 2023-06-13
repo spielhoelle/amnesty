@@ -1,4 +1,4 @@
-( function( window, $, items, models, views, i18n, modalinfo, nonces ) {
+( function ( window, $, items, models, views, i18n, modalinfo, nonces ) {
 	'use strict';
 
 	var modules,
@@ -29,15 +29,14 @@
 	modules.trigger( 'change' );
 
 	// Handle the filtering of modules.
-	handle_module_tag_click = function( event ) {
+	handle_module_tag_click = function ( event ) {
+		$( '.subsubsub' ).find( 'li.current' ).removeClass( 'current' );
+
 		// Switch the item in the subsubsub list that's flagged as current.
 		$( '.subsubsub' )
 			.find( 'a[data-title="' + $( this ).data( 'title' ) + '"]' )
-			.addClass( 'current' )
 			.closest( 'li' )
-			.siblings()
-			.find( 'a.current' )
-			.removeClass( 'current' );
+			.addClass( 'current' );
 
 		event.preventDefault();
 		modules.trigger( 'change' );
@@ -45,30 +44,25 @@
 
 	$( '.subsubsub a' ).on( 'click', { modules: modules }, handle_module_tag_click );
 
-	$the_filters.on( 'click', '.button-group .button', { modules: modules }, function( event ) {
+	$the_filters.on( 'click', '.button-group .button', { modules: modules }, function ( event ) {
 		event.preventDefault();
-		$( this )
-			.addClass( 'active' )
-			.siblings( '.active' )
-			.removeClass( 'active' );
+		$( this ).addClass( 'active' ).siblings( '.active' ).removeClass( 'active' );
 		modules.trigger( 'change' );
 	} );
 
-	$the_search.on( 'keyup search', function( e ) {
+	$the_search.on( 'keyup search', function ( e ) {
 		// Don't trigger change on tab, since it's only used for accessibility
 		// anyway, and will remove all checked boxes
-		if ( e.keyCode !== 9 ) {
+		if ( e.code !== 'Tab' ) {
 			modules.trigger( 'change' );
 		}
 	} );
 
 	$the_search.prop( 'placeholder', i18n.search_placeholder );
 
-	$bulk_button.on( 'click', function( event ) {
+	$bulk_button.on( 'click', function ( event ) {
 		var selectedModules = $( '.jetpack-modules-list-table-form' ).serialize(),
-			selectedAction = $( this )
-				.siblings( 'select' )
-				.val(),
+			selectedAction = $( this ).siblings( 'select' ).val(),
 			url;
 
 		if ( selectedModules.length && '-1' !== selectedAction ) {
@@ -84,11 +78,11 @@
 		event.preventDefault();
 	} );
 } )(
-	this,
+	window,
 	jQuery,
 	window.jetpackModulesData.modules,
-	this.jetpackModules.models,
-	this.jetpackModules.views,
+	window.jetpackModules.models,
+	window.jetpackModules.views,
 	window.jetpackModulesData.i18n,
 	window.jetpackModulesData.modalinfo,
 	window.jetpackModulesData.nonces

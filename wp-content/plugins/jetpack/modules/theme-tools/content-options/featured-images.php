@@ -1,12 +1,36 @@
 <?php
 /**
- * The function to prevent for Featured Images to be displayed in a theme.
+ * Theme Tools: functions for Featured Images.
+ *
+ * @package automattic/jetpack
  */
-function jetpack_featured_images_remove_post_thumbnail( $metadata, $object_id, $meta_key, $single ) {
+
+/**
+ * The function to prevent for Featured Images to be displayed in a theme.
+ *
+ * @param array  $metadata Post metadata.
+ * @param int    $object_id Post ID.
+ * @param string $meta_key Metadata key.
+ */
+function jetpack_featured_images_remove_post_thumbnail( $metadata, $object_id, $meta_key ) {
 	$opts = jetpack_featured_images_get_settings();
 
-	// Automatically return metadata if it's a PayPal product - we don't want to hide the Featured Image.
-	if ( 'jp_pay_product' === get_post_type( $object_id ) ) {
+	/**
+	 * Allow featured images to be displayed at all times for specific CPTs.
+	 *
+	 * @module theme-tools
+	 *
+	 * @since 9.1.0
+	 *
+	 * @param array $excluded_post_types Array of excluded post types.
+	 */
+	$excluded_post_types = apply_filters(
+		'jetpack_content_options_featured_image_exclude_cpt',
+		array( 'jp_pay_product' )
+	);
+
+	// Automatically return metadata for specific post types, when we don't want to hide the Featured Image.
+	if ( in_array( get_post_type( $object_id ), $excluded_post_types, true ) ) {
 		return $metadata;
 	}
 
@@ -50,7 +74,7 @@ function jetpack_featured_images_remove_post_thumbnail( $metadata, $object_id, $
 		return $metadata;
 	}
 }
-add_filter( 'get_post_metadata', 'jetpack_featured_images_remove_post_thumbnail', true, 4 );
+add_filter( 'get_post_metadata', 'jetpack_featured_images_remove_post_thumbnail', true, 3 );
 
 /**
  * Check if we are in a WooCommerce Product in order to exclude it from the is_single check.
@@ -75,7 +99,7 @@ function jetpack_is_shop_page() {
 	$is_static_front_page = 'page' === get_option( 'show_on_front' );
 
 	if ( $is_static_front_page && $front_page_id === $current_page_id ) {
-		$is_shop_page = ( $current_page_id === wc_get_page_id( 'shop' ) ) ? true : false;
+		$is_shop_page = ( wc_get_page_id( 'shop' ) === $current_page_id ) ? true : false;
 	} else {
 		$is_shop_page = is_shop();
 	}

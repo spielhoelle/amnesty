@@ -1,12 +1,33 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
- * Adds actions and filters related to languages when creating, updating or deleting posts
- * Actions a filters used when reaing posts are handled separately
+ * Adds actions and filters related to languages when creating, updating or deleting posts.
+ * Actions and filters triggered when reading posts are handled separately.
  *
  * @since 2.4
  */
 class PLL_CRUD_Posts {
+	/**
+	 * @var PLL_Model
+	 */
+	protected $model;
+
+	/**
+	 * Preferred language to assign to a new post.
+	 *
+	 * @var PLL_Language|null
+	 */
+	protected $pref_lang;
+
+	/**
+	 * Current language.
+	 *
+	 * @var PLL_Language|null
+	 */
+	protected $curlang;
 
 	/**
 	 * Constructor
@@ -22,7 +43,7 @@ class PLL_CRUD_Posts {
 
 		add_action( 'save_post', array( $this, 'save_post' ), 10, 2 );
 		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 4 );
-		add_filter( 'wp_insert_post_parent', array( $this, 'wp_insert_post_parent' ), 10, 4 );
+		add_filter( 'wp_insert_post_parent', array( $this, 'wp_insert_post_parent' ), 10, 2 );
 		add_action( 'before_delete_post', array( $this, 'delete_post' ) );
 
 		// Specific for media
@@ -39,6 +60,7 @@ class PLL_CRUD_Posts {
 	 * @since 1.5
 	 *
 	 * @param int $post_id
+	 * @return void
 	 */
 	public function set_default_language( $post_id ) {
 		if ( ! $this->model->post->get_language( $post_id ) ) {
@@ -53,7 +75,7 @@ class PLL_CRUD_Posts {
 			} elseif ( isset( $this->pref_lang ) ) {
 				// Always defined on admin, never defined on frontend
 				$this->model->post->set_language( $post_id, $this->pref_lang );
-			} else {
+			} elseif ( ! empty( $this->curlang ) ) {
 				// Only on frontend due to the previous test always true on admin
 				$this->model->post->set_language( $post_id, $this->curlang );
 			}
@@ -61,16 +83,17 @@ class PLL_CRUD_Posts {
 	}
 
 	/**
-	 * Called when a post ( or page ) is saved, published or updated
+	 * Called when a post ( or page ) is saved, published or updated.
 	 *
 	 * @since 0.1
-	 * @since 2.3 Does not save the language and translations anymore, unless the post has no language yet
+	 * @since 2.3 Does not save the language and translations anymore, unless the post has no language yet.
 	 *
-	 * @param int    $post_id
-	 * @param object $post
+	 * @param int     $post_id Post id of the post being saved.
+	 * @param WP_Post $post    The post being saved.
+	 * @return void
 	 */
 	public function save_post( $post_id, $post ) {
-		// Does nothing except on post types which are filterable
+		// Does nothing except on post types which are filterable.
 		if ( $this->model->is_translated_post_type( $post->post_type ) ) {
 			if ( $id = wp_is_post_revision( $post_id ) ) {
 				$post_id = $id;
@@ -83,27 +106,28 @@ class PLL_CRUD_Posts {
 			}
 
 			/**
-			 * Fires after the post language and translations are saved
+			 * Fires after the post language and translations are saved.
 			 *
 			 * @since 1.2
 			 *
-			 * @param int    $post_id      Post id
-			 * @param object $post         Post object
-			 * @param array  $translations The list of translations post ids
+			 * @param int     $post_id      Post id.
+			 * @param WP_Post $post         Post object.
+			 * @param int[]   $translations The list of translations post ids.
 			 */
 			do_action( 'pll_save_post', $post_id, $post, $this->model->post->get_translations( $post_id ) );
 		}
 	}
 
 	/**
-	 * Make sure saved terms are in the right language (especially tags with same name in different languages)
+	 * Makes sure that saved terms are in the right language (especially tags with same name in different languages).
 	 *
 	 * @since 2.3
 	 *
-	 * @param int    $object_id Object ID.
-	 * @param array  $terms     An array of object terms.
-	 * @param array  $tt_ids    An array of term taxonomy IDs.
-	 * @param string $taxonomy  Taxonomy slug.
+	 * @param int            $object_id Object ID.
+	 * @param int[]|string[] $terms     An array of object term IDs or slugs.
+	 * @param int[]          $tt_ids    An array of term taxonomy IDs.
+	 * @param string         $taxonomy  Taxonomy slug.
+	 * @return void
 	 */
 	public function set_object_terms( $object_id, $terms, $tt_ids, $taxonomy ) {
 		static $avoid_recursion;
@@ -115,7 +139,7 @@ class PLL_CRUD_Posts {
 				// Convert to term ids if we got tag names
 				$strings = array_filter( $terms, 'is_string' );
 				if ( ! empty( $strings ) ) {
-					$_terms = get_terms( $taxonomy, array( 'name' => $strings, 'object_ids' => $object_id, 'fields' => 'ids' ) );
+					$_terms = get_terms( array( 'taxonomy' => $taxonomy, 'name' => $strings, 'object_ids' => $object_id, 'fields' => 'ids' ) );
 					$terms = array_merge( array_diff( $terms, $strings ), $_terms );
 				}
 
@@ -163,27 +187,22 @@ class PLL_CRUD_Posts {
 	}
 
 	/**
-	 * Make sure that the post parent is in the correct language when using bulk edit
+	 * Make sure that the post parent is in the correct language.
 	 *
 	 * @since 1.8
 	 *
-	 * @param int   $post_parent Post parent ID.
-	 * @param int   $post_id     Post ID.
-	 * @param array $new_postarr Array of parsed post data.
-	 * @param array $postarr     Array of sanitized, but otherwise unmodified post data.
+	 * @param int $post_parent Post parent ID.
+	 * @param int $post_id     Post ID.
 	 * @return int
 	 */
-	public function wp_insert_post_parent( $post_parent, $post_id, $new_postarr, $postarr ) {
-		if ( isset( $postarr['bulk_edit'], $postarr['inline_lang_choice'] ) ) {
-			check_admin_referer( 'bulk-posts' );
-			$lang = -1 == $postarr['inline_lang_choice'] ?
-				$this->model->post->get_language( $post_id ) :
-				$this->model->get_language( $postarr['inline_lang_choice'] );
-			// Dont break the hierarchy in case the post has no language
-			if ( ! empty( $lang ) ) {
-				$post_parent = $this->model->post->get_translation( $post_parent, $lang );
-			}
+	public function wp_insert_post_parent( $post_parent, $post_id ) {
+		$lang = $this->model->post->get_language( $post_id );
+		$parent_post_type = $post_parent > 0 ? get_post_type( $post_parent ) : null;
+		// Dont break the hierarchy in case the post has no language
+		if ( ! empty( $lang ) && ! empty( $parent_post_type ) && $this->model->is_translated_post_type( $parent_post_type ) ) {
+			$post_parent = $this->model->post->get_translation( $post_parent, $lang );
 		}
+
 		return $post_parent;
 	}
 
@@ -195,6 +214,7 @@ class PLL_CRUD_Posts {
 	 * @since 0.1
 	 *
 	 * @param int $post_id
+	 * @return void
 	 */
 	public function delete_post( $post_id ) {
 		if ( ! wp_is_post_revision( $post_id ) ) {
@@ -203,8 +223,7 @@ class PLL_CRUD_Posts {
 	}
 
 	/**
-	 * Prevents WP deleting files when there are still media using them
-	 * Thanks to Bruno "Aesqe" Babic and its plugin file gallery in which I took all the ideas for this function
+	 * Prevents WP deleting files when there are still media using them.
 	 *
 	 * @since 0.9
 	 *
@@ -216,19 +235,20 @@ class PLL_CRUD_Posts {
 
 		$uploadpath = wp_upload_dir();
 
+		// Get the main attached file.
+		$attached_file = substr_replace( $file, '', 0, strlen( trailingslashit( $uploadpath['basedir'] ) ) );
+		$attached_file = preg_replace( '#-\d+x\d+\.([a-z]+)$#', '.$1', $attached_file );
+
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT post_id FROM $wpdb->postmeta
 				WHERE meta_key = '_wp_attached_file' AND meta_value = %s",
-				substr_replace( $file, '', 0, strlen( trailingslashit( $uploadpath['basedir'] ) ) )
+				$attached_file
 			)
 		);
 
 		if ( ! empty( $ids ) ) {
-			// Regenerate intermediate sizes if it's an image ( since we could not prevent WP deleting them before ).
-			require_once ABSPATH . 'wp-admin/includes/image.php'; // In case the file is deleted outside admin.
-			wp_update_attachment_metadata( $ids[0], wp_slash( wp_generate_attachment_metadata( $ids[0], $file ) ) ); // Directly uses update_post_meta, so expects slashed.
-			return ''; // Prevent deleting the main file.
+			return ''; // Prevent deleting the file.
 		}
 
 		return $file;
@@ -245,27 +265,34 @@ class PLL_CRUD_Posts {
 	 */
 	public function create_media_translation( $post_id, $lang ) {
 		if ( empty( $post_id ) ) {
-			return $post_id;
+			return 0;
 		}
 
-		$post = get_post( $post_id );
+		$post = get_post( $post_id, ARRAY_A );
 
 		if ( empty( $post ) ) {
-			return $post;
+			return 0;
 		}
 
 		$lang = $this->model->get_language( $lang ); // Make sure we get a valid language slug.
 
+		if ( empty( $lang ) ) {
+			return 0;
+		}
+
 		// Create a new attachment ( translate attachment parent if exists ).
 		add_filter( 'pll_enable_duplicate_media', '__return_false', 99 ); // Avoid a conflict with automatic duplicate at upload.
-		$post->ID = null; // Will force the creation
-		$post->post_parent = ( $post->post_parent && $tr_parent = $this->model->post->get_translation( $post->post_parent, $lang->slug ) ) ? $tr_parent : 0;
-		$post->tax_input = array( 'language' => array( $lang->slug ) ); // Assigns the language.
-		$tr_id = wp_insert_attachment( wp_slash( (array) $post ) );
+		unset( $post['ID'] ); // Will force the creation.
+		if ( ! empty( $post['post_parent'] ) ) {
+			$post['post_parent'] = (int) $this->model->post->get_translation( $post['post_parent'], $lang->slug );
+		}
+		$post['tax_input'] = array( 'language' => array( $lang->slug ) ); // Assigns the language.
+		$tr_id = wp_insert_attachment( wp_slash( $post ) );
 		remove_filter( 'pll_enable_duplicate_media', '__return_false', 99 ); // Restore automatic duplicate at upload.
 
 		// Copy metadata.
-		if ( $data = wp_get_attachment_metadata( $post_id, true ) ) { // Unfiltered.
+		$data = wp_get_attachment_metadata( $post_id, true ); // Unfiltered.
+		if ( is_array( $data ) ) {
 			wp_update_attachment_metadata( $tr_id, wp_slash( $data ) ); // Directly uses update_post_meta, so expects slashed.
 		}
 

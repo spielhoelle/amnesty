@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * A generic activation / de-activation class compatble with multisite
@@ -6,6 +9,11 @@
  * @since 1.7
  */
 class PLL_Install_Base {
+	/**
+	 * The plugin basename.
+	 *
+	 * @var string
+	 */
 	protected $plugin_basename;
 
 	/**
@@ -22,13 +30,8 @@ class PLL_Install_Base {
 		register_activation_hook( $plugin_basename, array( $this, 'activate' ) );
 		register_deactivation_hook( $plugin_basename, array( $this, 'deactivate' ) );
 
-		// Blog creation on multisite.
-		if ( version_compare( $GLOBALS['wp_version'], '5.1', '<' ) ) {
-			// FIXME: Backward compatibility with WP < 5.1.
-			add_action( 'wpmu_new_blog', array( $this, 'wpmu_new_blog' ), 5 ); // Before WP attempts to send mails which can break on some PHP versions
-		} else {
-			add_action( 'wp_insert_site', array( $this, 'new_site' ) );
-		}
+		// Site creation on multisite.
+		add_action( 'wp_insert_site', array( $this, 'new_site' ) );
 	}
 
 	/**
@@ -49,6 +52,7 @@ class PLL_Install_Base {
 	 *
 	 * @param string $what        Either 'activate' or 'deactivate'
 	 * @param bool   $networkwide
+	 * @return void
 	 */
 	protected function do_for_all_blogs( $what, $networkwide ) {
 		// Network
@@ -74,6 +78,7 @@ class PLL_Install_Base {
 	 * @since 1.7
 	 *
 	 * @param bool $networkwide
+	 * @return void
 	 */
 	public function activate( $networkwide ) {
 		$this->do_for_all_blogs( 'activate', $networkwide );
@@ -83,6 +88,8 @@ class PLL_Install_Base {
 	 * Plugin activation
 	 *
 	 * @since 0.5
+	 *
+	 * @return void
 	 */
 	protected function _activate() {
 		// Can be overriden in child class
@@ -94,6 +101,7 @@ class PLL_Install_Base {
 	 * @since 0.1
 	 *
 	 * @param bool $networkwide
+	 * @return void
 	 */
 	public function deactivate( $networkwide ) {
 		$this->do_for_all_blogs( 'deactivate', $networkwide );
@@ -103,6 +111,8 @@ class PLL_Install_Base {
 	 * Plugin deactivation
 	 *
 	 * @since 0.5
+	 *
+	 * @return void
 	 */
 	protected function _deactivate() {
 		// Can be overriden in child class
@@ -114,23 +124,10 @@ class PLL_Install_Base {
 	 * @since 2.6.8
 	 *
 	 * @param WP_Site $new_site New site object.
+	 * @return void
 	 */
 	public function new_site( $new_site ) {
 		switch_to_blog( $new_site->id );
-		$this->_activate();
-		restore_current_blog();
-	}
-
-	/**
-	 * Blog creation on multisite ( to set default options )
-	 * Backward compatibility with WP < 5.1
-	 *
-	 * @since 0.9.4
-	 *
-	 * @param int $blog_id
-	 */
-	public function wpmu_new_blog( $blog_id ) {
-		switch_to_blog( $blog_id );
 		$this->_activate();
 		restore_current_blog();
 	}

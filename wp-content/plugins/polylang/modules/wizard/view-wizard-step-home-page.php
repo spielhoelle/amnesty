@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Displays the wizard home page step
+ *
+ * @package Polylang
  *
  * @since 2.7
  */
@@ -70,7 +71,7 @@ foreach ( $languages as $language ) {
 				echo $language->flag;  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo ' ' . esc_html( $language->name ) . ' ' . esc_html( $language->locale ) . ' ';
 				?>
-				<?php if ( $language->slug === $default_language ) : ?>
+				<?php if ( $language->is_default ) : ?>
 					<span class="icon-default-lang">
 						<span class="screen-reader-text">
 							<?php esc_html_e( 'Default language', 'polylang' ); ?>
@@ -117,7 +118,7 @@ foreach ( $languages as $language ) {
 				echo $lg->flag;  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo ' ' . esc_html( $lg->name ) . ' ' . esc_html( $lg->locale ) . ' ';
 				?>
-				<?php if ( $lg->slug === $default_language ) : ?>
+				<?php if ( $lg->is_default ) : ?>
 					<span class="icon-default-lang">
 						<span class="screen-reader-text">
 							<?php esc_html_e( 'Default language', 'polylang' ); ?>

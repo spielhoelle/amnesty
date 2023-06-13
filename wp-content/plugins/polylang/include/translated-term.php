@@ -1,203 +1,321 @@
 <?php
+/**
+ * @package Polylang
+ */
+
+defined( 'ABSPATH' ) || exit;
 
 /**
- * Setups the taxonomies languages and translations model
+ * Sets the taxonomies languages and translations model up.
  *
  * @since 1.8
  */
-class PLL_Translated_Term extends PLL_Translated_Object {
+class PLL_Translated_Term extends PLL_Translated_Object implements PLL_Translatable_Object_With_Types_Interface {
+
+	use PLL_Translatable_Object_With_Types_Trait;
 
 	/**
-	 * Constructor
+	 * Taxonomy name for the languages.
+	 *
+	 * @var string
+	 *
+	 * @phpstan-var non-empty-string
+	 */
+	protected $tax_language = 'term_language';
+
+	/**
+	 * Object type to use when registering the taxonomy.
+	 *
+	 * @var string
+	 *
+	 * @phpstan-var non-empty-string
+	 */
+	protected $object_type = 'term';
+
+	/**
+	 * Identifier that must be unique for each type of content.
+	 * Also used when checking capabilities.
+	 *
+	 * @var string
+	 *
+	 * @phpstan-var non-empty-string
+	 */
+	protected $type = 'term';
+
+	/**
+	 * Identifier for each type of content to used for cache type.
+	 *
+	 * @var string
+	 *
+	 * @phpstan-var non-empty-string
+	 */
+	protected $cache_type = 'terms';
+
+
+	/**
+	 * Taxonomy name for the translation groups.
+	 *
+	 * @var string
+	 *
+	 * @phpstan-var non-empty-string
+	 */
+	protected $tax_translations = 'term_translations';
+
+	/**
+	 * Constructor.
 	 *
 	 * @since 1.8
 	 *
-	 * @param object $model
+	 * @param PLL_Model $model Instance of `PLL_Model`.
 	 */
-	public function __construct( &$model ) {
-		$this->object_type = 'term'; // For taxonomies
-		$this->type = 'term'; // For capabilities
-		$this->tax_language = 'term_language';
-		$this->tax_translations = 'term_translations';
-		$this->tax_tt = 'tl_term_taxonomy_id';
+	public function __construct( PLL_Model &$model ) {
+		$this->db = array(
+			'table'         => $GLOBALS['wpdb']->term_taxonomy,
+			'id_column'     => 'term_id',
+			'type_column'   => 'taxonomy',
+			'default_alias' => 't',
+		);
 
 		parent::__construct( $model );
 
-		// Filters to prime terms cache
-		add_filter( 'get_terms', array( $this, '_prime_terms_cache' ), 10, 2 );
-		add_filter( 'wp_get_object_terms', array( $this, 'wp_get_object_terms' ), 10, 3 );
-
-		add_action( 'clean_term_cache', array( $this, 'clean_term_cache' ) );
+		// Keep hooks in constructor for backward compatibility.
+		$this->init();
 	}
 
 	/**
-	 * Stores the term language in the database
+	 * Adds hooks.
+	 *
+	 * @since 3.4
+	 *
+	 * @return static
+	 */
+	public function init() {
+		add_filter( 'get_terms', array( $this, '_prime_terms_cache' ), 10, 2 );
+		add_action( 'clean_term_cache', array( $this, 'clean_term_cache' ) );
+		return parent::init();
+	}
+
+	/**
+	 * Stores the term's language into the database.
 	 *
 	 * @since 0.6
+	 * @since 3.4 Renamed the parameter $term_id into $id.
 	 *
-	 * @param int               $term_id term id
-	 * @param int|string|object $lang    language ( term_id or slug or object )
+	 * @param int                     $id   Term ID.
+	 * @param PLL_Language|string|int $lang Language (object, slug, or term ID).
+	 * @return bool True when successfully assigned. False otherwise (or if the given language is already assigned to
+	 *              the object).
 	 */
-	public function set_language( $term_id, $lang ) {
-		$term_id = (int) $term_id;
-
-		$old_lang = $this->get_language( $term_id );
-		$old_lang = $old_lang ? $old_lang->tl_term_id : '';
-		$lang = $lang ? $this->model->get_language( $lang )->tl_term_id : '';
-
-		if ( $old_lang !== $lang ) {
-			wp_set_object_terms( $term_id, $lang, 'term_language' );
-
-			// Add translation group for correct WXR export
-			$translations = $this->get_translations( $term_id );
-			if ( $slug = array_search( $term_id, $translations ) ) {
-				unset( $translations[ $slug ] );
-			}
-
-			$this->save_translations( $term_id, $translations );
+	public function set_language( $id, $lang ) {
+		if ( ! parent::set_language( $id, $lang ) ) {
+			return false;
 		}
+
+		$id = $this->sanitize_int_id( $id );
+
+		// Add translation group for correct WXR export.
+		$translations = $this->get_translations( $id );
+
+		if ( ! empty( $translations ) ) {
+			$translations = array_diff( $translations, array( $id ) );
+		}
+
+		$this->save_translations( $id, $translations );
+
+		return true;
 	}
 
 	/**
-	 * Removes the term language in database
+	 * Returns the language of a term.
+	 *
+	 * @since 0.1
+	 * @since 3.4 Renamed the parameter $value into $id.
+	 * @since 3.4 Deprecated to retrieve the language by term slug + taxonomy anymore.
+	 *
+	 * @param int $id Term ID.
+	 * @return PLL_Language|false A `PLL_Language` object. `false` if no language is associated to that term or if the
+	 *                            ID is invalid.
+	 */
+	public function get_language( $id ) {
+		if ( func_num_args() > 1 ) {
+			// Backward compatibility.
+			_deprecated_argument( __METHOD__ . '()', '3.4' );
+
+			$term = get_term_by( 'slug', $id, func_get_arg( 1 ) ); // @phpstan-ignore-line
+			$id   = $term instanceof WP_Term ? $term->term_id : 0;
+		}
+
+		return parent::get_language( $id );
+	}
+
+	/**
+	 * Deletes a translation of a term.
 	 *
 	 * @since 0.5
 	 *
-	 * @param int $term_id term id
+	 * @param int $id Term ID.
+	 * @return void
 	 */
-	public function delete_language( $term_id ) {
-		wp_delete_object_term_relationships( $term_id, 'term_language' );
+	public function delete_translation( $id ) {
+		global $wpdb;
+
+		$id = $this->sanitize_int_id( $id );
+
+		if ( empty( $id ) ) {
+			return;
+		}
+
+		$slug = array_search( $id, $this->get_translations( $id ) ); // In case some plugin stores the same value with different key.
+
+		parent::delete_translation( $id );
+		wp_delete_object_term_relationships( $id, $this->tax_translations );
+
+		if ( doing_action( 'pre_delete_term' ) ) {
+			return;
+		}
+
+		if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $wpdb->terms WHERE term_id = %d;", $id ) ) ) {
+			return;
+		}
+
+		// Always keep a group for terms to allow relationships remap when importing from a WXR file.
+		$group        = uniqid( 'pll_' );
+		$translations = array( $slug => $id );
+		wp_insert_term( $group, $this->tax_translations, array( 'description' => maybe_serialize( $translations ) ) );
+		wp_set_object_terms( $id, $group, $this->tax_translations );
 	}
 
 	/**
-	 * Returns the language of a term
+	 * Returns object types (taxonomy names) that need to be translated.
+	 * The taxonomies list is cached for better performance.
+	 * The method waits for 'after_setup_theme' to apply the cache to allow themes adding the filter in functions.php.
 	 *
-	 * @since 0.1
+	 * @since 3.4
 	 *
-	 * @param int|string $value    term id or term slug
-	 * @param string     $taxonomy optional taxonomy needed when the term slug is passed as first parameter
-	 * @return bool|object PLL_Language object, false if no language is associated to that term
+	 * @param bool $filter True if we should return only valid registered object types.
+	 * @return string[] Object type names for which Polylang manages languages.
+	 *
+	 * @phpstan-return array<non-empty-string, non-empty-string>
 	 */
-	public function get_language( $value, $taxonomy = '' ) {
-		if ( is_numeric( $value ) ) {
-			$term_id = $value;
+	public function get_translated_object_types( $filter = true ) {
+		$taxonomies = $this->model->cache->get( 'taxonomies' );
+
+		if ( false === $taxonomies ) {
+			$taxonomies = array( 'category' => 'category', 'post_tag' => 'post_tag' );
+
+			if ( ! empty( $this->model->options['taxonomies'] ) && is_array( $this->model->options['taxonomies'] ) ) {
+				$taxonomies = array_merge( $taxonomies, array_combine( $this->model->options['taxonomies'], $this->model->options['taxonomies'] ) );
+			}
+
+			/**
+			 * Filters the list of taxonomies available for translation.
+			 * The default are taxonomies which have the parameter ‘public’ set to true.
+			 * The filter must be added soon in the WordPress loading process:
+			 * in a function hooked to ‘plugins_loaded’ or directly in functions.php for themes.
+			 *
+			 * @since 0.8
+			 *
+			 * @param string[] $taxonomies  List of taxonomy names (as array keys and values).
+			 * @param bool     $is_settings True when displaying the list of custom taxonomies in Polylang settings.
+			 */
+			$taxonomies = apply_filters( 'pll_get_taxonomies', $taxonomies, false );
+
+			if ( did_action( 'after_setup_theme' ) ) {
+				$this->model->cache->set( 'taxonomies', $taxonomies );
+			}
 		}
 
-		// get_term_by still not cached in WP 3.5.1 but internally, the function is always called by term_id
-		elseif ( is_string( $value ) && $taxonomy ) {
-			$term_id = get_term_by( 'slug', $value, $taxonomy )->term_id;
-		}
-
-		// Get the language and make sure it is a PLL_Language object
-		return isset( $term_id ) && ( $lang = $this->get_object_term( $term_id, 'term_language' ) ) ? $this->model->get_language( $lang->term_id ) : false;
+		/** @var array<non-empty-string, non-empty-string> $taxonomies */
+		return $filter ? array_intersect( $taxonomies, get_taxonomies() ) : $taxonomies;
 	}
 
 	/**
-	 * Tells whether a translation term must updated
+	 * Caches the language and translations when terms are queried by get_terms().
+	 *
+	 * @since 1.2
+	 *
+	 * @param WP_Term[]|int[] $terms      Queried terms.
+	 * @param string[]        $taxonomies Queried taxonomies.
+	 * @return WP_Term[]|int[] Unmodified $terms.
+	 *
+	 * @phpstan-param array<WP_Term|positive-int> $terms
+	 * @phpstan-param array<non-empty-string> $taxonomies
+	 * @phpstan-return array<WP_Term|positive-int>
+	 */
+	public function _prime_terms_cache( $terms, $taxonomies ) {
+		$ids = array();
+
+		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomies ) ) {
+			foreach ( $terms as $term ) {
+				$ids[] = is_object( $term ) ? $term->term_id : (int) $term;
+			}
+		}
+
+		if ( ! empty( $ids ) ) {
+			update_object_term_cache( array_unique( $ids ), 'term' ); // Adds language and translation of terms to cache.
+		}
+		return $terms;
+	}
+
+	/**
+	 * When the term cache is cleaned, cleans the object term cache too.
+	 *
+	 * @since 2.0
+	 *
+	 * @param int[] $ids An array of term IDs.
+	 * @return void
+	 *
+	 * @phpstan-param array<positive-int> $ids
+	 */
+	public function clean_term_cache( $ids ) {
+		clean_object_term_cache( $this->sanitize_int_ids_list( $ids ), 'term' );
+	}
+
+	/**
+	 * Tells whether a translation term must be updated.
 	 *
 	 * @since 2.3
 	 *
-	 * @param array $id           Post id or term id
-	 * @param array $translations An associative array of translations with language code as key and translation id as value
+	 * @param int   $id           Term ID.
+	 * @param int[] $translations An associative array of translations with language code as key and translation ID as
+	 *                            value. Make sure to sanitize this.
+	 * @return bool
+	 *
+	 * @phpstan-param array<non-empty-string, positive-int> $translations
 	 */
 	protected function should_update_translation_group( $id, $translations ) {
-		// Don't do anything if no translations have been added to the group
+		// Don't do anything if no translations have been added to the group.
 		$old_translations = $this->get_translations( $id );
-		if ( count( $translations ) > 1 && count( array_diff_assoc( $translations, $old_translations ) ) > 0 ) {
+		if ( count( $translations ) > 1 && ! empty( array_diff_assoc( $translations, $old_translations ) ) ) {
 			return true;
 		}
 
 		// But we need a translation group for terms to allow relationships remap when importing from a WXR file
 		$term = $this->get_object_term( $id, $this->tax_translations );
-		return empty( $term ) || count( array_diff_assoc( $translations, $old_translations ) );
+		return empty( $term ) || ! empty( array_diff_assoc( $translations, $old_translations ) );
 	}
 
 	/**
-	 * Deletes a translation
-	 *
-	 * @since 0.5
-	 *
-	 * @param int $id term id
-	 */
-	public function delete_translation( $id ) {
-		global $wpdb;
-		$slug = array_search( $id, $this->get_translations( $id ) ); // in case some plugin stores the same value with different key
-
-		parent::delete_translation( $id );
-		wp_delete_object_term_relationships( $id, 'term_translations' );
-
-		if ( ! doing_action( 'pre_delete_term' ) && $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( * ) FROM $wpdb->terms WHERE term_id = %d;", $id ) ) ) {
-			// Always keep a group for terms to allow relationships remap when importing from a WXR file
-			$translations = array( $slug => $id );
-			wp_insert_term( $group = uniqid( 'pll_' ), 'term_translations', array( 'description' => maybe_serialize( $translations ) ) );
-			wp_set_object_terms( $id, $group, 'term_translations' );
-		}
-	}
-
-	/**
-	 * A join clause to add to sql queries when filtering by language is needed directly in query
+	 * Assigns a language to terms in mass.
 	 *
 	 * @since 1.2
-	 * @since 2.6 The `$alias` parameter was added.
+	 * @since 3.4 Moved from PLL_Admin_Model class.
 	 *
-	 * @param string $alias Alias for $wpdb->terms table
-	 * @return string join clause
+	 * @param int[]        $ids  Array of post ids or term ids.
+	 * @param PLL_Language $lang Language to assign to the posts or terms.
+	 * @return void
 	 */
-	public function join_clause( $alias = 't' ) {
-		global $wpdb;
-		return " INNER JOIN $wpdb->term_relationships AS pll_tr ON pll_tr.object_id = $alias.term_id";
-	}
+	public function set_language_in_mass( $ids, $lang ) {
+		parent::set_language_in_mass( $ids, $lang );
 
-	/**
-	 * Cache language and translations when terms are queried by get_terms
-	 *
-	 * @since 1.2
-	 *
-	 * @param array $terms      queried terms
-	 * @param array $taxonomies queried taxonomies
-	 * @return array unmodified $terms
-	 */
-	public function _prime_terms_cache( $terms, $taxonomies ) {
-		$term_ids = array();
+		$translations = array();
 
-		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomies ) ) {
-			foreach ( $terms as $term ) {
-				$term_ids[] = is_object( $term ) ? $term->term_id : (int) $term;
-			}
+		foreach ( $ids as $id ) {
+			$translations[] = array( $lang->slug => $id );
 		}
 
-		if ( ! empty( $term_ids ) ) {
-			update_object_term_cache( array_unique( $term_ids ), 'term' ); // Adds language and translation of terms to cache
+		if ( ! empty( $translations ) ) {
+			$this->set_translation_in_mass( $translations );
 		}
-		return $terms;
-	}
-
-	/**
-	 * When terms are found for posts, add their language and translations to cache
-	 *
-	 * @since 1.2
-	 *
-	 * @param array $terms      terms found
-	 * @param array $object_ids not used
-	 * @param array $taxonomies terms taxonomies
-	 * @return array unmodified $terms
-	 */
-	public function wp_get_object_terms( $terms, $object_ids, $taxonomies ) {
-		$taxonomies = explode( "', '", trim( $taxonomies, "'" ) );
-		if ( ! in_array( 'term_translations', $taxonomies ) ) {
-			$this->_prime_terms_cache( $terms, $taxonomies );
-		}
-		return $terms;
-	}
-
-	/**
-	 * When the term cache is cleaned, clean the object term cache too
-	 *
-	 * @since 2.0
-	 *
-	 * @param array $ids An array of term IDs.
-	 */
-	public function clean_term_cache( $ids ) {
-		clean_object_term_cache( $ids, 'term' );
 	}
 }

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Settings class for browser language preference detection
@@ -6,6 +9,12 @@
  * @since 1.8
  */
 class PLL_Settings_Browser extends PLL_Settings_Module {
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 20;
 
 	/**
 	 * Constructor
@@ -15,13 +24,15 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 	 * @param object $polylang polylang object
 	 */
 	public function __construct( &$polylang ) {
+		// Needed for `$this->is_available()`, which is used before calling the parent's constructor.
 		$this->options = &$polylang->options;
+
 		parent::__construct(
 			$polylang,
 			array(
 				'module'        => 'browser',
 				'title'         => __( 'Detect browser language', 'polylang' ),
-				'description'   => __( 'When the front page is visited, set the language according to the browser preference', 'polylang' ),
+				'description'   => __( 'When the front page is visited, redirects to itself in the browser preferred language. As this doesn\'t work if it is cached, Polylang will attempt to disable the front page cache for known cache plugins.', 'polylang' ),
 				'active_option' => $this->is_available() ? 'browser' : false,
 			)
 		);
@@ -58,6 +69,8 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 	 * as the preferred browser language is not used when the language is set from different domains
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	public function print_js() {
 		wp_enqueue_script( 'jquery' );
@@ -76,17 +89,19 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 		?>
 		<script type='text/javascript'>
 			//<![CDATA[
-			( function( $ ){
-				$( "input[name='force_lang']" ).change( function() {
-					var value = $( this ).val();
-					if ( 3 > value ) {
-						$( "#pll-module-browser" ).<?php echo $func; // phpcs:ignore WordPress.Security.EscapeOutput ?>.children( "td" ).children( ".row-actions" ).html( '<?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput ?>' );
-					}
-					else {
-						$( "#pll-module-browser" ).removeClass( "active" ).addClass( "inactive" ).children( "td" ).children( ".row-actions" ).html( '<?php echo $deactivated; // phpcs:ignore WordPress.Security.EscapeOutput ?>' );
-					}
-				} );
-			} )( jQuery );
+			jQuery(
+				function( $ ){
+					$( "input[name='force_lang']" ).on( 'change', function() {
+						var value = $( this ).val();
+						if ( 3 > value ) {
+							$( "#pll-module-browser" ).<?php echo $func; // phpcs:ignore WordPress.Security.EscapeOutput ?>.children( "td" ).children( ".row-actions" ).html( '<?php echo $link; // phpcs:ignore WordPress.Security.EscapeOutput ?>' );
+						}
+						else {
+							$( "#pll-module-browser" ).removeClass( "active" ).addClass( "inactive" ).children( "td" ).children( ".row-actions" ).html( '<?php echo $deactivated; // phpcs:ignore WordPress.Security.EscapeOutput ?>' );
+						}
+					} );
+				}
+			);
 			// ]]>
 		</script>
 		<?php

@@ -9,6 +9,8 @@
  * <script type="text/javascript" src="//downloads.mailchimp.com/js/signup-forms/popup/unique-methods/embed.js" data-dojo-config="usePlainJson: true, isDebug: false"></script><script type="text/javascript">window.dojoRequire(["mojo/signup-forms/Loader"], function(L) { L.start({"baseUrl":"mc.us11.list-manage.com","uuid":"1ca7856462585a934b8674c71","lid":"2d24f1898b","uniqueMethods":true}) })</script>
  */
 
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- TODO: Move classes to appropriately-named class files.
+
 /**
  * Register [mailchimp_subscriber_popup] shortcode and add a filter to 'pre_kses' queue to reverse MailChimp embed to shortcode.
  *
@@ -92,9 +94,6 @@ class MailChimp_Subscriber_Popup {
 			return $content;
 		}
 
-		require_once ABSPATH . WPINC . '/class-json.php';
-		$wp_json = new Services_JSON();
-
 		// loop through our rules and find valid embeds.
 		foreach ( self::$reversal_regexes as $regex ) {
 
@@ -106,10 +105,10 @@ class MailChimp_Subscriber_Popup {
 				// the regex rule for a specific embed.
 				$replace_regex = sprintf( '#\s*%s\s*#', preg_quote( $matches[0][ $index ], '#' ) );
 
-				$attrs = $wp_json->decode( '{' . $js_vars . '}' );
+				$attrs = json_decode( '{' . $js_vars . '}' );
 
 				if ( $matches[2][ $index ] ) {
-					$config_attrs = $wp_json->decode( '{' . $matches[2][ $index ] . '}' );
+					$config_attrs = json_decode( '{' . $matches[2][ $index ] . '}' );
 					foreach ( $config_attrs as $key => $value ) {
 						$attrs->$key = ( 1 === $value ) ? 'true' : 'false';
 					}
@@ -142,7 +141,7 @@ class MailChimp_Subscriber_Popup {
 		foreach ( $attrs as $key => $value ) {
 			// skip unsupported keys.
 			if (
-				! in_array( $key, array_keys( self::$allowed_config ), true )
+				! array_key_exists( $key, self::$allowed_config )
 				&& ! in_array( $key, self::$allowed_js_vars, true )
 			) {
 				continue;

@@ -22,7 +22,7 @@ class wfUtils {
 	}
 	public static function makeTimeAgo($secs, $noSeconds = false) {
 		if($secs < 1){
-			return "a moment";
+			return __("a moment", 'wordfence');
 		}
 		
 		if (function_exists('date_diff')) {
@@ -57,25 +57,29 @@ class wfUtils {
 		}
 		
 		if ($years) {
-			return self::pluralize($years, 'year', $months, 'month');
+			return $years . ' ' . _n('year', 'years', $years, 'wordfence') .
+				(is_numeric($months) ? ' ' . $months . ' ' . _n('month', 'months', $months, 'wordfence') : '');
 		}
 		else if ($months) {
-			return self::pluralize($months, 'month', $days, 'day');
+			return $months . ' ' . _n('month', 'months', $months, 'wordfence') .
+				(is_numeric($days) ? ' ' . $days . ' ' . _n('day', 'days', $days, 'wordfence') : '');
 		}
 		else if ($days) {
-			return self::pluralize($days, 'day', $hours, 'hour');
+			return $days . ' ' . _n('day', 'days', $days, 'wordfence') .
+				(is_numeric($hours) ? ' ' . $hours . ' ' . _n('hour', 'hours', $hours, 'wordfence') : '');
 		}
 		else if ($hours) {
-			return self::pluralize($hours, 'hour', $minutes, 'min');
+			return $hours . ' ' . _n('hour', 'hours', $hours, 'wordfence') .
+				(is_numeric($minutes) ? ' ' . $minutes . ' ' . _n('minute', 'minutes', $minutes, 'wordfence') : '');
 		}
 		else if ($minutes) {
-			return self::pluralize($minutes, 'min');
+			return $minutes . ' ' . _n('minute', 'minutes', $minutes, 'wordfence');
 		}
 		else {
 			if($noSeconds){
-				return "less than a minute";
+				return __("less than a minute", 'wordfence');
 			} else {
-				return floor($secs) . " secs";
+				return sprintf(/* translators: Number of seconds. */ __("%d seconds", 'wordfence'), floor($secs));
 			}
 		}
 	}
@@ -88,47 +92,43 @@ class wfUtils {
 		$minutes = floor($secs / 60); $secs -= $minutes * 60;
 		
 		if ($months) {
-			$components[] = self::pluralize($months, 'month');
+			$components[] = $months . ' ' . _n('month', 'months', $months, 'wordfence');
 			if (!$createExact) {
 				$hours = $minutes = $secs = 0;
 			}
 		}
 		if ($days) {
-			$components[] = self::pluralize($days, 'day');
+			$components[] = $days . ' ' . _n('day', 'days', $days, 'wordfence');
 			if (!$createExact) {
 				$minutes = $secs = 0;
 			}
 		}
 		if ($hours) {
-			$components[] = self::pluralize($hours, 'hour');
+			$components[] = $hours . ' ' . _n('hour', 'hours', $hours, 'wordfence');
 			if (!$createExact) {
 				$secs = 0;
 			}
 		}
 		if ($minutes) {
-			$components[] = self::pluralize($minutes, 'minute');
+			$components[] = $minutes . ' ' . _n('minute', 'minutes', $minutes, 'wordfence');
 		}
 		if ($secs && $secs >= 1) {
-			$components[] = self::pluralize($secs, 'second');
+			$components[] = $secs . ' ' . _n('second', 'seconds', $secs, 'wordfence');
 		}
 		
 		if (empty($components)) {
-			$components[] = 'less than 1 second';
+			$components[] = __('less than 1 second', 'wordfence');
 		}
 		
 		return implode(' ', $components);
 	}
-	public static function pluralize($m1, $t1, $m2 = false, $t2 = false) {
-		if($m1 != 1) {
-			$t1 = $t1 . 's';
-		}
-		if($m2 != 1) {
-			$t2 = $t2 . 's';
-		}
-		if($m1 && $m2){
-			return "$m1 $t1 $m2 $t2";
+	public static function pluralize($m1, $m1Singular, $m1Plural, $m2 = false, $m2Singular = false, $m2Plural = false) {
+		$m1Text = _n($m1Singular, $m1Plural, $m1, 'wordfence');
+		if (is_numeric($m2)) {
+			$m2Text = _n($m2Singular, $m2Plural, $m2, 'wordfence');
+			return "$m1 $m1Text $m2 $m2Text";
 		} else {
-			return "$m1 $t1";
+			return "$m1 $m1Text";
 		}
 	}
 	public static function formatBytes($bytes, $precision = 2) {
@@ -1200,7 +1200,7 @@ class wfUtils {
 	public static function encrypt($str){
 		$key = wfConfig::get('encKey');
 		if(! $key){
-			wordfence::status(1, 'error', "Wordfence error: No encryption key found!");
+			wordfence::status(1, 'error', __("Wordfence error: No encryption key found!", 'wordfence'));
 			return false;
 		}
 		$db = new wfDB();
@@ -1209,7 +1209,7 @@ class wfUtils {
 	public static function decrypt($str){
 		$key = wfConfig::get('encKey');
 		if(! $key){
-			wordfence::status(1, 'error', "Wordfence error: No encryption key found!");
+			wordfence::status(1, 'error', __("Wordfence error: No encryption key found!", 'wordfence'));
 			return false;
 		}
 		$db = new wfDB();
@@ -1433,6 +1433,7 @@ class wfUtils {
 						$IPLocs[$ip_printable] = false;
 					} else {
 						$row['IP'] = self::inet_ntop($row['IP']);
+						$row['region'] = wfUtils::shouldDisplayRegion($row['countryName']) ? $row['region'] : '';
 						$IPLocs[$ip_printable] = $row;
 					}
 				}
@@ -1442,46 +1443,68 @@ class wfUtils {
 			}
 		}
 		if(sizeof($toResolve) > 0){
-			$api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
-			try {
-				$freshIPs = $api->call('resolve_ips', array(), array(
-					'ips' => implode(',', $toResolve)
-					));
-				if(is_array($freshIPs)){
-					foreach($freshIPs as $IP => $value){
-						$IP_bin = wfUtils::inet_pton($IP);
-						if($value == 'failed'){
-							$db->queryWrite("insert IGNORE into " . $locsTable . " (IP, ctime, failed) values (%s, unix_timestamp(), 1)", $IP_bin);
-							$IPLocs[$IP] = false;
-						} else if(is_array($value)){
-							for($i = 0; $i <= 5; $i++){
-								//Prevent warnings in debug mode about uninitialized values
-								if(! isset($value[$i])){ $value[$i] = ''; }
-							}
-							$db->queryWrite("insert IGNORE into " . $locsTable . " (IP, ctime, failed, city, region, countryName, countryCode, lat, lon) values (%s, unix_timestamp(), 0, '%s', '%s', '%s', '%s', %s, %s)",
-								$IP_bin,
-								$value[3], //city
-								$value[2], //region
-								$value[1], //countryName
-								$value[0],//countryCode
-								$value[4],//lat
-								$value[5]//lon
-								);
-							$IPLocs[$IP] = array(
-								'IP' => $IP,
-								'city' => $value[3],
-								'region' => $value[2],
-								'countryName' => $value[1],
-								'countryCode' => $value[0],
-								'lat' => $value[4],
-								'lon' => $value[5]
-								);
+			if (wfConfig::get('enableRemoteIpLookup', true)) {
+				$api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
+				try {
+					$freshIPs = $api->call('resolve_ips', array(), array(
+						'ips' => implode(',', $toResolve)
+						));
+				} catch(Exception $e){
+					wordfence::status(2, 'error', sprintf(/* translators: Error message. */ __("Call to Wordfence API to resolve IPs failed: %s", 'wordfence'), $e->getMessage()));
+					return array();
+				}
+			}
+			else {
+				require_once(__DIR__ . '/wfIpLocator.php');
+				$locator = wfIpLocator::getInstance();
+				$freshIPs = array();
+				$locale = get_locale();
+				foreach ($toResolve as $ip) {
+					$record = $locator->locate($ip);
+					if ($record !== null) {
+						$countryCode = $record->getCountryCode();
+						if ($countryCode !== null) {
+							$countryName = $record->getCountryName($locale);
+							if ($countryName === null)
+								$countryName = $countryCode;
+							$freshIPs[$ip] = array($countryCode, $countryName);
+							continue;
 						}
 					}
+					$freshIPs[$ip] = 'failed';
 				}
-			} catch(Exception $e){
-				wordfence::status(2, 'error', "Call to Wordfence API to resolve IPs failed: " . $e->getMessage());
-				return array();
+			}
+			if(is_array($freshIPs)){
+				foreach($freshIPs as $IP => $value){
+					$IP_bin = wfUtils::inet_pton($IP);
+					if($value == 'failed'){
+						$db->queryWrite("insert IGNORE into " . $locsTable . " (IP, ctime, failed) values (%s, unix_timestamp(), 1)", $IP_bin);
+						$IPLocs[$IP] = false;
+					} else if(is_array($value)){
+						for($i = 0; $i <= 5; $i++){
+							//Prevent warnings in debug mode about uninitialized values
+							if(! isset($value[$i])){ $value[$i] = ''; }
+						}
+						$db->queryWrite("insert IGNORE into " . $locsTable . " (IP, ctime, failed, city, region, countryName, countryCode, lat, lon) values (%s, unix_timestamp(), 0, '%s', '%s', '%s', '%s', %s, %s)",
+							$IP_bin,
+							$value[3], //city
+							$value[2], //region
+							$value[1], //countryName
+							$value[0],//countryCode
+							$value[4],//lat
+							$value[5]//lon
+							);
+						$IPLocs[$IP] = array(
+							'IP' => $IP,
+							'city' => $value[3],
+							'region' => wfUtils::shouldDisplayRegion($value[1]) ? $value[2] : '',
+							'countryName' => $value[1],
+							'countryCode' => $value[0],
+							'lat' => $value[4],
+							'lon' => $value[5]
+							);
+					}
+				}
 			}
 		}
 		return $IPLocs;
@@ -1584,63 +1607,36 @@ class wfUtils {
 			return '';
 		}
 	}
+	public static function shouldDisplayRegion($country) {
+		$countries_to_show_for = array('united states', 'canada', 'australia');
+		return in_array(strtolower($country), $countries_to_show_for);
+	}
 	public static function extractBareURI($URL){
 		$URL = preg_replace('/^https?:\/\/[^\/]+/i', '', $URL); //strip of method and host
 		$URL = preg_replace('/\#.*$/', '', $URL); //strip off fragment
 		$URL = preg_replace('/\?.*$/', '', $URL); //strip off query string
 		return $URL;
 	}
-	public static function IP2Country($IP){
-		if (version_compare(phpversion(), '5.4.0', '<')) {
-			return '';
-		}
-		
-		if (!class_exists('wfGeoIP2')) {
-			wfUtils::error_clear_last();
-			require_once(dirname(__FILE__) . '/../models/common/wfGeoIP2.php');
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-		}
-		
-		try {
-			wfUtils::error_clear_last();
-			$geoip = @wfGeoIP2::shared();
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-			wfUtils::error_clear_last();
-			$code = @$geoip->countryCode($IP);
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-			return is_string($code) ? $code : '';
-		}
-		catch (Exception $e) {
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:', $e->getMessage());
-		}
-		
-		return '';
+	public static function requireIpLocator() {
+		/**
+		 * This is also used in the WAF so in certain site setups (i.e. nested sites in subdirectories)
+		 * it's possible for this to already have been loaded from a different installation of the
+		 * plugin and hence require_once doesn't help as it's a different file path. There is no guarantee
+		 * that the two plugin installations are the same version, so should the wfIpLocator class or any
+		 * of its dependencies change in a manner that is not backwards compatible, this may need to be
+		 * handled differently.
+		 */
+		if (!class_exists('wfIpLocator'))
+			require_once(__DIR__ . '/wfIpLocator.php');
+	}
+	public static function IP2Country($ip){
+		self::requireIpLocator();
+		return wfIpLocator::getInstance()->getCountryCode($ip);
 	}
 	public static function geoIPVersion() {
-		if (version_compare(phpversion(), '5.4.0', '<')) {
-			return 0;
-		}
-		
-		if (!class_exists('wfGeoIP2')) {
-			wfUtils::error_clear_last();
-			require_once(dirname(__FILE__) . '/../models/common/wfGeoIP2.php');
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-		}
-		
-		try {
-			wfUtils::error_clear_last();
-			$geoip = @wfGeoIP2::shared();
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-			wfUtils::error_clear_last();
-			$version = @$geoip->version();
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:');
-			return $version;
-		}
-		catch (Exception $e) {
-			wfUtils::check_and_log_last_error('geoip', 'GeoIP Error:', $e->getMessage());
-		}
-		
-		return 0;
+		self::requireIpLocator();
+		$version = wfIpLocator::getInstance()->getDatabaseVersion();
+		return $version === null ? 0 : $version;
 	}
 	public static function siteURLRelative(){
 		if(is_multisite()){
@@ -1659,10 +1655,11 @@ class wfUtils {
 		return date('D jS F \@ h:i:sA', time() + (3600 * get_option('gmt_offset')));
 	}
 	public static function funcEnabled($func){
-		if(! function_exists($func)){ return false; }
+		if (!function_exists($func)){ return false; }
+		if (!is_callable($func)) { return false; }
 		$disabled = explode(',', ini_get('disable_functions'));
-		foreach($disabled as $f){
-			if($func == $f){ return false; }
+		if (in_array($func, $disabled)) {
+			return false;
 		}
 		return true;
 	}
@@ -1673,7 +1670,7 @@ class wfUtils {
 	}
 	public static function doNotCache(){
 		header("Pragma: no-cache");
-		header("Cache-Control: no-cache, must-revalidate, private");
+		header("Cache-Control: no-cache, must-revalidate, private, max-age=0");
 		header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); //In the past
 		if(! defined('DONOTCACHEPAGE')){ define('DONOTCACHEPAGE', true); }
 		if(! defined('DONOTCACHEDB')){ define('DONOTCACHEDB', true); }
@@ -1850,24 +1847,30 @@ class wfUtils {
 	 * @param string $host
 	 * @return array
 	 */
-	public static function resolveDomainName($host) {
-		// Fallback if this function is not available
+	public static function resolveDomainName($host, $ipVersion = null) {
 		if (!function_exists('dns_get_record')) {
-			return gethostbynamel($host);
-		}
-
-		$ips = array_merge((array) @dns_get_record($host, DNS_AAAA), (array) @dns_get_record($host, DNS_A));
-		$return = array();
-
-		foreach ($ips as $record) {
-			if ($record['type'] === 'A') {
-				$return[] = $record['ip'];
+			if ($ipVersion === 4 || $ipVersion === null) {
+				$ips = gethostbynamel($host);
+				if ($ips !== false)
+					return $ips;
 			}
-			if ($record['type'] === 'AAAA') {
-				$return[] = $record['ipv6'];
+			return array();
+		}
+		$recordTypes = array();
+		if ($ipVersion === 4 || $ipVersion === null)
+			$recordTypes[DNS_A] = 'ip';
+		if ($ipVersion === 6 || $ipVersion === null)
+			$recordTypes[DNS_AAAA] = 'ipv6';
+		$ips = array();
+		foreach ($recordTypes as $type => $key) {
+			$records = @dns_get_record($host, $type);
+			if ($records !== false) {
+				foreach ($records as $record) {
+					$ips[] = $record[$key];
+				}
 			}
 		}
-		return $return;
+		return $ips;
 	}
 
 	/**
@@ -2151,7 +2154,8 @@ class wfUtils {
 					's'      => $siteurl,
 					'h'		 => $homeurl,
 					't'		 => microtime(true),
-				), null, '&'),
+					'lang'   => get_site_option('WPLANG'),
+				), '', '&'),
 				array(
 					'body'    => json_encode($payload),
 					'headers' => array(
@@ -2846,11 +2850,7 @@ class wfUtils {
 			$base = time();
 		}
 		
-		$offset = wfConfig::get('timeoffset_ntp', false);
-		if ($offset === false) {
-			$offset = wfConfig::get('timeoffset_wf', false);
-			if ($offset === false) { $offset = 0; }
-		}
+		$offset = (int) wfConfig::get('timeoffset_wf', 0);
 		return $base + $offset;
 	}
 	
@@ -2861,11 +2861,7 @@ class wfUtils {
 	 * @return int
 	 */
 	public static function denormalizedTime($base) {
-		$offset = wfConfig::get('timeoffset_ntp', false);
-		if ($offset === false) {
-			$offset = wfConfig::get('timeoffset_wf', false);
-			if ($offset === false) { $offset = 0; }
-		}
+		$offset = (int) wfConfig::get('timeoffset_wf', 0);
 		return $base - $offset;
 	}
 	
@@ -3042,6 +3038,68 @@ class wfUtils {
 		}
 		return $payload;
 	}
+
+	/**
+	 * Split a path into its components
+	 * @param string $path
+	 */
+	public static function splitPath($path) {
+		return preg_split('/[\\/\\\\]/', $path, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	/**
+	 * Convert an absolute path to a path relative to $to
+	 * @param string $absolute the absolute path to convert
+	 * @param string $to the absolute path from which to derive the relative path
+	 * @param bool $leadingSlash if true, prepend the resultant URL with a slash
+	 */
+	public static function relativePath($absolute, $to, $leadingSlash = false) {
+		$trailingSlash = in_array(substr($absolute, -1), array('/', '\\'));
+		$absoluteComponents = self::splitPath($absolute);
+		$toComponents = self::splitPath($to);
+		$relativeComponents = array();
+		do {
+			$currentAbsolute = array_shift($absoluteComponents);
+			$currentTo = array_shift($toComponents);
+		} while($currentAbsolute === $currentTo && $currentAbsolute !== null);
+		while ($currentTo !== null) {
+			array_push($relativeComponents, '..');
+			$currentTo = array_shift($toComponents);
+		}
+		while ($currentAbsolute !== null) {
+			array_push($relativeComponents, $currentAbsolute);
+			$currentAbsolute = array_shift($absoluteComponents);
+		}
+		return implode(array(
+			$leadingSlash ? '/' : '',
+			implode('/', $relativeComponents),
+			($trailingSlash && (count($relativeComponents) > 0 || !$leadingSlash)) ? '/' : ''
+		));
+	}
+
+	public static function getHomePath() {
+		if (!function_exists('get_home_path')) {
+			include_once(ABSPATH . 'wp-admin/includes/file.php');
+		}
+		if (WF_IS_FLYWHEEL)
+			return trailingslashit($_SERVER['DOCUMENT_ROOT']);
+		return get_home_path();
+	}
+
+	public static function includeOnceIfPresent($path) {
+		if (file_exists($path)) {
+			@include_once($path);
+			return @include_once($path); //Calling `include_once` for an already included file will return true
+		}
+		return false;
+	}
+
+	public static function isCurlSupported() {
+		if (self::includeOnceIfPresent(ABSPATH . 'wp-includes/class-wp-http-curl.php'))
+			return WP_Http_Curl::test();
+		return false;
+	}
+
 }
 
 // GeoIP lib uses these as well
@@ -3074,21 +3132,25 @@ class wfWebServerInfo {
 	public static function createFromEnvironment() {
 		$serverInfo = new self;
 		$sapi = php_sapi_name();
-		if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
-			$serverInfo->setSoftware(self::APACHE);
-			$serverInfo->setSoftwareName('apache');
+		if (WF_IS_FLYWHEEL) {
+			$serverInfo->setSoftware(self::NGINX);
+			$serverInfo->setSoftwareName('Flywheel');
 		}
-		if (stripos($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false || $sapi == 'litespeed') {
-			$serverInfo->setSoftware(self::LITESPEED);
-			$serverInfo->setSoftwareName('litespeed');
+		else if (strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'ExpressionDevServer') !== false) {
+			$serverInfo->setSoftware(self::IIS);
+			$serverInfo->setSoftwareName('iis');
 		}
-		if (strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
+		else if (strpos($_SERVER['SERVER_SOFTWARE'], 'nginx') !== false) {
 			$serverInfo->setSoftware(self::NGINX);
 			$serverInfo->setSoftwareName('nginx');
 		}
-		if (strpos($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') !== false || strpos($_SERVER['SERVER_SOFTWARE'], 'ExpressionDevServer') !== false) {
-			$serverInfo->setSoftware(self::IIS);
-			$serverInfo->setSoftwareName('iis');
+		else if (stripos($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false || $sapi == 'litespeed') {
+			$serverInfo->setSoftware(self::LITESPEED);
+			$serverInfo->setSoftwareName('litespeed');
+		}
+		else if (stripos($_SERVER['SERVER_SOFTWARE'], 'apache') !== false) {
+			$serverInfo->setSoftware(self::APACHE);
+			$serverInfo->setSoftwareName('apache');
 		}
 
 		$serverInfo->setHandler($sapi);

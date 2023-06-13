@@ -67,6 +67,12 @@ wp-content/mysql.sql
 /wp-content/themes/twentyfifteen
 /wp-content/themes/twentysixteen
 /wp-content/themes/twentyseventeen
+/wp-content/themes/twentytwentyone
+/wp-content/themes/twentytwentytwo
+/wp-content/themes/twentytwentythree
+
+
+
 
 # large/disallowed file types
 # a CDN should be used for these
@@ -108,3 +114,22 @@ wp-content/plugins/w3-total-cache/
 wp-content/w3tc-config/
 wp-content/wflogs/
 wp-content/w3tc-config
+wp-content/plugins/wixelpress/README.md
+wp-content/plugins/wixelpress/readme.txt
+wp-content/plugins/wixelpress/screenshot.png
+wp-content/plugins/wixelpress/screenshot2.png
+wp-content/plugins/wixelpress/screenshot3.png
+wp-content/plugins/wixelpress/screenshot4.png
+wp-content/plugins/wixelpress/screenshot5.png
+wp-content/plugins/wixelpress/screenshot6.png
+wp-content/plugins/wixelpress/style.css
+wp-content/plugins/wixelpress/wixelpress.php
+wp-content/plugins/wixelpress/dist/admin.bundle.js
+wp-content/plugins/wixelpress/dist/frontend.bundle.js
+wp-content/plugins/wixelpress/inc/helper.php
+wp-content/plugins/wixelpress/inc/init.php
+wp-content/plugins/wixelpress/inc/mw_wp_form.php
+wp-content/plugins/wixelpress/inc/wp_forms.php
+wp-content/plugins/wixelpress/inc/wpcf7.php
+wp-content/plugins/wixelpress/languages/wixelpress-ja.mo
+wp-content/plugins/wixelpress/languages/wixelpress-ja.po

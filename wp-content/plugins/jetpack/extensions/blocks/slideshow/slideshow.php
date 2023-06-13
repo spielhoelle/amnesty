@@ -4,12 +4,12 @@
  *
  * @since 7.1.0
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 namespace Automattic\Jetpack\Extensions\Slideshow;
 
-use Jetpack_AMP_Support;
+use Automattic\Jetpack\Blocks;
 use Jetpack_Gutenberg;
 
 const FEATURE_NAME = 'slideshow';
@@ -21,7 +21,7 @@ const BLOCK_NAME   = 'jetpack/' . FEATURE_NAME;
  * registration if we need to.
  */
 function register_block() {
-	jetpack_register_block(
+	Blocks::jetpack_register_block(
 		BLOCK_NAME,
 		array( 'render_callback' => __NAMESPACE__ . '\load_assets' )
 	);
@@ -38,7 +38,7 @@ add_action( 'init', __NAMESPACE__ . '\register_block' );
  */
 function load_assets( $attr, $content ) {
 	Jetpack_Gutenberg::load_assets_as_required( FEATURE_NAME );
-	if ( class_exists( 'Jetpack_AMP_Support' ) && Jetpack_AMP_Support::is_amp_request() ) {
+	if ( Blocks::is_amp_request() ) {
 		return render_amp( $attr );
 	}
 	return $content;
@@ -52,18 +52,21 @@ function load_assets( $attr, $content ) {
  * @return string
  */
 function render_amp( $attr ) {
+	if ( empty( $attr['ids'] ) ) {
+		return '';
+	}
+
 	static $wp_block_jetpack_slideshow_id = 0;
-	$wp_block_jetpack_slideshow_id++;
+	++$wp_block_jetpack_slideshow_id;
 
-	$ids      = empty( $attr['ids'] ) ? array() : $attr['ids'];
-	$autoplay = empty( $attr['autoplay'] ) ? false : $attr['autoplay'];
-
-	$extras  = array(
+	$ids      = $attr['ids'];
+	$autoplay = empty( $attr['autoplay'] ) ? false : true;
+	$extras   = array(
 		'wp-amp-block',
 		$autoplay ? 'wp-block-jetpack-slideshow__autoplay' : null,
 		$autoplay ? 'wp-block-jetpack-slideshow__autoplay-playing' : null,
 	);
-	$classes = Jetpack_Gutenberg::block_classes( FEATURE_NAME, $attr, $extras );
+	$classes  = Blocks::classes( FEATURE_NAME, $attr, $extras );
 
 	return sprintf(
 		'<div class="%1$s" id="wp-block-jetpack-slideshow__%2$d"><div class="wp-block-jetpack-slideshow_container swiper-container">%3$s%4$s%5$s</div></div>',
@@ -71,7 +74,7 @@ function render_amp( $attr ) {
 		absint( $wp_block_jetpack_slideshow_id ),
 		amp_carousel( $attr, $wp_block_jetpack_slideshow_id ),
 		$autoplay ? autoplay_ui( $wp_block_jetpack_slideshow_id ) : '',
-		bullets( $ids, $wp_block_jetpack_slideshow_id )
+		render_paginator( $ids, $wp_block_jetpack_slideshow_id )
 	);
 }
 
@@ -113,7 +116,7 @@ function amp_carousel( $attr, $block_ordinal ) {
  */
 function slides( $ids = array(), $width = 400, $height = 300 ) {
 	return array_map(
-		function( $id ) use ( $width, $height ) {
+		function ( $id ) use ( $width, $height ) {
 			$caption    = wp_get_attachment_caption( $id );
 			$figcaption = $caption ? sprintf(
 				'<figcaption class="wp-block-jetpack-slideshow_caption gallery-caption">%s</figcaption>',
@@ -139,6 +142,28 @@ function slides( $ids = array(), $width = 400, $height = 300 ) {
 }
 
 /**
+ * Render blocks paginator section
+ *
+ * @param array $ids Array of image ids.
+ * @param int   $block_ordinal The ordinal number of the block, used in unique ID.
+ *
+ * @return array Array of bullets markup.
+ */
+function render_paginator( $ids = array(), $block_ordinal = 0 ) {
+	$total = count( $ids );
+
+	if ( $total < 6 ) {
+		return bullets( $ids, $block_ordinal );
+	}
+
+	return sprintf(
+		'<div class="swiper-pagination-simple">%s / %s</div>',
+		absint( $block_ordinal ),
+		absint( $total )
+	);
+}
+
+/**
  * Generate array of bullets markup
  *
  * @param array $ids Array of image ids.
@@ -148,7 +173,7 @@ function slides( $ids = array(), $width = 400, $height = 300 ) {
  */
 function bullets( $ids = array(), $block_ordinal = 0 ) {
 	$buttons = array_map(
-		function( $index ) {
+		function ( $index ) {
 			$aria_label = sprintf(
 				/* translators: %d: Slide number. */
 				__( 'Go to slide %d', 'jetpack' ),
@@ -165,7 +190,7 @@ function bullets( $ids = array(), $block_ordinal = 0 ) {
 	);
 
 	return sprintf(
-		'<amp-selector id="wp-block-jetpack-slideshow__amp-pagination__%1$d" class="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-bullets amp-pagination" on="select:wp-block-jetpack-slideshow__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
+		'<amp-selector id="wp-block-jetpack-slideshow__amp-pagination__%1$d" class="wp-block-jetpack-slideshow_pagination swiper-pagination swiper-pagination-custom amp-pagination" on="select:wp-block-jetpack-slideshow__amp-carousel__%1$d.goToSlide(index=event.targetOption)" layout="container">%2$s</amp-selector>',
 		absint( $block_ordinal ),
 		implode( '', $buttons )
 	);

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Manages custom menus translations as well as the language switcher menu item on frontend
@@ -6,6 +9,11 @@
  * @since 1.2
  */
 class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
+	/**
+	 * Current language.
+	 *
+	 * @var PLL_Language|null|false
+	 */
 	public $curlang;
 
 	/**
@@ -37,12 +45,12 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	}
 
 	/**
-	 * Sort menu items by menu order
+	 * Sorts menu items by menu order.
 	 *
 	 * @since 1.7.9
 	 *
-	 * @param object $a The first object to compare
-	 * @param object $b The second object to compare
+	 * @param stdClass $a The first object to compare.
+	 * @param stdClass $b The second object to compare.
 	 * @return int -1 or 1 if $a is considered to be respectively less than or greater than $b.
 	 */
 	protected function usort_menu_items( $a, $b ) {
@@ -73,15 +81,19 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	}
 
 	/**
-	 * Splits the one item of backend in several items on frontend
-	 * take care to menu_order as it is used later in wp_nav_menu
+	 * Splits the one language switcher menu item of backend in several menu items on frontend.
+	 * Takes care to menu_order as it is used later in wp_nav_menu().
 	 *
 	 * @since 1.1.1
 	 *
-	 * @param array $items menu items
-	 * @return array modified items
+	 * @param stdClass[] $items Menu items.
+	 * @return stdClass[] Modified menu items.
 	 */
 	public function wp_get_nav_menu_items( $items ) {
+		if ( empty( $this->curlang ) ) {
+			return $items;
+		}
+
 		if ( doing_action( 'customize_register' ) ) { // needed since WP 4.3, doing_action available since WP 3.9
 			return $items;
 		}
@@ -90,30 +102,34 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		usort( $items, array( $this, 'usort_menu_items' ) );
 
 		$new_items = array();
+
 		$offset = 0;
 
 		foreach ( $items as $item ) {
 			if ( $options = get_post_meta( $item->ID, '_pll_menu_item', true ) ) {
-				$i = 0;
-
 				/** This filter is documented in include/switcher.php */
 				$options = apply_filters( 'pll_the_languages_args', $options ); // Honor the filter here for 'show_flags', 'show_names' and 'dropdown'.
 
 				$switcher = new PLL_Switcher();
 				$args = array_merge( array( 'raw' => 1 ), $options );
+
+				/** @var array */
 				$the_languages = $switcher->the_languages( PLL()->links, $args );
 
 				// parent item for dropdown
 				if ( ! empty( $options['dropdown'] ) ) {
 					$name = isset( $options['display_names_as'] ) && 'slug' === $options['display_names_as'] ? $this->curlang->slug : $this->curlang->name;
-					$item->title = $this->get_item_title( $this->curlang->flag, $name, $options );
+					$item->title = $this->get_item_title( $this->curlang->get_display_flag(), $name, $options );
 					$item->attr_title = '';
 					$item->classes = array( 'pll-parent-menu-item' );
+					$item->menu_order += $offset;
 					$new_items[] = $item;
 					$offset++;
 				}
 
+				$i = 0; // for incrementation of menu order only in case of dropdown
 				foreach ( $the_languages as $lang ) {
+					$i++;
 					$lang_item = clone $item;
 					$lang_item->ID = $lang_item->ID . '-' . $lang['slug']; // A unique ID
 					$lang_item->title = $this->get_item_title( $lang['flag'], $lang['name'], $options );
@@ -121,14 +137,17 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 					$lang_item->url = $lang['url'];
 					$lang_item->lang = $lang['locale']; // Save this for use in nav_menu_link_attributes
 					$lang_item->classes = $lang['classes'];
-					$lang_item->menu_order += $offset + $i++;
 					if ( ! empty( $options['dropdown'] ) ) {
+						$lang_item->menu_order = $item->menu_order + $i;
 						$lang_item->menu_item_parent = $item->db_id;
 						$lang_item->db_id = 0; // to avoid recursion
+					} else {
+						$lang_item->menu_order += $offset;
 					}
 					$new_items[] = $lang_item;
+					$offset++;
 				}
-				$offset += $i - 1;
+				$offset--;
 			} else {
 				$item->menu_order += $offset;
 				$new_items[] = $item;
@@ -138,12 +157,12 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	}
 
 	/**
-	 * Returns the ancestors of a menu item
+	 * Returns the ancestors of a menu item.
 	 *
 	 * @since 1.1.1
 	 *
-	 * @param object $item
-	 * @return array ancestors ids
+	 * @param stdClass $item Menu item.
+	 * @return int[] Ancestors ids.
 	 */
 	public function get_ancestors( $item ) {
 		$ids = array();
@@ -155,12 +174,12 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	}
 
 	/**
-	 * Removes current-menu and current-menu-ancestor classes to lang switcher when not on the home page
+	 * Removes current-menu and current-menu-ancestor classes to lang switcher when not on the home page.
 	 *
 	 * @since 1.1.1
 	 *
-	 * @param array $items
-	 * @return array modified menu items
+	 * @param stdClass[] $items An array of menu items.
+	 * @return stdClass[]
 	 */
 	public function wp_nav_menu_objects( $items ) {
 		$r_ids = $k_ids = array();
@@ -189,14 +208,14 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	}
 
 	/**
-	 * Adds hreflang attribute for the language switcher menu items
-	 * available since WP 3.6
+	 * Adds hreflang attribute for the language switcher menu items.
+	 * available since WP 3.6.
 	 *
 	 * @since 1.1
 	 *
-	 * @param array  $atts
-	 * @param object $item
-	 * @return array modified $atts
+	 * @param string[] $atts HTML attributes applied to the menu item's `<a>` element.
+	 * @param stdClass $item Menu item.
+	 * @return string[] Modified attributes.
 	 */
 	public function nav_menu_link_attributes( $atts, $item ) {
 		if ( isset( $item->lang ) ) {
@@ -232,7 +251,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 						$infos = $this->explode_location( $loc );
 						if ( $infos['lang'] === $this->curlang->slug ) {
 							$menus[ $infos['location'] ] = (int) $value;
-						} elseif ( $this->curlang->slug === $this->options['default_lang'] ) {
+						} elseif ( $this->curlang->is_default ) {
 							$menus[ $loc ] = (int) $value;
 						}
 					}

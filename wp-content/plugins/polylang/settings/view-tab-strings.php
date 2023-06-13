@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Displays the strings translations tab in Polylang settings
+ *
+ * @package Polylang
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="metabox-holder">
 		<?php
 		wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-		do_meta_boxes( 'languages_page_mlang_strings', 'bottom', array() );
+		do_meta_boxes( 'languages_page_mlang_strings', 'normal', array() );
 		?>
 	</div>
 

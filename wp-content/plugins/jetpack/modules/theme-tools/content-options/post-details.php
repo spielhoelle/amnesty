@@ -1,5 +1,11 @@
 <?php
 /**
+ * Theme Tools: functions for Post Details.
+ *
+ * @package automattic/jetpack
+ */
+
+/**
  * The function to include Post Details in a theme's stylesheet.
  */
 function jetpack_post_details_enqueue_scripts() {
@@ -16,28 +22,33 @@ function jetpack_post_details_enqueue_scripts() {
 	$elements = array();
 
 	// If date option is unticked, add it to the list of classes.
-	if ( 1 != $date_option && ! empty( $date ) ) {
+	if ( 1 !== (int) $date_option && ! empty( $date ) ) {
 		$elements[] = $date;
 	}
 
 	// If categories option is unticked, add it to the list of classes.
-	if ( 1 != $categories_option && ! empty( $categories ) ) {
+	if ( 1 !== (int) $categories_option && ! empty( $categories ) ) {
 		$elements[] = $categories;
 	}
 
 	// If tags option is unticked, add it to the list of classes.
-	if ( 1 != $tags_option && ! empty( $tags ) ) {
+	if ( 1 !== (int) $tags_option && ! empty( $tags ) ) {
 		$elements[] = $tags;
 	}
 
 	// If author option is unticked, add it to the list of classes.
-	if ( 1 != $author_option && ! empty( $author ) ) {
+	if ( 1 !== (int) $author_option && ! empty( $author ) ) {
 		$elements[] = $author;
 	}
 
 	// If comment option is unticked, add it to the list of classes.
-	if ( 1 != $comment_option && ! empty( $comment ) ) {
+	if ( 1 !== (int) $comment_option && ! empty( $comment ) ) {
 		$elements[] = $comment;
+	}
+
+	// If the Elements array is empty, return without setting custom CSS.
+	if ( empty( $elements ) ) {
+		return;
 	}
 
 	// Get the list of classes.
@@ -53,6 +64,8 @@ add_action( 'wp_enqueue_scripts', 'jetpack_post_details_enqueue_scripts' );
 
 /**
  * Adds custom classes to the array of body classes.
+ *
+ * @param array $classes Classes for the body element.
  */
 function jetpack_post_details_body_classes( $classes ) {
 	// Make sure we can proceed.
@@ -66,27 +79,27 @@ function jetpack_post_details_body_classes( $classes ) {
 	list( $date, $categories, $tags, $author, $comment )                                    = $definied;
 
 	// If date option is unticked, add a class of 'date-hidden' to the body.
-	if ( 1 != $date_option && ! empty( $date ) ) {
+	if ( 1 !== (int) $date_option && ! empty( $date ) ) {
 		$classes[] = 'date-hidden';
 	}
 
 	// If categories option is unticked, add a class of 'categories-hidden' to the body.
-	if ( 1 != $categories_option && ! empty( $categories ) ) {
+	if ( 1 !== (int) $categories_option && ! empty( $categories ) ) {
 		$classes[] = 'categories-hidden';
 	}
 
 	// If tags option is unticked, add a class of 'tags-hidden' to the body.
-	if ( 1 != $tags_option && ! empty( $tags ) ) {
+	if ( 1 !== (int) $tags_option && ! empty( $tags ) ) {
 		$classes[] = 'tags-hidden';
 	}
 
 	// If author option is unticked, add a class of 'author-hidden' to the body.
-	if ( 1 != $author_option && ! empty( $author ) ) {
+	if ( 1 !== (int) $author_option && ! empty( $author ) ) {
 		$classes[] = 'author-hidden';
 	}
 
 	// If comment option is unticked, add a class of 'comment-hidden' to the body.
-	if ( 1 != $comment_option && ! empty( $comment ) ) {
+	if ( 1 !== (int) $comment_option && ! empty( $comment ) ) {
 		$classes[] = 'comment-hidden';
 	}
 
@@ -132,11 +145,11 @@ function jetpack_post_details_should_run() {
 		return $void;
 	}
 
-	$date_option       = get_option( 'jetpack_content_post_details_date', 1 );
-	$categories_option = get_option( 'jetpack_content_post_details_categories', 1 );
-	$tags_option       = get_option( 'jetpack_content_post_details_tags', 1 );
-	$author_option     = get_option( 'jetpack_content_post_details_author', 1 );
-	$comment_option    = get_option( 'jetpack_content_post_details_comment', 1 );
+	$date_option       = Jetpack_Options::get_option_and_ensure_autoload( 'jetpack_content_post_details_date', 1 );
+	$categories_option = Jetpack_Options::get_option_and_ensure_autoload( 'jetpack_content_post_details_categories', 1 );
+	$tags_option       = Jetpack_Options::get_option_and_ensure_autoload( 'jetpack_content_post_details_tags', 1 );
+	$author_option     = Jetpack_Options::get_option_and_ensure_autoload( 'jetpack_content_post_details_author', 1 );
+	$comment_option    = Jetpack_Options::get_option_and_ensure_autoload( 'jetpack_content_post_details_comment', 1 );
 
 	$options  = array( $date_option, $categories_option, $tags_option, $author_option, $comment_option );
 	$definied = array( $date, $categories, $tags, $author, $comment );

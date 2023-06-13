@@ -1,14 +1,20 @@
 @import "../../../base/less/mixins";
 
-.widget-function('import_google_font');
+@responsive_breakpoint: 780px;
+@align: center;
+@mobile_align: center;
 
 @button_width: '';
 @button_color: #41a9d5;
 @border_color: darken(@button_color, 5%);
 @text_color: #FFFFFF;
 
+@hover_background_color: #41a9d5;
+@hover_text_color:  #FFFFFF;
+
 @button_font: default;
 @button_font_weight: default;
+@button_font_style: default;
 
 @font_size: 1em;
 @rounding: 0.25em;
@@ -18,6 +24,24 @@
 .ow-button-base {
 	.clearfix();
 
+	@media (max-width: @responsive_breakpoint) {
+		&.ow-button-align-@{align} {
+			text-align: @mobile_align;
+
+			& when not ( @mobile_align = justify ) {
+				&.ow-button-align-justify a {
+					display: inline-block;
+				}
+			}
+
+			& when ( @mobile_align = justify ) {
+				a {
+					display: block;
+				}
+			}
+		}
+	}
+
 	a {
 		.box-sizing(border-box);
 		& when( isnumber( @button_width ) ) {
@@ -25,6 +49,7 @@
 			max-width: 100%;
 		}
 		.font(@button_font, @button_font_weight);
+		font-style: @button_font_style;
 
 		font-size: @font_size;
 		padding: @padding @padding*2;
@@ -45,16 +70,11 @@
 			}
 		}
 
-		&:visited,
-		&:active,
-		&:hover{
-			color: @text_color !important;
-		}
-
+		&.ow-button-hover:active,
 		&.ow-button-hover:hover {
-			background: lighten(@button_color, 4%);
-			border-bottom-color: lighten(@border_color, 4%);
-			color: lighten(@text_color, 4%);
+			background: lighten(@hover_background_color, 4%);
+			border-color: lighten(@hover_background_color, 4%);
+			color: @hover_text_color !important;
 		}
 	}
 }

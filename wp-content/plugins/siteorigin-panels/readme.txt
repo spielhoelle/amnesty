@@ -1,19 +1,20 @@
 === Page Builder by SiteOrigin ===
-Tags: page builder, responsive, widget, widgets, builder, page, admin, gallery, content, cms, pages, post, css, layout, grid
+Tags: page builder, responsive, parallax, widgets, blocks, gallery, layout, grid, cms, builder, widget
 Requires at least: 4.7
-Tested up to: 5.4
-Stable tag: 2.10.15
-Build time: 2020-04-07T11:25:41+02:00
+Tested up to: 6.2
+Requires PHP: 5.6.20
+Stable tag: 2.23.0
+Build time: 2023-05-21T21:35:02+01:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
-Contributors: gpriday, braam-genis
+Contributors: gpriday, braam-genis, alexgso
 
 Build responsive page layouts using the widgets you know and love using this simple drag and drop page builder.
 
 == Description ==
 
-SiteOrigin Page Builder is the most popular page creation plugin for WordPress. It makes it easy to create responsive column based content, using the widgets you know and love. Your content will accurately adapt to all mobile devices, ensuring your site is mobile-ready. Read more on [SiteOrigin](https://siteorigin.com/page-builder/).
+SiteOrigin Page Builder is a powerful content creation interface, instantly recognizable, astonishingly different. SiteOrigin Page Builder makes it easy to create responsive column-based content using the widgets you know and love. Your content will accurately adapt to all mobile devices, ensuring your site is mobile-ready. Read more on [SiteOrigin](https://siteorigin.com/page-builder/).
 
 We've created an intuitive interface that looks just like WordPress itself. It's easy to learn, so you'll be building beautiful, responsive content in no time.
 
@@ -21,80 +22,458 @@ We've created an intuitive interface that looks just like WordPress itself. It's
 
 Page Builder works with standard WordPress widgets, so you'll always find the widget you need. We've created the [SiteOrigin Widgets Bundle](https://wordpress.org/plugins/so-widgets-bundle/) to give you all the most common widgets, and with a world of plugins out there, you'll always find the widget you need.
 
-= It works with your theme. =
+= Ready to Be Used Anywhere =
+
+Choose your editor; Page Builder is ready to be used anywhere. Build in the traditional Page Builder interface or insert a Page Builder Layout into the Block Editor. Insert the SiteOrigin Layout Widget into sidebar and footer widget areas or use the SiteOrigin Layout Block in block-based widget areas.
+
+= It Works With Your Theme =
 
 Page Builder gives you complete freedom to choose any WordPress theme you like. It's not a commitment to a single theme or theme developer. The advantage is that you're free to change themes as often as you like. Your content will always come along with you.
 
 We've also made some fantastic [free themes](https://siteorigin.com/theme/) that work well with Page Builder.
 
-= No coding required. =
+= No Coding Required =
 
 Page Builder's simple drag and drop interface means you'll never need to write a single line of code. Page Builder generates all the highly efficient code for you.
 
-We don't limit you with a set of pre-defined row layouts. Page Builder gives you complete flexibility. You can choose the exact number of columns for each row and the precise weight of each column - down to the decimal point. This flexibility is all possible using our convenient row builder. And, if you're not sure what you like, the Row Builder will guide you towards beautifully proportioned content using advanced ratios.
+= Live Editing =
 
-= Live Editing. =
+Page Builder supports live editing. This tool lets you see your content and edit widgets in real time. It's the fastest way to adjust your content quickly and easily.
 
-Page Builder supports live editing. This tool lets you see your content and edit widgets in real-time. It's the fastest way to adjust your content quickly and easily.
-
-= History Browser. =
+= History Browser =
 
 This tool lets you roll forward and back through your changes. It gives you the freedom to experiment with different layouts and content without the fear of breaking your content.
 
-= Row and widget styles. =
+= Row, Cell, and Widget Styles =
 
-Row and widget styles give you all the control you need to make your content uniquely your own. Change attributes like paddings, background colours and column spacing. You can also enter custom CSS and CSS classes if you need even finer grained control.
+Row, cell, and widget styles give you all the control you need to make your content uniquely your own. Change attributes like paddings, background colors, and column spacing. You can also enter custom CSS and CSS classes if you need even finer-grained control.
 
-= It's free, and always will be. =
+= Focussed on Performance =
 
-Page Builder is our commitment to the democratization of content creation. Like WordPress, Page Builder is, and always will be free. We'll continue supporting and developing it for many years to come. It'll only get better from here.
+We've built a lightweight framework, focusing on small page sizes and fast load time. Page Builder is compatible with [Autoptimize](https://wordpress.org/plugins/autoptimize/) and all other major performance plugins.
 
-We offer free support on the [SiteOrigin support forums](https://siteorigin.com/thread/).
+= SEO Optimized =
+
+Page Builder uses modern SEO best practices and seamlessly integrates with all major SEO plugins, including Yoast SEO and Rank Math.
+
+= It's Free, and Always Will Be =
+
+Page Builder is our commitment to the democratization of content creation. Like WordPress, Page Builder is, and always will be, free. We'll continue supporting and developing it for many years to come. It'll only get better from here.
+
+= Accessibility Ready =
+
+Page Builder is accessibility-ready. Tab through all form fields and settings, and make changes without a mouse.
 
 = Actively Developed =
 
-Page Builder is actively developed with new features and exciting enhancements all the time. Keep track on the [Page Builder GitHub repository](https://github.com/siteorigin/siteorigin-panels).
+SiteOrigin has been creating magical tools for your WordPress website since 2011. Page Builder is actively developed with new features and exciting enhancements every month. Keep track on the [Page Builder GitHub repository](https://github.com/siteorigin/siteorigin-panels).
 
 Read the [Page Builder developer docs](https://siteorigin.com/docs/page-builder/) if you'd like to develop for Page Builder.
 
-= Available in 17 Languages =
+== Documentation ==
 
-Through the efforts of both professional translators and our community, Page Builder is available in the following languages:  Afrikaans, Bulgarian, Chinese (simplified), Danish, Dutch, English, Finnish, French, German, Hindi, Italian, Japanese, Polish, Portuguese (BR), Russian, Spanish and Swedish.
+[Documentation](https://siteorigin.com/page-builder/documentation/) is available on SiteOrigin.
 
-== Installation ==
+== Support ==
 
-1. Upload and install Page Builder in the same way you'd install any other plugin.
-2. Read the [usage documentation](http://siteorigin.com/page-builder/documentation/) on SiteOrigin.
+Free support is available on the [SiteOrigin support forums](https://siteorigin.com/thread/).
+
+== SiteOrigin Premium ==
+
+[SiteOrigin Premium](https://siteorigin.com/downloads/premium/) enhances Page Builder by SiteOrigin, the SiteOrigin Widgets Bundle, and all SiteOrigin themes with a vast array of additional features and settings. Take your layouts to the next level with SiteOrigin Premium Addons.
+
+SiteOrigin Premium includes access to our professional email support service, perfect for those times when you need fast and effective technical support. We're standing by to assist you in any way we can.
 
 == Screenshots ==
 
-1. The page builder interface.
-2. Powerful widget insert dialog with groups and search.
-3. Live Editor that lets you change your content in real time.
-4. Undo changes with the History Browser.
+1. The Page Builder editing interface.
+2. Editing a Page Builder Layout Block in the Block Editor.
+3. Powerful widget insert interface with groups and search.
+4. Live Editor that lets you change your content in real-time.
 5. Row Builder that gives unlimited flexibility.
-
-== Documentation ==
-
-[Documentation](http://siteorigin.com/page-builder/documentation/) is available on SiteOrigin.
+6. Undo changes with the History Browser.
 
 == Frequently Asked Questions ==
 
-= How do I move a site created with Page Builder from one server to another? =
+= How Do I Install Page Builder? =
 
-We recommend the [duplicator plugin](https://wordpress.org/plugins/duplicator/). We've tested it in several instances and it always works well with Page Builder data.
+Go to Plugins > Add New within WordPress. Search for "SiteOrigin Page Builder" using the field at the top right of the page. Alternatively, manually install the [plugin ZIP file](https://downloads.wordpress.org/plugin/siteorigin-panels.zip) from Plugins > Add New > Upload Plugin. If you'd like to install Page Builder manually and use Safari, disable the Safari auto-unzip feature in Safari > Preferences before downloading.
 
-= Can I bundle Page Builder with my theme? =
+= Is Page Builder Compatible With My Theme? =
 
-Yes, provided your theme is licensed under GPL or a compatible license. If you're publishing your theme on ThemeForest, you must select the GPL license instead of their regular license.
+Page Builder is compatible with all standardized WordPress themes. A curated list with enhanced Page Builder integration is available on [SiteOrigin.com](https://siteorigin.com/theme/).
 
-Page Builder is actively developed and updated, so generally I'd recommend that you have your users install the original plugin so they can receive updates. You can try [TGM Plugin Activation](http://tgmpluginactivation.com/).
+= Can I Use Page Builder With the WordPress Block Editor =
 
-= Will plugin X work with Page Builder? =
+Yes, you can insert SiteOrigin Layout Block into the Block Editor. If you have the SiteOrigin Widgets Bundle installed, a SiteOrigin Widget Block is also available for use in the Block Editor.
 
-We've tried to ensure that Page Builder is compatible with most plugin widgets. It's best to just download Page Builder and test for yourself.
+= Does Page Builder Work With Custom Post Types? =
+
+Page Builder can be activated for all post types from Settings > Page Builder > General > Post Types.
+
+= Does Page Builder Work With Third-Party Plugins and Widgets? =
+
+Page Builder is compatible with the vast majority of third-party plugins and widgets. If you encounter a compatibility issue, please, let us know via our [free support forum](https://siteorigin.com/thread/) or if you have an active SiteOrigin Premium license; directly via email.
+
+= Does Page Builder Have a Pro Version? =
+
+SiteOrigin offers a single premium plugin that enhances and extends Page Builder, the Widgets Bundle, SiteOrigin CSS and all of our free themes. Find out more about [SiteOrigin Premium](https://siteorigin.com/downloads/premium/) and the powerful addons it offers.
 
 == Changelog ==
+
+= 2.23.0 - 21 May 2023 =
+* Row Styles: Added a Full Height setting to the Design section.
+* Box Shadow: Resolved potential migration error due to an invalid hex.
+* Widget Admin Titles: Improved display of unusually long strings.
+* Color Settings: Update to ensure only alpha enabled settings apply opacity to the swatch.
+* Page Builder Settings Page: Minor styling update.
+
+= 2.22.1 - 06 May 2023 =
+* Inline Styles: Restored tablet and mobile padding.
+
+= 2.22.0 - 05 May 2023 =
+* Color Settings: Added alpha channel support which specifies the opacity for a color.
+* Styles: Prevented `!important` from being added to tablet and mobile padding.
+* Classic Editor: Further SEO plugin compatibility changes on load.
+
+= 2.21.1 - 25 April 2023 =
+* Prevented potential new page JavaScript error.
+
+= 2.21.0 - 22 April 2023 =
+* Added an Inline Styles setting at `Settings > Page Builder > Layout`. Supports margin, border, and padding.
+* Classic Editor: Improved preview markup handling.
+* Rank Math: Removed `wp_targeted_link_rel` from sitemap compatibility.
+* SEO: Removed widget class requirement.
+* Added Cross Domain Copy Paste support.
+* PHP coding standards update.
+
+= 2.20.6 - 30 March 2023 =
+* Updated Tested up to tag.
+
+= 2.20.5 - 04 March 2023 =
+* Excluded some WooCommerce post types from the Page Builder Post Types list.
+* Sidebar Emulator: Resolved `Undefined array key "option_name"` warning.
+* Removed preview content if `Copy Content` is disabled.
+* Developer: Added `siteorigin_panels_add_preview_content` filter.
+* Developer: Added `siteorigin_panels_layout_tabs` filter.
+
+= 2.20.4 - 16 January 2023 =
+* Prevented potential "Are you sure you want to navigate away." notice.
+* Customizer Widgets Block Editor: Fixed Layout Block styling.
+* Layouts Directory: Allowed layouts to be named "0".
+* Modern Parallax Sliders: Prevented a potential mobile display issue.
+* Developer: Prevented `$layout_data` loading if already set.
+
+= 2.20.3 - 29 December 2022 =
+* Reverted: Prevented `$layout_data` loading if already set.
+
+= 2.20.2 - 29 December 2022 =
+* Styles: Improved `Background Image Display` and `Size` settings conditional display behavior.
+* Classic Editor: Prevented potential notice when opening a saved widget.
+* Developer: Prevented `$layout_data` loading if already set.
+* Developer: Added custom style field type support via `siteorigin_panels_style_field_*`, and `siteorigin_panels_style_field_sanitize_*`.
+
+= 2.20.1 - 09 December 2022 =
+* Darkened default cell admin background color.
+* Removed `@font-face` query string.
+* Altered `siteorigin_panels_url` to better allow different directory names.
+
+= 2.20.0 - 02 December 2022 =
+* Styles: Added a row, cell, and widget `Border Thickness` setting.
+* Parallax: Resolved `Disable Parallax On Mobile` setting bug.
+
+= 2.19.0 - 22 November 2022 =
+* Styles: Added a row, cell, and widget `Background Image Size` setting.
+
+= 2.18.4 - 13 November 2022 =
+* Admin Row Colors: Adjusted swatches layout and spacing.
+
+= 2.18.3 - 09 November 2022 =
+* Styles: Added viewport units of measurement.
+* Updated `Tested up to` tag to 6.1.
+
+= 2.18.2 - 26 October 2022 =
+* Restored row re-ordering functionality.
+
+= 2.18.1 - 25 October 2022 =
+* Restored admin row background functionality.
+* Developer: Added `siteorigin_panels_admin_row_colors_default` to set the default admin row background color.
+
+= 2.18.0 - 22 October 2022 =
+* Box Shadow: Added a new `Inset` setting. Inset box shadows appear inside the row, cell, or widget.
+* Media Modal: Updated the title to `Choose Media`.
+* Developer: Added `siteorigin_panels_admin_row_colors` filter.
+* Developer: Added a client side event to allow for widget validation.
+* Developer: Accounted for a situation where `$panels_data` is passed as a string containing JSON rather than an array.
+
+= 2.17.0 - 28 August 2022 =
+* Row, Cell, and Widget Design Settings: Added Border Radius and Box Shadow settings.
+
+= 2.16.19 - 16 August 2022 =
+* Resolved `Uncaught TypeError` Customizer Layout Builder console error.
+
+= 2.16.18 - 10 August 2022 =
+* Easy Digital Downloads: Resolved `Add New` button error.
+* Resolved a Customizer Layout Builder widget sizing issue.
+* Improved `style` tag HTML validation.
+* Resolved a potential Panels preview PHP 8.3 type error.
+
+= 2.16.17 - 19 July 2022 =
+* Restored Cell `Link Color` and `Link Hover Color` settings.
+* Gravity Forms: Added additional check to prevent an unrelated notice.
+* Jetpack: Added Copy Post module support.
+
+= 2.16.16 - 09 July 2022 =
+* Legacy Layout Engine: Resolved `Undefined index: cell_index` notice.
+
+= 2.16.15 - 27 June 2022 =
+* Resolved edge case empty widgets warning.
+
+= 2.16.14 - 19 June 2022 =
+* Layout Block: Limited block preview attempts.
+* Modern Parallax: Resolved potential choppy scrolling.
+
+= 2.16.13 - 25 May 2022 =
+* Updated WordPress `Tested up to` tag.
+* Minor PHP formatting improvements.
+
+= 2.16.12 - 22 May 2022 =
+* Layout Block: Resolved WP 6.0 styling conflict.
+* WP Version Check: Update to check for version body class instead of branch.
+
+= 2.16.11 - 18 April 2022 =
+* Widget Descriptions: Resolved a potential error with old SiteOrigin Image Widgets title value set to `false` rather than `null`.
+
+= 2.16.10 - 13 April 2022 =
+* Block-Based Widgets Editor: Restored SiteOrigin Layout Block compatibility and other improvements.
+
+= 2.16.9 - 07 April 2022 =
+* Layout Block: Fixed JSON layout export file name.
+* Developer: Passed `postId` to server when rendering widget form.
+
+= 2.16.8 - 30 March 2022 =
+* Improved PHP 8 Compatibility: Replaced `GLOB_BRACE` flag in favor of multiple `glob` functions.
+* Developer: Added `siteorigin_panels_output_row` and `siteorigin_panels_output_widget` filters.
+
+= 2.16.7 - 23 March 2022 =
+* Improved empty CSS rule check to avoid potential edge cases.
+
+= 2.16.6 - 21 March 2022 =
+* Prevented CSS properties outputting with only `px` set as the value.
+* WPML: Refined sidebar emulator language path removal.
+
+= 2.16.5 - 06 March 2022 =
+* Full-Width Containers Using CSS: Ensured full-width global CSS is only output once.
+
+= 2.16.4 - 19 February 2022 =
+* Full-Width Containers Using CSS: Restored normal functionality when Standard or Full-Width rows not present.
+* Full-Width Containers Using CSS: Resolved a collapse issue when the browser resolution equals the collapse value.
+
+= 2.16.3 - 14 February 2022 =
+* Fixed Background Images: Change to `scroll` on mobile devices. Resolves iOS bug.
+
+= 2.16.2 - 07 February 2022 =
+* Added Yoast Video SEO plugin integration.
+* Restored content analysis functionality for newer Yoast SEO versions.
+
+= 2.16.1 - 26 January 2022 =
+* Sidebar Emulator: Accounted for a potential notice when setting widget ID.
+* Updated the `Tested up to tag` to `5.9`.
+
+= 2.16.0 - 04 January 2022 =
+* Added a new global `Mobile Widget Bottom Margin` setting.
+* Added a new global `Mobile Cell Bottom Margin` setting.
+* Legacy Widgets: Updated for PHP 8 compatibility.
+* WordPress 5.9 Compatibility: Resolved row ordering issue.
+* jQuery: Resolved jQuery Migrate notice. Updated `ready` function.
+* Full-Width Containers Using CSS: Theme container no longer removed on pages without full-width rows.
+* Developer: Resolved JavaScript error when all style fields removed.
+* Developer: Added `panels_title_check_sub_fields` to allow for sub-field detection.
+
+= 2.15.3 - 01 December 2021 =
+* Rows/Cells: Prevented possible data mismatch.
+
+= 2.15.2 - 29 November 2021 =
+* Cells: Resolved undefined `style` error.
+
+= 2.15.1 - 27 November 2021 =
+* Updated Page Builder `Pro Tips`.
+* SiteOrigin Premium: Added row and widget fade styling when hidden by the Toggle Visibility Addon.
+
+= 2.15.0 - 22 October 2021 =
+* Added a "Mobile Margin" setting to `Widget Styles > Mobile Layout`.
+* Ensured the Widget Title is used as the widget description if present.
+
+= 2.14.3 - 10 October 2021 =
+* Resolved conflict caused by Block Editor JavaScript loaded in the Classic Editor.
+
+= 2.14.2 - 08 October 2021 =
+* Layout Block: Force a draft before displaying the Live Editor button.
+* Fixed `Cell Vertical Alignment` setting.
+* Developer: Prevented potential notice when processing Page Builder fallback shortcode.
+
+= 2.14.1 - 01 October 2021 =
+* Layout Block: Restored Live Editor and History functionality.
+* Ensured Cell Vertical Alignment doesn't stretch independently of the setting chosen.
+* Developer: Prevented a potential small jump on load when CSS full width containers in use.
+
+= 2.14.0 - 29 September 2021 =
+* Tablet Styles: Added a new Tablet Styles section to row, cell, and widget styles.
+* Widget Design Settings: Added a Link Hover Color setting.
+* History Browser: Resolved incorrect preview URL.
+* Live Editor: When accessing the Live Editor via the toolbar link, return to the site after saving. Setting available at Settings > Page Builder > General.
+* Polylang: Ensured Page Builder data is copied during page duplication in the Classic Editor.
+* Yoast SEO: Added additional Open Graph compatibility check.
+* Developer: Advanced Custom Fields: Improved repeater support.
+* Developer: Changed CSS Builder `$css` to public to allow more extensive filtering.
+* Developer: Added `setup_style_fields` JavaScript event to allow the setup of custom style fields.
+* Developer: Added an optional CSS method for full width containers using `siteorigin_panels_theme_container_width` and `siteorigin_panels_theme_container_selector`.
+
+= 2.13.2 - 14 August 2021 =
+* Modern Parallax: Resolved potential Jetpack Image Accelerator notice.
+* Customizer: Resolved new widget area notice.
+
+= 2.13.1 - 03 August 2021 =
+* Modern Parallax: Exclude images from Jetpack Image Accelerator.
+* Modern Parallax: Resolved sizing issue when the browser back button was used.
+* Yoast: Selectively disabled Page Builder when Yoast is generating the OpenGraph meta description. Resolves potential Forminator and Ninja Forms errors.
+
+= 2.13.0 - 20 July 2021 =
+* Compatibility enhancements for WordPress 5.8.
+* Developer: Added a style field wrapper ID.
+
+= 2.12.6 - 5 July 2021 =
+* Added cell editing icons to replace text action links when space isn't sufficient.
+* Live Editor: Resolved bottom margin not being removed from the last widget in a given row.
+* Parallax: Improved type detection to ensure legacy is always set when appropriate.
+* Resolved a potential restore content prompt in the Classic Editor.
+* Developer: Expanded widget title detection to include Widgets Bundle repeaters and sections.
+* Developer: Expanded `panels_title` to fetch the first valid widget description.
+
+= 2.12.5 - 17 June 2021 =
+* Modern Parallax: Use the image attachment if available.
+* Modern Parallax: Prevent possible container overflow using CSS.
+* Live Editor: Minor button alignment improvements.
+* Developer: ACF compatibility - use `panelsopen` for more consistent loading.
+* Developer: ACF compatibility - added a check to ensure instance ACF data exists.
+* Developer: Fixed `siteorigin_panels_row_column_count_input` filter.
+
+= 2.12.4 - 04 June 2021 =
+* Restored Tablet Layout row collapse.
+
+= 2.12.3 - 03 June 2021 =
+* Developer: Added the ability to filter fields based on the widget the user is editing using the `siteorigin_panels_widget_style_fields` filter.
+* Developer: Added the ability to create individual row collapse points using the `siteorigin_panels_css_row_collapse_point` filter.
+
+= 2.12.2 - 21 May 2021 =
+* ACF: Added a check to ensure 5.7.10+ is active before loading Page Builder compatibility.
+* Lazy Load: Added support for WP Rocket Lazy Load.
+* Gravity Forms: Added compatibility to ensure conditional forms function normally when added via the Form widget.
+* Developer: Stopped checking for repeated rendering if `$panels_data` was supplied.
+
+= 2.12.1 - 11 May 2021 =
+* Prevented potential repeated rendering of layouts.
+* Moved the Page Builder metabox PHP outside of the metabox template.
+* Added a check for `has_blocks()` before using the function.
+* Resolved potential background display issue when a local and external background is used.
+
+= 2.12.0 - 03 May 2021 =
+* **New Parallax Scrolling!** Existing users can optionally switch to `Modern` at `Settings > Page Builder > General`.
+* ACF: Added widget fields compatibility. `siteorigin_panels_before_widget_form` action is triggered before the widget form is output.
+* Improved Add/Edit row responsive behavior.
+* Updated sidebar emulator to detect current page ID by path. Resolves WPML compatibility issue.
+* Added WP Rocket Lazy Loading compatibility for row, cell, and, widget background images.
+* Automatic Excerpt: Added support for the `<!-- more -->` quicktag.
+* Improved indexing of text containing multibyte Unicode such as Greek.
+* Instant Open Widgets: Updated the setting to default enabled for new installs.
+* Limited the `Page Builder Layout CSS Output Location` setting to the Classic Editor.
+* Add Layout: Improved responsive behavior for long post titles.
+* Ensured background image remove URL only displays when an image is present.
+* SiteOrigin Layout Block: Removed the preview button when a preview isn't available.
+* SiteOrigin Layout Block: Prevent an empty layout from being rendered.
+* Block Editor: Added support for automatic excerpt generation if the first post block is a SiteOrigin Layout Block.
+* Block Editor: Resolved duplicate Add SiteOrigin Layout button.
+* Accessibility: Implemented keyboard navigation for the Page Builder admin interface. You can now tab through all fields and settings, and make changes without a mouse.
+* Developer: Ensured prebuilt layout compatibility with JSON MIME type.
+* Developer: Updated depreciated jQuery `bind` usage.
+* Developer: Replaced older-style PHP type conversion functions with type casts.
+* Developer: Resolved a PHP 8 notice relating to the CSS builder.
+* Developer: Improved WordPress indexing of languages that use multibyte Unicode
+
+= 2.11.8 - 09 December 2020 =
+* Developer: jQuery updates for WordPress 5.6.
+
+= 2.11.7 - 07 December 2020 =
+* SEO: Generated `preview_url` before `preview_content`. Resolves Live Editor preview issue when a post loop is present in the page.
+
+= 2.11.6 - 01 December 2020 =
+* New: `Page Builder Layout CSS Output Location` setting that controls where PB outputs its CSS. Located at `Settings > Page Builder > Layout`.
+* SEO: Improved content analysis process for slower servers and connections.
+* SEO: Excluded `<iframe>, <script>, <link>, <style>` from content analysis due to word count inflation.
+* Developer: Added `wp-color-picker` as an editor dependency.
+* Developer: Introduced a new Ajax Response filter `siteorigin_panels_layouts_result`.
+* Developer: Standardized SO Layout Block variables to avoid conflicts with other blocks.
+
+= 2.11.5 - 30 September 2020 =
+* Updated build scripts.
+
+= 2.11.4 - 28 September 2020 =
+* Block Editor: Fixed SiteOrigin Widgets Bundle block preview.
+* Yoast SEO: Fixed word count in the Classic Editor when Page Builder is not in use.
+* Yoast SEO: Resolved a console error in the Block Editor.
+* Block Editor: Enhanced the Layout Block to allow for Post Loop widget previews.
+* Layout Export: Resolved JSON files exported without contents.
+
+= 2.11.3 - 14 September 2020 =
+* Block Editor: Added SEO support for multiple Layout Block instances.
+* Yoast SEO Sitemap: Added images added using Page Builder.
+* Prevented potential `Are you sure you want to navigate away?` notice.
+* Post Loop: Resolved `Undefined index` notice when used outside of Page Builder.
+* Android Chrome: Improved edit widget touch detection.
+* Yoast SEO: Resolved version `14.6` integration issue.
+* Block Editor: Used new categories for the Layout Block for WP 5.5+.
+* Block Editor: Resolved potential Layout Block data validation issue by running `wp_targeted_link_rel` on the generated preview content.
+* Block Editor: Added preview support for the Layout Block.
+* Block Editor: Updated translation functions to avoid potential conflicts.
+* Block Editor: Added the page name and block number to Layout Block JSON export files.
+* Block Editor: Improved SEO plugin support.
+* Added a global `Row Mobile Bottom Margin` setting at `Settings > Page Builder > Layout`.
+* Ensured Yoast SEO is ready before running compatibility functionality.
+* Global Settings: Resolved a jQuery Migrate Helper warning.
+
+= 2.11.2 - 12 August 2020 =
+* Updated build scripts.
+
+= 2.11.1 - 17 July 2020 =
+* Added Rank Math SEO plugin support.
+* Added [siteorigin_panels_layout_builder_supports](https://siteorigin.com/docs/page-builder/hooks/builder-features-actions/) filter.
+* Block Editor: Added History and Live Editor functionality to the SiteOrigin Layout Block.
+* Resolved a plugin conflict between the AMP by AMP Project Contributors plugin and the Text widget.
+* Block Editor: Prevented the page saving until the SiteOrigin Layout Block is finished setting up widgets using AJAX.
+* Mobile: Several minor improvements to the Page Builder interface to improve usability while editing on mobile devices.
+* Fixed `undefined` Page Builder tab in WordPress 5.5.
+* Added a new "Disable Background Parallax On Mobile" global setting to `Settings > Page Builder > General`.
+* Post Loop: Added custom pagination format support to allow developers to use two Post Loop widgets with independent pagination on a page.
+* Removed all HTML from the CSS Declarations field and strip slashes from textarea/code fields.
+
+= 2.11.0 - 02 June 2020 =
+* Live Editor: Ensured device viewing mode retained after update.
+* Live Editor: Improved device preview transition.
+* Legacy Layout: Detect IE 11 as legacy browser.
+* Yoast SEO: Improved Classic Editor support.
+* Yoast SEO: Added Block Editor support for the SiteOrigin Layout block.
+* CSS Builder: Prevented rules without declarations from outputting.
+* Widget Previews: Prevented boolean values from being used as widget descriptions.
+* Live Editor: Resolved Chrome bug by setting preview url for iframe.
+
+= 2.10.17 - 18 May 2020 =
+* Live Editor: Improved mobile device previews.
+* Excluded Black Studio TinyMCE Widget title from excerpts.
+* Fixed Live Editor draft post functionality.
+
+= 2.10.16 - 05 May 2020 =
+* Security: Added nonce check to Live Editor.
+* Security: Added nonce check to `builder_content` action.
 
 = 2.10.15 - 07 April 2020 =
 * Minor styling fixes.

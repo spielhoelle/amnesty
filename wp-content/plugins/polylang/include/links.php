@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Manages links related functions
@@ -6,7 +9,31 @@
  * @since 1.2
  */
 class PLL_Links {
-	public $links_model, $model, $options;
+	/**
+	 * Stores the plugin options.
+	 *
+	 * @var array
+	 */
+	public $options;
+
+	/**
+	 * @var PLL_Model
+	 */
+	public $model;
+
+	/**
+	 * Instance of a child class of PLL_Links_Model.
+	 *
+	 * @var PLL_Links_Model
+	 */
+	public $links_model;
+
+	/**
+	 * Current language (used to filter the content).
+	 *
+	 * @var PLL_Language|null
+	 */
+	public $curlang;
 
 	/**
 	 * Constructor
@@ -22,15 +49,23 @@ class PLL_Links {
 	}
 
 	/**
-	 * Returns the home url in the requested language
+	 * Returns the home url in the requested language.
 	 *
 	 * @since 1.3
 	 *
-	 * @param object|string $language
-	 * @param bool          $is_search optional whether we need the home url for a search form, defaults to false
+	 * @param PLL_Language|string $language  The language.
+	 * @param bool                $is_search Optional, whether we need the home url for a search form, defaults to false.
+	 * @return string
 	 */
 	public function get_home_url( $language, $is_search = false ) {
-		$language = is_object( $language ) ? $language : $this->model->get_language( $language );
-		return $is_search ? $language->search_url : $language->home_url;
+		if ( ! $language instanceof PLL_Language ) {
+			$language = $this->model->get_language( $language );
+		}
+
+		if ( empty( $language ) ) {
+			return home_url( '/' );
+		}
+
+		return $is_search ? $language->get_search_url() : $language->get_home_url();
 	}
 }

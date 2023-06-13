@@ -35,39 +35,13 @@ class WPSEO_Admin_Init {
 		$this->asset_manager = new WPSEO_Admin_Asset_Manager();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_dismissible' ] );
-		add_action( 'admin_init', [ $this, 'blog_public_notice' ], 15 );
-		add_action( 'admin_init', [ $this, 'yoast_plugin_suggestions_notification' ], 15 );
-		add_action( 'admin_init', [ $this, 'recalculate_notice' ], 15 );
 		add_action( 'admin_init', [ $this, 'unsupported_php_notice' ], 15 );
+		add_action( 'admin_init', [ $this, 'remove_translations_notification' ], 15 );
 		add_action( 'admin_init', [ $this->asset_manager, 'register_assets' ] );
 		add_action( 'admin_init', [ $this, 'show_hook_deprecation_warnings' ] );
 		add_action( 'admin_init', [ 'WPSEO_Plugin_Conflict', 'hook_check_for_plugin_conflicts' ] );
-		add_action( 'admin_init', [ $this, 'handle_notifications' ], 15 );
 		add_action( 'admin_notices', [ $this, 'permalink_settings_notice' ] );
-
-		$health_checks = [
-			new WPSEO_Health_Check_Page_Comments(),
-			new WPSEO_Health_Check_Ryte(),
-			new WPSEO_Health_Check_Default_Tagline(),
-			new WPSEO_Health_Check_Postname_Permalink(),
-			new WPSEO_Health_Check_Curl_Version(),
-		];
-
-		foreach ( $health_checks as $health_check ) {
-			$health_check->register_test();
-		}
-
-		$listeners   = [];
-		$listeners[] = new WPSEO_Post_Type_Archive_Notification_Handler();
-
-		/**
-		 * Listener interface classes.
-		 *
-		 * @var WPSEO_Listener $listener
-		 */
-		foreach ( $listeners as $listener ) {
-			$listener->listen();
-		}
+		add_action( 'post_submitbox_misc_actions', [ $this, 'add_publish_box_section' ] );
 
 		$this->load_meta_boxes();
 		$this->load_taxonomy_class();
@@ -78,26 +52,6 @@ class WPSEO_Admin_Init {
 	}
 
 	/**
-	 * Handles the notifiers for the dashboard page.
-	 *
-	 * @return void
-	 */
-	public function handle_notifications() {
-		/**
-		 * Notification handlers.
-		 *
-		 * @var WPSEO_Notification_Handler[] $handlers
-		 */
-		$handlers   = [];
-		$handlers[] = new WPSEO_Post_Type_Archive_Notification_Handler();
-
-		$notification_center = Yoast_Notification_Center::get();
-		foreach ( $handlers as $handler ) {
-			$handler->handle( $notification_center );
-		}
-	}
-
-	/**
 	 * Enqueue our styling for dismissible yoast notifications.
 	 */
 	public function enqueue_dismissible() {
@@ -105,125 +59,13 @@ class WPSEO_Admin_Init {
 	}
 
 	/**
-	 * Add an alert if the blog is not publicly visible.
-	 */
-	public function blog_public_notice() {
-
-		$info_message  = '<strong>' . __( 'Huge SEO Issue: You\'re blocking access to robots.', 'wordpress-seo' ) . '</strong> ';
-		$info_message .= sprintf(
-			/* translators: %1$s resolves to the opening tag of the link to the reading settings, %1$s resolves to the closing tag for the link */
-			__( 'You must %1$sgo to your Reading Settings%2$s and uncheck the box for Search Engine Visibility.', 'wordpress-seo' ),
-			'<a href="' . esc_url( admin_url( 'options-reading.php' ) ) . '">',
-			'</a>'
-		);
-
-		$notification_options = [
-			'type'         => Yoast_Notification::ERROR,
-			'id'           => 'wpseo-dismiss-blog-public-notice',
-			'priority'     => 1.0,
-			'capabilities' => 'wpseo_manage_options',
-		];
-
-		$notification = new Yoast_Notification( $info_message, $notification_options );
-
-		$notification_center = Yoast_Notification_Center::get();
-		if ( ! $this->is_blog_public() ) {
-			$notification_center->add_notification( $notification );
-		}
-		else {
-			$notification_center->remove_notification( $notification );
-		}
-	}
-
-	/**
-	 * Determines whether a suggested plugins notification needs to be displayed.
+	 * Removes any notification for incomplete translations.
 	 *
 	 * @return void
 	 */
-	public function yoast_plugin_suggestions_notification() {
-		$checker             = new WPSEO_Plugin_Availability();
+	public function remove_translations_notification() {
 		$notification_center = Yoast_Notification_Center::get();
-
-		// Get all Yoast plugins that have dependencies.
-		$plugins = $checker->get_plugins_with_dependencies();
-
-		foreach ( $plugins as $plugin_name => $plugin ) {
-			$dependency_names = $checker->get_dependency_names( $plugin );
-			$notification     = $this->get_yoast_seo_suggested_plugins_notification( $plugin_name, $plugin, $dependency_names[0] );
-
-			if ( $checker->dependencies_are_satisfied( $plugin ) && ! $checker->is_installed( $plugin ) ) {
-				$notification_center->add_notification( $notification );
-
-				continue;
-			}
-
-			$notification_center->remove_notification( $notification );
-		}
-	}
-
-	/**
-	 * Build Yoast SEO suggested plugins notification.
-	 *
-	 * @param string $name            The plugin name to use for the unique ID.
-	 * @param array  $plugin          The plugin to retrieve the data from.
-	 * @param string $dependency_name The name of the dependency.
-	 *
-	 * @return Yoast_Notification The notification containing the suggested plugin.
-	 */
-	private function get_yoast_seo_suggested_plugins_notification( $name, $plugin, $dependency_name ) {
-		$info_message = sprintf(
-			/* translators: %1$s expands to Yoast SEO, %2$s expands to the plugin version, %3$s expands to the plugin name */
-			__( '%1$s and %2$s can work together a lot better by adding a helper plugin. Please install %3$s to make your life better.', 'wordpress-seo' ),
-			'Yoast SEO',
-			$dependency_name,
-			sprintf( '<a href="%s">%s</a>', $plugin['url'], $plugin['title'] )
-		);
-
-		return new Yoast_Notification(
-			$info_message,
-			[
-				'id'   => 'wpseo-suggested-plugin-' . $name,
-				'type' => Yoast_Notification::WARNING,
-			]
-		);
-	}
-
-	/**
-	 * Shows the notice for recalculating the post. the Notice will only be shown if the user hasn't dismissed it before.
-	 */
-	public function recalculate_notice() {
-		// Just a return, because we want to temporary disable this notice (#3998 and #4532).
-		return;
-
-		if ( filter_input( INPUT_GET, 'recalculate' ) === '1' ) {
-			update_option( 'wpseo_dismiss_recalculate', '1' );
-
-			return;
-		}
-
-		if ( ! WPSEO_Capability_Utils::current_user_can( 'wpseo_manage_options' ) ) {
-			return;
-		}
-
-		if ( $this->is_site_notice_dismissed( 'wpseo_dismiss_recalculate' ) ) {
-			return;
-		}
-
-		Yoast_Notification_Center::get()->add_notification(
-			new Yoast_Notification(
-				sprintf(
-					/* translators: 1: is a link to 'admin_url / admin.php?page=wpseo_tools&recalculate=1' 2: closing link tag */
-					__( 'We\'ve updated our SEO score algorithm. %1$sRecalculate the SEO scores%2$s for all posts and pages.', 'wordpress-seo' ),
-					'<a href="' . admin_url( 'admin.php?page=wpseo_tools&recalculate=1' ) . '">',
-					'</a>'
-				),
-				[
-					'type'  => 'updated yoast-dismissible',
-					'id'    => 'wpseo-dismiss-recalculate',
-					'nonce' => wp_create_nonce( 'wpseo-dismiss-recalculate' ),
-				]
-			)
-		);
+		$notification_center->remove_notification_by_id( 'i18nModuleTranslationAssistance' );
 	}
 
 	/**
@@ -239,7 +81,7 @@ class WPSEO_Admin_Init {
 	/**
 	 * Gets the latest released major WordPress version from the WordPress stable-check api.
 	 *
-	 * @return float The latest released major WordPress version. 0 The stable-check api doesn't respond.
+	 * @return float|int The latest released major WordPress version. 0 when the stable-check API doesn't respond.
 	 */
 	private function get_latest_major_wordpress_version() {
 		$core_updates = get_core_updates( [ 'dismissed' => true ] );
@@ -260,33 +102,31 @@ class WPSEO_Admin_Init {
 	}
 
 	/**
-	 * Check if the user has dismissed the given notice (by $notice_name).
-	 *
-	 * @param string $notice_name The name of the notice that might be dismissed.
-	 *
-	 * @return bool
-	 */
-	private function is_site_notice_dismissed( $notice_name ) {
-		return get_option( $notice_name, true ) === '1';
-	}
-
-	/**
 	 * Helper to verify if the user is currently visiting one of our admin pages.
 	 *
 	 * @return bool
 	 */
 	private function on_wpseo_admin_page() {
-		return $this->pagenow === 'admin.php' && strpos( filter_input( INPUT_GET, 'page' ), 'wpseo' ) === 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		if ( ! isset( $_GET['page'] ) || ! is_string( $_GET['page'] ) ) {
+			return false;
+		}
+
+		if ( $this->pagenow !== 'admin.php' ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		$current_page = sanitize_text_field( wp_unslash( $_GET['page'] ) );
+		return strpos( $current_page, 'wpseo' ) === 0;
 	}
 
 	/**
-	 * Determine whether we should load the meta box class and if so, load it.
+	 * Whether we should load the meta box classes.
+	 *
+	 * @return bool true if we should load the meta box classes, false otherwise.
 	 */
-	private function load_meta_boxes() {
-
-		$is_editor      = WPSEO_Metabox::is_post_overview( $this->pagenow ) || WPSEO_Metabox::is_post_edit( $this->pagenow );
-		$is_inline_save = filter_input( INPUT_POST, 'action' ) === 'inline-save';
-
+	private function should_load_meta_boxes() {
 		/**
 		 * Filter: 'wpseo_always_register_metaboxes_on_admin' - Allow developers to change whether
 		 * the WPSEO metaboxes are only registered on the typical pages (lean loading) or always
@@ -294,8 +134,28 @@ class WPSEO_Admin_Init {
 		 *
 		 * @api bool Whether to always register the metaboxes or not. Defaults to false.
 		 */
-		if ( $is_editor || $is_inline_save || apply_filters( 'wpseo_always_register_metaboxes_on_admin', false )
-		) {
+		if ( apply_filters( 'wpseo_always_register_metaboxes_on_admin', false ) ) {
+			return true;
+		}
+
+		// If we are in a post editor.
+		if ( WPSEO_Metabox::is_post_overview( $this->pagenow ) || WPSEO_Metabox::is_post_edit( $this->pagenow ) ) {
+			return true;
+		}
+
+		// If we are doing an inline save.
+		if ( check_ajax_referer( 'inlineeditnonce', '_inline_edit', false ) && isset( $_POST['action'] ) && sanitize_text_field( wp_unslash( $_POST['action'] ) ) === 'inline-save' ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determine whether we should load the meta box class and if so, load it.
+	 */
+	private function load_meta_boxes() {
+		if ( $this->should_load_meta_boxes() ) {
 			$GLOBALS['wpseo_metabox']      = new WPSEO_Metabox();
 			$GLOBALS['wpseo_meta_columns'] = new WPSEO_Meta_Columns();
 		}
@@ -337,9 +197,16 @@ class WPSEO_Admin_Init {
 			// For backwards compatabilty, this still needs a global, for now...
 			$GLOBALS['wpseo_admin_pages'] = new WPSEO_Admin_Pages();
 
-			// Only register the yoast i18n when the page is a Yoast SEO page.
-			if ( WPSEO_Utils::is_yoast_seo_free_page( filter_input( INPUT_GET, 'page' ) ) ) {
-				$this->register_i18n_promo_class();
+			$page = null;
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+			if ( isset( $_GET['page'] ) && is_string( $_GET['page'] ) ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+				$page = sanitize_text_field( wp_unslash( $_GET['page'] ) );
+			}
+
+			// Only renders Yoast SEO Premium upsells when the page is a Yoast SEO page.
+			if ( $page !== null && WPSEO_Utils::is_yoast_seo_free_page( $page ) ) {
 				$this->register_premium_upsell_admin_block();
 			}
 		}
@@ -359,51 +226,10 @@ class WPSEO_Admin_Init {
 	 * @return void
 	 */
 	private function register_premium_upsell_admin_block() {
-		if ( ! WPSEO_Utils::is_yoast_seo_premium() ) {
+		if ( ! YoastSEO()->helpers->product->is_premium() ) {
 			$upsell_block = new WPSEO_Premium_Upsell_Admin_Block( 'wpseo_admin_promo_footer' );
 			$upsell_block->register_hooks();
 		}
-	}
-
-	/**
-	 * Registers the promotion class for our GlotPress instance, then creates a notification with the i18n promo.
-	 *
-	 * @link https://github.com/Yoast/i18n-module
-	 */
-	private function register_i18n_promo_class() {
-		// BC, because an older version of the i18n-module didn't have this class.
-		$i18n_module = new Yoast_I18n_WordPressOrg_v3(
-			[
-				'textdomain'  => 'wordpress-seo',
-				'plugin_name' => 'Yoast SEO',
-				'hook'        => 'wpseo_admin_promo_footer',
-			],
-			false
-		);
-
-		$message = $i18n_module->get_promo_message();
-
-		if ( $message !== '' ) {
-			$message .= $i18n_module->get_dismiss_i18n_message_button();
-		}
-
-		$notification_center = Yoast_Notification_Center::get();
-
-		$notification = new Yoast_Notification(
-			$message,
-			[
-				'type' => Yoast_Notification::WARNING,
-				'id'   => 'i18nModuleTranslationAssistance',
-			]
-		);
-
-		if ( $message ) {
-			$notification_center->add_notification( $notification );
-
-			return;
-		}
-
-		$notification_center->remove_notification( $notification );
 	}
 
 	/**
@@ -413,15 +239,6 @@ class WPSEO_Admin_Init {
 		if ( WPSEO_Options::get( 'enable_xml_sitemap', false ) ) {
 			new WPSEO_Sitemaps_Admin();
 		}
-	}
-
-	/**
-	 * Check if the site is set to be publicly visible.
-	 *
-	 * @return bool
-	 */
-	private function is_blog_public() {
-		return (string) get_option( 'blog_public' ) === '1';
 	}
 
 	/**
@@ -440,6 +257,34 @@ class WPSEO_Admin_Init {
 				'version'     => '9.4',
 				'alternative' => null,
 			],
+			'wpseo_opengraph' => [
+				'version'     => '14.0',
+				'alternative' => null,
+			],
+			'wpseo_twitter' => [
+				'version'     => '14.0',
+				'alternative' => null,
+			],
+			'wpseo_twitter_taxonomy_image' => [
+				'version'     => '14.0',
+				'alternative' => null,
+			],
+			'wpseo_twitter_metatag_key' => [
+				'version'     => '14.0',
+				'alternative' => null,
+			],
+			'wp_seo_get_bc_ancestors' => [
+				'version'     => '14.0',
+				'alternative' => 'wpseo_breadcrumb_links',
+			],
+			'validate_facebook_app_id_api_response_code' => [
+				'version'     => '15.5',
+				'alternative' => null,
+			],
+			'validate_facebook_app_id_api_response_body' => [
+				'version'     => '15.5',
+				'alternative' => null,
+			],
 		];
 
 		// Determine which filters have been registered.
@@ -451,13 +296,13 @@ class WPSEO_Admin_Init {
 		// Show notice for each deprecated filter or action that has been registered.
 		foreach ( $deprecated_notices as $deprecated_filter ) {
 			$deprecation_info = $deprecated_filters[ $deprecated_filter ];
-			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- only uses the hardcoded values from above.
+			// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Only uses the hardcoded values from above.
 			_deprecated_hook(
 				$deprecated_filter,
 				'WPSEO ' . $deprecation_info['version'],
 				$deprecation_info['alternative']
 			);
-			// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped.
+			// phpcs:enable
 		}
 	}
 
@@ -493,104 +338,24 @@ class WPSEO_Admin_Init {
 		}
 	}
 
-	/* ********************* DEPRECATED METHODS ********************* */
-
 	/**
-	 * Add an alert if outdated versions of Yoast SEO plugins are running.
+	 * Adds a custom Yoast section within the Classic Editor publish box.
 	 *
-	 * @deprecated 12.3
-	 * @codeCoverageIgnore
-	 */
-	public function yoast_plugin_compatibility_notification() {
-		_deprecated_function( __METHOD__, 'WPSEO 12.3' );
-	}
-
-	/**
-	 * Creates a WordPress upgrade notification in the notification center.
-	 *
-	 * @deprecated 12.5
-	 * @codeCoverageIgnore
+	 * @param \WP_Post $post The current post object.
 	 *
 	 * @return void
 	 */
-	public function wordpress_upgrade_notice() {
-		_deprecated_function( __METHOD__, 'WPSEO 12.5' );
-	}
-
-	/**
-	 * Shows a notice to the user if they have Google Analytics for WordPress 5.4.3 installed because it causes an error
-	 * on the google search console page.
-	 *
-	 * @deprecated 12.5
-	 *
-	 * @codeCoverageIgnore
-	 */
-	public function ga_compatibility_notice() {
-		_deprecated_function( __METHOD__, 'WPSEO 12.5' );
-	}
-
-	/**
-	 * Display notice to disable comment pagination.
-	 *
-	 * @deprecated 12.8
-	 * @codeCoverageIgnore
-	 */
-	public function page_comments_notice() {
-		_deprecated_function( __METHOD__, 'WPSEO 12.8' );
-	}
-
-	/**
-	 * Are page comments enabled.
-	 *
-	 * @deprecated 12.8
-	 * @codeCoverageIgnore
-	 *
-	 * @return bool
-	 */
-	public function has_page_comments() {
-		_deprecated_function( __METHOD__, 'WPSEO 12.8' );
-
-		return get_option( 'page_comments' ) === '1';
-	}
-
-	/**
-	 * Notify about the default tagline if the user hasn't changed it.
-	 *
-	 * @deprecated 13.2
-	 * @codeCoverageIgnore
-	 */
-	public function tagline_notice() {
-		_deprecated_function( __METHOD__, 'WPSEO 13.2' );
-	}
-
-	/**
-	 * Returns whether or not the site has the default tagline.
-	 *
-	 * @deprecated 13.2
-	 * @codeCoverageIgnore
-	 *
-	 * @return bool
-	 */
-	public function has_default_tagline() {
-		_deprecated_function( __METHOD__, 'WPSEO 13.2' );
-
-		$blog_description         = get_bloginfo( 'description' );
-		$default_blog_description = 'Just another WordPress site';
-
-		// We are checking against the WordPress internal translation.
-		// @codingStandardsIgnoreLine
-		$translated_blog_description = __( 'Just another WordPress site', 'default' );
-
-		return $translated_blog_description === $blog_description || $default_blog_description === $blog_description;
-	}
-
-	/**
-	 * Shows an alert when the permalink doesn't contain %postname%.
-	 *
-	 * @deprecated 13.2
-	 * @codeCoverageIgnore
-	 */
-	public function permalink_notice() {
-		_deprecated_function( __METHOD__, 'WPSEO 13.2' );
+	public function add_publish_box_section( $post ) {
+		if ( in_array( $this->pagenow, [ 'post.php', 'post-new.php' ], true ) ) {
+			?>
+			<div id="yoast-seo-publishbox-section"></div>
+			<?php
+			/**
+			 * Fires after the post time/date setting in the Publish meta box.
+			 *
+			 * @api \WP_Post The current post object.
+			 */
+			do_action( 'wpseo_publishbox_misc_actions', $post );
+		}
 	}
 }

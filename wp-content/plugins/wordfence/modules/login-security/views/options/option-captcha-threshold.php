@@ -25,8 +25,8 @@ $selectOptions = array(
 				<ul>
 					<li class="wfls-option-title">
 						<ul class="wfls-flex-vertical wfls-flex-align-left">
-							<li><span id="wfls-option-recaptcha-threshold-label"><strong><?php _e('reCAPTCHA human/bot threshold score', 'wordfence-2fa'); ?></strong></span></li>
-							<li class="wfls-option-subtitle"><?php _e('A reCAPTCHA score equal to or higher than this value will be considered human. Anything lower will be treated as a bot and require additional verification for login and registration.', 'wordfence-2fa'); ?></li>
+							<li><span id="wfls-option-recaptcha-threshold-label"><strong><?php esc_html_e('reCAPTCHA human/bot threshold score', 'wordfence-2fa'); ?></strong></span></li>
+							<li class="wfls-option-subtitle"><?php esc_html_e('A reCAPTCHA score equal to or higher than this value will be considered human. Anything lower will be treated as a bot and require additional verification for login and registration.', 'wordfence-2fa'); ?></li>
 						</ul>
 					</li>
 					<li class="wfls-option-select wfls-padding-add-top-xs-small">
@@ -43,9 +43,13 @@ $selectOptions = array(
 	<li>
 		<ul class="wfls-option">
 			<li class="wfls-option-spacer"></li>
-			<li>
-				<canvas id="wfls-recaptcha-score-history"></canvas>
-				<div class="wfls-center"><a href="#" id="wfls-reset-recaptcha-score-stats" class="wfls-text-small"><?php _e('Reset Score Statistics', 'wordfence'); ?></a></div>
+			<li class="wfls-recaptcha-score-history">
+				<div class="wfls-recaptcha-chart-container">
+					<canvas id="wfls-recaptcha-score-history"></canvas>
+				</div>
+				<div class="wfls-center">
+					<a href="#" id="wfls-reset-recaptcha-score-stats" class="wfls-text-small"><?php esc_html_e('Reset Score Statistics', 'wordfence-2fa'); ?></a>
+				</div>
 			</li>
 		</ul>
 	</li>
@@ -76,7 +80,7 @@ $selectOptions = array(
 			});
 		});
 		
-		$(window).on('wfls-tab-change', function(e, target) {
+		$(window).on('wfls-tab-change.recaptcha-score-history', function(e, target) {
 			if (target == 'settings') {
 				var barChartData = {
 					labels: ['0.0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', '1.0'],
@@ -85,19 +89,7 @@ $selectOptions = array(
 						backgroundColor: 'rgba(75,192,192,0.4)',
 						borderColor: 'rgba(75,192,192,1.0)',
 						borderWidth: 1,
-						data: [
-							<?php echo (int) @$stats['counts'][0]; ?>,
-							<?php echo (int) @$stats['counts'][1]; ?>,
-							<?php echo (int) @$stats['counts'][2]; ?>,
-							<?php echo (int) @$stats['counts'][3]; ?>,
-							<?php echo (int) @$stats['counts'][4]; ?>,
-							<?php echo (int) @$stats['counts'][5]; ?>,
-							<?php echo (int) @$stats['counts'][6]; ?>,
-							<?php echo (int) @$stats['counts'][7]; ?>,
-							<?php echo (int) @$stats['counts'][8]; ?>,
-							<?php echo (int) @$stats['counts'][9]; ?>,
-							<?php echo (int) @$stats['counts'][10]; ?>
-						]
+						data: <?php echo json_encode($stats['counts']) ?>
 					}]
 				};
 
@@ -129,6 +121,7 @@ $selectOptions = array(
 						}
 					}
 				});
+				$(window).off('wfls-tab-change.recaptcha-score-history');
 			}
 		});
 	})(jQuery);

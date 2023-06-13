@@ -13,8 +13,8 @@ class WPSEO_Content_Images {
 	/**
 	 * Retrieves images from the post content.
 	 *
-	 * @param int      $post_id The post ID.
-	 * @param \WP_Post $post    The post object.
+	 * @param int           $post_id The post ID.
+	 * @param \WP_Post|null $post    The post object.
 	 *
 	 * @return array An array of images found in this post.
 	 */
@@ -72,7 +72,7 @@ class WPSEO_Content_Images {
 	 */
 	private function get_img_tag_source( $image ) {
 		preg_match( '`src=(["\'])(.*?)\1`', $image, $matches );
-		if ( isset( $matches[2] ) ) {
+		if ( isset( $matches[2] ) && filter_var( $matches[2], FILTER_VALIDATE_URL ) ) {
 			return $matches[2];
 		}
 		return false;
@@ -107,33 +107,5 @@ class WPSEO_Content_Images {
 		}
 
 		return $content;
-	}
-
-	/* ********************* DEPRECATED METHODS ********************* */
-
-	/**
-	 * Removes the cached images on post save.
-	 *
-	 * @deprecated 7.7
-	 * @codeCoverageIgnore
-	 *
-	 * @param int $post_id The post id to remove the images from.
-	 *
-	 * @return void
-	 */
-	public function clear_cached_images( $post_id ) {
-		_deprecated_function( __METHOD__, '7.7.0' );
-	}
-
-	/**
-	 * Registers the hooks.
-	 *
-	 * @deprecated 9.6
-	 * @codeCoverageIgnore
-	 *
-	 * @return void
-	 */
-	public function register_hooks() {
-		_deprecated_function( __METHOD__, 'WPSEO 9.6' );
 	}
 }

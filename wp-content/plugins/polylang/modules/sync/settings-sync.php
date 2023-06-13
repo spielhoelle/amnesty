@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Settings class for synchronization settings management
@@ -6,6 +9,12 @@
  * @since 1.8
  */
 class PLL_Settings_Sync extends PLL_Settings_Module {
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 50;
 
 	/**
 	 * Constructor
@@ -70,22 +79,22 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	}
 
 	/**
-	 * Get the row actions
+	 * Get the row actions.
 	 *
 	 * @since 1.8
 	 *
-	 * @return array
+	 * @return string[] Row actions.
 	 */
 	protected function get_actions() {
 		return empty( $this->options['sync'] ) ? array( 'configure' ) : array( 'configure', 'deactivate' );
 	}
 
 	/**
-	 * List the post metas to synchronize
+	 * Get the list of synchronization settings.
 	 *
 	 * @since 1.0
 	 *
-	 * @return array
+	 * @return string[] Array synchronization options.
 	 */
 	public static function list_metas_to_sync() {
 		return array(

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Compatibility with WPML legacy API
@@ -56,11 +59,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 
 		// NB: When 'skip_missing' is false, WPML returns all languages even if there is no content
 		$languages = PLL()->model->get_languages_list( array( 'hide_empty' => $args['skip_missing'] ) );
-
-		// FIXME: Backward compatibility with WP < 4.7
-		if ( function_exists( 'wp_list_sort' ) ) {
-			$languages = wp_list_sort( $languages, $orderby, $order ); // Since WP 4.7
-		}
+		$languages = wp_list_sort( $languages, $orderby, $order ); // Since WP 4.7
 
 		foreach ( $languages as $lang ) {
 			// We can find a translation only on frontend once the global $wp_query object has been instantiated
@@ -80,7 +79,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 				'missing'          => empty( $url ) ? 1 : 0,
 				'translated_name'  => '', // Does not exist in Polylang
 				'language_code'    => $lang->slug,
-				'country_flag_url' => $lang->flag_url,
+				'country_flag_url' => $lang->get_display_flag_url(),
 				'url'              => ! empty( $url ) ? $url :
 					( empty( $args['link_empty_to'] ) ? PLL()->links->get_home_url( $lang ) :
 					str_replace( '{$lang}', $lang->slug, $args['link_empty_to'] ) ),
@@ -129,7 +128,7 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 			}
 		} elseif ( taxonomy_exists( $type ) ) {
 			$link = get_term_link( $id, $type );
-			if ( empty( $text ) && ( $term = get_term( $id, $type ) ) && ! empty( $term ) && ! is_wp_error( $term ) ) {
+			if ( empty( $text ) && ( $term = get_term( $id, $type ) ) && $term instanceof WP_Term ) {
 				$text = $term->name;
 			}
 		}
@@ -158,34 +157,61 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 
 if ( ! function_exists( 'icl_object_id' ) ) {
 	/**
-	 * Used for calculating the IDs of objects (usually categories) in the current language
+	 * Returns an element’s ID in the current language or in another specified language.
 	 *
 	 * @since 0.9.5
 	 *
-	 * @param int    $id                         Object id
-	 * @param string $type                       Optional, post type or taxonomy name of the object, defaults to 'post'
-	 * @param bool   $return_original_if_missing Optional, true if Polylang should return the original id if the translation is missing, defaults to false
-	 * @param string $lang                       Optional, language code, defaults to current language
-	 * @return int|null The object id of the translation, null if the translation is missing and $return_original_if_missing set to false
+	 * @param int         $element_id                 Object id.
+	 * @param string      $element_type               Optional, post type or taxonomy name of the object, defaults to 'post'.
+	 * @param bool        $return_original_if_missing Optional, true if Polylang should return the original id if the translation is missing, defaults to false.
+	 * @param string|null $ulanguage_code             Optional, language code, defaults to the current language.
+	 * @return int|null The object id of the translation, null if the translation is missing and $return_original_if_missing set to false.
 	 */
-	function icl_object_id( $id, $type = 'post', $return_original_if_missing = false, $lang = false ) {
-		$lang = $lang ? $lang : pll_current_language();
+	function icl_object_id( $element_id, $element_type = 'post', $return_original_if_missing = false, $ulanguage_code = null ) {
+		if ( empty( $element_id ) ) {
+			return null;
+		}
 
-		if ( 'nav_menu' === $type ) {
+		$element_id = (int) $element_id;
+
+		if ( 'any' === $element_type ) {
+			$element_type = get_post_type( $element_id );
+		}
+
+		if ( empty( $element_type ) ) {
+			return null;
+		}
+
+		if ( empty( $ulanguage_code ) ) {
+			$ulanguage_code = pll_current_language();
+		}
+
+		if ( 'nav_menu' === $element_type ) {
+			$tr_id = false;
 			$theme = get_option( 'stylesheet' );
 			if ( isset( PLL()->options['nav_menus'][ $theme ] ) ) {
 				foreach ( PLL()->options['nav_menus'][ $theme ] as $menu ) {
-					if ( array_search( $id, $menu ) && ! empty( $menu[ $lang ] ) ) {
-						$tr_id = $menu[ $lang ];
+					if ( array_search( $element_id, $menu ) && ! empty( $menu[ $ulanguage_code ] ) ) {
+						$tr_id = $menu[ $ulanguage_code ];
 						break;
 					}
 				}
 			}
-		} elseif ( $pll_type = ( 'post' === $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' === $type || pll_is_translated_taxonomy( $type ) ? 'term' : false ) ) {
-			$tr_id = PLL()->model->$pll_type->get_translation( $id, $lang );
+		} elseif ( pll_is_translated_post_type( $element_type ) ) {
+			$tr_id = PLL()->model->post->get_translation( $element_id, $ulanguage_code );
+		} elseif ( pll_is_translated_taxonomy( $element_type ) ) {
+			$tr_id = PLL()->model->term->get_translation( $element_id, $ulanguage_code );
 		}
 
-		return ! empty( $tr_id ) ? $tr_id : ( $return_original_if_missing ? $id : null );
+		if ( ! isset( $tr_id ) ) {
+			return $element_id; // WPML doesn't honor $return_original_if_missing if the post type or taxonomy is not translated.
+		}
+
+		if ( empty( $tr_id ) ) {
+			return $return_original_if_missing ? $element_id : null;
+		}
+
+		return (int) $tr_id;
 	}
 }
 
@@ -211,7 +237,7 @@ if ( ! function_exists( 'wpml_get_language_information' ) ) {
 	 * Undocumented function used by the theme Maya
 	 * returns the post language
 	 *
-	 * @see original WPML code at https://wpml.org/forums/topic/canonical-urls-for-wpml-duplicated-posts/#post-52198
+	 * @see https://wpml.org/forums/topic/canonical-urls-for-wpml-duplicated-posts/#post-52198 for the original WPML code
 	 *
 	 * @since 1.8
 	 *
@@ -240,15 +266,16 @@ if ( ! function_exists( 'icl_register_string' ) ) {
 	/**
 	 * Registers a string for translation in the "strings translation" panel
 	 *
+	 * The 4th and 5th parameters $allow_empty_value and $source_lang are not used by Polylang.
+	 *
 	 * @since 0.9.3
 	 *
 	 * @param string $context           the group in which the string is registered, defaults to 'polylang'
 	 * @param string $name              a unique name for the string
 	 * @param string $string            the string to register
-	 * @param bool   $allow_empty_value not used
-	 * @param string $source_lang       not used by Polylang
+	 * @return void
 	 */
-	function icl_register_string( $context, $name, $string, $allow_empty_value = false, $source_lang = '' ) {
+	function icl_register_string( $context, $name, $string ) {
 		PLL_WPML_Compat::instance()->register_string( $context, $name, $string );
 	}
 }
@@ -261,6 +288,7 @@ if ( ! function_exists( 'icl_unregister_string' ) ) {
 	 *
 	 * @param string $context the group in which the string is registered, defaults to 'polylang'
 	 * @param string $name    a unique name for the string
+	 * @return void
 	 */
 	function icl_unregister_string( $context, $name ) {
 		PLL_WPML_Compat::instance()->unregister_string( $context, $name );
@@ -283,7 +311,7 @@ if ( ! function_exists( 'icl_t' ) ) {
 	 * @param string|null $lang            optional, return the translation in this language, defaults to current language
 	 * @return string the translated string
 	 */
-	function icl_t( $context, $name, $string = false, &$has_translation = null, $bool = false, $lang = null ) {
+	function icl_t( $context, $name, $string = '', &$has_translation = null, $bool = false, $lang = null ) {
 		return icl_translate( $context, $name, $string, false, $has_translation, $lang );
 	}
 }
@@ -304,7 +332,7 @@ if ( ! function_exists( 'icl_translate' ) ) {
 	 * @param string|null $lang            optional, return the translation in this language, defaults to current language
 	 * @return string the translated string
 	 */
-	function icl_translate( $context, $name, $string = false, $bool = false, &$has_translation = null, $lang = null ) {
+	function icl_translate( $context, $name, $string = '', $bool = false, &$has_translation = null, $lang = null ) {
 		// FIXME WPML can automatically registers the string based on an option
 		if ( empty( $string ) ) {
 			$string = PLL_WPML_Compat::instance()->get_string_by_context_and_name( $context, $name );
@@ -331,10 +359,13 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 
 		$arr = array( 'original_post_id' => (int) $_GET['from_post'] ); // phpcs:ignore WordPress.Security.NonceVerification
 
-		// Don't know what WPML does but Polylang does copy all public meta keys by default
-		foreach ( $keys = array_unique( array_keys( get_post_custom( $arr['original_post_id'] ) ) ) as $k => $meta_key ) {
-			if ( is_protected_meta( $meta_key ) ) {
-				unset( $keys[ $k ] );
+		// Don't know what WPML does but Polylang does copy all public meta keys by default.
+		$keys = get_post_custom_keys( $arr['original_post_id'] );
+		if ( is_array( $keys ) ) {
+			foreach ( $keys as $k => $meta_key ) {
+				if ( is_protected_meta( $meta_key ) ) {
+					unset( $keys[ $k ] );
+				}
 			}
 		}
 

@@ -25,6 +25,8 @@ class wfSupportController {
 	
 	const ITEM_GDPR = 'gdpr';
 	const ITEM_GDPR_DPA = 'gdpr-dpa';
+
+	const ITEM_GENERAL_REMOTE_IP_LOOKUP = 'general-remote-ip-lookup';
 	
 	const ITEM_DASHBOARD = 'dashboard';
 	const ITEM_DASHBOARD_STATUS_FIREWALL = 'dashboard-status-firewall';
@@ -73,6 +75,7 @@ class wfSupportController {
 	const ITEM_FIREWALL_WAF_OPTION_MASK_LOGIN_ERRORS = 'firewall-waf-option-mask-login-errors';
 	const ITEM_FIREWALL_WAF_OPTION_PREVENT_ADMIN_REGISTRATION = 'firewall-waf-option-prevent-admin-registration';
 	const ITEM_FIREWALL_WAF_OPTION_PREVENT_AUTHOR_SCAN = 'firewall-waf-option-prevent-author-scan';
+	const ITEM_FIREWALL_WAF_OPTION_DISABLE_APPLICATION_PASSWORDS = 'firewall-waf-option-disable-application-passwords';
 	const ITEM_FIREWALL_WAF_OPTION_BLOCK_BAD_POST = 'firewall-waf-option-block-bad-post';
 	const ITEM_FIREWALL_WAF_OPTION_CUSTOM_BLOCK_TEXT = 'firewall-waf-option-custom-block-text';
 	const ITEM_FIREWALL_WAF_OPTION_CHECK_PASSWORD = 'firewall-waf-option-check-password';
@@ -98,6 +101,8 @@ class wfSupportController {
 	const ITEM_FIREWALL_BLOCKING_BYPASS_COOKIE = 'firewall-blocking-bypass-cookie';
 	const ITEM_FIREWALL_BLOCKING_BYPASS_REDIRECT = 'firewall-blocking-bypass-redirect';
 	const ITEM_FIREWALL_BLOCKING_FULL_SITE = 'firewall-blocking-full-site';
+
+	const ITEM_FIREWALL_REMOVE_OPTIMIZATION = 'firewall-remove-optimization';
 	
 	const ITEM_SCAN = 'scan';
 	const ITEM_SCAN_STATUS_OVERALL = 'scan-status-overall';
@@ -134,6 +139,7 @@ class wfSupportController {
 	const ITEM_SCAN_OPTION_STAGE_TIME_LIMIT = 'scan-option-stage-time-limit';
 	const ITEM_SCAN_OPTION_EXCLUDE_PATTERNS = 'scan-option-exclude-patterns';
 	const ITEM_SCAN_OPTION_CUSTOM_MALWARE_SIGNATURES = 'scan-option-custom-malware-signatures';
+	const ITEM_SCAN_OPTION_MAX_RESUME_ATTEMPTS = 'scan-option-max-resume-attempts';
 	const ITEM_SCAN_TIME_LIMIT = 'scan-time-limit';
 	const ITEM_SCAN_FAILS = 'scan-fails';
 	const ITEM_SCAN_FAILED_START = 'scan-failed-start';
@@ -147,23 +153,31 @@ class wfSupportController {
 	const ITEM_SCAN_RESULT_WAF_DISABLED = 'scan-result-waf-disabled';
 	const ITEM_SCAN_RESULT_UNKNOWN_FILE_CORE = 'scan-result-unknown-file-in-wordpress-core';
 	const ITEM_SCAN_RESULT_SKIPPED_PATHS = 'scan-result-skipped-paths';
-	
+	const ITEM_SCAN_RESULT_REPAIR_MODIFIED_FILES = 'scan-result-repair-modified-files';
+	const ITEM_SCAN_RESULT_MODIFIED_PLUGIN = 'scan-result-modified-plugin';
+	const ITEM_SCAN_RESULT_MODIFIED_THEME = 'scan-result-modified-theme';
+	const ITEM_SCAN_RESULT_PLUGIN_VULNERABLE = 'scan-result-plugin-vulnerable';
+
 	const ITEM_TOOLS_TWO_FACTOR = 'tools-two-factor';
 	const ITEM_TOOLS_LIVE_TRAFFIC = 'tools-live-traffic';
 	const ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE = 'tools-live-traffic-option-enable';
 	const ITEM_TOOLS_WHOIS_LOOKUP = 'tools-whois-lookup';
 	const ITEM_TOOLS_IMPORT_EXPORT = 'tools-import-export';
 	
+	const ITEM_DIAGNOSTICS = 'diagnostics';
 	const ITEM_DIAGNOSTICS_SYSTEM_CONFIGURATION = 'diagnostics-system-configuration';
 	const ITEM_DIAGNOSTICS_TEST_MEMORY = 'diagnostics-test-memory';
 	const ITEM_DIAGNOSTICS_TEST_EMAIL = 'diagnostics-test-email';
 	const ITEM_DIAGNOSTICS_TEST_ACTIVITY_REPORT = 'diagnostics-test-activity-report';
+	const ITEM_DIAGNOSTICS_REMOVE_CENTRAL_DATA = 'diagnostics-remove-central-data';
 	const ITEM_DIAGNOSTICS_OPTION_DEBUGGING_MODE = 'diagnostics-option-debugging-mode';
 	const ITEM_DIAGNOSTICS_OPTION_REMOTE_SCANS = 'diagnostics-option-remote-scans';
 	const ITEM_DIAGNOSTICS_OPTION_SSL_VERIFICATION = 'diagnostics-option-ssl-verification';
 	const ITEM_DIAGNOSTICS_OPTION_DISABLE_PHP_INPUT = 'diagnostics-option-disable-php-input';
 	const ITEM_DIAGNOSTICS_OPTION_BETA_TDF = 'diagnostics-option-beta-tdf';
-	
+	const ITEM_DIAGNOSTICS_OPTION_WORDFENCE_TRANSLATIONS = 'diagnostics-option-wordfence-translations';
+	const ITEM_DIAGNOSTICS_IPV6 = 'diagnostics-ipv6';
+
 	const ITEM_MODULE_LOGIN_SECURITY = 'module-login-security';
 	const ITEM_MODULE_LOGIN_SECURITY_2FA = 'module-login-security-2fa';
 	const ITEM_MODULE_LOGIN_SECURITY_CAPTCHA = 'module-login-security-captcha';
@@ -202,6 +216,8 @@ class wfSupportController {
 				
 			case self::ITEM_GDPR:
 			case self::ITEM_GDPR_DPA:
+
+			case self::ITEM_GENERAL_REMOTE_IP_LOOKUP:
 				
 			case self::ITEM_DASHBOARD:
 			case self::ITEM_DASHBOARD_STATUS_FIREWALL:
@@ -250,6 +266,7 @@ class wfSupportController {
 			case self::ITEM_FIREWALL_WAF_OPTION_MASK_LOGIN_ERRORS:
 			case self::ITEM_FIREWALL_WAF_OPTION_PREVENT_ADMIN_REGISTRATION:
 			case self::ITEM_FIREWALL_WAF_OPTION_PREVENT_AUTHOR_SCAN:
+			case self::ITEM_FIREWALL_WAF_OPTION_DISABLE_APPLICATION_PASSWORDS:
 			case self::ITEM_FIREWALL_WAF_OPTION_BLOCK_BAD_POST:
 			case self::ITEM_FIREWALL_WAF_OPTION_CUSTOM_BLOCK_TEXT:
 			case self::ITEM_FIREWALL_WAF_OPTION_CHECK_PASSWORD:
@@ -275,6 +292,8 @@ class wfSupportController {
 			case self::ITEM_FIREWALL_BLOCKING_BYPASS_COOKIE:
 			case self::ITEM_FIREWALL_BLOCKING_BYPASS_REDIRECT:
 			case self::ITEM_FIREWALL_BLOCKING_FULL_SITE:
+
+			case self::ITEM_FIREWALL_REMOVE_OPTIMIZATION:
 				
 			case self::ITEM_SCAN:
 			case self::ITEM_SCAN_STATUS_OVERALL:
@@ -316,6 +335,7 @@ class wfSupportController {
 			case self::ITEM_SCAN_OPTION_STAGE_TIME_LIMIT:
 			case self::ITEM_SCAN_OPTION_EXCLUDE_PATTERNS:
 			case self::ITEM_SCAN_OPTION_CUSTOM_MALWARE_SIGNATURES:
+			case self::ITEM_SCAN_OPTION_MAX_RESUME_ATTEMPTS:
 			case self::ITEM_SCAN_RESULT_PUBLIC_CONFIG:
 			case self::ITEM_SCAN_RESULT_PLUGIN_ABANDONED:
 			case self::ITEM_SCAN_RESULT_PLUGIN_REMOVED:
@@ -324,23 +344,31 @@ class wfSupportController {
 			case self::ITEM_SCAN_RESULT_WAF_DISABLED:
 			case self::ITEM_SCAN_RESULT_UNKNOWN_FILE_CORE:
 			case self::ITEM_SCAN_RESULT_SKIPPED_PATHS:
-				
+			case self::ITEM_SCAN_RESULT_REPAIR_MODIFIED_FILES:
+			case self::ITEM_SCAN_RESULT_MODIFIED_PLUGIN:
+			case self::ITEM_SCAN_RESULT_MODIFIED_THEME:
+			case self::ITEM_SCAN_RESULT_PLUGIN_VULNERABLE:
+
 			case self::ITEM_TOOLS_TWO_FACTOR:
 			case self::ITEM_TOOLS_LIVE_TRAFFIC:
 			case self::ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE:
 			case self::ITEM_TOOLS_WHOIS_LOOKUP:
 			case self::ITEM_TOOLS_IMPORT_EXPORT:
 				
+			case self::ITEM_DIAGNOSTICS:
 			case self::ITEM_DIAGNOSTICS_SYSTEM_CONFIGURATION:
 			case self::ITEM_DIAGNOSTICS_TEST_MEMORY:
 			case self::ITEM_DIAGNOSTICS_TEST_EMAIL:
 			case self::ITEM_DIAGNOSTICS_TEST_ACTIVITY_REPORT:
+			case self::ITEM_DIAGNOSTICS_REMOVE_CENTRAL_DATA:
 			case self::ITEM_DIAGNOSTICS_OPTION_DEBUGGING_MODE:
 			case self::ITEM_DIAGNOSTICS_OPTION_REMOTE_SCANS:
 			case self::ITEM_DIAGNOSTICS_OPTION_SSL_VERIFICATION:
 			case self::ITEM_DIAGNOSTICS_OPTION_DISABLE_PHP_INPUT:
 			case self::ITEM_DIAGNOSTICS_OPTION_BETA_TDF:
-				
+			case self::ITEM_DIAGNOSTICS_OPTION_WORDFENCE_TRANSLATIONS:
+			case self::ITEM_DIAGNOSTICS_IPV6:
+
 			case self::ITEM_MODULE_LOGIN_SECURITY:
 			case self::ITEM_MODULE_LOGIN_SECURITY_2FA:
 			case self::ITEM_MODULE_LOGIN_SECURITY_CAPTCHA:

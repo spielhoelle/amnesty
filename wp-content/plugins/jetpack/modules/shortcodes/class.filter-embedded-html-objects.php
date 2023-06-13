@@ -5,7 +5,7 @@
  * This file contains the code that converts HTML embeds into shortcodes
  * for when the user copy/pastes in HTML.
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 add_filter( 'pre_kses', array( 'Filter_Embedded_HTML_Objects', 'filter' ), 11 );
@@ -152,7 +152,7 @@ class Filter_Embedded_HTML_Objects {
 			}
 		}
 
-		if ( count( $unfiltered_content_tokens ) > 0 ) {
+		if ( $unfiltered_content_tokens !== array() ) {
 			// Replace any tokens generated earlier with their original unfiltered text.
 			$html = str_replace( array_keys( $unfiltered_content_tokens ), $unfiltered_content_tokens, $html );
 		}
@@ -194,12 +194,10 @@ class Filter_Embedded_HTML_Objects {
 			} else {
 				self::$html_strpos_filters[ $match ] = $callback;
 			}
+		} elseif ( $is_regexp ) {
+			self::$regexp_filters[ $match ] = $callback;
 		} else {
-			if ( $is_regexp ) {
-				self::$regexp_filters[ $match ] = $callback;
-			} else {
-				self::$strpos_filters[ $match ] = $callback;
-			}
+			self::$strpos_filters[ $match ] = $callback;
 		}
 	}
 
@@ -223,7 +221,7 @@ class Filter_Embedded_HTML_Objects {
 	 */
 	private static function dispatch_entities( $matches ) {
 		$orig_html       = $matches[0];
-		$decoded_matches = array( html_entity_decode( $matches[0] ) );
+		$decoded_matches = array( html_entity_decode( $matches[0], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) );
 
 		return self::dispatch( $decoded_matches, $orig_html );
 	}

@@ -2,21 +2,29 @@
 /**
  * Jetpack Compatibility File
  * See: https://jetpack.com/
+ *
+ * @package automattic/jetpack
  */
 
+/**
+ * Add Jetpack theme supports for Twenty Nineteen.
+ */
 function twentynineteen_jetpack_setup() {
 
 	/**
- 	 * Add theme support for Infinite Scroll.
+	 * Add theme support for Infinite Scroll.
 	 */
- 	add_theme_support( 'infinite-scroll', array(
-	 	'type'      => 'click',
- 		'container' => 'main',
- 		'render'    => 'twentynineteen_infinite_scroll_render',
- 		'footer'    => 'page',
- 	) );
+	add_theme_support(
+		'infinite-scroll',
+		array(
+			'type'      => 'click',
+			'container' => 'main',
+			'render'    => 'twentynineteen_infinite_scroll_render',
+			'footer'    => 'page',
+		)
+	);
 
- 	/**
+	/**
 	 * Add theme support for Responsive Videos.
 	 */
 	add_theme_support( 'jetpack-responsive-videos' );
@@ -29,22 +37,25 @@ function twentynineteen_jetpack_setup() {
 	/**
 	 * Add theme support for Content Options.
 	 */
-	add_theme_support( 'jetpack-content-options', array(
-		'blog-display' => array( 'content', 'excerpt' ),
-    	'post-details' => array(
-			'stylesheet' => 'twentynineteen-style',
-			'date'       => '.posted-on',
-			'categories' => '.cat-links',
-			'tags'       => '.tags-links',
-			'author'     => '.byline',
-			'comment'    => '.comments-link',
-		),
-		'featured-images'    => array(
-			'archive'  => true,
-			'post'     => true,
-			'page'     => true,
-		),
-	) );
+	add_theme_support(
+		'jetpack-content-options',
+		array(
+			'blog-display'    => array( 'content', 'excerpt' ),
+			'post-details'    => array(
+				'stylesheet' => 'twentynineteen-style',
+				'date'       => '.posted-on',
+				'categories' => '.cat-links',
+				'tags'       => '.tags-links',
+				'author'     => '.byline',
+				'comment'    => '.comments-link',
+			),
+			'featured-images' => array(
+				'archive' => true,
+				'post'    => true,
+				'page'    => true,
+			),
+		)
+	);
 }
 add_action( 'after_setup_theme', 'twentynineteen_jetpack_setup' );
 
@@ -58,6 +69,9 @@ function twentynineteen_infinite_scroll_render() {
 	}
 }
 
+/**
+ * Enqueue Jetpack compat styles for Twenty Nineteen.
+ */
 function twentynineteen_init_jetpack() {
 	/**
 	 * Add our compat CSS file for Infinite Scroll and custom widget stylings and such.
@@ -78,7 +92,7 @@ add_action( 'init', 'twentynineteen_init_jetpack' );
 /**
  * Alter gallery widget default width.
  */
-function twentynineteen_gallery_widget_content_width( $width ) {
+function twentynineteen_gallery_widget_content_width() {
 	return 390;
 }
 add_filter( 'gallery_widget_content_width', 'twentynineteen_gallery_widget_content_width' );
@@ -86,7 +100,7 @@ add_filter( 'gallery_widget_content_width', 'twentynineteen_gallery_widget_conte
 /**
  * Alter featured-image default visibility for content-options.
  */
-function twentynineteen_override_post_thumbnail( $width ) {
+function twentynineteen_override_post_thumbnail() {
 	$options         = get_theme_support( 'jetpack-content-options' );
 	$featured_images = ( ! empty( $options[0]['featured-images'] ) ) ? $options[0]['featured-images'] : null;
 
@@ -95,10 +109,13 @@ function twentynineteen_override_post_thumbnail( $width ) {
 		'page-default' => ( isset( $featured_images['page-default'] ) && false === $featured_images['page-default'] ) ? '' : 1,
 	);
 
-	$settings = array_merge( $settings, array(
-		'post-option'  => get_option( 'jetpack_content_featured_images_post', $settings['post-default'] ),
-		'page-option'  => get_option( 'jetpack_content_featured_images_page', $settings['page-default'] ),
-	) );
+	$settings = array_merge(
+		$settings,
+		array(
+			'post-option' => get_option( 'jetpack_content_featured_images_post', $settings['post-default'] ),
+			'page-option' => get_option( 'jetpack_content_featured_images_page', $settings['page-default'] ),
+		)
+	);
 
 	if ( ( ! $settings['post-option'] && is_single() )
 	|| ( ! $settings['page-option'] && is_singular() && is_page() ) ) {
@@ -116,7 +133,7 @@ add_filter( 'twentynineteen_can_show_post_thumbnail', 'twentynineteen_override_p
  * @return array
  */
 function twentynineteen_jetpack_body_classes( $classes ) {
-	// Adds a class if we're in the Customizer
+	// Adds a class if we're in the Customizer.
 	if ( is_customize_preview() ) :
 		$classes[] = 'twentynineteen-customizer';
 	endif;
@@ -124,3 +141,87 @@ function twentynineteen_jetpack_body_classes( $classes ) {
 	return $classes;
 }
 add_filter( 'body_class', 'twentynineteen_jetpack_body_classes' );
+
+/**
+ * Load AMP theme specific hooks for infinite scroll.
+ *
+ * @return void
+ */
+function amp_twentynineteen_infinite_scroll_render_hooks() {
+	add_filter( 'jetpack_amp_infinite_footers', 'twentynineteen_amp_infinite_footers', 10, 2 );
+	add_filter( 'jetpack_amp_infinite_output', 'twentynineteen_amp_infinite_output' );
+	add_filter( 'jetpack_amp_infinite_older_posts', 'twentynineteen_amp_infinite_older_posts' );
+}
+
+/**
+ * Get the theme specific footers.
+ *
+ * @param array  $footers The footers of the themes.
+ * @param string $buffer  Contents of the output buffer.
+ *
+ * @return mixed
+ */
+function twentynineteen_amp_infinite_footers( $footers, $buffer ) {
+	// Collect the footer wrapper.
+	preg_match(
+		'/<footer id="colophon".*<!-- #colophon -->/s',
+		$buffer,
+		$footer
+	);
+	$footers[] = reset( $footer );
+
+	return $footers;
+}
+
+/**
+ * Hide and remove various elements from next page load.
+ *
+ * @param string $buffer Contents of the output buffer.
+ *
+ * @return string
+ */
+function twentynineteen_amp_infinite_output( $buffer ) {
+	// Hide site header on next page load.
+	$buffer = preg_replace(
+		'/id="masthead"/',
+		'$0 next-page-hide',
+		$buffer
+	);
+
+	// Hide pagination on next page load.
+	$buffer = preg_replace(
+		'/class=".*navigation pagination.*"/',
+		'$0 next-page-hide hidden',
+		$buffer
+	);
+
+	// Remove the footer as it will be added back to amp next page footer.
+	$buffer = preg_replace(
+		'/<footer id="colophon".*<!-- #colophon -->/s',
+		'',
+		$buffer
+	);
+
+	return $buffer;
+}
+
+/**
+ * Filter the AMP infinite scroll older posts button
+ *
+ * @return string
+ */
+function twentynineteen_amp_infinite_older_posts() {
+	ob_start();
+	?>
+<div id="infinite-handle" style="text-align: center;">
+	<span>
+		<a href="{{url}}">
+			<button>
+				<?php esc_html_e( 'Older posts', 'jetpack' ); ?>
+			</button>
+		</a>
+	</span>
+</div>
+	<?php
+	return ob_get_clean();
+}
