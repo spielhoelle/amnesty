@@ -59,6 +59,24 @@ class wfCentralAPIRequest {
 
 		$http = _wp_http_get_object();
 		$response = $http->request(WORDFENCE_CENTRAL_API_URL_SEC . $this->getEndpoint(), $args);
+
+		if (!is_wp_error($response)) {
+			$body = wp_remote_retrieve_body($response);
+			$statusCode = wp_remote_retrieve_response_code($response);
+
+			// Check if site has been disconnected on Central's end, but the plugin is still trying to connect.
+			if ($statusCode === 404 && strpos($body, 'Site has been disconnected') !== false) {
+				// Increment attempt count.
+				$centralDisconnectCount = get_site_transient('wordfenceCentralDisconnectCount');
+				set_site_transient('wordfenceCentralDisconnectCount', ++$centralDisconnectCount, 86400);
+
+				// Once threshold is hit, disconnect Central.
+				if ($centralDisconnectCount > 3) {
+					wfRESTConfigController::disconnectConfig();
+				}
+			}
+		}
+
 		return new wfCentralAPIResponse($response);
 	}
 
@@ -178,7 +196,9 @@ class wfCentralAPIResponse {
 	public function returnErrorArray() {
 		return array(
 			'err'      => 1,
-			'errorMsg' => sprintf(__('HTTP %d received from Wordfence Central: %s', 'wordfence'),
+			'errorMsg' => sprintf(
+				/* translators: 1. HTTP status code. 2. Error message. */
+				__('HTTP %1$d received from Wordfence Central: %2$s', 'wordfence'),
 				$this->getStatusCode(), $this->parseErrorJSON($this->getBody())),
 		);
 	}
@@ -232,6 +252,9 @@ class wfCentralAuthenticatedAPIRequest extends wfCentralAPIRequest {
 			try {
 				$token = $this->fetchToken();
 				break;
+			} catch (wfCentralConfigurationException $e) {
+				wfConfig::set('wordfenceCentralConfigurationIssue', true);
+				throw new wfCentralAPIException(__('Fetching token for Wordfence Central authentication due to configuration issue.', 'wordfence'));
 			} catch (wfCentralAPIException $e) {
 				continue;
 			}
@@ -248,6 +271,7 @@ class wfCentralAuthenticatedAPIRequest extends wfCentralAPIRequest {
 		if (!empty($tokenContents['body']['exp'])) {
 			set_transient('wordfenceCentralJWT' . wfConfig::get('wordfenceCentralSiteID'), $token, $tokenContents['body']['exp'] - time());
 		}
+		wfConfig::set('wordfenceCentralConfigurationIssue', false);
 		return $token;
 	}
 
@@ -281,7 +305,12 @@ class wfCentralAuthenticatedAPIRequest extends wfCentralAPIRequest {
 
 		// Sign nonce to pull down JWT.
 		$data = $nonce . '|' . $siteID;
-		$signature = ParagonIE_Sodium_Compat::crypto_sign_detached($data, $secretKey);
+		try {
+			$signature = ParagonIE_Sodium_Compat::crypto_sign_detached($data, $secretKey);
+		}
+		catch (SodiumException $e) {
+			throw new wfCentralConfigurationException('Signing failed, likely due to malformed secret key', $e);
+		}
 		$request = new wfCentralAPIRequest(sprintf('/site/%s/login', $siteID), 'POST', null, array(
 			'data'      => $data,
 			'signature' => ParagonIE_Sodium_Compat::bin2hex($signature),
@@ -306,6 +335,14 @@ class wfCentralAPIException extends Exception {
 
 }
 
+class wfCentralConfigurationException extends RuntimeException {
+
+	public function __construct($message, $previous = null) {
+		parent::__construct($message, 0, $previous);
+	}
+
+}
+
 class wfCentral {
 
 	/**
@@ -319,14 +356,22 @@ class wfCentral {
 	 * @return bool
 	 */
 	public static function isConnected() {
-		return self::isSupported() && ((bool) wfConfig::get('wordfenceCentralConnected', false));
+		return self::isSupported() && ((bool) self::_isConnected());
 	}
 
 	/**
 	 * @return bool
 	 */
 	public static function isPartialConnection() {
-		return !wfConfig::get('wordfenceCentralConnected') && wfConfig::get('wordfenceCentralSiteID');
+		return !self::_isConnected() && wfConfig::get('wordfenceCentralSiteID');
+	}
+
+	public static function _isConnected($forceUpdate = false) {
+		static $isConnected;
+		if (!isset($isConnected) || $forceUpdate) {
+			$isConnected = wfConfig::get('wordfenceCentralConnected', false);
+		}
+		return $isConnected;
 	}
 
 	/**

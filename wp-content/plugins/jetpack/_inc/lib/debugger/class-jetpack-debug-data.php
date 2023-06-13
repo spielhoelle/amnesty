@@ -1,13 +1,17 @@
 <?php
 /**
- * Jetpack Debug Data for the legacy Jetpack debugger page and the WP 5.2-era Site Health sections.
+ * Jetpack Debug Data for the Site Health sections.
  *
- * @package jetpack
+ * @package automattic/jetpack
  */
 
+use Automattic\Jetpack\Connection\Tokens;
+use Automattic\Jetpack\Connection\Urls;
 use Automattic\Jetpack\Constants;
+use Automattic\Jetpack\Identity_Crisis;
+use Automattic\Jetpack\Redirect;
+use Automattic\Jetpack\Status;
 use Automattic\Jetpack\Sync\Modules;
-use Automattic\Jetpack\Sync\Functions;
 use Automattic\Jetpack\Sync\Sender;
 
 /**
@@ -42,7 +46,7 @@ class Jetpack_Debug_Data {
 	 * @return string Human readable time.
 	 */
 	public static function seconds_to_time( $seconds ) {
-		$seconds = intval( $seconds );
+		$seconds = (int) $seconds;
 		$units   = array(
 			'week'   => WEEK_IN_SECONDS,
 			'day'    => DAY_IN_SECONDS,
@@ -56,7 +60,7 @@ class Jetpack_Debug_Data {
 		}
 		$human_readable = '';
 		foreach ( $units as $name => $divisor ) {
-			$quot = intval( $seconds / $divisor );
+			$quot = (int) ( $seconds / $divisor );
 			if ( $quot ) {
 				$human_readable .= "$quot $name";
 				$human_readable .= ( abs( $quot ) > 1 ? 's' : '' ) . ', ';
@@ -95,8 +99,8 @@ class Jetpack_Debug_Data {
 	 */
 	public static function core_debug_data( $debug ) {
 		$support_url = Jetpack::is_development_version()
-			? 'https://jetpack.com/contact-support/beta-group/'
-			: 'https://jetpack.com/contact-support/';
+			? Redirect::get_url( 'jetpack-contact-support-beta-group' )
+			: Redirect::get_url( 'jetpack-contact-support' );
 
 		$jetpack = array(
 			'jetpack' => array(
@@ -133,39 +137,49 @@ class Jetpack_Debug_Data {
 		$debug_info = array();
 
 		/* Add various important Jetpack options */
-		$debug_info['site_id']        = array(
+		$debug_info['site_id']                  = array(
 			'label'   => 'Jetpack Site ID',
 			'value'   => Jetpack_Options::get_option( 'id' ),
 			'private' => false,
 		);
-		$debug_info['ssl_cert']       = array(
+		$debug_info['ssl_cert']                 = array(
 			'label'   => 'Jetpack SSL Verfication Bypass',
 			'value'   => ( Jetpack_Options::get_option( 'fallback_no_verify_ssl_certs' ) ) ? 'Yes' : 'No',
 			'private' => false,
 		);
-		$debug_info['time_diff']      = array(
+		$debug_info['time_diff']                = array(
 			'label'   => "Offset between Jetpack server's time and this server's time.",
 			'value'   => Jetpack_Options::get_option( 'time_diff' ),
 			'private' => false,
 		);
-		$debug_info['version_option'] = array(
+		$debug_info['version_option']           = array(
 			'label'   => 'Current Jetpack Version Option',
 			'value'   => Jetpack_Options::get_option( 'version' ),
 			'private' => false,
 		);
-		$debug_info['old_version']    = array(
+		$debug_info['old_version']              = array(
 			'label'   => 'Previous Jetpack Version',
 			'value'   => Jetpack_Options::get_option( 'old_version' ),
 			'private' => false,
 		);
-		$debug_info['public']         = array(
+		$debug_info['public']                   = array(
 			'label'   => 'Jetpack Site Public',
 			'value'   => ( Jetpack_Options::get_option( 'public' ) ) ? 'Public' : 'Private',
 			'private' => false,
 		);
-		$debug_info['master_user']    = array(
+		$debug_info['master_user']              = array(
 			'label'   => 'Jetpack Master User',
-			'value'   => self::human_readable_master_user(),
+			'value'   => self::human_readable_master_user(), // Only ID number and user name.
+			'private' => false,
+		);
+		$debug_info['is_offline_mode']          = array(
+			'label'   => 'Jetpack Offline Mode',
+			'value'   => ( new Status() )->is_offline_mode() ? 'on' : 'off',
+			'private' => false,
+		);
+		$debug_info['is_offline_mode_constant'] = array(
+			'label'   => 'JETPACK_DEV_DEBUG Constant',
+			'value'   => ( defined( 'JETPACK_DEV_DEBUG' ) && JETPACK_DEV_DEBUG ) ? 'on' : 'off',
 			'private' => false,
 		);
 
@@ -179,8 +193,8 @@ class Jetpack_Debug_Data {
 		 * If a token does not contain a period, then it is malformed and we report it as such.
 		 */
 		$user_id    = get_current_user_id();
-		$blog_token = Jetpack_Data::get_access_token();
-		$user_token = Jetpack_Data::get_access_token( $user_id );
+		$blog_token = ( new Tokens() )->get_access_token();
+		$user_token = ( new Tokens() )->get_access_token( $user_id );
 
 		$tokenset = '';
 		if ( $blog_token ) {
@@ -262,8 +276,8 @@ class Jetpack_Debug_Data {
 			if ( isset( $_SERVER[ $header ] ) ) {
 				$debug_info[ $header ] = array(
 					'label'   => 'Server Variable ' . $header,
-					'value'   => ( $_SERVER[ $header ] ) ? $_SERVER[ $header ] : 'false',
-					'private' => false,
+					'value'   => empty( $_SERVER[ $header ] ) ? 'false' : filter_var( wp_unslash( $_SERVER[ $header ] ) ),
+					'private' => true, // This isn't really 'private' information, but we don't want folks to easily paste these into public forums.
 				);
 			}
 		}
@@ -282,7 +296,7 @@ class Jetpack_Debug_Data {
 			foreach ( $sync_statuses as $sync_status => $sync_status_value ) {
 				$human_readable_sync_status[ $sync_status ] =
 					in_array( $sync_status, array( 'started', 'queue_finished', 'send_started', 'finished' ), true )
-						? date( 'r', $sync_status_value ) : $sync_status_value;
+						? gmdate( 'r', $sync_status_value ) : $sync_status_value;
 			}
 			$debug_info['full_sync'] = array(
 				'label'   => 'Full Sync Status',
@@ -323,8 +337,8 @@ class Jetpack_Debug_Data {
 		 * Must follow sync debug since it depends on sync functionality.
 		 */
 		$idc_urls = array(
-			'home'       => Functions::home_url(),
-			'siteurl'    => Functions::site_url(),
+			'home'       => Urls::home_url(),
+			'siteurl'    => Urls::site_url(),
 			'WP_HOME'    => Constants::is_defined( 'WP_HOME' ) ? Constants::get_constant( 'WP_HOME' ) : '',
 			'WP_SITEURL' => Constants::is_defined( 'WP_SITEURL' ) ? Constants::get_constant( 'WP_SITEURL' ) : '',
 		);
@@ -341,7 +355,7 @@ class Jetpack_Debug_Data {
 		);
 		$debug_info['idc_optin']        = array(
 			'label'   => 'IDC Opt-in',
-			'value'   => Jetpack::sync_idc_optin(),
+			'value'   => Identity_Crisis::should_handle_idc(),
 			'private' => false,
 		);
 
@@ -392,6 +406,6 @@ class Jetpack_Debug_Data {
 	private static function human_readable_user( $user ) {
 		$user = new WP_User( $user );
 
-		return sprintf( '#%1$d %2$s (%3$s)', $user->ID, $user->user_login, $user->user_email ); // Format: "#1 username (user@example.com)".
+		return sprintf( '#%1$d %2$s', $user->ID, $user->user_login ); // Format: "#1 username".
 	}
 }

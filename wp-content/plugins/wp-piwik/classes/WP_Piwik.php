@@ -1,5 +1,7 @@
 <?php
 
+use WP_Piwik\Widget\Post;
+
 /**
  * The main WP-Matomo class configures, registers and manages the plugin
  *
@@ -8,11 +10,7 @@
  */
 class WP_Piwik {
 
-	/**
-	 *
-	 * @var Runtime environment variables
-	 */
-	private static $revisionId = 2019072901, $version = '1.0.22', $blog_id, $pluginBasename = NULL, $logger, $settings, $request, $optionsPageId;
+	private static $revisionId = 2023052101, $version = '1.0.28', $blog_id, $pluginBasename = NULL, $logger, $settings, $request, $optionsPageId;
 
 	/**
 	 * Constructor class to configure and register all WP-Piwik components
@@ -141,7 +139,7 @@ class WP_Piwik {
 						'addPiwikAnnotation'
 				), 10, 3 );
 		}
-		
+
 	}
 
 	/**
@@ -198,9 +196,9 @@ class WP_Piwik {
 	 * Install WP-Piwik for the first time
 	 */
 	private function installPlugin($isUpdate = false) {
-		self::$logger->log ( 'Running WP-Piwik installation' );
+		self::$logger->log ( 'Running WP-Matomo installation' );
 		if (! $isUpdate)
-			$this->addNotice ( 'install', sprintf ( __ ( '%s %s installed.', 'wp-piwik' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), self::$version ), __ ( 'Next you should connect to Piwik', 'wp-piwik' ) );
+			$this->addNotice ( 'install', sprintf ( __ ( '%s %s installed.', 'wp-piwik' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), self::$version ), __ ( 'Next you should connect to Matomo', 'wp-piwik' ) );
 		self::$settings->setGlobalOption ( 'revision', self::$revisionId );
 		self::$settings->setGlobalOption ( 'last_settings_update', time () );
 	}
@@ -209,7 +207,7 @@ class WP_Piwik {
 	 * Uninstall WP-Piwik
 	 */
 	public function uninstallPlugin() {
-		self::$logger->log ( 'Running WP-Piwik uninstallation' );
+		self::$logger->log ( 'Running WP-Matomo uninstallation' );
 		if (! defined ( 'WP_UNINSTALL_PLUGIN' ))
 			exit ();
 		self::deleteWordPressOption ( 'wp-piwik-notices' );
@@ -220,7 +218,7 @@ class WP_Piwik {
 	 * Update WP-Piwik
 	 */
 	private function updatePlugin() {
-		self::$logger->log ( 'Upgrade WP-Piwik to ' . self::$version );
+		self::$logger->log ( 'Upgrade WP-Matomo to ' . self::$version );
 		$patches = glob ( dirname ( __FILE__ ) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'update' . DIRECTORY_SEPARATOR . '*.php' );
 		$isPatched = false;
 		if (is_array ( $patches )) {
@@ -234,7 +232,7 @@ class WP_Piwik {
 			}
 		}
 		if ((self::$settings->getGlobalOption('update_notice') == 'enabled') || ((self::$settings->getGlobalOption('update_notice') == 'script') && $isPatched))
-			$this->addNotice ( 'update', sprintf ( __ ( '%s updated to %s.', 'wp-piwik' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), self::$version ), __ ( 'Please validate your configuration', 'wp-piwik' ) );
+			$this->addNotice ( 'update', sprintf ( __ ( '%s updated to %s.', 'wp-piwik' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), self::$version ), __ ( 'Please validate your configuration', 'wp-piwik' ) );
 		$this->installPlugin ( true );
 	}
 
@@ -360,7 +358,7 @@ class WP_Piwik {
 					'saveCustomVars'
 			), 10, 2 );
 		}
-		if (self::$settings->getGlobalOption ( 'perpost_stats' )) {
+		if (self::$settings->getGlobalOption ( 'perpost_stats' ) != "disabled") {
 			add_action ( 'add_meta_boxes', array (
 					$this,
 					'onloadPostPage'
@@ -378,7 +376,7 @@ class WP_Piwik {
 				global $current_user;
 				$userRoles = $current_user->roles;
 				$allowed = self::$settings->getGlobalOption ( 'capability_read_stats' );
-				if (is_array($userRoles) && is_array($allowed)) 
+				if (is_array($userRoles) && is_array($allowed))
 					foreach ($userRoles as $userRole)
 						if (isset( $allowed[$userRole] ) && $allowed[$userRole]) {
 							$cap = 'read';
@@ -386,7 +384,7 @@ class WP_Piwik {
 						}
 			}
 			$statsPage = new WP_Piwik\Admin\Statistics ( $this, self::$settings );
-			$this->statsPageId = add_dashboard_page ( __ ( 'Piwik Statistics', 'wp-piwik' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), $cap, 'wp-piwik_stats', array (
+			$this->statsPageId = add_dashboard_page ( __ ( 'Matomo Statistics', 'wp-piwik' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), $cap, 'wp-piwik_stats', array (
 					$statsPage,
 					'show'
 			) );
@@ -394,7 +392,7 @@ class WP_Piwik {
 		}
 		if (! self::$settings->checkNetworkActivation ()) {
 			$optionsPage = new WP_Piwik\Admin\Settings ( $this, self::$settings );
-			self::$optionsPageId = add_options_page ( self::$settings->getGlobalOption ( 'plugin_display_name' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), 'activate_plugins', __FILE__, array (
+			self::$optionsPageId = add_options_page ( self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), 'activate_plugins', __FILE__, array (
 					$optionsPage,
 					'show'
 			) );
@@ -405,17 +403,17 @@ class WP_Piwik {
 	/**
 	 * Register network admin menu components
 	 */
-	public function buildNetworkAdminMenu() {		
+	public function buildNetworkAdminMenu() {
 		if (self::isConfigured ()) {
 			$statsPage = new WP_Piwik\Admin\Network ( $this, self::$settings );
-			$this->statsPageId = add_dashboard_page ( __ ( 'Piwik Statistics', 'wp-piwik' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), 'manage_sites', 'wp-piwik_stats', array (
+			$this->statsPageId = add_dashboard_page ( __ ( 'Matomo Statistics', 'wp-piwik' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), 'manage_sites', 'wp-piwik_stats', array (
 					$statsPage,
 					'show'
 			) );
 			$this->loadAdminStatsHeader ( $this->statsPageId, $statsPage );
 		}
 		$optionsPage = new WP_Piwik\Admin\Settings ( $this, self::$settings );
-		self::$optionsPageId = add_submenu_page ( 'settings.php', self::$settings->getGlobalOption ( 'plugin_display_name' ), self::$settings->getGlobalOption ( 'plugin_display_name' ), 'manage_sites', __FILE__, array (
+		self::$optionsPageId = add_submenu_page ( 'settings.php', self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), self::$settings->getNotEmptyGlobalOption ( 'plugin_display_name' ), 'manage_sites', __FILE__, array (
 				$optionsPage,
 				'show'
 		) );
@@ -438,10 +436,6 @@ class WP_Piwik {
 		add_action ( 'admin_print_styles-' . $statsPageId, array (
 				$statsPage,
 				'printAdminStyles'
-		) );
-		add_action ( 'admin_head-' . $statsPageId, array (
-				$statsPage,
-				'extendAdminHeader'
 		) );
 		add_action ( 'load-' . $statsPageId, array (
 				$this,
@@ -498,12 +492,54 @@ class WP_Piwik {
 			) );
 			$unique = $this->request ( $id );
 			$url = is_network_admin () ? $this->getSettingsURL () : false;
-			$content = is_network_admin () ? __('Configure WP-Piwik', 'wp-piwik') : '';
+			$content = is_network_admin () ? __('Configure WP-Matomo', 'wp-piwik') : '';
 			// Leave if result array does contain a message instead of valid data
 			if (isset($unique['result']))
 				$content .= '<!-- '.$unique['result'].': '.($unique['message']?$unique['message']:'...').' -->';
 			elseif (is_array ( $unique ) ) {
-				$content = "<script type='text/javascript'>var \$jSpark = jQuery.noConflict();\$jSpark(function() {var piwikSparkVals=[" . implode ( ',', $unique ) . "];\$jSpark('.wp-piwik_dynbar').sparkline(piwikSparkVals, {type: 'bar', barColor: '#ccc', barWidth:2});});</script><span class='wp-piwik_dynbar'>Loading...</span>";
+			    $labels = "";
+			    for ($i = 0; $i < count($unique); $i++) {
+                    $labels .= $i.",";
+                }
+                ob_start();
+                ?>
+                    <div style="width:100px; height:100%;">
+                        <canvas id="wpPiwikSparkline" style="max-width:100%; max-height:100%;padding-top:4px; padding-bottom:4px;"></canvas>
+                    </div>
+                    <script>
+                        function showWpPiwikSparkline() {
+                            new Chart(document.getElementById('wpPiwikSparkline').getContext('2d'), {
+                                type: 'bar',
+                                data: {
+                                    labels: [<?php echo $labels; ?>],
+                                    datasets: [
+                                        {
+                                            borderColor: "rgb(240, 240, 241)",
+                                            backgroundColor: "rgb(240, 240, 241)",
+                                            borderWidth:1,
+                                            radius:0,
+                                            data: [<?php echo implode(',', $unique); ?>]
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: { display: false },
+                                        tooltip: { enabled: false }
+                                    },
+                                    scales: {
+                                        y: { display: false },
+                                        x: { display: false }
+                                    }
+                                }
+                            });
+                        }
+                        jQuery(showWpPiwikSparkline);
+                    </script>
+                <?php
+                $content .= ob_get_contents();
+                ob_end_clean();
 				$url = $this->getStatsURL ();
 			}
 			$toolbar->add_menu ( array (
@@ -536,10 +572,7 @@ class WP_Piwik {
 	 */
 	public function loadToolbarRequirements() {
 		if (is_admin_bar_showing ()) {
-			wp_enqueue_script ( 'wp-piwik-sparkline', $this->getPluginURL () . 'js/sparkline/jquery.sparkline.min.js', array (
-					'jquery'
-			), self::$version );
-			wp_enqueue_style ( 'wp-piwik', $this->getPluginURL () . 'css/wp-piwik-spark.css', array (), $this->getPluginVersion () );
+            wp_enqueue_script ( 'wp-piwik-chartjs', $this->getPluginURL () . 'js/chartjs/chart.min.js', "3.4.1" );
 		}
 	}
 
@@ -565,11 +598,11 @@ class WP_Piwik {
 			$posturl = get_permalink ( $post->ID );
 			$urlref = get_bloginfo ( 'rss2_url' );
 			if (self::$settings->getGlobalOption ( 'track_mode' ) == 'proxy')
-			    $url = plugins_url ( 'wp-piwik' ) . '/proxy/piwik.php';
+			    $url = plugins_url ( 'wp-piwik' ) . '/proxy/matomo.php';
             else {
                 $url = self::$settings->getGlobalOption ( 'piwik_url' );
                 if (substr($url, -10, 10) == '/index.php')
-                    $url = str_replace('/index.php', '/piwik.php', $url);
+                    $url = str_replace('/index.php', '/matomo.php', $url);
                 else
                     $url .= 'piwik.php';
             }
@@ -914,7 +947,7 @@ class WP_Piwik {
 	 * Get WP-Piwik's URL
 	 */
 	public function getPluginURL() {
-		return trailingslashit ( plugins_url () . '/wp-piwik/' );
+		return trailingslashit ( plugin_dir_url( dirname( __FILE__ ) ) );
 	}
 
 	/**
@@ -1091,7 +1124,7 @@ class WP_Piwik {
 				$result = $result [0] ['idsite'];
 			else $result = null;
 		} else $result = null;
-		self::$logger->log ( 'Get Piwik ID: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) . ' = Piwik ID ' . $result );
+		self::$logger->log ( 'Get Matomo ID: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) . ' = Matomo ID ' . $result );
 		if ($result !== null) {
 			self::$settings->setOption ( 'site_id', $result, $blogId );
 			if (self::$settings->getGlobalOption ( 'track_mode' ) != 'disabled' && self::$settings->getGlobalOption ( 'track_mode' ) != 'manually') {
@@ -1119,8 +1152,13 @@ class WP_Piwik {
 				'urls' => $isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl,
 				'siteName' => urlencode( $isCurrent ? get_bloginfo ( 'name' ) : get_blog_details ( $blogId )->blogname )
 		) );
-		$result = (int) $this->request ( $id );
-		self::$logger->log ( 'Create Piwik ID: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) . ' = Piwik ID ' . $result );
+		$result = $this->request ( $id );
+		if ( is_array( $result ) && isset( $result['value'] ) ) {
+			$result = (int) $result['value'];
+		} else {
+			$result = (int) $result;
+		}
+		self::$logger->log ( 'Create Matomo ID: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) . ' = Matomo ID ' . $result );
 		if (empty ( $result ))
 			return null;
 		else {
@@ -1145,7 +1183,7 @@ class WP_Piwik {
 				'siteName' => $isCurrent ? get_bloginfo ( 'name' ) : get_blog_details ( $blogId )->blogname
 		) );
 		$this->request ( $id );
-		self::$logger->log ( 'Update Piwik site: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) );
+		self::$logger->log ( 'Update Matomo site: WordPress site ' . ($isCurrent ? get_bloginfo ( 'url' ) : get_blog_details ( $blogId )->siteurl) );
 	}
 
 	/**
@@ -1179,7 +1217,7 @@ class WP_Piwik {
 		if (isset ( $result ['script'] ) && ! empty ( $result ['script'] )) {
 			self::$settings->setOption ( 'tracking_code', $result ['script'], $blogId );
 			self::$settings->setOption ( 'noscript_code', $result ['noscript'], $blogId );
-			self::$settings->setGlobalOption ( 'proxy_url', $result ['proxy'], $blogId );
+			self::$settings->setGlobalOption ( 'proxy_url', $result ['proxy'] );
 		}
 		return $result;
 	}
@@ -1221,9 +1259,7 @@ class WP_Piwik {
 		wp_enqueue_script ( 'wp-lists' );
 		wp_enqueue_script ( 'postbox' );
 		wp_enqueue_script ( 'wp-piwik', $this->getPluginURL () . 'js/wp-piwik.js', array (), self::$version, true );
-		wp_enqueue_script ( 'wp-piwik-jqplot', $this->getPluginURL () . 'js/jqplot/wp-piwik.jqplot.js', array (
-				'jquery'
-		), self::$version );
+		wp_enqueue_script ( 'wp-piwik-chartjs', $this->getPluginURL () . 'js/chartjs/chart.min.js', "3.4.1" );
 		new \WP_Piwik\Widget\Chart ( $this, self::$settings, $this->statsPageId );
 		new \WP_Piwik\Widget\Visitors ( $this, self::$settings, $this->statsPageId );
 		new \WP_Piwik\Widget\Overview ( $this, self::$settings, $this->statsPageId );
@@ -1261,8 +1297,11 @@ class WP_Piwik {
 		global $post;
 		$postUrl = get_permalink ( $post->ID );
 		$this->log ( 'Load per post statistics: ' . $postUrl );
+        $locations = apply_filters( 'wp-piwik_meta_boxes_locations', get_post_types( array( 'public' => true ), 'names' ) );
 		array (
-				new \WP_Piwik\Widget\Post ( $this, self::$settings, array('post', 'page', 'custom_post_type'), 'side', 'default', array (
+				new Post ( $this, self::$settings, $locations, 'side', 'default', array (
+				        'date' => self::$settings->getGlobalOption ( 'perpost_stats' ),
+						'period' => 'day',
 						'url' => $postUrl
 				) ),
 				'show'
@@ -1285,7 +1324,7 @@ class WP_Piwik {
 	 * Get option value, choose method depending on network mode
 	 *
 	 * @param string $option option key
-	 * @return string option value
+	 * @return string|array option value
 	 */
 	private function getWordPressOption($option, $default = null) {
 		return ($this->isNetworkMode () ? get_site_option ( $option, $default ) : get_option ( $option, $default ));
@@ -1318,7 +1357,7 @@ class WP_Piwik {
 
 	/**
 	 * Check if WP-Piwik options page
-	 * 
+	 *
 	 * @return boolean True if current page is WP-Piwik's option page
 	 */
 	public static function isValidOptionsPost() {

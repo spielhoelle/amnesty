@@ -696,7 +696,11 @@ class ObjectCache_WpObjectCache_Regular {
 		case 'redis':
 			$engineConfig = array(
 				'servers' => $this->_config->get_array( 'objectcache.redis.servers' ),
+				'verify_tls_certificates' => $this->_config->get_boolean( 'objectcache.redis.verify_tls_certificates' ),
 				'persistent' => $this->_config->get_boolean( 'objectcache.redis.persistent' ),
+				'timeout' => $this->_config->get_integer( 'objectcache.redis.timeout' ),
+				'retry_interval' => $this->_config->get_integer( 'objectcache.redis.retry_interval' ),
+				'read_timeout' => $this->_config->get_integer( 'objectcache.redis.read_timeout' ),
 				'dbid' => $this->_config->get_integer( 'objectcache.redis.dbid' ),
 				'password' => $this->_config->get_string( 'objectcache.redis.password' )
 			);
@@ -744,8 +748,11 @@ class ObjectCache_WpObjectCache_Regular {
 			case 'redis':
 				$engineConfig = array(
 					'servers' => $this->_config->get_array( 'objectcache.redis.servers' ),
-					'persistent' => $this->_config->get_boolean(
-						'objectcache.redis.persistent' ),
+					'verify_tls_certificates' => $this->_config->get_boolean( 'objectcache.redis.verify_tls_certificates' ),
+					'persistent' => $this->_config->get_boolean( 'objectcache.redis.persistent' ),
+					'timeout' => $this->_config->get_integer( 'objectcache.redis.timeout' ),
+					'retry_interval' => $this->_config->get_integer( 'objectcache.redis.retry_interval' ),
+					'read_timeout' => $this->_config->get_integer( 'objectcache.redis.read_timeout' ),
 					'dbid' => $this->_config->get_integer( 'objectcache.redis.dbid' ),
 					'password' => $this->_config->get_string( 'objectcache.redis.password' )
 				);
@@ -779,15 +786,6 @@ class ObjectCache_WpObjectCache_Regular {
 	 * @return boolean
 	 */
 	function _can_cache() {
-		/**
-		 * Don't cache in console mode
-		 */
-		if ( PHP_SAPI === 'cli' ) {
-			$this->cache_reject_reason = 'Console mode';
-
-			return false;
-		}
-
 		/**
 		 * Skip if disabled
 		 */
@@ -845,13 +843,16 @@ class ObjectCache_WpObjectCache_Regular {
 
 	public function w3tc_footer_comment( $strings ) {
 		$reason = $this->get_reject_reason();
-		$append = ( $reason != '' ? sprintf( ' (%s)', $reason ) : '' );
+		$append = empty( $reason ) ? '' : sprintf( ' (%1$s)', $reason );
 
 		$strings[] = sprintf(
-			__( 'Object Caching %d/%d objects using %s%s', 'w3-total-cache' ),
-			$this->cache_hits, $this->cache_total,
+			// translators: 1: Cache hits, 2: Cache total cache objects, 3: Engine anme, 4: Reason.
+			__( 'Object Caching %1$d/%2$d objects using %3$s%4$s', 'w3-total-cache' ),
+			$this->cache_hits,
+			$this->cache_total,
 			Cache::engine_name( $this->_config->get_string( 'objectcache.engine' ) ),
-			$append );
+			$append
+		);
 
 		if ( $this->_config->get_boolean( 'objectcache.debug' ) ) {
 			$strings[] = '';

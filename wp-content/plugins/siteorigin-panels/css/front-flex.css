@@ -9,6 +9,26 @@
   -webkit-justify-content: space-between;
   justify-content: space-between;
 }
+.panel-grid .so-parallax {
+  position: relative;
+}
+.panel-grid .so-parallax > *:not(.simpleParallax) {
+  position: relative;
+  z-index: 1;
+}
+.panel-grid .so-parallax .simpleParallax {
+  overflow: hidden;
+}
+.panel-grid .so-parallax .simpleParallax,
+.panel-grid .so-parallax img[data-siteorigin-parallax] {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
 .panel-layout.panel-is-rtl .panel-grid.panel-no-style,
 .panel-layout.panel-is-rtl .panel-grid.panel-has-style > .panel-row-style {
   -ms-flex-direction: row-reverse;
@@ -42,10 +62,10 @@
 .panel-grid-cell .widget-title {
   margin-top: 0;
 }
-body.siteorigin-panels-before-js {
+body.siteorigin-panels-before-js:not(.siteorigin-panels-css-container) {
   overflow-x: hidden;
 }
-body.siteorigin-panels-before-js .siteorigin-panels-stretch {
+body.siteorigin-panels-before-js:not(.siteorigin-panels-css-container) .siteorigin-panels-stretch {
   margin-right: -1000px !important;
   margin-left: -1000px !important;
   padding-right: 1000px !important;

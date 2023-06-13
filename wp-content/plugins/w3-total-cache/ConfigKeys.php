@@ -101,11 +101,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'dbcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'dbcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'dbcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -161,9 +177,18 @@ $keys = array(
 		)
 	),
 
+	'docroot_fix.enable' => array(
+		'type' => 'boolean',
+		'default' => false,
+	),
+
 	'lazyload.enabled' => array(
 		'type' => 'boolean',
 		'default' => false
+	),
+	'lazyload.threshold' => array(
+		'type' => 'string',
+		'default' => ''
 	),
 	'lazyload.process_img' => array(
 		'type' => 'boolean',
@@ -172,6 +197,18 @@ $keys = array(
 	'lazyload.process_background' => array(
 		'type' => 'boolean',
 		'default' => true
+	),
+	'lazyload.googlemaps.google_maps_easy' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'lazyload.googlemaps.wp_google_maps' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'lazyload.googlemaps.wp_google_map_plugin' => array(
+		'type' => 'boolean',
+		'default' => false
 	),
 	'lazyload.exclude' => array(
 		'type' => 'array',
@@ -223,7 +260,7 @@ $keys = array(
 	),
 	'objectcache.enabled_for_wp_admin' => array(
 		'type' => 'boolean',
-		'default' => true
+		'default' => false,
 	),
 	'objectcache.fallback_transients' => array(
 		'type' => 'boolean',
@@ -277,11 +314,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'objectcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'objectcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'objectcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -304,7 +357,6 @@ $keys = array(
 	'objectcache.groups.nonpersistent' => array(
 		'type' => 'array',
 		'default' => array(
-			'comment',
 			'counts',
 			'plugins'
 		)
@@ -394,11 +446,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'pgcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'pgcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'pgcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -764,11 +832,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'minify.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'minify.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'minify.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -820,12 +904,9 @@ $keys = array(
 		'type' => 'array',
 		'default' => array(
 			'google_ad_',
-			'RSPEAK_'
+			'RSPEAK_',
+			'mfunc'
 		)
-	),
-	'minify.css.combine' => array(
-		'type' => 'boolean',
-		'default' => false
 	),
 	'minify.css.enable' => array(
 		'type' => 'boolean',
@@ -834,6 +915,10 @@ $keys = array(
 	'minify.css.engine' => array(
 		'type' => 'string',
 		'default' => 'css'
+	),
+	'minify.css.method' => array(
+		'type' => 'string',
+		'default' => 'both'
 	),
 	'minify.css.http2push' => array(
 		'type' => 'boolean',
@@ -870,6 +955,10 @@ $keys = array(
 	'minify.js.engine' => array(
 		'type' => 'string',
 		'default' => 'js'
+	),
+	'minify.js.method' => array(
+		'type' => 'string',
+		'default' => 'both'
 	),
 	'minify.js.combine.header' => array(
 		'type' => 'boolean',
@@ -1279,6 +1368,10 @@ $keys = array(
 		'type' => 'string',
 		'default' => 'auto'
 	),
+	'cdn.s3.public_objects' => array(
+		'type'    => 'string',
+		'default' => 'enabled',
+	),
 
 	'cdn.s3_compatible.api_host' => array(
 		'type' => 'string',
@@ -1312,6 +1405,10 @@ $keys = array(
 	'cdn.cf.ssl' => array(
 		'type' => 'string',
 		'default' => 'auto'
+	),
+	'cdn.cf.public_objects' => array(
+		'type' => 'string',
+		'default' => 'enabled'
 	),
 	'cdn.cf2.key' => array(
 		'type' => 'string',
@@ -1437,22 +1534,6 @@ $keys = array(
 	'cdn.limelight.ssl' => array(
 		'type' => 'string',
 		'default' => 'auto'
-	),
-	'cdn.maxcdn.authorization_key' => array(
-		'type' => 'string',
-		'default' => ''
-	),
-	'cdn.maxcdn.domain' => array(
-		'type' => 'array',
-		'default' => array()
-	),
-	'cdn.maxcdn.ssl' => array(
-		'type' => 'string',
-		'default' => 'auto'
-	),
-	'cdn.maxcdn.zone_id' => array(
-		'type' => 'integer',
-		'default' => 0
 	),
 	'cdn.cotendo.username' => array(
 		'type' => 'string',
@@ -1646,14 +1727,6 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
-	'cdnfsd.maxcdn.api_key' => array(
-		'type' => 'string',
-		'default' => ''
-	),
-	'cdnfsd.maxcdn.zone_id' => array(
-		'type' => 'integer',
-		'default' => 0
-	),
 	'cdnfsd.stackpath.api_key' => array(
 		'type' => 'string',
 		'default' => ''
@@ -1689,6 +1762,18 @@ $keys = array(
 	'cdnfsd.stackpath2.ssl' => array(
 		'type' => 'string',
 		'default' => 'auto'
+	),
+	'cdnfsd.transparentcdn.client_id' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.transparentcdn.client_secret' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'cdnfsd.transparentcdn.company_id' => array(
+		'type' => 'string',
+		'default' => ''
 	),
 
 	'varnish.configuration_overloaded' => array(
@@ -1951,6 +2036,14 @@ $keys = array(
 		'type' => 'boolean',
 		'default' => false
 	),
+	'browsercache.security.csp.reporturi' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.reportto' => array(
+		'type' => 'string',
+		'default' => ''
+	),
 	'browsercache.security.csp.base' => array(
 		'type' => 'string',
 		'default' => ''
@@ -2003,7 +2096,131 @@ $keys = array(
 		'type' => 'string',
 		'default' => ''
 	),
+	'browsercache.security.csp.child' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.manifest' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.scriptelem' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.scriptattr' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.styleelem' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.styleattr' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.csp.worker' => array(
+		'type' => 'string',
+		'default' => ''
+	),
 	'browsercache.security.csp.default' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro' => array(
+		'type' => 'boolean',
+		'default' => false
+	),
+	'browsercache.security.cspro.reporturi' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.reportto' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.base' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.frame' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.connect' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.font' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.script' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.style' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.img' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.media' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.object' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.plugin' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.form' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.frame.ancestors' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.sandbox' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.child' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.manifest' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.scriptelem' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.scriptattr' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.styleelem' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.styleattr' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.worker' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'browsercache.security.cspro.default' => array(
 		'type' => 'string',
 		'default' => ''
 	),
@@ -2313,19 +2530,15 @@ $keys = array(
 	),
 	'widget.pagespeed.enabled' => array(
 		'type' => 'boolean',
-		'default' => true
-	),
-	'widget.pagespeed.key' => array(
-		'type' => 'string',
-		'default' => ''
-	),
-	'widget.pagespeed.key.restrict.referrer' => array(
-		'type' => 'string',
-		'default' => ''
-	),
-	'widget.pagespeed.show_in_admin_bar' => array(
-		'type' => 'boolean',
 		'default' => false
+	),
+	'widget.pagespeed.access_token' => array(
+		'type' => 'string',
+		'default' => ''
+	),
+	'widget.pagespeed.w3tc_pagespeed_key' => array(
+		'type' => 'string',
+		'default' => ''
 	),
 	'timelimit.email_send' => array(
 		'type' => 'integer',
@@ -2384,12 +2597,12 @@ $keys = array(
 	'extensions.active' => array(
 		'type' => 'array',
 		'default' => array(
-			'fragmentcache' => 'w3-total-cache/Extension_FragmentCache_Plugin.php'
-		)
+			'fragmentcache' => 'w3-total-cache/Extension_FragmentCache_Plugin.php',
+		),
 	),
 	'extensions.active_frontend' => array(
 		'type' => 'array',
-		'default' => array()
+		'default' => array(),
 	),
 	'extensions.active_dropin' => array(
 		'type' => 'array',
@@ -2405,7 +2618,22 @@ $keys = array(
 		'default' => '',
 		'master_only' => true
 	),
-
+	'jquerymigrate.disabled' => array(
+		'type' => 'boolean',
+		'default' => false,
+	),
+	'imageservice' => array(
+		'type' => 'array',
+		'default' => array(
+			'compression' => 'lossy',
+			'auto'        => 'enabled',
+			'visibility'  => 'never',
+		),
+	),
+	'imageservice.configuration_overloaded' => array(
+		'type' => 'boolean',
+		'default' => true,
+	),
 
 	// extensions keys:
 	//
@@ -2497,5 +2725,9 @@ $overloading_keys_scope = array(
 	array(
 		'key' => 'varnish.configuration_overloaded',
 		'prefix' => 'varnish.'
-	)
+	),
+	array(
+		'key' => 'imageservice.configuration_overloaded',
+		'prefix' => 'imageservice.'
+	),
 );

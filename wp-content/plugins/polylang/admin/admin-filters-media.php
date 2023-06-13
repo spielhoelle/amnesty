@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Manages filters and actions related to media on admin side
@@ -7,6 +10,9 @@
  * @since 1.2
  */
 class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
+	/**
+	 * @var PLL_CRUD_Posts|null
+	 */
 	public $posts;
 
 	/**
@@ -34,14 +40,14 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 	}
 
 	/**
-	 * Adds the language field and translations tables in the 'Edit Media' panel
+	 * Adds the language field and translations tables in the 'Edit Media' panel.
 	 * Needs WP 3.5+
 	 *
 	 * @since 0.9
 	 *
-	 * @param array  $fields list of form fields
-	 * @param object $post
-	 * @return array modified list of form fields
+	 * @param array   $fields List of form fields.
+	 * @param WP_Post $post   The attachment being edited.
+	 * @return array Modified list of form fields.
 	 */
 	public function attachment_fields_to_edit( $fields, $post ) {
 		if ( 'post.php' == $GLOBALS['pagenow'] ) {
@@ -73,6 +79,8 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 	 * Creates a media translation
 	 *
 	 * @since 0.9
+	 *
+	 * @return void
 	 */
 	public function translate_media() {
 		if ( isset( $_GET['from_media'], $_GET['new_lang'] ) ) {
@@ -107,13 +115,17 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 	public function save_media( $post, $attachment ) {
 		// Language is filled in attachment by the function applying the filter 'attachment_fields_to_save'
 		// All security checks have been done by functions applying this filter
-		if ( ! empty( $attachment['language'] ) ) {
-			$this->model->post->set_language( $post['ID'], $attachment['language'] );
+		if ( empty( $attachment['language'] ) || ! current_user_can( 'edit_post', $post['ID'] ) ) {
+			return $post;
 		}
 
-		if ( isset( $_POST['media_tr_lang'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$this->save_translations( $post['ID'], array_map( 'absint', $_POST['media_tr_lang'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$language = $this->model->get_language( $attachment['language'] );
+
+		if ( empty( $language ) ) {
+			return $post;
 		}
+
+		$this->model->post->set_language( $post['ID'], $language );
 
 		return $post;
 	}

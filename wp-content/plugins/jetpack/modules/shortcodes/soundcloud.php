@@ -17,7 +17,7 @@
  * [soundcloud url="https://soundcloud.com/closetorgan/sets/smells-like-lynx-africa-private" color="00cc11"]
  * <iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/150745932&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 /**
@@ -47,10 +47,22 @@ function soundcloud_shortcode( $atts, $content = null ) {
 		}
 	}
 
+	// If the shortcode is displayed in a WPCOM notification, display a simple link only.
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+		require_once WP_CONTENT_DIR . '/lib/display-context.php';
+		$context = A8C\Display_Context\get_current_context();
+		if ( A8C\Display_Context\NOTIFICATIONS === $context ) {
+			return sprintf(
+				'<a href="%1$s" target="_blank" rel="noopener noreferrer">%1$s</a>',
+				esc_url( $shortcode_options['url'] )
+			);
+		}
+	}
+
 	// Turn shortcode option "param" (param=value&param2=value) into array of params.
 	$shortcode_params = array();
 	if ( isset( $shortcode_options['params'] ) ) {
-		parse_str( html_entity_decode( $shortcode_options['params'] ), $shortcode_params );
+		parse_str( html_entity_decode( $shortcode_options['params'], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ), $shortcode_params );
 		$shortcode_options = array_merge(
 			$shortcode_options,
 			$shortcode_params
@@ -214,7 +226,7 @@ function jetpack_soundcloud_embed_reversal( $content ) {
 			// if pasted from the visual editor - prevent double encoding.
 			$match[1] = str_replace( '&amp;amp;', '&amp;', $match[1] );
 
-			$args = wp_parse_url( html_entity_decode( $match[1] ), PHP_URL_QUERY );
+			$args = wp_parse_url( html_entity_decode( $match[1], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ), PHP_URL_QUERY );
 			$args = wp_parse_args( $args );
 
 			if ( ! preg_match( '#^(?:https?:)?//api\.soundcloud\.com/.+$#i', $args['url'], $url_matches ) ) {
@@ -224,12 +236,12 @@ function jetpack_soundcloud_embed_reversal( $content ) {
 			if ( ! preg_match( '#height="(\d+)"#i', $match[0], $hmatch ) ) {
 				$height = '';
 			} else {
-				$height = ' height="' . intval( $hmatch[1] ) . '"';
+				$height = ' height="' . (int) $hmatch[1] . '"';
 			}
 
 			unset( $args['url'] );
 			$params = 'params="';
-			if ( count( $args ) > 0 ) {
+			if ( is_countable( $args ) && count( $args ) > 0 ) {
 				foreach ( $args as $key => $value ) {
 					$params .= esc_html( $key ) . '=' . esc_html( $value ) . '&amp;';
 				}

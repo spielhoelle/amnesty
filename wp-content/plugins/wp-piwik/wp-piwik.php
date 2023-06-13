@@ -1,12 +1,12 @@
 <?php
 /*
-Plugin Name: WP-Matomo
+Plugin Name: WP-Matomo Integration 
 
 Plugin URI: http://wordpress.org/extend/plugins/wp-piwik/
 
 Description: Adds Matomo statistics to your WordPress dashboard and is also able to add the Matomo Tracking Code to your blog.
 
-Version: 1.0.22
+Version: 1.0.28
 Author: Andr&eacute; Br&auml;kling
 Author URI: https://www.braekling.de
 Text Domain: wp-piwik
@@ -57,7 +57,7 @@ function wp_piwik_autoloader($class) {
  */
 function wp_piwik_phperror() {
 	echo '<div class="error"><p>';
-	printf ( __ ( 'WP-Piwik requires at least PHP 5.3. You are using the deprecated version %s. Please update PHP to use WP-Piwik.', 'wp-piwik' ), PHP_VERSION );
+	printf ( __ ( 'WP-Matomo requires at least PHP 5.3. You are using the deprecated version %s. Please update PHP to use WP-Matomo.', 'wp-piwik' ), PHP_VERSION );
 	echo '</p></div>';
 }
 

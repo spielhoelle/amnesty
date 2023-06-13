@@ -1,7 +1,8 @@
 <?php
-
 /**
  * Displays the wizard unstranslated content step
+ *
+ * @package Polylang
  *
  * @since 2.7
  */
@@ -11,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 };
 
 $languages_list = $this->model->get_languages_list();
-$default_language = ! empty( $languages_list ) ? $this->options['default_lang'] : '';
 ?>
 <h2><?php esc_html_e( 'Content without language', 'polylang' ); ?></h2>
 <p>
@@ -29,7 +29,7 @@ $default_language = ! empty( $languages_list ) ? $this->options['default_lang'] 
 				esc_attr( $lg->locale ),
 				esc_html( $lg->name ),
 				esc_html( $lg->flag ),
-				$lg->slug === $default_language ? ' selected="selected"' : ''
+				$lg->is_default ? ' selected="selected"' : ''
 			);
 		}
 		?>

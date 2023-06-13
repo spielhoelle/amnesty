@@ -7,7 +7,7 @@
  * [bandcamp album=3462839126  bgcol=FFFFFF linkcol=4285BB size=venti]
  * [bandcamp track=2446959313]
  *
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 /**
@@ -16,6 +16,8 @@
  * @param array $atts Shortcode attributes.
  */
 function shortcode_handler_bandcamp( $atts ) {
+	$csswidth  = null;
+	$cssheight = null;
 	// there are no default values, but specify here anyway to explicitly list supported atts.
 	$attributes = shortcode_atts(
 		array(
@@ -30,6 +32,7 @@ function shortcode_handler_bandcamp( $atts ) {
 			'height'      => null,     // integer with optional "%".
 			'notracklist' => null,     // may be string "true" (defaults false).
 			'tracklist'   => null,     // may be string "false" (defaults true).
+			// phpcs:ignore Squiz.PHP.CommentedOutCode.Found -- false positive
 			'artwork'     => null,     // may be string "false" (alternately: "none") or "small" (default is large).
 			'minimal'     => null,     // may be string "true" (defaults false).
 			'theme'       => null,     // may be theme identifier string ("light"|"dark" so far).
@@ -227,10 +230,10 @@ function shortcode_handler_bandcamp( $atts ) {
 	}
 
 	if ( $is_video ) {
-		$url         = '//bandcamp.com/VideoEmbed?' . join( '&', $argparts );
+		$url         = '//bandcamp.com/VideoEmbed?' . implode( '&', $argparts );
 		$extra_attrs = " mozallowfullscreen='1' webkitallowfullscreen='1' allowfullscreen='1'";
 	} else {
-		$url         = '//bandcamp.com/EmbeddedPlayer/v=2/' . join( '/', $argparts ) . '/';
+		$url         = '//bandcamp.com/EmbeddedPlayer/v=2/' . implode( '/', $argparts ) . '/';
 		$extra_attrs = '';
 	}
 

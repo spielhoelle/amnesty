@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Base class for all settings
@@ -6,10 +9,81 @@
  * @since 1.8
  */
 class PLL_Settings_Module {
-	public $active_option, $configure;
-	public $module, $title, $description;
+	/**
+	 * Stores the plugin options.
+	 *
+	 * @var array
+	 */
 	public $options;
-	protected $action_links, $buttons, $form = false;
+
+	/**
+	 * @var PLL_Model
+	 */
+	public $model;
+
+	/**
+	 * Instance of a child class of PLL_Links_Model.
+	 *
+	 * @var PLL_Links_Model
+	 */
+	public $links_model;
+
+	/**
+	 * Stores if the module is active.
+	 *
+	 * @var bool
+	 */
+	public $active_option;
+
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 100;
+
+	/**
+	 * Stores the module name.
+	 * It must be unique.
+	 *
+	 * @var string|null
+	 */
+	public $module;
+
+	/**
+	 * Stores the module title.
+	 *
+	 * @var string
+	 */
+	public $title;
+
+	/**
+	 * Stores the module description.
+	 *
+	 * @var string
+	 */
+	public $description;
+
+	/**
+	 * Stores the settings actions.
+	 *
+	 * @var array
+	 */
+	protected $action_links;
+
+	/**
+	 * Stores html fragment for the buttons.
+	 *
+	 * @var array
+	 */
+	protected $buttons;
+
+	/**
+	 * Stores html form when provided by a child class.
+	 *
+	 * @var string|false
+	 */
+	protected $form = false;
 
 	/**
 	 * Constructor
@@ -85,6 +159,8 @@ class PLL_Settings_Module {
 	 * Activates the module
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	public function activate() {
 		if ( ! empty( $this->active_option ) ) {
@@ -97,6 +173,8 @@ class PLL_Settings_Module {
 	 * Deactivates the module
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	public function deactivate() {
 		if ( ! empty( $this->active_option ) ) {
@@ -109,6 +187,8 @@ class PLL_Settings_Module {
 	 * Protected method to display a configuration form
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	protected function form() {
 		// Child classes can provide a form
@@ -140,7 +220,7 @@ class PLL_Settings_Module {
 	 * @param array $options Raw options
 	 * @return array Options
 	 */
-	protected function update( $options ) {
+	protected function update( $options ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return array(); // It's responsibility of the child class to decide what is saved
 	}
 
@@ -148,6 +228,8 @@ class PLL_Settings_Module {
 	 * Ajax method to save the options
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	public function save_options() {
 		check_ajax_referer( 'pll_options', '_pll_nonce' );
@@ -169,9 +251,10 @@ class PLL_Settings_Module {
 			// Don't use flush_rewrite_rules as we don't have the right links model and permastruct
 			delete_option( 'rewrite_rules' );
 
+
 			ob_start();
 
-			if ( ! get_settings_errors() ) {
+			if ( empty( get_settings_errors() ) ) {
 				// Send update message
 				add_settings_error( 'general', 'settings_updated', __( 'Settings saved.', 'polylang' ), 'updated' );
 				settings_errors();
@@ -187,11 +270,11 @@ class PLL_Settings_Module {
 	}
 
 	/**
-	 * Get the row actions
+	 * Get the row actions.
 	 *
 	 * @since 1.8
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	protected function get_actions() {
 		$actions = array();
@@ -212,11 +295,11 @@ class PLL_Settings_Module {
 	}
 
 	/**
-	 * Get the actions links
+	 * Get the actions links.
 	 *
 	 * @since 1.8
 	 *
-	 * @return array
+	 * @return string[] Action links.
 	 */
 	public function get_action_links() {
 		return array_intersect_key( $this->action_links, array_flip( $this->get_actions() ) );
@@ -250,11 +333,11 @@ class PLL_Settings_Module {
 	}
 
 	/**
-	 * Get the buttons
+	 * Get the buttons.
 	 *
 	 * @since 1.9
 	 *
-	 * @return array
+	 * @return string[] An array of html fragment for the buttons.
 	 */
 	public function get_buttons() {
 		return $this->buttons;

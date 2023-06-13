@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Settings class for licenses
@@ -6,6 +9,18 @@
  * @since 1.9
  */
 class PLL_Settings_Licenses extends PLL_Settings_Module {
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 100;
+
+	/**
+	 * Stores an array of objects allowing to manage a license.
+	 *
+	 * @var PLL_License[]
+	 */
 	protected $items;
 
 	/**
@@ -62,11 +77,11 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 	}
 
 	/**
-	 * Get the html for a row (one per license key) for display
+	 * Get the html for a row (one per license key) for display.
 	 *
 	 * @since 1.9
 	 *
-	 * @param array $item licence id, name and key
+	 * @param PLL_License $item Object allowing to manage a license.
 	 * @return string
 	 */
 	protected function get_row( $item ) {
@@ -107,6 +122,8 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 	 * Ajax method to deactivate a license
 	 *
 	 * @since 1.9
+	 *
+	 * @return void
 	 */
 	public function deactivate_license() {
 		check_ajax_referer( 'pll_options', '_pll_nonce' );

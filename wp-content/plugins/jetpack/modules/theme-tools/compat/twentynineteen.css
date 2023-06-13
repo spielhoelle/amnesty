@@ -37,7 +37,7 @@
 .site-main #infinite-handle span button:hover,
 .site-main #infinite-handle span button:focus {
 	transition: background 150ms ease-in-out;
-	background: #0073aa;
+	background: #2271b1;
 	border: none;
 	border-radius: 5px;
 	box-sizing: border-box;
@@ -116,20 +116,6 @@
 .sd-social-official .sd-content ul {
 	margin-bottom: 0 !important;
 }
-
-.entry #sharing_email .sharing_send,
-.entry .sd-content ul li .option a.share-ustom,
-.entry .sd-content ul li a.sd-button,
-.entry .sd-content ul li.advanced a.share-more,
-.entry .sd-content ul li.preview-item div.option.option-smart-off a,
-.entry .sd-social-icon .sd-content ul li a.sd-button,
-.entry .sd-social-icon-text .sd-content ul li a.sd-button,
-.entry .sd-social-official .sd-content > ul > li .digg_button > a,
-.entry .sd-social-official .sd-content > ul > li > a.sd-button,
-.entry .sd-social-text .sd-content ul li a.sd-button {
-	box-shadow: none;
-}
-
 
 /**
  * Related Posts

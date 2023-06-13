@@ -56,8 +56,8 @@ class Settings {
 			'capability_read_stats' => array (
 					'administrator' => true
 			),
-			'perpost_stats' => false,
-			'plugin_display_name' => 'WP-Piwik',
+			'perpost_stats' => "disabled",
+			'plugin_display_name' => 'WP-Matomo',
 			'piwik_shortcut' => false,
 			'shortcodes' => false,
 			// User settings: Tracking configuration
@@ -75,6 +75,7 @@ class Settings {
 			'set_download_extensions' => '',
 			'set_link_classes' => '',
 			'set_download_classes' => '',
+            'require_consent' => 'disabled',
 			'disable_cookies' => false,
 			'limit_cookies' => false,
 			'limit_cookies_visitor' => 34186669, // Piwik default 13 months
@@ -106,6 +107,7 @@ class Settings {
 			'track_cdnurl' => '',
 			'track_cdnurlssl' => '',
 			'force_protocol' => 'disabled',
+			'remove_type_attribute' => false,
 			'update_notice' => 'enabled'
 	), $settings = array (
 			'name' => '',
@@ -146,6 +148,7 @@ class Settings {
 			return;
 		}
 		self::$wpPiwik->log ( 'Save settings' );
+        $this->globalSettings['plugin_display_name'] = htmlspecialchars($this->globalSettings['plugin_display_name'], ENT_QUOTES, 'utf-8');
 		foreach ( $this->globalSettings as $key => $value ) {
 			if ( $this->checkNetworkActivation() )
 				update_site_option ( 'wp-piwik_global-' . $key, $value );
@@ -174,6 +177,17 @@ class Settings {
 		}
 		$this->settingsChanged = false;
 	}
+
+    /**
+     * Get a global option's value which should not be empty
+     *
+     * @param string $key
+     *        	option key
+     * @return string option value
+     */
+    public function getNotEmptyGlobalOption($key) {
+        return isset ( $this->globalSettings [$key] ) && !empty($this->globalSettings [$key]) ? $this->globalSettings [$key] : self::$defaultSettings ['globalSettings'] [$key];
+    }
 
 	/**
 	 * Get a global option's value
@@ -221,18 +235,23 @@ class Settings {
 	 *
 	 * @param string $key
 	 *        	option key
-	 * @param int $blogID
-	 *        	blog ID (default: current blog)
 	 * @param string $value
 	 *        	new option value
+	 * @param int $blogID
+	 *        	blog ID (default: current blog)
 	 */
 	public function setOption($key, $value, $blogID = null) {
+		if (empty( $blogID )) {
+			$blogID = get_current_blog_id();
+		}
 		$this->settingsChanged = true;
 		self::$wpPiwik->log ( 'Changed option ' . $key . ': ' . $value );
-		if ($this->checkNetworkActivation () && ! empty ( $blogID )) {
-			add_blog_option ( $blogID, 'wp-piwik-'.$key, $value );
-		} else
+		if ($this->checkNetworkActivation ()) {
+			update_blog_option ( $blogID, 'wp-piwik-'.$key, $value );
+		}
+		if ($blogID == get_current_blog_id()) {
 			$this->settings [$key] = $value;
+		}
 	}
 
 	/**
@@ -368,7 +387,7 @@ class Settings {
 		if ($in ['track_mode'] == 'manually' || $in ['track_mode'] == 'disabled') {
 			$value = stripslashes ( $value );
 			if ($this->checkNetworkActivation ())
-				add_site_option ( 'wp-piwik-manually', $value );
+				update_site_option ( 'wp-piwik-manually', $value );
 			return $value;
 		}
 		/*$result = self::$wpPiwik->updateTrackingCode ();

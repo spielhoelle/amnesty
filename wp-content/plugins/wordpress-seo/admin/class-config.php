@@ -5,6 +5,10 @@
  * @package WPSEO\Admin
  */
 
+use Yoast\WP\SEO\Config\Schema_Types;
+use Yoast\WP\SEO\Integrations\Settings_Integration;
+use Yoast\WP\SEO\Integrations\Academy_Integration;
+
 /**
  * Class WPSEO_Admin_Pages.
  *
@@ -38,9 +42,11 @@ class WPSEO_Admin_Pages {
 	 * Make sure the needed scripts are loaded for admin pages.
 	 */
 	public function init() {
-		if ( filter_input( INPUT_GET, 'wpseo_reset_defaults' ) && wp_verify_nonce( filter_input( INPUT_GET, 'nonce' ), 'wpseo_reset_defaults' ) && current_user_can( 'manage_options' ) ) {
-			WPSEO_Options::reset();
-			wp_redirect( admin_url( 'admin.php?page=' . WPSEO_Configuration_Page::PAGE_IDENTIFIER ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		$page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		if ( $page === Settings_Integration::PAGE || $page === Academy_Integration::PAGE ) {
+			// Bail, this is managed in the Settings_Integration.
+			return;
 		}
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'config_page_scripts' ] );
@@ -55,68 +61,67 @@ class WPSEO_Admin_Pages {
 		wp_enqueue_style( 'thickbox' );
 		wp_enqueue_style( 'global' );
 		wp_enqueue_style( 'wp-admin' );
-		$this->asset_manager->enqueue_style( 'select2' );
-
 		$this->asset_manager->enqueue_style( 'admin-css' );
+		$this->asset_manager->enqueue_style( 'monorepo' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		$page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		if ( $page === 'wpseo_licenses' ) {
+			$this->asset_manager->enqueue_style( 'tailwind' );
+		}
 	}
 
 	/**
 	 * Loads the required scripts for the config page.
 	 */
 	public function config_page_scripts() {
-		$this->asset_manager->enqueue_script( 'admin-script' );
-
-		$page = filter_input( INPUT_GET, 'page' );
-
-		if ( $page === 'wpseo_titles' ) {
-			wp_localize_script( WPSEO_Admin_Asset_Manager::PREFIX . 'search-appearance', 'wpseoReplaceVarsL10n', $this->localize_replace_vars_script() );
-			wp_localize_script( WPSEO_Admin_Asset_Manager::PREFIX . 'search-appearance', 'wpseoSearchAppearance', $this->localize_search_appearance_script() );
-			$this->asset_manager->enqueue_script( 'search-appearance' );
-			$this->asset_manager->enqueue_style( 'search-appearance' );
-			/**
-			 * Remove the emoji script as it is incompatible with both React and any
-			 * contenteditable fields.
-			 */
-			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
-
-			$yoast_components_l10n = new WPSEO_Admin_Asset_Yoast_Components_L10n();
-			$yoast_components_l10n->localize_script( 'search-appearance' );
-		}
-
+		$this->asset_manager->enqueue_script( 'settings' );
 		wp_enqueue_script( 'dashboard' );
 		wp_enqueue_script( 'thickbox' );
 
-		wp_localize_script( WPSEO_Admin_Asset_Manager::PREFIX . 'admin-script', 'wpseoSelect2Locale', WPSEO_Language_Utils::get_language( WPSEO_Language_Utils::get_user_locale() ) );
+		$alert_dismissal_action = YoastSEO()->classes->get( \Yoast\WP\SEO\Actions\Alert_Dismissal_Action::class );
+		$dismissed_alerts       = $alert_dismissal_action->all_dismissed();
 
-		if ( in_array( $page, [ 'wpseo_social', WPSEO_Admin::PAGE_IDENTIFIER, 'wpseo_titles' ], true ) ) {
+		$script_data = [
+			'userLanguageCode'               => WPSEO_Language_Utils::get_language( \get_user_locale() ),
+			'dismissedAlerts'                => $dismissed_alerts,
+			'isRtl'                          => is_rtl(),
+			'isPremium'                      => YoastSEO()->helpers->product->is_premium(),
+			'webinarIntroSettingsUrl'        => WPSEO_Shortlinker::get( 'https://yoa.st/webinar-intro-settings' ),
+			'webinarIntroFirstTimeConfigUrl' => $this->get_webinar_shortlink(),
+		];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		$page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( in_array( $page, [ WPSEO_Admin::PAGE_IDENTIFIER, 'wpseo_workouts' ], true ) ) {
 			wp_enqueue_media();
 
-			$this->asset_manager->enqueue_script( 'admin-media' );
-			wp_localize_script( WPSEO_Admin_Asset_Manager::PREFIX . 'admin-media', 'wpseoMediaL10n', $this->localize_media_script() );
+			$script_data['media'] = [
+				'choose_image' => __( 'Use Image', 'wordpress-seo' ),
+			];
+
+			$script_data['userEditUrl'] = add_query_arg( 'user_id', '{user_id}', admin_url( 'user-edit.php' ) );
 		}
 
 		if ( $page === 'wpseo_tools' ) {
 			$this->enqueue_tools_scripts();
 		}
-	}
 
-	/**
-	 * Retrieves some variables that are needed for the upload module in JS.
-	 *
-	 * @return array The upload module variables.
-	 */
-	public function localize_media_script() {
-		return [
-			'choose_image' => __( 'Use Image', 'wordpress-seo' ),
-		];
+		$this->asset_manager->localize_script( 'settings', 'wpseoScriptData', $script_data );
+		$this->asset_manager->enqueue_user_language_script();
 	}
 
 	/**
 	 * Retrieves some variables that are needed for replacing variables in JS.
 	 *
+	 * @deprecated 20.3
+	 * @codeCoverageIgnore
+	 *
 	 * @return array The replacement and recommended replacement variables.
 	 */
-	public function localize_replace_vars_script() {
+	public function get_replace_vars_script_data() {
+		_deprecated_function( __METHOD__, 'Yoast SEO 20.3' );
 		$replace_vars                 = new WPSEO_Replace_Vars();
 		$recommended_replace_vars     = new WPSEO_Admin_Recommended_Replace_Vars();
 		$editor_specific_replace_vars = new WPSEO_Admin_Editor_Specific_Replace_Vars();
@@ -127,49 +132,16 @@ class WPSEO_Admin_Pages {
 			'recommended_replace_vars'     => $recommended_replace_vars->get_recommended_replacevars(),
 			'editor_specific_replace_vars' => $editor_specific_replace_vars->get(),
 			'shared_replace_vars'          => $editor_specific_replace_vars->get_generic( $replace_vars_list ),
+			'hidden_replace_vars'          => $replace_vars->get_hidden_replace_vars(),
 		];
-	}
-
-	/**
-	 * Retrieves some variables that are needed for the search appearance in JS.
-	 *
-	 * @return array The search appearance variables.
-	 */
-	public function localize_search_appearance_script() {
-		$search_appearance_l10n = [
-			'isRtl'                    => is_rtl(),
-			'userEditUrl'              => add_query_arg( 'user_id', '{user_id}', admin_url( 'user-edit.php' ) ),
-			'brushstrokeBackgroundURL' => plugins_url( 'images/brushstroke_background.svg', WPSEO_FILE ),
-			'showLocalSEOUpsell'       => $this->should_show_local_seo_upsell(),
-			'localSEOUpsellURL'        => WPSEO_Shortlinker::get( 'https://yoa.st/3mp' ),
-		];
-
-		$search_appearance_l10n['knowledgeGraphCompanyInfoMissing'] = WPSEO_Language_Utils::get_knowledge_graph_company_info_missing_l10n();
-
-		return $search_appearance_l10n;
-	}
-
-	/**
-	 * Determines whether the Local SEO upsell should be shown.
-	 *
-	 * The Local SEO upsell should:
-	 * - Only be shown in Free, not when Premium is active.
-	 * - Not be shown when Local SEO is active.
-	 *
-	 * @return bool Whether the Local SEO upsell should be shown.
-	 */
-	private function should_show_local_seo_upsell() {
-		$addon_manager = new WPSEO_Addon_Manager();
-
-		return ! WPSEO_Utils::is_yoast_seo_premium()
-			&& ! ( defined( 'WPSEO_LOCAL_FILE' ) );
 	}
 
 	/**
 	 * Enqueues and handles all the tool dependencies.
 	 */
 	private function enqueue_tools_scripts() {
-		$tool = filter_input( INPUT_GET, 'tool' );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		$tool = isset( $_GET['tool'] ) && is_string( $_GET['tool'] ) ? sanitize_text_field( wp_unslash( $_GET['tool'] ) ) : '';
 
 		if ( empty( $tool ) ) {
 			$this->asset_manager->enqueue_script( 'yoast-seo' );
@@ -179,4 +151,17 @@ class WPSEO_Admin_Pages {
 			$this->asset_manager->enqueue_script( 'bulk-editor' );
 		}
 	}
-} /* End of class */
+
+	/**
+	 * Returns the appropriate shortlink for the Webinar.
+	 *
+	 * @return string The shortlink for the Webinar.
+	 */
+	private function get_webinar_shortlink() {
+		if ( YoastSEO()->helpers->product->is_premium() ) {
+			return WPSEO_Shortlinker::get( 'https://yoa.st/webinar-intro-first-time-config-premium' );
+		}
+
+		return WPSEO_Shortlinker::get( 'https://yoa.st/webinar-intro-first-time-config' );
+	}
+}

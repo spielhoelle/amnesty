@@ -2,8 +2,10 @@
 /**
  * Mapbox API helper.
  *
- * @package jetpack
+ * @package automattic/jetpack
  */
+
+use Automattic\Jetpack\Status\Host;
 
 /**
  * Class Jetpack_Mapbox_Helper
@@ -39,14 +41,14 @@ class Jetpack_Mapbox_Helper {
 
 		// If on WordPress.com, try to return the access token straight away.
 		if ( self::is_wpcom() && defined( 'WPCOM_MAPBOX_ACCESS_TOKEN' ) ) {
-			jetpack_require_lib( 'mapbox-blacklist' );
-			return wpcom_is_site_blacklisted_from_map_block( $site_id )
+			require_lib( 'mapbox-blocklist' );
+			return wpcom_is_site_blocked_from_map_block( $site_id )
 				? self::format_access_token()
 				: self::format_access_token( WPCOM_MAPBOX_ACCESS_TOKEN, 'wpcom' );
 		}
 
 		// If not on WordPress.com or Atomic, return an empty access token.
-		if ( ! $site_id || ( ! self::is_wpcom() && ! jetpack_is_atomic_site() ) ) {
+		if ( ! $site_id || ( ! self::is_wpcom() && ! ( new Host() )->is_woa_site() ) ) {
 			return self::format_access_token();
 		}
 
@@ -87,7 +89,7 @@ class Jetpack_Mapbox_Helper {
 	private static function get_wpcom_site_id() {
 		if ( self::is_wpcom() ) {
 			return get_current_blog_id();
-		} elseif ( method_exists( 'Jetpack', 'is_active' ) && Jetpack::is_active() ) {
+		} elseif ( method_exists( 'Jetpack', 'is_connection_ready' ) && Jetpack::is_connection_ready() ) {
 			return Jetpack_Options::get_option( 'id' );
 		}
 		return false;

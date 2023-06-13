@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/wfCurlInterceptor.php';
+
 class wfGrant
 {
 	public $select = false;
@@ -34,7 +36,8 @@ class wfGrant
 					}
 					break 2;
 				}
-				$this->$permission = true;
+				if (property_exists($this, $permission))
+					$this->$permission = true;
 			}
 		}
 	}
@@ -82,12 +85,14 @@ class wfDiagnostic
 				'description' => __('Current WAF configuration.', 'wordfence'),
 				'tests' => array(
 					'wafAutoPrepend' => __('WAF auto prepend active', 'wordfence'),
-					'wafStorageEngine' => __('WAF storage engine (WFWAF_STORAGE_ENGINE)', 'wordfence'),
+					'wafStorageEngine' => __('Configured WAF storage engine (WFWAF_STORAGE_ENGINE)', 'wordfence'),
+					'wafActiveStorageEngine' => __('Active WAF storage engine', 'wordfence'),
 					'wafLogPath' => __('WAF log path', 'wordfence'),
 					'wafSubdirectoryInstall' => __('WAF subdirectory installation', 'wordfence'),
 					'wafAutoPrependFilePath' => __('wordfence-waf.php path', 'wordfence'),
 					'wafFilePermissions' => __('WAF File Permissions', 'wordfence'),
 					'wafRecentlyRemoved' => __('Recently removed wflogs files', 'wordfence'),
+					'wafLoaded' => __('WAF Loaded Successfully', 'wordfence')
 				),
 			),
 			'MySQL' => array(
@@ -107,7 +112,7 @@ class wfDiagnostic
 			'PHP Environment' => array(
 				'description' => __('PHP version, important PHP extensions.', 'wordfence'),
 				'tests' => array(
-					'phpVersion' => array('raw' => true, 'value' => sprintf(__('PHP version >= PHP 5.6.20<br><em> (<a href="https://wordpress.org/about/requirements/" target="_blank" rel="noopener noreferrer">Minimum version required by WordPress</a>)</em> <a href="%s" target="_blank" rel="noopener noreferrer" class="wfhelp"></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_VERSION_PHP))),
+					'phpVersion' => array('raw' => true, 'value' => wp_kses(sprintf(/* translators: Support URL. */ __('PHP version >= PHP 5.6.20<br><em> (<a href="https://wordpress.org/about/requirements/" target="_blank" rel="noopener noreferrer">Minimum version required by WordPress</a>)</em> <a href="%s" target="_blank" rel="noopener noreferrer" class="wfhelp"><span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_VERSION_PHP)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array()), 'span'=>array('class'=>array())))),
 					'processOwner' => __('Process Owner', 'wordfence'),
 					'hasOpenSSL' => __('Checking for OpenSSL support', 'wordfence'),
 					'openSSLVersion' => __('Checking OpenSSL version', 'wordfence'),
@@ -117,15 +122,15 @@ class wfDiagnostic
 					'curlProtocols'    => __('cURL Support Protocols', 'wordfence'),
 					'curlSSLVersion'    => __('cURL SSL Version', 'wordfence'),
 					'curlLibZVersion'    => __('cURL libz Version', 'wordfence'),
-					'displayErrors' => __('Checking <code>display_errors</code><br><em> (<a href="http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors" target="_blank" rel="noopener noreferrer">Should be disabled on production servers</a>)</em>', 'wordfence'),
+					'displayErrors' => array('raw' => true, 'value' => wp_kses(__('Checking <code>display_errors</code><br><em> (<a href="http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors" target="_blank" rel="noopener noreferrer">Should be disabled on production servers<span class="screen-reader-text"> (opens in new tab)</span></a>)</em>', 'wordfence'), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array()), 'span'=>array('class'=>array()), 'em'=>array(), 'code'=>array(), 'br'=>array()))),
 				)
 			),
 			'Connectivity' => array(
 				'description' => __('Ability to connect to the Wordfence servers and your own site.', 'wordfence'),
 				'tests' => array(
-					'connectToServer1' => __('Connecting to Wordfence servers (http)', 'wordfence'),
 					'connectToServer2' => __('Connecting to Wordfence servers (https)', 'wordfence'),
 					'connectToSelf' => __('Connecting back to this site', 'wordfence'),
+					'connectToSelfIpv6' => array('raw' => true, 'value' => wp_kses(sprintf(__('Connecting back to this site via IPv6 (not required; failure to connect may not be an issue on some sites) <a href="%s" target="_blank" rel="noopener noreferrer" class="wfhelp"><span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_DIAGNOSTICS_IPV6)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array()), 'span'=>array('class'=>array())))),
 					'serverIP' => __('IP(s) used by this server', 'wordfence'),
 				)
 			),
@@ -136,6 +141,7 @@ class wfDiagnostic
 					'serverTime' => __('Server Time', 'wordfence'),
 					'wfTimeOffset' => __('Wordfence Network Time Offset', 'wordfence'),
 					'ntpTimeOffset' => __('NTP Time Offset', 'wordfence'),
+					'ntpStatus' => __('NTP Status', 'wordfence'),
 					'timeSourceInUse' => __('TOTP Time Source', 'wordfence'),
 					'wpTimeZone' => __('WordPress Time Zone', 'wordfence'),
 				),
@@ -194,7 +200,7 @@ class wfDiagnostic
 			}
 		}
 		
-		return array('test' => true, 'infoOnly' => true, 'message' => $overdue ? ($overdue == 1 ? __('1 Job Overdue', 'wordfence') : sprintf(__('%d Jobs Overdue', 'wordfence'), $overdue)) : __('Normal', 'wordfence'));
+		return array('test' => true, 'infoOnly' => true, 'message' => $overdue ? sprintf(/* translators: Number of jobs. */ _n('%d Job Overdue', '%d Jobs Overdue', $overdue, 'wordfence'), $overdue) : __('Normal', 'wordfence'));
 	}
 	
 	public function geoIPError() {
@@ -231,7 +237,7 @@ class wfDiagnostic
 				$unreadable[] = sprintf(__('File "%s" does not exist', 'wordfence'), basename($f));
 			}
 			else if (!is_readable($f)) {
-				$unreadable[] = sprintf(__('File "%s" is unreadable', 'wordfence'), basename($f));
+				$unreadable[] = sprintf(/* translators: File path. */ __('File "%s" is unreadable', 'wordfence'), basename($f));
 			}
 		}
 		
@@ -264,10 +270,10 @@ class wfDiagnostic
 		$unwritable = array();
 		foreach ($files as $f) {
 			if (!file_exists($f)) {
-				$unwritable[] = sprintf(__('File "%s" does not exist', 'wordfence'), basename($f));
+				$unwritable[] = sprintf(/* translators: File name. */__('File "%s" does not exist', 'wordfence'), basename($f));
 			}
 			else if (!is_writable($f)) {
-				$unwritable[] = sprintf(__('File "%s" is unwritable', 'wordfence'), basename($f));
+				$unwritable[] = sprintf(/* translators: File name. */__('File "%s" is unwritable', 'wordfence'), basename($f));
 			}
 		}
 		
@@ -359,6 +365,20 @@ class wfDiagnostic
 	public function wafStorageEngine() {
 		return array('test' => true, 'infoOnly' => true, 'message' => (defined('WFWAF_STORAGE_ENGINE') ? WFWAF_STORAGE_ENGINE : __('(default)', 'wordfence')));
 	}
+	private static function getStorageEngineDescription($storageEngine) {
+		if ($storageEngine === null) {
+			return __('None', 'wordfence');
+		}
+		else if (method_exists($storageEngine, 'getDescription')) {
+			return $storageEngine->getDescription();
+		}
+		else {
+			return __('Unknown (mixed plugin version)', 'wordfence');
+		}
+	}
+	public function wafActiveStorageEngine() {
+		return array('test' => true, 'infoOnly' => true, 'message' => self::getStorageEngineDescription(wfWAF::getSharedStorageEngine()));
+	}
 	public function wafLogPath() {
 		$logPath = __('(not set)', 'wordfence');
 		if (defined('WFWAF_LOG_PATH')) {
@@ -385,7 +405,7 @@ class wfDiagnostic
 	
 	public function wafFilePermissions() {
 		if (defined('WFWAF_LOG_FILE_MODE')) {
-			return array('test' => true, 'infoOnly' => true, 'message' => sprintf(__('%s - using constant', 'wordfence'), str_pad(decoct(WFWAF_LOG_FILE_MODE), 4, '0', STR_PAD_LEFT)));
+			return array('test' => true, 'infoOnly' => true, 'message' => sprintf(/* translators: Unix file permissions in octal (example 0777). */ __('%s - using constant', 'wordfence'), str_pad(decoct(WFWAF_LOG_FILE_MODE), 4, '0', STR_PAD_LEFT)));
 		}
 		
 		if (defined('WFWAF_LOG_PATH')) {
@@ -398,7 +418,7 @@ class wfDiagnostic
 					if (($mode & 0020) == 0020) {
 						$updatedMode = $updatedMode | 0060;
 					}
-					return array('test' => true, 'infoOnly' => true, 'message' => sprintf(__('%s - using template', 'wordfence'), str_pad(decoct($updatedMode), 4, '0', STR_PAD_LEFT)));
+					return array('test' => true, 'infoOnly' => true, 'message' => sprintf(/* translators: Unix file permissions in octal (example 0777). */ __('%s - using template', 'wordfence'), str_pad(decoct($updatedMode), 4, '0', STR_PAD_LEFT)));
 				}
 			}
 		}
@@ -424,6 +444,15 @@ class wfDiagnostic
 		
 		return array('test' => true, 'infoOnly' => true, 'message' => implode("\n", $message));
 	}
+
+	public function wafLoaded() {
+		$waf = wfWAF::getInstance();
+		return array(
+			'test' => true,
+			'infoOnly' => true,
+			'message' => $waf !== null && ($waf instanceof wfWAFWordPress) ? __('Yes', 'wordfence') : __('No', 'wordfence')
+		);
+	}
 	
 	private function _filterOutNestedEntries($a) {
 		return !is_array($a);
@@ -441,7 +470,7 @@ class wfDiagnostic
 			}
 
 			$processOwner = posix_getpwuid(posix_geteuid());
-			if ($processOwner !== null)
+			if ($processOwner !== false)
 			{
 				return array(
 					'test' => true,
@@ -578,10 +607,6 @@ class wfDiagnostic
 		);
 	}
 
-	public function connectToServer1() {
-		return $this->_connectToServer('http');
-	}
-
 	public function connectToServer2() {
 		return $this->_connectToServer('https');
 	}
@@ -621,7 +646,7 @@ class wfDiagnostic
 		);
 	}
 	
-	public function connectToSelf() {
+	public function connectToSelf($ipVersion = null) {
 		$adminAJAX = admin_url('admin-ajax.php?action=wordfence_testAjax');
 		$result = wp_remote_post($adminAJAX, array(
 			'timeout' => 10, //Must be less than max execution time or more than 2 HTTP children will be occupied by scan
@@ -632,9 +657,11 @@ class wfDiagnostic
 		if ((!is_wp_error($result)) && $result['response']['code'] == 200 && strpos($result['body'], "WFSCANTESTOK") !== false) {
 			$host = parse_url($adminAJAX, PHP_URL_HOST);
 			if ($host !== null) {
-				$ips = wfUtils::resolveDomainName($host);
-				$ips = implode(', ', $ips);
-				return array('test' => true, 'message' => sprintf(__('OK - %s', 'wordfence'), $ips));
+				$ips = wfUtils::resolveDomainName($host, $ipVersion);
+				if (!empty($ips)) {
+					$ips = implode(', ', $ips);
+					return array('test' => true, 'message' => sprintf('OK - %s', $ips));
+				}
 			}
 			return true;
 		}
@@ -657,6 +684,42 @@ class wfDiagnostic
 			'detail' => $detail,
 		);
 	}
+
+	public function connectToSelfIpv6() {
+		if (wfUtils::isCurlSupported()) {
+			$interceptor = new wfCurlInterceptor();
+			$interceptor->setOption(CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+			try {
+				$instance = $this;
+				$result = $interceptor->intercept(function() use ($instance) {
+					return $instance->connectToSelf(6);
+				});
+				if ($result !== true && !$result['test']) {
+					$handle = $interceptor->getHandle();
+					$errorNumber = curl_errno($handle);
+					if ($errorNumber === 6 /* COULDNT_RESOLVE_HOST */) {
+						return array(
+							'test' => false,
+							'infoOnly' => true,
+							'message' => __('IPv6 DNS resolution failed', 'wordfence'),
+							'detail' => sprintf(/* translators: error message from failed request */ __('This likely indicates that the server either does not support IPv6 or does not have an IPv6 address assigned or associated with the domain. Original error message: %s', 'wordfence'), $result['message'])
+						);
+					}
+				}
+				return $result;
+			}
+			catch (wfCurlInterceptionFailedException $e) {
+				return array(
+					'test' => false,
+					'message' => __('This diagnostic is unavailable as cURL appears to be supported, but was not used by WordPress for this request', 'wordfence')
+				);
+			}
+		}
+		return array(
+			'test' => false,
+			'message' => __('This diagnostic requires cURL', 'wordfence')
+		);
+	}
 	
 	public function serverIP() {
 		$serverIPs = wfUtils::serverIPs();
@@ -674,7 +737,7 @@ class wfDiagnostic
 			if (empty($_SERVER[$howGet])) {
 				return array(
 					'test' => false,
-					'message' => sprintf(__('We cannot read $_SERVER[%s]', 'wordfence'), $howGet),
+					'message' => sprintf(/* translators: PHP super global key. */ __('We cannot read $_SERVER[%s]', 'wordfence'), $howGet),
 				);
 			}
 			return array(
@@ -761,6 +824,36 @@ class wfDiagnostic
 			'message' => '-',
 		);
 	}
+
+	public function ntpStatus() {
+		$maxFailures = \WordfenceLS\Controller_Time::FAILURE_LIMIT;
+		$cronDisabled = \WordfenceLS\Controller_Settings::shared()->is_ntp_cron_disabled($failureCount);
+		if ($cronDisabled) {
+			$constant = \WordfenceLS\Controller_Settings::shared()->is_ntp_disabled_via_constant();
+			$status = __('Disabled ', 'wordfence');
+			if ($constant) {
+				$status .= __('(WORDFENCE_LS_DISABLE_NTP)', 'wordfence');
+			}
+			else if ($failureCount > 0) {
+				$status .= __('(failures exceeded limit)', 'wordfence');
+			}
+			else {
+				$status .= __('(settings)', 'wordfence');
+			}
+		}
+		else {
+			$status = __('Enabled', 'wordfence');
+			if ($failureCount > 0) {
+				$remainingAttempts = $maxFailures - $failureCount;
+				$status .= sprintf(__(' (%d of %d attempts remaining)', 'wordfence'), $remainingAttempts, $maxFailures);
+			}
+		}
+		return array(
+			'test' => true,
+			'infoOnly' => true,
+			'message' => $status
+		);
+	}
 	
 	public function timeSourceInUse() {
 		if (class_exists('WFLSPHP52Compatability')) {
@@ -807,5 +900,72 @@ class wfDiagnostic
 			'message' => $tz,
 		);
 	}
-}
 
+	public static function getWordpressValues() {
+		require(ABSPATH . 'wp-includes/version.php');
+		$postRevisions = (defined('WP_POST_REVISIONS') ? WP_POST_REVISIONS : true);
+		return array(
+			'WordPress Version'            => array('description' => '', 'value' => $wp_version),
+			'Multisite'					   => array('description' => __('Return value of is_multisite()', 'wordfence'), 'value' => is_multisite() ? __('Yes', 'wordfence') : __('No', 'wordfence')),
+			'ABSPATH'					   => __('WordPress base path', 'wordfence'), 
+			'WP_DEBUG'                     => array('description' => __('WordPress debug mode', 'wordfence'), 'value' => (defined('WP_DEBUG') && WP_DEBUG ? __('On', 'wordfence') : __('Off', 'wordfence'))),
+			'WP_DEBUG_LOG'                 => array('description' => __('WordPress error logging override', 'wordfence'), 'value' => defined('WP_DEBUG_LOG') ? (WP_DEBUG_LOG ? 'Enabled' : 'Disabled') : __('(not set)', 'wordfence')),
+			'WP_DEBUG_DISPLAY'             => array('description' => __('WordPress error display override', 'wordfence'), 'value' => defined('WP_DEBUG_DISPLAY') ? (WP_DEBUG_DISPLAY ? 'Enabled' : 'Disabled') : __('(not set)', 'wordfence')),
+			'SCRIPT_DEBUG'                 => array('description' => __('WordPress script debug mode', 'wordfence'), 'value' => (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? __('On', 'wordfence') : __('Off', 'wordfence'))),
+			'SAVEQUERIES'                  => array('description' => __('WordPress query debug mode', 'wordfence'), 'value' => (defined('SAVEQUERIES') && SAVEQUERIES ? __('On', 'wordfence') : __('Off', 'wordfence'))),
+			'DB_CHARSET'                   => __('Database character set', 'wordfence'),
+			'DB_COLLATE'                   => __('Database collation', 'wordfence'),
+			'WP_SITEURL'                   => __('Explicitly set site URL', 'wordfence'),
+			'WP_HOME'                      => __('Explicitly set blog URL', 'wordfence'),
+			'WP_CONTENT_DIR'               => array('description' => __('"wp-content" folder is in default location', 'wordfence'), 'value' => (realpath(WP_CONTENT_DIR) === realpath(ABSPATH . 'wp-content') ? __('Yes', 'wordfence') : sprintf(/* translators: WordPress content directory. */ __('No: %s', 'wordfence'), WP_CONTENT_DIR))),
+			'WP_CONTENT_URL'               => __('URL to the "wp-content" folder', 'wordfence'),
+			'WP_PLUGIN_DIR'                => array('description' => __('"plugins" folder is in default location', 'wordfence'), 'value' => (realpath(WP_PLUGIN_DIR) === realpath(ABSPATH . 'wp-content/plugins') ? __('Yes', 'wordfence') : sprintf(/* translators: WordPress plugins directory. */ __('No: %s', 'wordfence'), WP_PLUGIN_DIR))),
+			'WP_LANG_DIR'                  => array('description' => __('"languages" folder is in default location', 'wordfence'), 'value' => (realpath(WP_LANG_DIR) === realpath(ABSPATH . 'wp-content/languages') ? __('Yes', 'wordfence') : sprintf(/* translators: WordPress languages directory. */ __('No: %s', 'wordfence'), WP_LANG_DIR))),
+			'WPLANG'                       => __('Language choice', 'wordfence'),
+			'UPLOADS'                      => __('Custom upload folder location', 'wordfence'),
+			'TEMPLATEPATH'                 => array('description' => __('Theme template folder override', 'wordfence'), 'value' => (defined('TEMPLATEPATH') && realpath(get_template_directory()) !== realpath(TEMPLATEPATH) ? sprintf(/* translators: WordPress theme template directory. */ __('Overridden: %s', 'wordfence'), TEMPLATEPATH) : __('(not set)', 'wordfence'))),
+			'STYLESHEETPATH'               => array('description' => __('Theme stylesheet folder override', 'wordfence'), 'value' => (defined('STYLESHEETPATH') && realpath(get_stylesheet_directory()) !== realpath(STYLESHEETPATH) ? sprintf(/* translators: WordPress theme stylesheet directory. */ __('Overridden: %s', 'wordfence'), STYLESHEETPATH) : __('(not set)', 'wordfence'))),
+			'AUTOSAVE_INTERVAL'            => __('Post editing automatic saving interval', 'wordfence'),
+			'WP_POST_REVISIONS'            => array('description' => __('Post revisions saved by WordPress', 'wordfence'), 'value' => is_numeric($postRevisions) ? $postRevisions : ($postRevisions ? __('Unlimited', 'wordfence') : __('None', 'wordfence'))),
+			'COOKIE_DOMAIN'                => __('WordPress cookie domain', 'wordfence'),
+			'COOKIEPATH'                   => __('WordPress cookie path', 'wordfence'),
+			'SITECOOKIEPATH'               => __('WordPress site cookie path', 'wordfence'),
+			'ADMIN_COOKIE_PATH'            => __('WordPress admin cookie path', 'wordfence'),
+			'PLUGINS_COOKIE_PATH'          => __('WordPress plugins cookie path', 'wordfence'),
+			'NOBLOGREDIRECT'               => __('URL redirected to if the visitor tries to access a nonexistent blog', 'wordfence'),
+			'CONCATENATE_SCRIPTS'          => array('description' => __('Concatenate JavaScript files', 'wordfence'), 'value' => (defined('CONCATENATE_SCRIPTS') && CONCATENATE_SCRIPTS ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'WP_MEMORY_LIMIT'              => __('WordPress memory limit', 'wordfence'),
+			'WP_MAX_MEMORY_LIMIT'          => __('Administrative memory limit', 'wordfence'),
+			'WP_CACHE'                     => array('description' => __('Built-in caching', 'wordfence'), 'value' => (defined('WP_CACHE') && WP_CACHE ? __('Enabled', 'wordfence') : __('Disabled', 'wordfence'))),
+			'CUSTOM_USER_TABLE'            => array('description' => __('Custom "users" table', 'wordfence'), 'value' => (defined('CUSTOM_USER_TABLE') ? sprintf(/* translators: WordPress custom user table. */ __('Set: %s', 'wordfence'), CUSTOM_USER_TABLE) : __('(not set)', 'wordfence'))),
+			'CUSTOM_USER_META_TABLE'       => array('description' => __('Custom "usermeta" table', 'wordfence'), 'value' => (defined('CUSTOM_USER_META_TABLE') ? sprintf(/* translators: WordPress custom user meta table. */ __('Set: %s', 'wordfence'), CUSTOM_USER_META_TABLE) : __('(not set)', 'wordfence'))),
+			'FS_CHMOD_DIR'                 => array('description' => __('Overridden permissions for a new folder', 'wordfence'), 'value' => defined('FS_CHMOD_DIR') ? decoct(FS_CHMOD_DIR) : __('(not set)', 'wordfence')),
+			'FS_CHMOD_FILE'                => array('description' => __('Overridden permissions for a new file', 'wordfence'), 'value' => defined('FS_CHMOD_FILE') ? decoct(FS_CHMOD_FILE) : __('(not set)', 'wordfence')),
+			'ALTERNATE_WP_CRON'            => array('description' => __('Alternate WP cron', 'wordfence'), 'value' => (defined('ALTERNATE_WP_CRON') && ALTERNATE_WP_CRON ? __('Enabled', 'wordfence') : __('Disabled', 'wordfence'))),
+			'DISABLE_WP_CRON'              => array('description' => __('WP cron status', 'wordfence'), 'value' => (defined('DISABLE_WP_CRON') && DISABLE_WP_CRON ? __('Cron is disabled', 'wordfence') : __('Cron is enabled', 'wordfence'))),
+			'WP_CRON_LOCK_TIMEOUT'         => __('Cron running frequency lock', 'wordfence'),
+			'EMPTY_TRASH_DAYS'             => array('description' => __('Interval the trash is automatically emptied at in days', 'wordfence'), 'value' => (EMPTY_TRASH_DAYS > 0 ? EMPTY_TRASH_DAYS : __('Never', 'wordfence'))),
+			'WP_ALLOW_REPAIR'              => array('description' => __('Automatic database repair', 'wordfence'), 'value' => (defined('WP_ALLOW_REPAIR') && WP_ALLOW_REPAIR ? __('Enabled', 'wordfence') : __('Disabled', 'wordfence'))),
+			'DO_NOT_UPGRADE_GLOBAL_TABLES' => array('description' => __('Do not upgrade global tables', 'wordfence'), 'value' => (defined('DO_NOT_UPGRADE_GLOBAL_TABLES') && DO_NOT_UPGRADE_GLOBAL_TABLES ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'DISALLOW_FILE_EDIT'           => array('description' => __('Disallow plugin/theme editing', 'wordfence'), 'value' => (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'DISALLOW_FILE_MODS'           => array('description' => __('Disallow plugin/theme update and installation', 'wordfence'), 'value' => (defined('DISALLOW_FILE_MODS') && DISALLOW_FILE_MODS ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'IMAGE_EDIT_OVERWRITE'         => array('description' => __('Overwrite image edits when restoring the original', 'wordfence'), 'value' => (defined('IMAGE_EDIT_OVERWRITE') && IMAGE_EDIT_OVERWRITE ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'FORCE_SSL_ADMIN'              => array('description' => __('Force SSL for administrative logins', 'wordfence'), 'value' => (defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'WP_HTTP_BLOCK_EXTERNAL'       => array('description' => __('Block external URL requests', 'wordfence'), 'value' => (defined('WP_HTTP_BLOCK_EXTERNAL') && WP_HTTP_BLOCK_EXTERNAL ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'WP_ACCESSIBLE_HOSTS'          => __('Allowlisted hosts', 'wordfence'),
+			'WP_AUTO_UPDATE_CORE'          => array('description' => __('Automatic WP Core updates', 'wordfence'), 'value' => defined('WP_AUTO_UPDATE_CORE') ? (is_bool(WP_AUTO_UPDATE_CORE) ? (WP_AUTO_UPDATE_CORE ? __('Everything', 'wordfence') : __('None', 'wordfence')) : WP_AUTO_UPDATE_CORE) : __('Default', 'wordfence')),
+			'WP_PROXY_HOST'                => array('description' => __('Hostname for a proxy server', 'wordfence'), 'value' => defined('WP_PROXY_HOST') ? WP_PROXY_HOST : __('(not set)', 'wordfence')),
+			'WP_PROXY_PORT'                => array('description' => __('Port for a proxy server', 'wordfence'), 'value' => defined('WP_PROXY_PORT') ? WP_PROXY_PORT : __('(not set)', 'wordfence')),
+			'MULTISITE'               	   => array('description' => __('Multisite enabled', 'wordfence'), 'value' => defined('MULTISITE') ? (MULTISITE ? __('Yes', 'wordfence') : __('No', 'wordfence')) : __('(not set)', 'wordfence')),
+			'WP_ALLOW_MULTISITE'           => array('description' => __('Multisite/network ability enabled', 'wordfence'), 'value' => (defined('WP_ALLOW_MULTISITE') && WP_ALLOW_MULTISITE ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'SUNRISE'					   => array('description' => __('Multisite enabled, WordPress will load the /wp-content/sunrise.php file', 'wordfence'), 'value' => defined('SUNRISE') ? __('Yes', 'wordfence') : __('(not set)', 'wordfence')),
+			'SUBDOMAIN_INSTALL'			   => array('description' => __('Multisite enabled, subdomain installation constant', 'wordfence'), 'value' => defined('SUBDOMAIN_INSTALL') ? (SUBDOMAIN_INSTALL ? __('Yes', 'wordfence') : __('No', 'wordfence')) : __('(not set)', 'wordfence')),
+			'VHOST'						   => array('description' => __('Multisite enabled, Older subdomain installation constant', 'wordfence'), 'value' => defined('VHOST') ? (VHOST == 'yes' ? __('Yes', 'wordfence') : __('No', 'wordfence')) : __('(not set)', 'wordfence')),
+			'DOMAIN_CURRENT_SITE'		   => __('Defines the multisite domain for the current site', 'wordfence'),
+			'PATH_CURRENT_SITE'			   => __('Defines the multisite path for the current site', 'wordfence'),
+			'BLOG_ID_CURRENT_SITE'		   => __('Defines the multisite database ID for the current site', 'wordfence'),
+			'WP_DISABLE_FATAL_ERROR_HANDLER' => array('description' => __('Disable the fatal error handler', 'wordfence'), 'value' => (defined('WP_DISABLE_FATAL_ERROR_HANDLER') && WP_DISABLE_FATAL_ERROR_HANDLER ? __('Yes', 'wordfence') : __('No', 'wordfence'))),
+			'AUTOMATIC_UPDATER_DISABLED' => array('description' => __('Disables automatic updates', 'wordfence'), 'value' => (defined('AUTOMATIC_UPDATER_DISABLED') ? (AUTOMATIC_UPDATER_DISABLED ? __('Automatic updates disabled', 'wordfence') : __('Automatic updates enabled', 'wordfence')) : __('(not set)', 'wordfence')))
+		);
+	}
+}

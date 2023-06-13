@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Settings class for custom post types and taxonomies language and translation management
@@ -6,7 +9,40 @@
  * @since 1.8
  */
 class PLL_Settings_CPT extends PLL_Settings_Module {
-	private $post_types, $disabled_post_types, $taxonomies, $disabled_taxonomies;
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 40;
+
+	/**
+	 * The list of post types to show in the form.
+	 *
+	 * @var string[]
+	 */
+	private $post_types;
+
+	/**
+	 * The list of post types to disable in the form.
+	 *
+	 * @var string[]
+	 */
+	private $disabled_post_types;
+
+	/**
+	 * The list of taxonomies to show in the form.
+	 *
+	 * @var string[]
+	 */
+	private $taxonomies;
+
+	/**
+	 * The list of taxonomies to disable in the form.
+	 *
+	 * @var string[]
+	 */
+	private $disabled_taxonomies;
 
 	/**
 	 * Constructor
@@ -29,8 +65,8 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 		/** This filter is documented in include/model.php */
 		$this->post_types = array_unique( apply_filters( 'pll_get_post_types', $public_post_types, true ) );
 
-		$programmatically_active_post_types = array_unique( apply_filters( 'pll_get_post_types', array(), false ) );
 		/** This filter is documented in include/model.php */
+		$programmatically_active_post_types = array_unique( apply_filters( 'pll_get_post_types', array(), false ) );
 		$this->disabled_post_types = array_intersect( $programmatically_active_post_types, $this->post_types );
 
 		$public_taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ) );
@@ -38,8 +74,8 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 		/** This filter is documented in include/model.php */
 		$this->taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', $public_taxonomies, true ) );
 
-		$programmatically_active_taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', array(), false ) );
 		/** This filter is documented in include/model.php */
+		$programmatically_active_taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', array(), false ) );
 		$this->disabled_taxonomies = array_intersect( $programmatically_active_taxonomies, $this->taxonomies );
 	}
 
@@ -71,9 +107,16 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 						printf(
 							'<li><label><input name="post_types[%s]" type="checkbox" value="1" %s %s/> %s</label></li>',
 							esc_attr( $post_type ),
-							checked( in_array( $post_type, $this->options['post_types'] ) || $disabled, true, false ),
+							checked( $disabled || in_array( $post_type, $this->options['post_types'], true ), true, false ),
 							disabled( $disabled, true, false ),
-							esc_html( $pt->labels->name )
+							esc_html(
+								sprintf(
+									/* translators: 1 is a post type or taxonomy label, 2 is a post type or taxonomy key. */
+									_x( '%1$s (%2$s)', 'content type setting choice', 'polylang' ),
+									$pt->labels->name,
+									$pt->name
+								)
+							)
 						);
 					}
 				}
@@ -95,9 +138,16 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 						printf(
 							'<li><label><input name="taxonomies[%s]" type="checkbox" value="1" %s %s/> %s</label></li>',
 							esc_attr( $taxonomy ),
-							checked( in_array( $taxonomy, $this->options['taxonomies'] ) || $disabled, true, false ),
+							checked( $disabled || in_array( $taxonomy, $this->options['taxonomies'], true ), true, false ),
 							disabled( $disabled, true, false ),
-							esc_html( $tax->labels->name )
+							esc_html(
+								sprintf(
+									/* translators: 1 is a post type or taxonomy label, 2 is a post type or taxonomy key. */
+									_x( '%1$s (%2$s)', 'content type setting choice', 'polylang' ),
+									$tax->labels->name,
+									$tax->name
+								)
+							)
 						);
 					}
 				}

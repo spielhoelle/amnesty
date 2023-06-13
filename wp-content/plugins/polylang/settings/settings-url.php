@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * A class to manage URL modifications settings
@@ -6,6 +9,19 @@
  * @since 1.8
  */
 class PLL_Settings_Url extends PLL_Settings_Module {
+	/**
+	 * Stores the display order priority.
+	 *
+	 * @var int
+	 */
+	public $priority = 10;
+
+	/**
+	 * The page id of the static front page.
+	 *
+	 * @var int|null
+	 */
+	protected $page_on_front;
 
 	/**
 	 * Constructor
@@ -21,11 +37,9 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 				'module'      => 'url',
 				'title'       => __( 'URL modifications', 'polylang' ),
 				'description' => __( 'Decide how your URLs will look like.', 'polylang' ),
-				'configure'   => true,
 			)
 		);
 
-		$this->links_model = &$polylang->links_model;
 		$this->page_on_front = &$polylang->static_pages->page_on_front;
 	}
 
@@ -33,9 +47,12 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * Displays the fieldset to choose how the language is set
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	protected function force_lang() {
 		?>
+		<p class="description"><?php esc_html_e( 'Some themes or plugins may not be fully compatible with the language defined by the content or by domains.', 'polylang' ); ?></p>
 		<label>
 			<?php
 			printf(
@@ -80,7 +97,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		<table id="pll-domains-table" class="form-table" <?php echo 3 == $this->options['force_lang'] ? '' : 'style="display: none;"'; ?>>
 			<?php
 			foreach ( $this->model->get_languages_list() as  $lg ) {
-				$url = isset( $this->options['domains'][ $lg->slug ] ) ? $this->options['domains'][ $lg->slug ] : ( $lg->slug == $this->options['default_lang'] ? $this->links_model->home : '' );
+				$url = isset( $this->options['domains'][ $lg->slug ] ) ? $this->options['domains'][ $lg->slug ] : ( $lg->is_default ? $this->links_model->home : '' );
 				printf(
 					'<tr><td><label for="pll-domain[%1$s]">%2$s</label></td>' .
 					'<td><input name="domains[%1$s]" id="pll-domain[%1$s]" type="text" value="%3$s" class="regular-text code" aria-required="true" /></td></tr>',
@@ -98,6 +115,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * Displays the fieldset to choose to hide the default language information in url
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	protected function hide_default() {
 		?>
@@ -117,6 +136,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * Displays the fieldset to choose to hide /language/ in url
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	protected function rewrite() {
 		?>
@@ -149,6 +170,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * Displays the fieldset to choose to redirect the home page to language page
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	protected function redirect_lang() {
 		?>
@@ -157,7 +180,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="redirect_lang" type="checkbox" value="1" %s/> %s',
 				checked( $this->options['redirect_lang'], 1, false ),
-				esc_html__( 'The front page url contains the language code instead of the page name or page id', 'polylang' )
+				esc_html__( 'The front page URL contains the language code instead of the page name or page id', 'polylang' )
 			);
 			?>
 		</label>
@@ -165,7 +188,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			<?php
 			// That's nice to display the right home urls but don't forget that the page on front may have no language yet
 			$lang = $this->model->post->get_language( $this->page_on_front );
-			$lang = $lang ? $lang : $this->model->get_language( $this->options['default_lang'] );
+			/** @var PLL_Language $lang */
+			$lang = $lang ? $lang : $this->model->get_default_language();
 			printf(
 				/* translators: %1$s example url when the option is active. %2$s example url when the option is not active */
 				esc_html__( 'Example: %1$s instead of %2$s', 'polylang' ),
@@ -181,6 +205,8 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * Displays the settings
 	 *
 	 * @since 1.8
+	 *
+	 * @return void
 	 */
 	public function form() {
 		?>
@@ -221,6 +247,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * @since 1.8
 	 *
 	 * @param array $options
+	 * @return array
 	 */
 	protected function update( $options ) {
 		$newoptions = array();
@@ -230,6 +257,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 		}
 
 		if ( 3 == $options['force_lang'] && isset( $options['domains'] ) && is_array( $options['domains'] ) ) {
+			$newoptions['domains'] = array();
 			foreach ( $options['domains'] as $key => $domain ) {
 				if ( empty( $domain ) ) {
 					$lang = $this->model->get_language( $key );
@@ -276,6 +304,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * @since 1.8
 	 *
 	 * @param array $options new set of options to test
+	 * @return void
 	 */
 	protected function check_domains( $options ) {
 		$options = array_merge( $this->options, $options );

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * A class to manage the sychronization of taxonomy terms across posts translations
@@ -8,6 +11,18 @@
 class PLL_Sync_Tax {
 
 	/**
+	 * Stores the plugin options.
+	 *
+	 * @var array
+	 */
+	protected $options;
+
+	/**
+	 * @var PLL_Model
+	 */
+	protected $model;
+
+	/**
 	 * Constructor
 	 *
 	 * @since 2.3
@@ -15,7 +30,7 @@ class PLL_Sync_Tax {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 
 		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
@@ -25,34 +40,35 @@ class PLL_Sync_Tax {
 	}
 
 	/**
-	 * Get the list of taxonomies to copy or to synchronize
+	 * Get the list of taxonomies to copy or to synchronize.
 	 *
 	 * @since 1.7
 	 * @since 2.1 The `$from`, `$to`, `$lang` parameters were added.
+	 * @since 3.2 Changed visibility from protected to public.
 	 *
-	 * @param bool   $sync True if it is synchronization, false if it is a copy
-	 * @param int    $from Id of the post from which we copy informations, optional, defaults to null
-	 * @param int    $to   Id of the post to which we paste informations, optional, defaults to null
-	 * @param string $lang Language slug, optional, defaults to null
-	 * @return array List of taxonomy names
+	 * @param bool   $sync True if it is synchronization, false if it is a copy.
+	 * @param int    $from Id of the post from which we copy informations, optional, defaults to null.
+	 * @param int    $to   Id of the post to which we paste informations, optional, defaults to null.
+	 * @param string $lang Language slug, optional, defaults to null.
+	 * @return string[] List of taxonomy names.
 	 */
-	protected function get_taxonomies_to_copy( $sync, $from = null, $to = null, $lang = null ) {
+	public function get_taxonomies_to_copy( $sync, $from = null, $to = null, $lang = null ) {
 		$taxonomies = ! $sync || in_array( 'taxonomies', $this->options['sync'] ) ? $this->model->get_translated_taxonomies() : array();
 		if ( ! $sync || in_array( 'post_format', $this->options['sync'] ) ) {
 			$taxonomies[] = 'post_format';
 		}
 
 		/**
-		 * Filter the taxonomies to copy or synchronize
+		 * Filters the taxonomies to copy or synchronize.
 		 *
 		 * @since 1.7
 		 * @since 2.1 The `$from`, `$to`, `$lang` parameters were added.
 		 *
-		 * @param array  $taxonomies List of taxonomy names
-		 * @param bool   $sync       True if it is synchronization, false if it is a copy
-		 * @param int    $from       Id of the post from which we copy informations
-		 * @param int    $to         Id of the post to which we paste informations
-		 * @param string $lang       Language slug
+		 * @param string[] $taxonomies List of taxonomy names.
+		 * @param bool     $sync       True if it is synchronization, false if it is a copy.
+		 * @param int      $from       Id of the post from which we copy informations.
+		 * @param int      $to         Id of the post to which we paste informations.
+		 * @param string   $lang       Language slug.
 		 */
 		return array_unique( apply_filters( 'pll_copy_taxonomies', $taxonomies, $sync, $from, $to, $lang ) );
 	}
@@ -62,11 +78,11 @@ class PLL_Sync_Tax {
 	 *
 	 * @since 2.3
 	 *
-	 * @param array  $object_id Object ID
-	 * @param array  $terms     List of terms ids assigned to the source post
-	 * @param string $taxonomy  Taxonomy name
-	 * @param string $lang      Language slug
-	 * @return array List of terms ids to assign to the target post
+	 * @param int    $object_id Object ID.
+	 * @param int[]  $terms     List of terms ids assigned to the source post.
+	 * @param string $taxonomy  Taxonomy name.
+	 * @param string $lang      Language slug.
+	 * @return int[] List of terms ids to assign to the target post.
 	 */
 	protected function maybe_translate_terms( $object_id, $terms, $taxonomy, $lang ) {
 		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomy ) ) {
@@ -89,7 +105,7 @@ class PLL_Sync_Tax {
 				 * @param int    $term    Source term id
 				 * @param string $lang    Language slug
 				 */
-				if ( $term_id = apply_filters( 'pll_maybe_translate_term', $this->model->term->get_translation( $term, $lang ), $term, $lang ) ) {
+				if ( $term_id = apply_filters( 'pll_maybe_translate_term', (int) $this->model->term->get_translation( $term, $lang ), $term, $lang ) ) {
 					$newterms[] = (int) $term_id; // Cast is important otherwise we get 'numeric' tags
 				}
 			}
@@ -101,7 +117,7 @@ class PLL_Sync_Tax {
 	}
 
 	/**
-	 * Maybe copy taxonomy terms from one post to the other
+	 * Maybe copy taxonomy terms from one post to the other.
 	 *
 	 * @since 2.6
 	 *
@@ -111,6 +127,7 @@ class PLL_Sync_Tax {
 	 * @param array  $terms     An array of object terms.
 	 * @param string $taxonomy  Taxonomy slug.
 	 * @param bool   $append    Whether to append new terms to the old terms.
+	 * @return void
 	 */
 	protected function copy_object_terms( $object_id, $tr_id, $lang, $terms, $taxonomy, $append ) {
 		$to_copy = $this->get_taxonomies_to_copy( true, $object_id, $tr_id, $lang );
@@ -136,22 +153,23 @@ class PLL_Sync_Tax {
 	}
 
 	/**
-	 * When assigning terms to a post, assign translated terms to the translated posts (synchronisation)
+	 * When assigning terms to a post, assign translated terms to the translated posts (synchronisation).
 	 *
 	 * @since 2.3
 	 *
 	 * @param int    $object_id Object ID.
 	 * @param array  $terms     An array of object terms.
-	 * @param array  $tt_ids    An array of term taxonomy IDs.
+	 * @param int[]  $tt_ids    An array of term taxonomy IDs.
 	 * @param string $taxonomy  Taxonomy slug.
 	 * @param bool   $append    Whether to append new terms to the old terms.
+	 * @return void
 	 */
 	public function set_object_terms( $object_id, $terms, $tt_ids, $taxonomy, $append ) {
 		static $avoid_recursion = false;
 		$taxonomy_object = get_taxonomy( $taxonomy );
 
 		// Make sure that the taxonomy is registered for a post type
-		if ( ! $avoid_recursion && array_filter( $taxonomy_object->object_type, 'post_type_exists' ) ) {
+		if ( ! $avoid_recursion && ! empty( $taxonomy_object ) && array_filter( $taxonomy_object->object_type, 'post_type_exists' ) ) {
 			$avoid_recursion = true;
 
 			$tr_ids = $this->model->post->get_translations( $object_id );
@@ -169,7 +187,7 @@ class PLL_Sync_Tax {
 							$tr_terms = array();
 						}
 
-						if ( is_array( $tr_terms ) ) {
+						if ( is_string( $orig_lang ) && is_array( $tr_terms ) ) {
 							$tr_terms = wp_list_pluck( $tr_terms, 'term_id' );
 							$this->copy_object_terms( $tr_id, $object_id, $orig_lang, $tr_terms, $taxonomy, $append );
 						}
@@ -190,15 +208,16 @@ class PLL_Sync_Tax {
 	 * @param int    $from  Id of the source post
 	 * @param int    $to    Id of the target post
 	 * @param string $lang  Language slug
+	 * @return void
 	 */
 	public function copy( $from, $to, $lang ) {
-		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 6 );
+		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ) );
 
 		// Get taxonomies to sync for this post type
 		$taxonomies = array_intersect( get_post_taxonomies( $from ), $this->get_taxonomies_to_copy( false, $from, $to, $lang ) );
 
 		// Update the term cache to reduce the number of queries in the loop
-		update_object_term_cache( $from, get_post_type( $from ) );
+		update_object_term_cache( array( $from ), get_post_type( $from ) );
 
 		// Copy
 		foreach ( $taxonomies as $tax ) {
@@ -212,17 +231,18 @@ class PLL_Sync_Tax {
 			}
 		}
 
-		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 6 );
+		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
 	}
 
 	/**
-	 * When creating a new term, associate it to posts having translations associated to the translated terms
+	 * When creating a new term, associate it to posts having translations associated to the translated terms.
 	 *
 	 * @since 2.3
 	 *
-	 * @param int    $term_id      Id of the created term
-	 * @param string $taxonomy     Taxonomy
-	 * @param array  $translations Ids of the translations of the created term
+	 * @param int    $term_id      Id of the created term.
+	 * @param string $taxonomy     Taxonomy.
+	 * @param int[]  $translations Ids of the translations of the created term.
+	 * @return void
 	 */
 	public function create_term( $term_id, $taxonomy, $translations ) {
 		if ( doing_action( 'create_term' ) && in_array( $taxonomy, $this->get_taxonomies_to_copy( true ) ) ) {
@@ -271,15 +291,19 @@ class PLL_Sync_Tax {
 	 * to avoid translated terms to be removed from translated posts
 	 *
 	 * @since 2.3.2
+	 *
+	 * @return void
 	 */
 	public function pre_delete_term() {
-		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
+		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ) );
 	}
 
 	/**
 	 * Re-activate the synchronization of terms after a term is deleted
 	 *
 	 * @since 2.3.2
+	 *
+	 * @return void
 	 */
 	public function delete_term() {
 		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );

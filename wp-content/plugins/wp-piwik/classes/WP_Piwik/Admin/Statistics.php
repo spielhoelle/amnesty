@@ -19,7 +19,6 @@
 					return;
 				}
 				echo '<p>'.__('Currently shown stats:').' <a href="'.get_bloginfo('url').'">'.get_bloginfo('name').'</a>.'.' <a href="?page=wp-piwik_stats&overview=1">Show site overview</a>.</p>';
-				echo '</form>'."\n";
 			}
 			echo '<form action="admin-post.php" method="post"><input type="hidden" name="action" value="save_wp-piwik_stats_general" /><div id="dashboard-widgets" class="metabox-holder columns-'.$screen_layout_columns.(2 <= $screen_layout_columns?' has-right-sidebar':'').'">';
 			wp_nonce_field('wp-piwik_stats-general');
@@ -32,7 +31,7 @@
 				echo '</div>';
 			}
 			echo '</div></form></div>';
-			echo '<script type="text/javascript">//<![CDATA['."\n";
+			echo '<script>//<![CDATA['."\n";
 			echo 'jQuery(document).ready(function($) {$(".if-js-closed").removeClass("if-js-closed").addClass("closed"); postboxes.add_postbox_toggles("'.self::$wpPiwik->statsPageId.'");});'."\n";
 			echo '//]]></script>'."\n";
 			if (self::$settings->checkNetworkActivation() && function_exists('is_super_admin') && is_super_admin()) {
@@ -42,13 +41,7 @@
 
 		public function printAdminScripts() {
 			wp_enqueue_script('wp-piwik', self::$wpPiwik->getPluginURL().'js/wp-piwik.js', array(), self::$wpPiwik->getPluginVersion(), true);
-			wp_enqueue_script('wp-piwik-jqplot', self::$wpPiwik->getPluginURL().'js/jqplot/wp-piwik.jqplot.js',array('jquery'), self::$wpPiwik->getPluginVersion());
+            wp_enqueue_script ( 'wp-piwik-chartjs', self::$wpPiwik->getPluginURL () . 'js/chartjs/chart.min.js', "3.4.1" );
 		}
-		
-		public function extendAdminHeader() {
-			echo '<!--[if IE]><script language="javascript" type="text/javascript" src="'.(self::$wpPiwik->getPluginURL()).'js/jqplot/excanvas.min.js"></script><![endif]-->';
-			echo '<link rel="stylesheet" href="'.(self::$wpPiwik->getPluginURL()).'js/jqplot/jquery.jqplot.min.css" type="text/css"/>';
-			echo '<script type="text/javascript">var $j = jQuery.noConflict();</script>';		
-		}
-		
+
 	}

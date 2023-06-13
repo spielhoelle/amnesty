@@ -2,14 +2,14 @@
 /**
  * Jetpack Network Manager class file.
  *
- * @package jetpack
+ * @package automattic/jetpack
  */
 
-use Automattic\Jetpack\Connection\Client;
+use Automattic\Jetpack\Assets\Logo;
 use Automattic\Jetpack\Connection\Manager;
-use Automattic\Jetpack\Connection\Utils as Connection_Utils;
-use Automattic\Jetpack\Constants;
+use Automattic\Jetpack\Connection\Tokens;
 use Automattic\Jetpack\Status;
+use Automattic\Jetpack\Waf\Brute_Force_Protection\Brute_Force_Protection_Shared_Functions;
 
 /**
  * Used to manage Jetpack installation on Multisite Network installs
@@ -64,7 +64,6 @@ class Jetpack_Network {
 	 */
 	private function __construct() {
 		require_once ABSPATH . '/wp-admin/includes/plugin.php'; // For the is_plugin... check.
-		require_once JETPACK__PLUGIN_DIR . 'modules/protect/shared-functions.php'; // For managing the global whitelist.
 
 		/**
 		 * Sanity check to ensure the install is Multisite and we
@@ -75,7 +74,7 @@ class Jetpack_Network {
 			add_action( 'network_admin_edit_jetpack-network-settings', array( $this, 'save_network_settings_page' ), 10, 0 );
 			add_filter( 'admin_body_class', array( $this, 'body_class' ) );
 
-			if ( isset( $_GET['page'] ) && 'jetpack' == $_GET['page'] ) {
+			if ( isset( $_GET['page'] ) && 'jetpack' === $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is view logic.
 				add_action( 'admin_init', array( $this, 'jetpack_sites_list' ) );
 			}
 		}
@@ -85,6 +84,7 @@ class Jetpack_Network {
 		 */
 		if ( is_multisite() && is_plugin_active_for_network( 'jetpack/jetpack.php' ) ) {
 			add_action( 'wp_before_admin_bar_render', array( $this, 'add_to_menubar' ) );
+			add_filter( 'jetpack_disconnect_cap', array( $this, 'set_multisite_disconnect_cap' ) );
 
 			/*
 			 * If admin wants to automagically register new sites set the hook here
@@ -104,19 +104,6 @@ class Jetpack_Network {
 	 */
 	public function set_connection( Manager $connection ) {
 		$this->connection = $connection;
-	}
-
-	/**
-	 * Sets which modules get activated by default on subsite connection.
-	 * Modules can be set in Network Admin > Jetpack > Settings
-	 *
-	 * @since 2.9
-	 * @deprecated since 7.7.0
-	 *
-	 * @param array $modules List of modules.
-	 */
-	public function set_auto_activated_modules( $modules ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-		_deprecated_function( __METHOD__, 'jetpack-7.7' );
 	}
 
 	/**
@@ -203,9 +190,10 @@ class Jetpack_Network {
 			 */
 			if ( ! in_array( 'jetpack/jetpack.php', $active_plugins, true ) ) {
 				Jetpack::disconnect();
+				Jetpack_Options::delete_option( 'version' );
 			}
+			restore_current_blog();
 		}
-		restore_current_blog();
 	}
 
 	/**
@@ -252,7 +240,7 @@ class Jetpack_Network {
 
 		if ( is_string( $args ) ) {
 			$name = $args;
-		} else if ( is_array( $args ) ) {
+		} elseif ( is_array( $args ) ) {
 			$name = $args['name'];
 		} else {
 			return $url;
@@ -293,7 +281,8 @@ class Jetpack_Network {
 	 * @since 2.9
 	 */
 	public function add_network_admin_menu() {
-		add_menu_page( 'Jetpack', 'Jetpack', 'jetpack_network_admin_page', 'jetpack', array( $this, 'wrap_network_admin_page' ), 'div', 3 );
+		$icon = ( new Logo() )->get_base64_logo();
+		add_menu_page( 'Jetpack', 'Jetpack', 'jetpack_network_admin_page', 'jetpack', array( $this, 'wrap_network_admin_page' ), $icon, 3 );
 		$jetpack_sites_page_hook    = add_submenu_page( 'jetpack', __( 'Jetpack Sites', 'jetpack' ), __( 'Sites', 'jetpack' ), 'jetpack_network_sites_page', 'jetpack', array( $this, 'wrap_network_admin_page' ) );
 		$jetpack_settings_page_hook = add_submenu_page( 'jetpack', __( 'Settings', 'jetpack' ), __( 'Settings', 'jetpack' ), 'jetpack_network_settings_page', 'jetpack-settings', array( $this, 'wrap_render_network_admin_settings_page' ) );
 		add_action( "admin_print_styles-$jetpack_sites_page_hook", array( 'Jetpack_Admin_Page', 'load_wrapper_styles' ) );
@@ -305,21 +294,6 @@ class Jetpack_Network {
 		 */
 		require_once JETPACK__PLUGIN_DIR . '_inc/genericons.php';
 		jetpack_register_genericons();
-
-		if ( ! wp_style_is( 'jetpack-icons', 'registered' ) ) {
-			wp_register_style( 'jetpack-icons', plugins_url( 'css/jetpack-icons.min.css', JETPACK__PLUGIN_FILE ), false, JETPACK__VERSION );
-		}
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_menu_css' ) );
-	}
-
-	/**
-	 * Adds JP menu icon
-	 *
-	 * @since 2.9
-	 **/
-	public function admin_menu_css() {
-		wp_enqueue_style( 'jetpack-icons' );
 	}
 
 	/**
@@ -334,14 +308,10 @@ class Jetpack_Network {
 		if ( isset( $_GET['action'] ) ) {
 			switch ( $_GET['action'] ) {
 				case 'subsiteregister':
-					/**
-					 * Add actual referrer checking.
-					 *
-					 * @todo check_admin_referer( 'jetpack-subsite-register' );
-					 */
+					check_admin_referer( 'jetpack-subsite-register' );
 					Jetpack::log( 'subsiteregister' );
 
-					// If !$_GET['site_id'] stop registration and error.
+					// If no site_id, stop registration and error.
 					if ( ! isset( $_GET['site_id'] ) || empty( $_GET['site_id'] ) ) {
 						/**
 						 * Log error to state cookie for display later.
@@ -366,6 +336,7 @@ class Jetpack_Network {
 					exit;
 
 				case 'subsitedisconnect':
+					check_admin_referer( 'jetpack-subsite-disconnect' );
 					Jetpack::log( 'subsitedisconnect' );
 
 					if ( ! isset( $_GET['site_id'] ) || empty( $_GET['site_id'] ) ) {
@@ -385,13 +356,33 @@ class Jetpack_Network {
 	}
 
 	/**
+	 * Set the disconnect capability for multisite.
+	 *
+	 * @param array $caps The capabilities array.
+	 */
+	public function set_multisite_disconnect_cap( $caps ) {
+		// Can individual site admins manage their own connection?
+		if ( ! is_super_admin() && ! $this->get_option( 'sub-site-connection-override' ) ) {
+			/*
+			 * We need to update the option name -- it's terribly unclear which
+			 * direction the override goes.
+			 *
+			 * @todo: Update the option name to `sub-sites-can-manage-own-connections`
+			 */
+			return array( 'do_not_allow' );
+		}
+
+		return $caps;
+	}
+
+	/**
 	 * Shows the Jetpack plugin notices.
 	 */
 	public function show_jetpack_notice() {
-		if ( isset( $_GET['action'] ) && 'connected' == $_GET['action'] ) {
+		if ( isset( $_GET['action'] ) && 'connected' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is view logic.
 			$notice    = __( 'Site successfully connected.', 'jetpack' );
 			$classname = 'updated';
-		} elseif ( isset( $_GET['action'] ) && 'connection_failed' == $_GET['action'] ) {
+		} elseif ( isset( $_GET['action'] ) && 'connection_failed' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is view logic.
 			$notice    = __( 'Site connection failed!', 'jetpack' );
 			$classname = 'error';
 		}
@@ -414,7 +405,8 @@ class Jetpack_Network {
 		if ( ! current_user_can( 'jetpack_disconnect' ) ) {
 			return;
 		}
-		$site_id = ( is_null( $site_id ) ) ? $_GET['site_id'] : $site_id;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Caller (i.e. `$this->jetpack_sites_list()`) should check.
+		$site_id = ( $site_id === null ) ? ( isset( $_GET['site_id'] ) ? (int) $_GET['site_id'] : null ) : $site_id;
 		switch_to_blog( $site_id );
 		Jetpack::disconnect();
 		restore_current_blog();
@@ -434,12 +426,13 @@ class Jetpack_Network {
 			return;
 		}
 
-		if ( ( new Status() )->is_development_mode() ) {
+		if ( ( new Status() )->is_offline_mode() ) {
 			return;
 		}
 
 		// Figure out what site we are working on.
-		$site_id = ( is_null( $site_id ) ) ? $_GET['site_id'] : $site_id;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Caller (i.e. `$this->jetpack_sites_list()`) should check.
+		$site_id = ( $site_id === null ) ? ( isset( $_GET['site_id'] ) ? (int) $_GET['site_id'] : null ) : $site_id;
 
 		/*
 		 * Here we need to switch to the subsite
@@ -471,19 +464,19 @@ class Jetpack_Network {
 	 * @param Object $token the received token.
 	 */
 	public function filter_register_user_token( $token ) {
-		$is_master_user = ! Jetpack::is_active();
-		Connection_Utils::update_user_token(
+		$is_connection_owner = ! $this->connection->has_connected_owner();
+		( new Tokens() )->update_user_token(
 			get_current_user_id(),
 			sprintf( '%s.%d', $token->secret, get_current_user_id() ),
-			$is_master_user
+			$is_connection_owner
 		);
 	}
 
 	/**
 	 * Filters the registration request body to include additional properties.
 	 *
-	 * @param Array $properties standard register request body properties.
-	 * @return Array amended properties.
+	 * @param array $properties standard register request body properties.
+	 * @return array amended properties.
 	 */
 	public function filter_register_request_body( $properties ) {
 		$blog_details = get_blog_details();
@@ -541,11 +534,11 @@ class Jetpack_Network {
 
 		// We should be, but ensure we are on the main blog.
 		switch_to_blog( $current_site->blog_id );
-		$main_active = $jp->is_active();
+		$main_active = $jp->is_connection_ready();
 		restore_current_blog();
 
 		// If we are in dev mode, just show the notice and bail.
-		if ( ( new Status() )->is_development_mode() ) {
+		if ( ( new Status() )->is_offline_mode() ) {
 			Jetpack::show_development_mode_notice();
 			return;
 		}
@@ -555,19 +548,13 @@ class Jetpack_Network {
 		 * connections will feed off this one
 		 */
 		if ( ! $main_active ) {
-			$url  = $this->get_url(
-				array(
-					'name'    => 'subsiteregister',
-					'site_id' => 1,
-				)
-			);
 			$data = array( 'url' => $jp->build_connect_url() );
 			Jetpack::init()->load_view( 'admin/must-connect-main-blog.php', $data );
 
 			return;
 		}
 
-		require_once 'class.jetpack-network-sites-list-table.php';
+		require_once __DIR__ . '/class.jetpack-network-sites-list-table.php';
 
 		$network_sites_table = new Jetpack_Network_Sites_List_Table();
 		echo '<div class="wrap"><h2>' . esc_html__( 'Sites', 'jetpack' ) . '</h2>';
@@ -575,7 +562,6 @@ class Jetpack_Network {
 		$network_sites_table->prepare_items();
 		$network_sites_table->display();
 		echo '</form></div>';
-
 	}
 
 	/**
@@ -584,7 +570,7 @@ class Jetpack_Network {
 	 * @since 2.9
 	 */
 	public function network_admin_page_header() {
-		$is_connected = Jetpack::is_active();
+		$is_connected = Jetpack::is_connection_ready();
 
 		$data = array(
 			'is_connected' => $is_connected,
@@ -599,7 +585,7 @@ class Jetpack_Network {
 	 */
 	public function save_network_settings_page() {
 
-		if ( ! wp_verify_nonce( $_POST['_wpnonce'], 'jetpack-network-settings' ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'jetpack-network-settings' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			// No nonce, push back to settings page.
 			wp_safe_redirect(
 				add_query_arg(
@@ -610,10 +596,11 @@ class Jetpack_Network {
 			exit();
 		}
 
-		// Try to save the Protect whitelist before anything else, since that action can result in errors.
-		$whitelist = str_replace( ' ', '', $_POST['global-whitelist'] );
-		$whitelist = explode( PHP_EOL, $whitelist );
-		$result    = jetpack_protect_save_whitelist( $whitelist, true );
+		// Try to save the Protect allow list before anything else, since that action can result in errors.
+		$allow_list = isset( $_POST['global-allow-list'] ) ? filter_var( wp_unslash( $_POST['global-allow-list'] ) ) : '';
+		$allow_list = str_replace( ' ', '', $allow_list );
+		$allow_list = explode( PHP_EOL, $allow_list );
+		$result     = Brute_Force_Protection_Shared_Functions::save_allow_list( $allow_list, true );
 		if ( is_wp_error( $result ) ) {
 			wp_safe_redirect(
 				add_query_arg(
@@ -692,7 +679,7 @@ class Jetpack_Network {
 		$data = array(
 			'modules'                   => $modules,
 			'options'                   => $options,
-			'jetpack_protect_whitelist' => jetpack_protect_format_whitelist(),
+			'jetpack_protect_whitelist' => Brute_Force_Protection_Shared_Functions::format_allow_list(),
 		);
 
 		Jetpack::init()->load_view( 'admin/network-settings.php', $data );

@@ -9,22 +9,22 @@ if (!defined('WORDFENCE_LS_VERSION')) { exit; }
 	<div class="wfls-block-header wfls-block-header-border-bottom">
 		<div class="wfls-block-header-content">
 			<div class="wfls-block-title">
-				<strong><?php _e('Recovery Codes', 'wordfence-2fa'); ?></strong>
+				<strong><?php esc_html_e('Recovery Codes', 'wordfence-2fa'); ?></strong>
 			</div>
 		</div>
 	</div>
 	<div class="wfls-block-content wfls-padding-add-bottom">
-		<p id="wfls-recovery-code-count"><?php printf($remaining == 1 ? __('%d unused recovery code remains. You may generate a new set by clicking below.', 'wordfence-2fa') : __('%d unused recovery codes remain. You may generate a new set by clicking below.', 'wordfence-2fa'), $remaining); ?></p>
-		<p class="wfls-center wfls-add-top"><a href="#" class="wfls-btn wfls-btn-default" id="wfls-recovery" target="_blank" rel="noopener noreferrer"><?php _e('Generate New Codes', 'wordfence-2fa'); ?></a></p>
+		<p id="wfls-recovery-code-count"><?php echo esc_html(sprintf($remaining == 1 ? __('%d unused recovery code remains. You may generate a new set by clicking below.', 'wordfence-2fa') : __('%d unused recovery codes remain. You may generate a new set by clicking below.', 'wordfence-2fa'), $remaining)); ?></p>
+		<p class="wfls-center wfls-add-top"><a href="#" class="wfls-btn wfls-btn-default" id="wfls-recovery" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Generate New Codes', 'wordfence-2fa'); ?></a></p>
 	</div>
 </div>
 <script type="text/x-jquery-template" id="wfls-tmpl-recovery-prompt">
 	<?php
 	echo \WordfenceLS\Model_View::create('common/modal-prompt', array(
-		'title' => __('Generate New Recovery Codes', 'wordfence'),
-		'message' => __('Are you sure you want to generate new recovery codes? Any remaining unused codes will be disabled.'),
-		'primaryButton' => array('id' => 'wfls-recovery-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#'),
-		'secondaryButtons' => array(array('id' => 'wfls-recovery-prompt-confirm', 'label' => __('Generate', 'wordfence'), 'link' => '#')),
+		'title' => __('Generate New Recovery Codes', 'wordfence-2fa'),
+		'message' => __('Are you sure you want to generate new recovery codes? Any remaining unused codes will be disabled.', 'wordfence-2fa'),
+		'primaryButton' => array('id' => 'wfls-recovery-prompt-cancel', 'label' => __('Cancel', 'wordfence-2fa'), 'link' => '#'),
+		'secondaryButtons' => array(array('id' => 'wfls-recovery-prompt-confirm', 'label' => __('Generate', 'wordfence-2fa'), 'link' => '#')),
 	))->render();
 	?>
 </script>

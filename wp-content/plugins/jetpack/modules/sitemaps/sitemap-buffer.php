@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName.InvalidClassFileName
 /**
  * Sitemaps (per the protocol) are essentially lists of XML fragments;
  * lists which are subject to size constraints. The Jetpack_Sitemap_Buffer
@@ -6,7 +6,7 @@
  * maintaining the constraints.
  *
  * @since 4.8.0
- * @package Jetpack
+ * @package automattic/jetpack
  */
 
 /**
@@ -113,8 +113,8 @@ abstract class Jetpack_Sitemap_Buffer {
 		$this->finder = new Jetpack_Sitemap_Finder();
 		$this->doc    = new DOMDocument( '1.0', 'UTF-8' );
 
-		$this->item_capacity = max( 1, intval( $item_limit ) );
-		$this->byte_capacity = max( 1, intval( $byte_limit ) ) - strlen( $this->doc->saveXML() );
+		$this->item_capacity = max( 1, (int) $item_limit );
+		$this->byte_capacity = max( 1, (int) $byte_limit ) - strlen( $this->doc->saveXML() );
 	}
 
 	/**
@@ -132,26 +132,6 @@ abstract class Jetpack_Sitemap_Buffer {
 	 * we set is_full_flag to true. If $item is null,
 	 * don't do anything and report success.
 	 *
-	 * @since 4.8.0
-	 * @deprecated 5.3.0 Use Jetpack_Sitemap_Buffer::append.
-	 *
-	 * @param string $item The item to be added.
-	 */
-	public function try_to_add_item( $item ) {
-		_deprecated_function(
-			'Jetpack_Sitemap_Buffer::try_to_add_item',
-			'5.3.0',
-			'Jetpack_Sitemap_Buffer::append'
-		);
-		$this->append( $item );
-	}
-
-	/**
-	 * Append an item to the buffer, if there is room for it,
-	 * and set is_empty_flag to false. If there is no room,
-	 * we set is_full_flag to true. If $item is null,
-	 * don't do anything and report success.
-	 *
 	 * @since 5.3.0
 	 *
 	 * @param array $array The item to be added.
@@ -159,7 +139,7 @@ abstract class Jetpack_Sitemap_Buffer {
 	 * @return bool True if the append succeeded, False if not.
 	 */
 	public function append( $array ) {
-		if ( is_null( $array ) ) {
+		if ( $array === null ) {
 			return true;
 		}
 
@@ -286,11 +266,13 @@ abstract class Jetpack_Sitemap_Buffer {
 	 * @return string|DOMDocument The rendered XML string or an object if root element is specified.
 	 */
 	protected function array_to_xml_string( $array, $parent = null, $root = null ) {
+		$element       = null;
 		$return_string = false;
 
 		if ( null === $parent ) {
 			$return_string = true;
-			$parent        = $root = new DOMDocument();
+			$root          = new DOMDocument();
+			$parent        = $root;
 		}
 
 		if ( is_array( $array ) ) {

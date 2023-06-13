@@ -1,9 +1,9 @@
-﻿=== WP-Matomo (WP-Piwik) ===
+=== WP-Matomo Integration (WP-Piwik) ===
 
 Contributors: Braekling
-Requires at least: 4.0
-Tested up to: 5.2.2
-Stable tag: 1.0.22
+Requires at least: 5.0
+Tested up to: 6.2
+Stable tag: 1.0.28
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6046779
 Tags: matomo, tracking, statistics, stats, analytics
 
@@ -11,17 +11,19 @@ Adds Matomo (former Piwik) statistics to your WordPress dashboard and is also ab
 
 == Description ==
 
+If you are not yet using Matomo On-Premise, Matomo Cloud or hosting your own instance of Matomo, please use the [Matomo for WordPress plugin](https://wordpress.org/plugins/matomo/). 
+
 This plugin uses the Matomo API to show your Matomo statistics in your WordPress dashboard. It's also able to add the Matomo tracking code to your blog and to do some modifications to the tracking code. Additionally, WP-Matomo supports WordPress networks and manages multiple sites and their tracking codes.
 
 To use this plugin the Matomo web analytics application is required. If you do not already have a Matomo setup (e.g., provided by your web hosting service), you have two simple options: use either a [self-hosted Matomo](http://matomo.org/) or a [cloud-hosted Matomo by InnoCraft](https://www.innocraft.cloud/?pk_campaign=WP-Piwik).
 
-**Requirements:** PHP 7.0 (or higher), WordPress 5.0 (or higher), Matomo 3.0 (or higher)
+**Requirements:** PHP 7.0 (or higher), WordPress 5.0 (or higher), Matomo 4.0 (or higher)
  
 **Languages:** English, Albanian, Chinese, Dutch, French, German, Greek, Hungarian, Italian, Polish, Portuguese (Brazil). Partially supported: Azerbaijani, Belarusian, Hindi, Lithuanian, Luxembourgish, Norwegian, Persian, Romanian, Russian, Spanish, Swedish, Turkish, Ukrainian
 
 = What is Matomo? =
 
-[youtube https://youtu.be/OslfF_EH81g]
+[youtube https://youtu.be/Qc2kooLNDiU]
 [Learn more.](https://matomo.org/what-is-matomo/)
 
 = First steps =
@@ -44,11 +46,11 @@ Shows the chosen keys value related to the current post. You can define a range 
     [wp-piwik]
 is equal to *[wp-piwik module="overview" title="" period="day" date="yesterday"]*.
 
-= Credits =
+= Credits and Acknowledgements =
 
-* Graphs powered by [jqPlot](http://www.jqplot.com/) (GPL 2.0 and MIT) and and [jQuery Sparklines](http://omnipotent.net/jquery.sparkline/) (New BSD License).
+* Graphs powered by [Chart.js](https://www.chartjs.org) (MIT License).
 * All translators at Transifex and WordPress.
-* Donations: Marco L., Rolf W., Tobias U., Lars K., Donna F., Kevin D., Ramos S., Thomas M., John C., Andreas G., Ben M., Myra R. I., Carlos U. R.-S., Oleg I., M. N., Daniel K., James L., Jochen K., Cyril P., Thomas K., Patrik K., Zach, Sebastian W., Peakkom, Patrik K., Kati K., Helmut O., Valerie S., Jochen D., Atlas R., Harald W., Jan M., Addy K., Hans-Georg E.-B., Yvonne K., Andrew D., Nicolas J., Andre M., Steve J., Jakub P., ditho.berlin, Robert R., Simon B., Grzegorz O., Bjarne O., the Matomo team itself, and all people flattering this.
+* Anyone who donates to the WP-Matomo project, including the Matomo team!
 * All users who send me mails containing criticism, commendation, feature requests and bug reports - you help me to make WP-Matomo much better!
 
 Thank you all!
@@ -140,6 +142,47 @@ Add WP-Matomo to your /wp-content/plugins folder and enable it as [Network Plugi
 5. Matomo: Here you'll find your auth token.
 
 == Changelog ==
+
+= 1.0.28 =
+* Encode plugin display name
+* Option to set requireConsent or requireCookieConsent
+* Avoid notice on empty ecommerce data
+* Improve search tracking performance (thanks to theodejager, [details](https://github.com/braekling/WP-Matomo/pull/111))
+* Fix multisite sub-site tracking (thanks to ulkoalex, [details](https://github.com/braekling/WP-Matomo/issues/107))
+* Remove excess form closing tag (thanks to ulkoalex, [details](https://github.com/braekling/WP-Matomo/pull/113))
+
+= 1.0.27 =
+* Fix a CSRF vulnerability
+* Fix JavaScript typos on settings page which broke some interface functionality
+* Fix proxy path on multisite networks (thanks to caveman99, [details](https://github.com/braekling/WP-Matomo/pull/98))
+* Fix array key warnings (thanks to goaround, [details](https://github.com/braekling/WP-Matomo/pull/102))
+* Fixed a bug in proxy config.php to avoid adding the protocol twice to the Matomo URL 
+* Proxy script will run proxy/config.local.php before proxy/config.php to set an individual WordPress root directory via $wpRootDir
+
+= 1.0.26 =
+* Fix feed tracking via proxy script (thanks to nicobilliotte, [details](https://github.com/braekling/WP-Matomo/pull/92))
+* Add piwik.php proxy script wrapper to make sure proxy tracking codes continue working if piwik.php is used
+* Fix for stalled blog options on network activation (thanks to ulkoalex, [details](https://github.com/braekling/WP-Matomo/pull/94))
+* Fix wrong title on city statistics (thanks to ulkoalex, [details](https://github.com/braekling/WP-Matomo/pull/95))
+* [Fix "call to undefined method" error on network admin](https://wordpress.org/support/topic/fatal-error-call-to-undefined-method-wp_piwikadminnetworkgetpluginurl/)
+* Do not allow to set empty WP-Matomo display name
+* Rename Piwik link on dashboard widget to Matomo
+
+= 1.0.25 =
+* Replace jqplot and jquery.sparklines with [Chart.js](https://www.chartjs.org)
+* Allow to show overview stats for last 60 and 90 days
+* Allow to select the per post stats range from today to last 90 days
+* Optionally remove Matomo's script tag's type attribute, see https://wordpress.org/support/topic/how-to-remove-unnecessary-type-attribute-for-javascript/.
+* Fix/update proxy script (thanks to nicobilliotte and Rasp8e, https://github.com/braekling/WP-Matomo/pull/91)
+* Make plugin working if deployed in a custom folder (thanks to utolosa002, https://github.com/braekling/WP-Matomo/pull/88)
+
+= 1.0.24 =
+* Hotfix to avoid deprecated jQuery.support.boxModel in jqPlot (https://github.com/jqPlot/jqPlot/issues/123)
+* Enabling metaboxes on particular Custom Post Types (thanks to goaround, https://github.com/braekling/WP-Matomo/pull/83)
+
+= 1.0.23 =
+* Handle tracking codes containing matomo.js/.php instead of piwik.js/.php
+* Fixed target="_BLANK" property (thanks to tsteur)
 
 = 1.0.22 =
 * Bugfix: Innocraft cloud URL *.matomo.cloud will work

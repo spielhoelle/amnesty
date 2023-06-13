@@ -37,19 +37,31 @@ class TrackingCode {
         if (preg_match ( '/var u="([^"]*)";/', $code, $hits )) {
             $fetchedProxyUrl = $hits [1];
         } else $fetchedProxyUrl = '';
+        if ($settings->getGlobalOption ( 'remove_type_attribute')) {
+            $code = str_replace (
+                array( ' type="text/javascript"', " type='text/javascript'" ),
+                '',
+                $code
+            );
+        }
 		if ($settings->getGlobalOption ( 'track_mode' ) == 'js')
 			$code = str_replace ( array (
 					'piwik.js',
-					'piwik.php'
+					'piwik.php',
+					'matomo.js',
+					'matomo.php'
 			), 'js/index.php', $code );
 		elseif ($settings->getGlobalOption ( 'track_mode' ) == 'proxy') {
-			$code = str_replace ( 'piwik.js', 'piwik.php', $code );
+			$code = str_replace ( 'piwik.js', 'matomo.php', $code );
+			$code = str_replace ( 'matomo.js', 'matomo.php', $code );
+            $code = str_replace ( 'piwik.php', 'matomo.php', $code );
 			$proxy = str_replace ( array (
 					'https://',
 					'http://'
 			), '//', plugins_url ( 'wp-piwik' ) . '/proxy' ) . '/';
 			$code = preg_replace ( '/var u="([^"]*)";/', 'var u="' . $proxy . '"', $code );
-			$code = preg_replace ( '/img src="([^"]*)piwik.php/', 'img src="' . $proxy . 'piwik.php', $code );
+			$code = preg_replace ( '/img src="([^"]*)piwik.php/', 'img src="' . $proxy . 'matomo.php', $code );
+			$code = preg_replace ( '/img src="([^"]*)matomo.php/', 'img src="' . $proxy . 'matomo.php', $code );
 		}
 		if ($settings->getGlobalOption ( 'track_cdnurl' ) || $settings->getGlobalOption ( 'track_cdnurlssl' ))
 			$code = str_replace ( array (
@@ -70,7 +82,7 @@ class TrackingCode {
             $code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['setDownloadClasses', '" . ($settings->getGlobalOption ( 'set_download_classes' )) . "']);\n_paq.push(['trackPageView']);", $code );
         if ($settings->getGlobalOption ( 'set_link_classes' ))
             $code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['setLinkClasses', '" . ($settings->getGlobalOption ( 'set_link_classes' )) . "']);\n_paq.push(['trackPageView']);", $code );
-		if ($settings->getGlobalOption ( 'limit_cookies' ))
+        if ($settings->getGlobalOption ( 'limit_cookies' ))
 			$code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['setVisitorCookieTimeout', '" . $settings->getGlobalOption ( 'limit_cookies_visitor' ) . "']);\n_paq.push(['setSessionCookieTimeout', '" . $settings->getGlobalOption ( 'limit_cookies_session' ) . "']);\n_paq.push(['setReferralCookieTimeout', '" . $settings->getGlobalOption ( 'limit_cookies_referral' ) . "']);\n_paq.push(['trackPageView']);", $code );
 		if ($settings->getGlobalOption ( 'force_protocol' ) != 'disabled')
 			$code = str_replace ( '"//', '"' . $settings->getGlobalOption ( 'force_protocol' ) . '://', $code );
@@ -80,6 +92,11 @@ class TrackingCode {
 			$code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['trackPageView']);\n_paq.push(['trackVisibleContentImpressions']);", $code );
 		if ((int) $settings->getGlobalOption ( 'track_heartbeat' ) > 0)
 			$code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['trackPageView']);\n_paq.push(['enableHeartBeatTimer', ".(int) $settings->getGlobalOption ( 'track_heartbeat' )."]);", $code );
+        if ($settings->getGlobalOption ( 'require_consent' ) == 'consent') {
+            $code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['requireConsent']);\n_paq.push(['trackPageView']);", $code );
+        } elseif ($settings->getGlobalOption ( 'require_consent' ) == 'cookieconsent') {
+            $code = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['requireCookieConsent']);\n_paq.push(['trackPageView']);", $code );
+        }
 
 		$noScript = array ();
 		preg_match ( '/<noscript>(.*)<\/noscript>/', $code, $noScript );
@@ -106,9 +123,9 @@ class TrackingCode {
 	}
 
 	private function applySearchChanges() {
+		global $wp_query;
 		self::$wpPiwik->log ( 'Apply search tracking changes. Blog ID: ' . get_current_blog_id () . ' Site ID: ' . self::$wpPiwik->getOption ( 'site_id' ) );
-		$objSearch = new \WP_Query ( "s=" . get_search_query () . '&showposts=-1' );
-		$intResultCount = $objSearch->post_count;
+		$intResultCount = $wp_query->found_posts;
 		$this->trackingCode = str_replace ( "_paq.push(['trackPageView']);", "_paq.push(['trackSiteSearch','" . get_search_query () . "', false, " . $intResultCount . "]);\n_paq.push(['trackPageView']);", $this->trackingCode );
 	}
 

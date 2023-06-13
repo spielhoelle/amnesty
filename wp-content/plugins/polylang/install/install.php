@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Polylang activation / de-activation class
@@ -11,6 +14,8 @@ class PLL_Install extends PLL_Install_Base {
 	 * Checks min PHP and WP version, displays a notice if a requirement is not met.
 	 *
 	 * @since 2.6.7
+	 *
+	 * @return bool
 	 */
 	public function can_activate() {
 		global $wp_version;
@@ -32,9 +37,11 @@ class PLL_Install extends PLL_Install_Base {
 	 * Displays a notice if PHP min version is not met.
 	 *
 	 * @since 2.6.7
+	 *
+	 * @return void
 	 */
 	public function php_version_notice() {
-		load_plugin_textdomain( 'polylang', false, basename( POLYLANG_DIR ) . '/languages' ); // Plugin i18n.
+		load_plugin_textdomain( 'polylang' ); // Plugin i18n.
 
 		printf(
 			'<div class="error"><p>%s</p></div>',
@@ -52,11 +59,13 @@ class PLL_Install extends PLL_Install_Base {
 	 * Displays a notice if WP min version is not met.
 	 *
 	 * @since 2.6.7
+	 *
+	 * @return void
 	 */
 	public function wp_version_notice() {
 		global $wp_version;
 
-		load_plugin_textdomain( 'polylang', false, basename( POLYLANG_DIR ) . '/languages' ); // Plugin i18n.
+		load_plugin_textdomain( 'polylang' ); // Plugin i18n.
 
 		printf(
 			'<div class="error"><p>%s</p></div>',
@@ -71,22 +80,22 @@ class PLL_Install extends PLL_Install_Base {
 	}
 
 	/**
-	 * Get default Polylang options
+	 * Get default Polylang options.
 	 *
 	 * @since 1.8
 	 *
-	 * return array
+	 * @return array
 	 */
 	public static function get_default_options() {
 		return array(
-			'browser'          => 1, // Default language for the front page is set by browser preference
-			'rewrite'          => 1, // Remove /language/ in permalinks ( was the opposite before 0.7.2 )
-			'hide_default'     => 1, // Remove URL language information for default language ( was the opposite before 2.1.5 )
-			'force_lang'       => 1, // Add URL language information ( was 0 before 1.7 )
-			'redirect_lang'    => 0, // Do not redirect the language page to the homepage
-			'media_support'    => 1, // Support languages and translation for media by default
-			'uninstall'        => 0, // Do not remove data when uninstalling Polylang
-			'sync'             => array(), // Synchronisation is disabled by default ( was the opposite before 1.2 )
+			'browser'          => 0, // Default language for the front page is not set by browser preference (was the opposite before 3.1).
+			'rewrite'          => 1, // Remove /language/ in permalinks (was the opposite before 0.7.2).
+			'hide_default'     => 1, // Remove URL language information for default language (was the opposite before 2.1.5).
+			'force_lang'       => 1, // Add URL language information (was 0 before 1.7).
+			'redirect_lang'    => 0, // Do not redirect the language page to the homepage.
+			'media_support'    => 0, // Do not support languages and translation for media by default (was the opposite before 3.1).
+			'uninstall'        => 0, // Do not remove data when uninstalling Polylang.
+			'sync'             => array(), // Synchronisation is disabled by default (was the opposite before 1.2).
 			'post_types'       => array(),
 			'taxonomies'       => array(),
 			'domains'          => array(),
@@ -99,6 +108,8 @@ class PLL_Install extends PLL_Install_Base {
 	 * Plugin activation
 	 *
 	 * @since 0.5
+	 *
+	 * @return void
 	 */
 	protected function _activate() {
 		if ( $options = get_option( 'polylang' ) ) {
@@ -128,6 +139,8 @@ class PLL_Install extends PLL_Install_Base {
 	 * Plugin deactivation
 	 *
 	 * @since 0.5
+	 *
+	 * @return void
 	 */
 	protected function _deactivate() {
 		delete_option( 'rewrite_rules' ); // Don't use flush_rewrite_rules at network activation. See #32471

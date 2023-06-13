@@ -1,13 +1,20 @@
 <?php
-/*
+/**
+ * Module: Theme Tools
+ *
  * Load code specific to themes or theme tools
  * This file is special, and is not an actual `module` as such.
  * It is included by ./module-extras.php
+ *
+ * @package automattic/jetpack
  */
 
+/**
+ * Conditionally require the Tonesque lib depending on theme support.
+ */
 function jetpack_load_theme_tools() {
 	if ( current_theme_supports( 'tonesque' ) ) {
-		jetpack_require_lib( 'tonesque' );
+		require_once JETPACK__PLUGIN_DIR . '/_inc/lib/tonesque.php';
 	}
 }
 add_action( 'init', 'jetpack_load_theme_tools', 30 );
@@ -43,6 +50,7 @@ function jetpack_load_theme_compat() {
 			'twentyseventeen' => JETPACK__PLUGIN_DIR . 'modules/theme-tools/compat/twentyseventeen.php',
 			'twentynineteen'  => JETPACK__PLUGIN_DIR . 'modules/theme-tools/compat/twentynineteen.php',
 			'twentytwenty'    => JETPACK__PLUGIN_DIR . 'modules/theme-tools/compat/twentytwenty.php',
+			'twentytwentyone' => JETPACK__PLUGIN_DIR . 'modules/theme-tools/compat/twentytwentyone.php',
 		)
 	);
 
@@ -54,14 +62,13 @@ function jetpack_load_theme_compat() {
 }
 add_action( 'after_setup_theme', 'jetpack_load_theme_compat', -1 );
 
-
 /**
  * Requires a file once, if the passed key exists in the files array.
  *
  * @access private
- * @param string $key
- * @param array $files
- * @return void
+ * @param string $key The key to check.
+ * @param array  $files Array of files to check in.
+ * @return void|WP_Error
  */
 function _jetpack_require_compat_file( $key, $files ) {
 	if ( ! is_string( $key ) ) {

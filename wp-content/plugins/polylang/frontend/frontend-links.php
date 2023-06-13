@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Manages links filters and url of translations on frontend
@@ -6,8 +9,13 @@
  * @since 1.2
  */
 class PLL_Frontend_Links extends PLL_Links {
-	public $curlang;
-	public $cache; // Our internal non persistent cache object
+
+	/**
+	 * Internal non persistent cache object.
+	 *
+	 * @var PLL_Cache
+	 */
+	public $cache;
 
 	/**
 	 * Constructor
@@ -25,11 +33,11 @@ class PLL_Frontend_Links extends PLL_Links {
 	}
 
 	/**
-	 * Returns the url of the translation ( if exists ) of the current page
+	 * Returns the url of the translation (if it exists) of the current page.
 	 *
 	 * @since 0.1
 	 *
-	 * @param object $language
+	 * @param PLL_Language $language Language object.
 	 * @return string
 	 */
 	public function get_translation_url( $language ) {
@@ -44,14 +52,14 @@ class PLL_Frontend_Links extends PLL_Links {
 		$queried_object_id = $wp_query->get_queried_object_id();
 
 		/**
-		 * Filter the translation url before Polylang attempts to find one
-		 * Internally used by Polylang for the static front page and posts page
+		 * Filters the translation url before Polylang attempts to find one.
+		 * Internally used by Polylang for the static front page and posts page.
 		 *
 		 * @since 1.8
 		 *
-		 * @param string $url               Empty or the url of the translation of teh current page
-		 * @param object $language          Language of the translation
-		 * @param int    $queried_object_id Queried object id
+		 * @param string       $url               Empty string or the url of the translation of the current page.
+		 * @param PLL_Language $language          Language of the translation.
+		 * @param int          $queried_object_id Queried object ID.
 		 */
 		if ( ! $url = apply_filters( 'pll_pre_translation_url', '', $language, $queried_object_id ) ) {
 			$qv = $wp_query->query_vars;
@@ -75,7 +83,7 @@ class PLL_Frontend_Links extends PLL_Links {
 						if ( ! empty( $tax_query['taxonomy'] ) && $this->model->is_translated_taxonomy( $tax_query['taxonomy'] ) ) {
 
 							$tax = get_taxonomy( $tax_query['taxonomy'] );
-							$terms = get_terms( $tax->name, array( 'fields' => 'id=>slug' ) ); // Filtered by current language
+							$terms = get_terms( array( 'taxonomy' => $tax->name, 'fields' => 'id=>slug' ) ); // Filtered by current language
 
 							foreach ( $tax_query['terms'] as $slug ) {
 								$term_id = array_search( $slug, $terms ); // What is the term_id corresponding to taxonomy term?
@@ -101,7 +109,7 @@ class PLL_Frontend_Links extends PLL_Links {
 				elseif ( $tr_id = $this->model->term->get_translation( $term->term_id, $language ) ) {
 					if ( $tr_term = get_term( $tr_id, $term->taxonomy ) ) {
 						// Check if translated term ( or children ) have posts
-						$count = $tr_term->count || ( is_taxonomy_hierarchical( $term->taxonomy ) && array_sum( wp_list_pluck( get_terms( $term->taxonomy, array( 'child_of' => $tr_term->term_id, 'lang' => $language->slug ) ), 'count' ) ) );
+						$count = $tr_term->count || ( is_taxonomy_hierarchical( $term->taxonomy ) && array_sum( wp_list_pluck( get_terms( array( 'taxonomy' => $term->taxonomy, 'child_of' => $tr_term->term_id, 'lang' => $language->slug ) ), 'count' ) ) );
 
 						/**
 						 * Filter whether to hide an archive translation url
@@ -152,6 +160,8 @@ class PLL_Frontend_Links extends PLL_Links {
 			}
 		}
 
+		$url = ! empty( $url ) && ! is_wp_error( $url ) ? $url : null;
+
 		/**
 		 * Filter the translation url of the current page before Polylang caches it
 		 *
@@ -160,7 +170,7 @@ class PLL_Frontend_Links extends PLL_Links {
 		 * @param null|string $url      The translation url, null if none was found
 		 * @param string      $language The language code of the translation
 		 */
-		$translation_url = apply_filters( 'pll_translation_url', ( isset( $url ) && ! is_wp_error( $url ) ? $url : null ), $language->slug );
+		$translation_url = apply_filters( 'pll_translation_url', $url, $language->slug );
 
 		// Don't cache before template_redirect to avoid a conflict with Barrel + WP Bakery Page Builder
 		if ( did_action( 'template_redirect' ) ) {
@@ -196,12 +206,12 @@ class PLL_Frontend_Links extends PLL_Links {
 	}
 
 	/**
-	 * Returns the home url in the right language
+	 * Returns the home url in the right language.
 	 *
 	 * @since 0.1
 	 *
-	 * @param object $language  Optional, defaults to current language
-	 * @param bool   $is_search Optional, whether we need the home url for a search form, defaults to false
+	 * @param PLL_Language|string $language  Optional, defaults to current language.
+	 * @param bool                $is_search Optional, whether we need the home url for a search form, defaults to false.
 	 */
 	public function get_home_url( $language = '', $is_search = false ) {
 		if ( empty( $language ) ) {

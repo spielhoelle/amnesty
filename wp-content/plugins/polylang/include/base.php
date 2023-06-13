@@ -1,19 +1,54 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 /**
  * Base class for both admin and frontend
  *
  * @since 1.2
  */
+#[AllowDynamicProperties]
 abstract class PLL_Base {
-	public $links_model, $model, $options;
+	/**
+	 * Stores the plugin options.
+	 *
+	 * @var array
+	 */
+	public $options;
 
 	/**
-	 * Constructor
+	 * @var PLL_Model
+	 */
+	public $model;
+
+	/**
+	 * Instance of a child class of PLL_Links_Model.
+	 *
+	 * @var PLL_Links_Model
+	 */
+	public $links_model;
+
+	/**
+	 * Registers hooks on insert / update post related actions and filters.
+	 *
+	 * @var PLL_CRUD_Posts|null
+	 */
+	public $posts;
+
+	/**
+	 * Registers hooks on insert / update term related action and filters.
+	 *
+	 * @var PLL_CRUD_Terms|null
+	 */
+	public $terms;
+
+	/**
+	 * Constructor.
 	 *
 	 * @since 1.2
 	 *
-	 * @param object $links_model
+	 * @param PLL_Links_Model $links_model Links Model.
 	 */
 	public function __construct( &$links_model ) {
 		$this->links_model = &$links_model;
@@ -27,37 +62,30 @@ abstract class PLL_Base {
 		// User defined strings translations
 		add_action( 'pll_language_defined', array( $this, 'load_strings_translations' ), 5 );
 		add_action( 'change_locale', array( $this, 'load_strings_translations' ) ); // Since WP 4.7
-
+		add_action( 'personal_options_update', array( $this, 'load_strings_translations' ), 1, 0 ); // Before WP, for confirmation request when changing the user email.
+		add_action( 'lostpassword_post', array( $this, 'load_strings_translations' ), 10, 0 ); // Password reset email.
 		// Switch_to_blog
 		add_action( 'switch_blog', array( $this, 'switch_blog' ), 10, 2 );
 	}
 
 	/**
-	 * Instantiate classes always needed
+	 * Instantiates classes reacting to CRUD operations on posts and terms,
+	 * only when at least one language is defined.
 	 *
 	 * @since 2.6
+	 *
+	 * @return void
 	 */
 	public function init() {
-		// REST API
-		if ( class_exists( 'PLL_REST_API' ) ) {
-			$this->rest_api = new PLL_REST_API( $this );
-		}
+		if ( $this->model->has_languages() ) {
+			$this->posts = new PLL_CRUD_Posts( $this );
+			$this->terms = new PLL_CRUD_Terms( $this );
 
-		if ( $this->model->get_languages_list() ) {
-			// Used by content duplicate and post synchronization
-			if ( class_exists( 'PLL_Sync_Content' ) ) {
-				$this->sync_content = new PLL_Sync_Content( $this );
-			}
-
-			// Active languages
-			if ( class_exists( 'PLL_Active_Languages' ) ) {
-				$this->active_languages = new PLL_Active_Languages( $this );
-			}
-
-			// Share post slugs
-			if ( get_option( 'permalink_structure' ) && $this->options['force_lang'] && class_exists( 'PLL_Share_Post_Slug' ) ) {
-				$this->share_post_slug = new PLL_Share_Post_Slug( $this );
-			}
+			// WordPress options.
+			new PLL_Translate_Option( 'blogname', array(), array( 'context' => 'WordPress' ) );
+			new PLL_Translate_Option( 'blogdescription', array(), array( 'context' => 'WordPress' ) );
+			new PLL_Translate_Option( 'date_format', array(), array( 'context' => 'WordPress' ) );
+			new PLL_Translate_Option( 'time_format', array(), array( 'context' => 'WordPress' ) );
 		}
 	}
 
@@ -65,6 +93,8 @@ abstract class PLL_Base {
 	 * Registers our widgets
 	 *
 	 * @since 0.1
+	 *
+	 * @return void
 	 */
 	public function widgets_init() {
 		register_widget( 'PLL_Widget_Languages' );
@@ -83,10 +113,11 @@ abstract class PLL_Base {
 	 * @since 2.1.3 $locale parameter added.
 	 *
 	 * @param string $locale Locale. Defaults to current locale.
+	 * @return void
 	 */
 	public function load_strings_translations( $locale = '' ) {
 		if ( empty( $locale ) ) {
-			$locale = get_locale();
+			$locale = ( is_admin() && ! Polylang::is_ajax_on_front() ) ? get_user_locale() : get_locale();
 		}
 
 		$language = $this->model->get_language( $locale );
@@ -101,69 +132,72 @@ abstract class PLL_Base {
 	}
 
 	/**
-	 * Resets some variables when switching blog
-	 * Applies only if Polylang is active on the new blog
+	 * Resets some variables when the blog is switched.
+	 * Applied only if Polylang is active on the new blog.
 	 *
 	 * @since 1.5.1
 	 *
-	 * @param int $new_blog
-	 * @param int $old_blog
-	 * @return bool not used by WP but by child class
+	 * @param int $new_blog_id  New blog ID.
+	 * @param int $prev_blog_id Previous blog ID.
+	 * @return void
 	 */
-	public function switch_blog( $new_blog, $old_blog ) {
-		$plugins = ( $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : array();
-		$plugins = array_merge( $plugins, get_option( 'active_plugins', array() ) );
-
-		// 2nd test needed when Polylang is not networked activated
-		// 3rd test needed when Polylang is networked activated and a new site is created
-		if ( $new_blog != $old_blog && in_array( POLYLANG_BASENAME, $plugins ) && get_option( 'polylang' ) ) {
-			$this->options = get_option( 'polylang' ); // Needed for menus
+	public function switch_blog( $new_blog_id, $prev_blog_id ) {
+		if ( $this->is_active_on_new_blog( $new_blog_id, $prev_blog_id ) ) {
+			$this->options = get_option( 'polylang' ); // Needed for menus.
 			remove_action( 'pre_option_rewrite_rules', array( $this->links_model, 'prepare_rewrite_rules' ) );
 			$this->links_model = $this->model->get_links_model();
-			return true;
 		}
-		return false;
 	}
 
 	/**
-	 * Some backward compatibility with Polylang < 1.2
-	 * Allows for example to call $polylang->get_languages_list() instead of $polylang->model->get_languages_list()
-	 * This works but should be slower than the direct call, thus an error is triggered in debug mode
+	 * Checks if Polylang is active on the new blog when the blog is switched.
 	 *
-	 * @since 1.2
+	 * @since 3.0
 	 *
-	 * @param string $func function name
-	 * @param array  $args function arguments
+	 * @param int $new_blog_id  New blog ID.
+	 * @param int $prev_blog_id Previous blog ID.
+	 * @return bool
 	 */
-	public function __call( $func, $args ) {
-		foreach ( $this as $prop => &$obj ) {
-			if ( is_object( $obj ) && method_exists( $obj, $func ) ) {
-				if ( WP_DEBUG ) {
-					$debug = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-					$i = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
-					trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-						sprintf(
-							'%1$s was called incorrectly in %3$s on line %4$s: the call to $polylang->%1$s() has been deprecated in Polylang 1.2, use PLL()->%2$s->%1$s() instead.' . "\nError handler",
-							esc_html( $func ),
-							esc_html( $prop ),
-							esc_html( $debug[ $i ]['file'] ),
-							absint( $debug[ $i ]['line'] )
-						)
-					);
-				}
-				return call_user_func_array( array( $obj, $func ), $args );
-			}
+	protected function is_active_on_new_blog( $new_blog_id, $prev_blog_id ) {
+		$plugins = ( $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : array();
+		$plugins = array_merge( $plugins, get_option( 'active_plugins', array() ) );
+
+		/*
+		 * The 2nd test is needed when Polylang is not networked activated.
+		 * The 3rd test is needed when Polylang is networked activated and a new site is created.
+		 */
+		return $new_blog_id !== $prev_blog_id && in_array( POLYLANG_BASENAME, $plugins ) && get_option( 'polylang' );
+	}
+
+	/**
+	 * Check if the customize menu should be removed or not.
+	 *
+	 * @since 3.2
+	 *
+	 * @return bool True if it should be removed, false otherwise.
+	 */
+	public function should_customize_menu_be_removed() {
+		// Exit if a block theme isn't activated.
+		if ( ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
+			return false;
 		}
 
-		$debug = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-		trigger_error( // phpcs:ignore WordPress.PHP.DevelopmentFunctions
-			sprintf(
-				'Call to undefined function PLL()->%1$s() in %2$s on line %3$s' . "\nError handler",
-				esc_html( $func ),
-				esc_html( $debug[0]['file'] ),
-				absint( $debug[0]['line'] )
-			),
-			E_USER_ERROR
-		);
+		global $wp_filter;
+		if ( empty( $wp_filter['customize_register'] ) ) {
+			return false;
+		}
+
+		$customize_register_hooks = count( array_merge( ...array_values( $wp_filter['customize_register']->callbacks ) ) );
+
+		/*
+		 * 'customize_register' is hooked by:
+		 * @see PLL_Nav_Menu::create_nav_menu_locations()
+		 * @see PLL_Frontend_Static_Pages::filter_customizer()
+		 */
+		if ( $customize_register_hooks > 1 + (int) ( 'page' === get_option( 'show_on_front' ) ) ) { // Are there other hooks than our own?
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @package Polylang
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Don't access directly
@@ -10,7 +13,7 @@ if ( ! defined( 'PLL_LOCAL_DIR' ) ) {
 }
 
 // Includes local config file if exists
-if ( file_exists( PLL_LOCAL_DIR . '/pll-config.php' ) ) {
+if ( is_readable( PLL_LOCAL_DIR . '/pll-config.php' ) ) {
 	include_once PLL_LOCAL_DIR . '/pll-config.php';
 }
 
@@ -27,8 +30,7 @@ class Polylang {
 	 * @since 0.1
 	 */
 	public function __construct() {
-		require_once PLL_INC . '/functions.php'; // VIP functions
-		spl_autoload_register( array( $this, 'autoload' ) ); // Autoload classes
+		require_once __DIR__ . '/functions.php'; // VIP functions
 
 		// register an action when plugin is activating.
 		register_activation_hook( POLYLANG_BASENAME, array( 'PLL_Wizard', 'start_wizard' ) );
@@ -50,60 +52,12 @@ class Polylang {
 			PLL_OLT_Manager::instance();
 		}
 
-		// Extra code for compatibility with some plugins
-		// Loaded as soon as possible as we may need to act before other plugins are loaded
+		/*
+		 * Loads the compatibility with some plugins and themes.
+		 * Loaded as soon as possible as we may need to act before other plugins are loaded.
+		 */
 		if ( ! defined( 'PLL_PLUGINS_COMPAT' ) || PLL_PLUGINS_COMPAT ) {
-			PLL_Plugins_Compat::instance();
-		}
-	}
-
-	/**
-	 * Autoload classes
-	 *
-	 * @since 1.2
-	 *
-	 * @param string $class
-	 */
-	public function autoload( $class ) {
-		// Not a Polylang class
-		if ( 0 !== strncmp( 'PLL_', $class, 4 ) ) {
-			return;
-		}
-
-		$class = str_replace( '_', '-', strtolower( substr( $class, 4 ) ) );
-		$dirs  = array();
-		$parts = explode( '-', $class );
-		$parts = array_values( array_diff( $parts, array( 'frontend', 'admin', 'settings', 'advanced' ) ) );
-		if ( isset( $parts[0] ) ) {
-			$dirs[] = PLL_MODULES_INC . "/{$parts[0]}";
-			if ( isset( $parts[1] ) ) {
-				$dirs[] = PLL_MODULES_INC . "/{$parts[0]}-{$parts[1]}";
-				if ( isset( $parts[2] ) && in_array( $parts[1], array( 'post', 'term' ) ) ) {
-					$dirs[] = PLL_MODULES_INC . "/{$parts[0]}-{$parts[2]}";
-				}
-			}
-		}
-
-		$dirs = array_merge(
-			array(
-				PLL_FRONT_INC,
-				PLL_MODULES_INC,
-			),
-			$dirs,
-			array(
-				PLL_MODULES_INC . '/plugins',
-				PLL_INSTALL_INC,
-				PLL_ADMIN_INC,
-				PLL_SETTINGS_INC,
-				PLL_INC,
-			)
-		);
-
-		foreach ( $dirs as $dir ) {
-			if ( file_exists( $file = "$dir/$class.php" ) ) {
-				require_once $file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
-				return;
-			}
+			PLL_Integrations::instance();
 		}
 	}
 
@@ -141,10 +95,10 @@ class Polylang {
 	 */
 	public static function is_rest_request() {
 		// Handle pretty permalinks.
-		$home_path       = trim( wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		$home_path       = trim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
 		$home_path_regex = sprintf( '|^%s|i', preg_quote( $home_path, '|' ) );
 
-		$req_uri = trim( wp_parse_url( pll_get_requested_url(), PHP_URL_PATH ), '/' );
+		$req_uri = trim( (string) wp_parse_url( pll_get_requested_url(), PHP_URL_PATH ), '/' );
 		$req_uri = preg_replace( $home_path_regex, '', $req_uri );
 		$req_uri = trim( $req_uri, '/' );
 		$req_uri = str_replace( 'index.php', '', $req_uri );
@@ -152,7 +106,7 @@ class Polylang {
 
 		// And also test rest_route query string parameter is not empty for plain permalinks.
 		$query_string = array();
-		wp_parse_str( wp_parse_url( pll_get_requested_url(), PHP_URL_QUERY ), $query_string );
+		wp_parse_str( (string) wp_parse_url( pll_get_requested_url(), PHP_URL_QUERY ), $query_string );
 		$rest_route = isset( $query_string['rest_route'] ) ? trim( $query_string['rest_route'], '/' ) : false;
 
 		return 0 === strpos( $req_uri, rest_get_url_prefix() . '/' ) || ! empty( $rest_route );
@@ -174,6 +128,8 @@ class Polylang {
 	 * May be overridden by a plugin if set before plugins_loaded, 1
 	 *
 	 * @since 1.6
+	 *
+	 * @return void
 	 */
 	public static function define_constants() {
 		// Cookie name. no cookie will be used if set to false
@@ -202,6 +158,8 @@ class Polylang {
 	 * setups models and separate admin and frontend
 	 *
 	 * @since 1.2
+	 *
+	 * @return void
 	 */
 	public function init() {
 		global $polylang;
@@ -222,9 +180,6 @@ class Polylang {
 			$options = PLL_Install::get_default_options();
 		}
 
-		// Make sure that this filter is *always* added before PLL_Model::get_languages_list() is called for the first time
-		add_filter( 'pll_languages_list', array( 'PLL_Static_Pages', 'pll_languages_list' ), 2, 2 ); // Before PLL_Links_Model
-
 		/**
 		 * Filter the model class to use
 		 * /!\ this filter is fired *before* the $polylang object is available
@@ -234,10 +189,10 @@ class Polylang {
 		 * @param string $class either PLL_Model or PLL_Admin_Model
 		 */
 		$class = apply_filters( 'pll_model', PLL_SETTINGS || self::is_wizard() ? 'PLL_Admin_Model' : 'PLL_Model' );
+		/** @var PLL_Model $model */
 		$model = new $class( $options );
-		$links_model = $model->get_links_model();
 
-		if ( ! $model->get_languages_list() ) {
+		if ( ! $model->has_languages() ) {
 			/**
 			 * Fires when no language has been defined yet
 			 * Used to load overridden textdomains
@@ -255,7 +210,7 @@ class Polylang {
 			$class = 'PLL_Admin';
 		} elseif ( self::is_rest_request() ) {
 			$class = 'PLL_REST_Request';
-		} elseif ( $model->get_languages_list() && empty( $_GET['deactivate-polylang'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		} elseif ( $model->has_languages() ) {
 			$class = 'PLL_Frontend';
 		}
 
@@ -269,7 +224,22 @@ class Polylang {
 		$class = apply_filters( 'pll_context', $class );
 
 		if ( ! empty( $class ) ) {
-			$polylang = new $class( $links_model );
+			$links_model = $model->get_links_model();
+			$polylang    = new $class( $links_model );
+
+			/**
+			 * Fires after Polylang's model init.
+			 * This is the best place to register a custom table (see `PLL_Model`'s constructor).
+			 * /!\ This hook is fired *before* the $polylang object is available.
+			 * /!\ The languages are also not available yet.
+			 *
+			 * @since 3.4
+			 *
+			 * @param PLL_Model $model Polylang model.
+			 */
+			do_action( 'pll_model_init', $model );
+
+			$model->maybe_create_language_terms();
 
 			/**
 			 * Fires after the $polylang object is created and before the API is loaded
@@ -280,11 +250,14 @@ class Polylang {
 			 */
 			do_action_ref_array( 'pll_pre_init', array( &$polylang ) );
 
-			require_once PLL_INC . '/api.php'; // Loads the API
+			require_once __DIR__ . '/api.php'; // Loads the API
 
-			if ( ! defined( 'PLL_WPML_COMPAT' ) || PLL_WPML_COMPAT ) {
-				PLL_WPML_Compat::instance(); // WPML API
-				PLL_WPML_Config::instance(); // wpml-config.xml
+			// Loads the modules.
+			$load_scripts = glob( POLYLANG_DIR . '/modules/*/load.php', GLOB_NOSORT );
+			if ( is_array( $load_scripts ) ) {
+				foreach ( $load_scripts as $load_script ) {
+					require_once $load_script; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+				}
 			}
 
 			$polylang->init();

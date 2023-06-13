@@ -10,6 +10,26 @@
   display: table;
   clear: both;
 }
+.panel-grid .so-parallax {
+  position: relative;
+}
+.panel-grid .so-parallax > div:not(.simpleParallax) {
+  position: relative;
+  z-index: 1;
+}
+.panel-grid .so-parallax .simpleParallax {
+  overflow: hidden;
+}
+.panel-grid .so-parallax .simpleParallax,
+.panel-grid .so-parallax img[data-siteorigin-parallax] {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 0;
+}
 .panel-grid-cell {
   -ms-box-sizing: border-box;
   -moz-box-sizing: border-box;
