@@ -133,3 +133,4 @@ wp-content/plugins/wixelpress/inc/wp_forms.php
 wp-content/plugins/wixelpress/inc/wpcf7.php
 wp-content/plugins/wixelpress/languages/wixelpress-ja.mo
 wp-content/plugins/wixelpress/languages/wixelpress-ja.po
+*.sql.gz

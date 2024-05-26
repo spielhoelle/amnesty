@@ -1,9 +1,24 @@
-# Source image
-FROM wordpress:6.1.1
-RUN apt-get update && apt-get -y install cron vim
-# We're going to use this path multile times. So save it in a variable.
-ARG XDEBUG_INI="/usr/local/etc/php/conf.d/xdebug.ini"
+# WordPress Dockerfile: Create container from official WordPress image, basic customizations.
 
-# Install AND configure Xdebug
-RUN pecl install xdebug \
-	&& docker-php-ext-enable xdebug 
+# docker build -t amnesty (or wordpress)
+
+FROM wordpress:latest
+
+# APT Update/Upgrade, then install packages we need
+RUN apt update && \
+    apt upgrade -y && \
+    apt install -y vim wget php5-pgsql
+		# mariadb-client
+
+# Replace php.ini
+# COPY php.ini /us/local/etc/php
+
+# Install WP-CLI
+# RUN wet https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar & \
+# 	php wp-cli.phar --info && \
+# 	chmod +x wp-cli. phar && \
+# 	mv wp-cli.phar /usr/local/bin/wp && \
+
+# 	# Remove old php.ini files (wihtout creating new image)
+# 	rm /usr/local/etc/php/php.ini-development && \ 
+# 	rm /usr/local/etc/php/php.ini-production
